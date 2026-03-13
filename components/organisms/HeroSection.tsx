@@ -23,7 +23,7 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-background/50" aria-hidden="true" />
 
       <div className="relative z-10 flex flex-col items-center gap-6 animate-fade-in-up">
-        <Logo size="lg" className="drop-shadow-lg" />
+        {/* <Logo size="lg" className="drop-shadow-lg" /> */}
         <Heading level="h1" className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-wide">
           {SITE_NAME}
         </Heading>

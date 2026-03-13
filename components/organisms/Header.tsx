@@ -12,7 +12,7 @@ export default function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-white/10">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <a href="#" className="flex items-center gap-3" aria-label={SITE_NAME}>
-          <Logo size="sm" />
+          {/* <Logo size="sm" /> */}
           <span className="font-serif text-lg font-semibold hidden sm:inline">
             {SITE_NAME}
           </span>
