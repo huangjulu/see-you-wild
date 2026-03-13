@@ -1,0 +1,44 @@
+import Heading from "@/components/atoms/Heading";
+import Text from "@/components/atoms/Text";
+import Button from "@/components/atoms/Button";
+import { PRIVATE_GROUP } from "@/lib/constants";
+
+export default function PrivateGroupSection() {
+  return (
+    <section
+      id="private-group"
+      className="relative py-24 md:py-32 px-4 text-center overflow-hidden"
+      aria-labelledby="private-group-heading"
+    >
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-accent/5"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-accent/10"
+        aria-hidden="true"
+      />
+
+      <div className="relative z-10 max-w-2xl mx-auto space-y-6">
+        <Heading
+          level="h2"
+          id="private-group-heading"
+          className="text-3xl md:text-4xl font-bold"
+        >
+          {PRIVATE_GROUP.title}
+        </Heading>
+        <Text className="text-xl font-serif text-accent">
+          {PRIVATE_GROUP.subtitle}
+        </Text>
+        <Text muted className="leading-relaxed max-w-lg mx-auto">
+          {PRIVATE_GROUP.description}
+        </Text>
+        <div className="pt-4">
+          <Button variant="ghost" href={PRIVATE_GROUP.ctaUrl}>
+            {PRIVATE_GROUP.cta}
+          </Button>
+        </div>
+      </div>
+    </section>
+  );
+}

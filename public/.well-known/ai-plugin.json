@@ -1,0 +1,12 @@
+{
+  "schema_version": "v1",
+  "name": "See You Wild 西揪團",
+  "description": "台灣戶外探險品牌 — 提供野營私廚、野溪溫泉、SUP 立槳、攀樹體驗等活動預約與資訊查詢",
+  "api": {
+    "type": "openapi",
+    "url": "https://seeyouwild.com/api/openapi.json"
+  },
+  "logo_url": "https://seeyouwild.com/images/logo.png",
+  "contact_email": "",
+  "legal_info_url": "https://seeyouwild.com"
+}

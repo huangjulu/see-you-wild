@@ -1,0 +1,133 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "See You Wild 西揪團 API",
+    "description": "台灣戶外探險品牌 — 活動資訊查詢 API",
+    "version": "1.0.0",
+    "contact": {
+      "name": "See You Wild 西揪團",
+      "url": "https://www.instagram.com/c_you_wild"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://seeyouwild.com",
+      "description": "Production"
+    }
+  ],
+  "paths": {
+    "/api/events": {
+      "get": {
+        "operationId": "listEvents",
+        "summary": "列出所有活動",
+        "description": "取得目前所有可報名的戶外活動清單，包含野營私廚、野溪溫泉、包團等",
+        "responses": {
+          "200": {
+            "description": "活動清單",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/events/{id}": {
+      "get": {
+        "operationId": "getEvent",
+        "summary": "取得單一活動詳情",
+        "description": "根據活動 ID 取得該活動的完整資訊",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "活動 ID（例如 camping-chef, hot-spring）",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "活動詳情",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "活動不存在",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Event": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "活動唯一識別碼" },
+          "tag": { "type": "string", "description": "活動分類標籤（如「限定企劃」「常態行程」）" },
+          "title": { "type": "string", "description": "活動名稱" },
+          "subtitle": { "type": "string", "description": "活動副標題" },
+          "date": { "type": "string", "description": "活動日期" },
+          "description": { "type": "string", "description": "活動詳細說明" },
+          "cta": { "type": "string", "description": "行動呼籲按鈕文字" },
+          "ctaUrl": { "type": "string", "format": "uri", "description": "報名或諮詢連結" },
+          "image": { "type": "string", "description": "活動圖片路徑" },
+          "imageAlt": { "type": "string", "description": "圖片替代文字" }
+        }
+      },
+      "EventsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Event" }
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "total": { "type": "integer" },
+              "source": { "type": "string", "format": "uri" }
+            }
+          }
+        }
+      },
+      "EventResponse": {
+        "type": "object",
+        "properties": {
+          "data": { "$ref": "#/components/schemas/Event" },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "source": { "type": "string", "format": "uri" }
+            }
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "status": { "type": "integer" }
+        }
+      }
+    }
+  }
+}

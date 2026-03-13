@@ -1,0 +1,29 @@
+# See You Wild 西揪團
+
+> 台灣戶外探險品牌 — 山海之間・野放靈魂
+
+## About
+
+See You Wild 西揪團是台灣的戶外探險活動品牌，提供野營私廚、野溪溫泉、SUP 立槳、攀樹體驗等活動。我們相信人屬於自然，致力於打造安全、專業、難忘的戶外體驗。
+
+## Current Events
+
+- **野營私廚・專屬預約席**: 營火晚宴 × SUP立槳 × 攀樹體驗。限量席次。預約表單: https://forms.gle/kdXfmR7BXqijwkY46
+- **秘境野溪溫泉**: 專業教練帶領，深入台灣秘境野溪溫泉。詳情: https://seeyouwild.my.canva.site/march-hotspring
+- **摯友微包團**: 4人即刻成行，日期自選，行程客製化。諮詢: https://www.instagram.com/c_you_wild
+
+## Contact
+
+- Instagram: https://www.instagram.com/c_you_wild
+- Website: https://seeyouwild.com
+
+## API
+
+- Events listing: GET /api/events
+- Event detail: GET /api/events/[id]
+
+## Structured Data
+
+This site provides JSON-LD structured data (Schema.org) on every page:
+- LocalBusiness schema on homepage
+- Event schema for each activity
