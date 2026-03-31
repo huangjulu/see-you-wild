@@ -1,0 +1,21 @@
+{
+  "siteName": "See You Wild",
+  "nav": {
+    "events": "Events",
+    "privateGroup": "Private Group",
+    "contact": "Contact"
+  },
+  "footer": {
+    "rights": "All rights reserved."
+  },
+  "error": {
+    "heading": "Oops",
+    "message": "Something went wrong",
+    "retry": "Try again"
+  },
+  "notFound": {
+    "heading": "404",
+    "message": "Page not found",
+    "backHome": "Back to Home"
+  }
+}

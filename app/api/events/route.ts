@@ -1,12 +1,32 @@
 import { NextResponse } from "next/server";
-import { EVENTS, SITE_URL } from "@/lib/constants";
+import { EVENTS_CONFIG, SITE_URL } from "@/lib/constants";
+import { getDictionary } from "@/lib/i18n";
 import type { EventsApiResponse } from "@/lib/types";
 
 export async function GET() {
+  const { home } = await getDictionary("zh-TW");
+
+  const data = EVENTS_CONFIG.map((config) => {
+    const text = home.events.items[config.id as keyof typeof home.events.items];
+    return {
+      id: config.id,
+      tag: text.tag,
+      title: text.title,
+      subtitle: text.subtitle,
+      date: text.date,
+      description: text.description,
+      cta: text.cta,
+      ctaUrl: config.ctaUrl,
+      image: config.image,
+      imageAlt: text.imageAlt,
+      variant: config.variant,
+    };
+  });
+
   const response: EventsApiResponse = {
-    data: EVENTS,
+    data,
     meta: {
-      total: EVENTS.length,
+      total: data.length,
       source: SITE_URL,
     },
   };

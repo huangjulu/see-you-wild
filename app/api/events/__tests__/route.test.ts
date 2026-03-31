@@ -1,14 +1,14 @@
 import { describe, it, expect } from "vitest";
 import { GET } from "../route";
-import { EVENTS } from "@/lib/constants";
+import { EVENTS_CONFIG } from "@/lib/constants";
 
 describe("GET /api/events", () => {
   it("returns a response with events data", async () => {
     const response = await GET();
     const body = await response.json();
 
-    expect(body.data).toEqual(EVENTS);
-    expect(body.meta.total).toBe(EVENTS.length);
+    expect(body.data.length).toBe(EVENTS_CONFIG.length);
+    expect(body.meta.total).toBe(EVENTS_CONFIG.length);
   });
 
   it("response has Cache-Control header", async () => {

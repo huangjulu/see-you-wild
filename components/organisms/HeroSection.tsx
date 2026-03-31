@@ -1,11 +1,15 @@
 import Image from "next/image";
 import Heading from "@/components/atoms/Heading";
 import Text from "@/components/atoms/Text";
-import Logo from "@/components/atoms/Logo";
 import ScrollIndicator from "@/components/atoms/ScrollIndicator";
-import { SITE_NAME, SITE_TAGLINE } from "@/lib/constants";
+import type { CommonDictionary, HomeDictionary } from "@/lib/i18n";
 
-export default function HeroSection() {
+interface HeroSectionProps {
+  common: CommonDictionary;
+  dict: HomeDictionary["hero"];
+}
+
+export default function HeroSection({ common, dict }: HeroSectionProps) {
   return (
     <section
       className="relative min-h-screen flex flex-col items-center justify-center text-center px-4"
@@ -13,7 +17,7 @@ export default function HeroSection() {
     >
       <Image
         src="/images/hero.jpg"
-        alt="戶外溪谷露營場景，青山綠水環繞"
+        alt={dict.heroImageAlt}
         fill
         priority
         className="object-cover"
@@ -24,11 +28,14 @@ export default function HeroSection() {
 
       <div className="relative z-10 flex flex-col items-center gap-6 animate-fade-in-up">
         {/* <Logo size="lg" className="drop-shadow-lg" /> */}
-        <Heading level="h1" className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-wide">
-          {SITE_NAME}
+        <Heading
+          level="h1"
+          className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-wide"
+        >
+          {common.siteName}
         </Heading>
         <Text className="text-xl md:text-2xl tracking-[0.3em] font-serif text-white/90">
-          {SITE_TAGLINE}
+          {dict.tagline}
         </Text>
       </div>
 

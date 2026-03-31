@@ -1,9 +1,16 @@
 import Heading from "@/components/atoms/Heading";
 import Text from "@/components/atoms/Text";
 import Button from "@/components/atoms/Button";
-import { PRIVATE_GROUP } from "@/lib/constants";
+import { PRIVATE_GROUP_CTA_URL } from "@/lib/constants";
+import type { HomeDictionary } from "@/lib/i18n";
 
-export default function PrivateGroupSection() {
+interface PrivateGroupSectionProps {
+  dict: HomeDictionary["privateGroup"];
+}
+
+export default function PrivateGroupSection({
+  dict,
+}: PrivateGroupSectionProps) {
   return (
     <section
       id="private-group"
@@ -25,17 +32,15 @@ export default function PrivateGroupSection() {
           id="private-group-heading"
           className="text-3xl md:text-4xl font-bold"
         >
-          {PRIVATE_GROUP.title}
+          {dict.title}
         </Heading>
-        <Text className="text-xl font-serif text-accent">
-          {PRIVATE_GROUP.subtitle}
-        </Text>
+        <Text className="text-xl font-serif text-accent">{dict.subtitle}</Text>
         <Text muted className="leading-relaxed max-w-lg mx-auto">
-          {PRIVATE_GROUP.description}
+          {dict.description}
         </Text>
         <div className="pt-4">
-          <Button variant="ghost" href={PRIVATE_GROUP.ctaUrl}>
-            {PRIVATE_GROUP.cta}
+          <Button variant="ghost" href={PRIVATE_GROUP_CTA_URL}>
+            {dict.cta}
           </Button>
         </div>
       </div>

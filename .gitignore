@@ -3,3 +3,13 @@ node_modules/
 .env*.local
 
 .vercel
+
+docs/**/*
+
+.claude/
+.husky/
+youtube-research/
+
+*.stackdump
+tsconfig.tsbuildinfo
+api-test.http
