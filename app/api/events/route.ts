@@ -1,39 +1,63 @@
 import { NextResponse } from "next/server";
-import { EVENTS_CONFIG, SITE_URL } from "@/lib/constants";
-import { getDictionary } from "@/lib/i18n";
-import type { EventsApiResponse } from "@/lib/types";
+import { supabase } from "@/lib/supabase/client";
+import { createEventSchema } from "@/lib/validations/events";
+import type {
+  EventRow,
+  EventListDto,
+  RegistrationSummaryDto,
+} from "@/lib/types/database";
 
 export async function GET() {
-  const { home } = await getDictionary("zh-TW");
+  const { data: events, error: eventsError } = await supabase
+    .from("events")
+    .select("*")
+    .order("start_date", { ascending: true });
 
-  const data = EVENTS_CONFIG.map((config) => {
-    const text = home.events.items[config.id as keyof typeof home.events.items];
-    return {
-      id: config.id,
-      tag: text.tag,
-      title: text.title,
-      subtitle: text.subtitle,
-      date: text.date,
-      description: text.description,
-      cta: text.cta,
-      ctaUrl: config.ctaUrl,
-      image: config.image,
-      imageAlt: text.imageAlt,
-      variant: config.variant,
-    };
-  });
+  if (eventsError) {
+    return NextResponse.json({ error: eventsError.message }, { status: 500 });
+  }
 
-  const response: EventsApiResponse = {
-    data,
-    meta: {
-      total: data.length,
-      source: SITE_URL,
-    },
-  };
+  const result: EventListDto[] = [];
 
-  return NextResponse.json(response, {
-    headers: {
-      "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
-    },
-  });
+  for (const event of events as EventRow[]) {
+    const { data: registrations, error: regError } = await supabase
+      .from("registrations")
+      .select("id, name, status, transport, payment_ref, created_at")
+      .eq("event_id", event.id);
+
+    if (regError) {
+      return NextResponse.json({ error: regError.message }, { status: 500 });
+    }
+
+    result.push({
+      ...event,
+      registrations: (registrations ?? []) as RegistrationSummaryDto[],
+    });
+  }
+
+  return NextResponse.json(result);
+}
+
+export async function POST(request: Request) {
+  const body = await request.json();
+  const parsed = createEventSchema.safeParse(body);
+
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Validation failed", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+
+  const { data, error } = await supabase
+    .from("events")
+    .insert(parsed.data)
+    .select()
+    .single();
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json(data, { status: 201 });
 }
