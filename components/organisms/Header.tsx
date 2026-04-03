@@ -1,23 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations, useLocale } from "@/lib/i18n/client";
 import Logo from "@/components/atoms/Logo";
 import NavLink from "@/components/molecules/NavLink";
 import { NAV_ANCHORS } from "@/lib/constants";
-import type { CommonDictionary } from "@/lib/i18n";
 
-interface HeaderProps {
-  dict: CommonDictionary;
-  locale: string;
-}
-
-export default function Header({ dict, locale }: HeaderProps) {
+function Header() {
+  const t = useTranslations("common");
+  const locale = useLocale();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navLinks = [
-    { label: dict.nav.events, href: NAV_ANCHORS.events },
-    { label: dict.nav.privateGroup, href: NAV_ANCHORS.privateGroup },
-    { label: dict.nav.contact, href: NAV_ANCHORS.contact },
+    { label: t("nav.events"), href: NAV_ANCHORS.events },
+    { label: t("nav.privateGroup"), href: NAV_ANCHORS.privateGroup },
+    { label: t("nav.contact"), href: NAV_ANCHORS.contact },
   ];
 
   return (
@@ -26,11 +23,11 @@ export default function Header({ dict, locale }: HeaderProps) {
         <a
           href={locale === "zh-TW" ? "/" : `/${locale}`}
           className="flex items-center gap-3"
-          aria-label={dict.siteName}
+          aria-label={t("siteName")}
         >
           {/* <Logo size="sm" /> */}
           <span className="font-serif text-lg font-semibold hidden sm:inline">
-            {dict.siteName}
+            {t("siteName")}
           </span>
         </a>
 
@@ -88,3 +85,6 @@ export default function Header({ dict, locale }: HeaderProps) {
     </header>
   );
 }
+
+Header.displayName = "Header";
+export default Header;

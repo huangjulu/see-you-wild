@@ -1,34 +1,34 @@
 import { notFound } from "next/navigation";
 import HomeTemplate from "@/components/templates/HomeTemplate";
-import { getDictionary, isValidLocale } from "@/lib/i18n";
-import type { Locale } from "@/lib/i18n";
+import { isValidLocale } from "@/lib/i18n";
+import type { Locale, PageProps } from "@/lib/i18n";
 import { getLocalBusinessSchema, getEventSchemas } from "@/lib/seo/schemas";
 
-export default async function HomePage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await params;
+const HomePage: React.FC<PageProps> = async (props) => {
+  const { locale } = await props.params;
 
   if (!isValidLocale(locale)) {
     notFound();
   }
 
-  const dict = await getDictionary(locale);
-
   return (
     <>
       <SEOStrategy locale={locale} />
-      <HomeTemplate common={dict.common} home={dict.home} />
+      <HomeTemplate />
     </>
   );
+};
+
+HomePage.displayName = "HomePage";
+export default HomePage;
+
+interface SEOStrategyProps {
+  locale: Locale;
 }
 
-async function SEOStrategy({ locale }: { locale: Locale }) {
-  const localBusinessSchema = await getLocalBusinessSchema(locale);
-  const eventSchemas = await getEventSchemas(locale);
-
+const SEOStrategy: React.FC<SEOStrategyProps> = async (props) => {
+  const localBusinessSchema = await getLocalBusinessSchema(props.locale);
+  const eventSchemas = await getEventSchemas(props.locale);
   return (
     <>
       <script
@@ -48,4 +48,4 @@ async function SEOStrategy({ locale }: { locale: Locale }) {
       ))}
     </>
   );
-}
+};

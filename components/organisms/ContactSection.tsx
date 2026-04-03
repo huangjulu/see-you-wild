@@ -2,13 +2,11 @@ import Heading from "@/components/atoms/Heading";
 import Text from "@/components/atoms/Text";
 import SocialLinks from "@/components/molecules/SocialLinks";
 import { INSTAGRAM_HANDLE } from "@/lib/constants";
-import type { HomeDictionary } from "@/lib/i18n";
+import { getTranslations } from "@/lib/i18n/server";
 
-interface ContactSectionProps {
-  dict: HomeDictionary["contact"];
-}
+async function ContactSection() {
+  const t = await getTranslations("home.contact");
 
-export default function ContactSection({ dict }: ContactSectionProps) {
   return (
     <section
       id="contact"
@@ -21,10 +19,10 @@ export default function ContactSection({ dict }: ContactSectionProps) {
           id="contact-heading"
           className="text-3xl md:text-4xl font-bold"
         >
-          {dict.heading}
+          {t("heading")}
         </Heading>
         <Text muted className="text-lg">
-          {dict.description}
+          {t("description")}
         </Text>
         <Text className="text-accent font-serif text-xl">
           {INSTAGRAM_HANDLE}
@@ -34,3 +32,6 @@ export default function ContactSection({ dict }: ContactSectionProps) {
     </section>
   );
 }
+
+ContactSection.displayName = "ContactSection";
+export default ContactSection;

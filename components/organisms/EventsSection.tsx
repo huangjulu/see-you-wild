@@ -1,13 +1,11 @@
 import EventCard from "@/components/molecules/EventCard";
 import Divider from "@/components/atoms/Divider";
 import { EVENTS_CONFIG } from "@/lib/constants";
-import type { HomeDictionary } from "@/lib/i18n";
+import { getTranslations } from "@/lib/i18n/server";
 
-interface EventsSectionProps {
-  dict: HomeDictionary["events"];
-}
+async function EventsSection() {
+  const t = await getTranslations("home.events");
 
-export default function EventsSection({ dict }: EventsSectionProps) {
   return (
     <section
       id="events"
@@ -15,31 +13,31 @@ export default function EventsSection({ dict }: EventsSectionProps) {
       aria-labelledby="events-heading"
     >
       <h2 id="events-heading" className="sr-only">
-        {dict.sectionLabel}
+        {t("sectionLabel")}
       </h2>
       <div className="max-w-5xl mx-auto space-y-0">
-        {EVENTS_CONFIG.map((config, i) => {
-          const text = dict.items[config.id as keyof typeof dict.items];
-          return (
-            <div key={config.id}>
-              {i > 0 && <Divider />}
-              <EventCard
-                tag={text.tag}
-                title={text.title}
-                subtitle={text.subtitle}
-                date={text.date}
-                description={text.description}
-                cta={text.cta}
-                ctaUrl={config.ctaUrl}
-                image={config.image}
-                imageAlt={text.imageAlt}
-                variant={config.variant}
-                reverse={i % 2 !== 0}
-              />
-            </div>
-          );
-        })}
+        {EVENTS_CONFIG.map((config, i) => (
+          <div key={config.id}>
+            {i > 0 && <Divider />}
+            <EventCard
+              tag={t(`items.${config.id}.tag`)}
+              title={t(`items.${config.id}.title`)}
+              subtitle={t(`items.${config.id}.subtitle`)}
+              date={t(`items.${config.id}.date`)}
+              description={t(`items.${config.id}.description`)}
+              cta={t(`items.${config.id}.cta`)}
+              ctaUrl={config.ctaUrl}
+              image={config.image}
+              imageAlt={t(`items.${config.id}.imageAlt`)}
+              variant={config.variant}
+              reverse={i % 2 !== 0}
+            />
+          </div>
+        ))}
       </div>
     </section>
   );
 }
+
+EventsSection.displayName = "EventsSection";
+export default EventsSection;
