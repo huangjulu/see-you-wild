@@ -1,21 +1,28 @@
 import HeroSection from "@/components/organisms/HeroSection";
+import OpeningAnimation from "@/components/organisms/OpeningAnimation";
+import PhilosophySection from "@/components/organisms/PhilosophySection";
+import JourneysSection from "@/components/organisms/JourneysSection";
+import TestimonialsSection from "@/components/organisms/TestimonialsSection";
 import EventsSection from "@/components/organisms/EventsSection";
 import PrivateGroupSection from "@/components/organisms/PrivateGroupSection";
 import ContactSection from "@/components/organisms/ContactSection";
-import type { CommonDictionary, HomeDictionary } from "@/lib/i18n";
+import CookiePopup from "@/components/molecules/CookiePopup";
 
-interface HomeTemplateProps {
-  common: CommonDictionary;
-  home: HomeDictionary;
-}
-
-export default function HomeTemplate({ common, home }: HomeTemplateProps) {
+function HomeTemplate() {
   return (
     <main>
-      <HeroSection common={common} dict={home.hero} />
-      <EventsSection dict={home.events} />
-      <PrivateGroupSection dict={home.privateGroup} />
-      <ContactSection dict={home.contact} />
+      <OpeningAnimation />
+      <HeroSection />
+      <PhilosophySection />
+      <JourneysSection />
+      <TestimonialsSection />
+      <EventsSection />
+      <PrivateGroupSection />
+      <ContactSection />
+      <CookiePopup />
     </main>
   );
 }
+
+HomeTemplate.displayName = "HomeTemplate";
+export default HomeTemplate;

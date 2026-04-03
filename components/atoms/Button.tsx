@@ -6,7 +6,7 @@ interface ButtonProps {
   ariaLabel?: string;
 }
 
-export default function Button({ variant, href, children, className = "", ariaLabel }: ButtonProps) {
+function Button(props: ButtonProps) {
   const base =
     "inline-block px-8 py-3 rounded-full text-sm font-sans font-medium tracking-widest uppercase transition-all duration-300";
   const variants = {
@@ -18,14 +18,17 @@ export default function Button({ variant, href, children, className = "", ariaLa
 
   return (
     <a
-      href={href}
+      href={props.href}
       target="_blank"
       rel="noopener noreferrer"
       role="button"
-      aria-label={ariaLabel}
-      className={`${base} ${variants[variant]} ${className}`}
+      aria-label={props.ariaLabel}
+      className={`${base} ${variants[props.variant]} ${props.className ?? ""}`}
     >
-      {children}
+      {props.children}
     </a>
   );
 }
+
+Button.displayName = "Button";
+export default Button;

@@ -1,10 +1,12 @@
 "use client";
 
-export default function ScrollIndicator() {
+function ScrollIndicator() {
   return (
     <button
       onClick={() => {
-        document.getElementById("events")?.scrollIntoView({ behavior: "smooth" });
+        document
+          .getElementById("events")
+          ?.scrollIntoView({ behavior: "smooth" });
       }}
       className="animate-bounce-slow text-white/60 hover:text-white transition-colors"
       aria-label="Scroll down to events"
@@ -25,3 +27,6 @@ export default function ScrollIndicator() {
     </button>
   );
 }
+
+ScrollIndicator.displayName = "ScrollIndicator";
+export default ScrollIndicator;

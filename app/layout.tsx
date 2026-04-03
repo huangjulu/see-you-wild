@@ -4,6 +4,9 @@ type RootLayoutProps = {
   children: React.ReactNode;
 };
 
-export default function RootLayout({ children }: RootLayoutProps) {
-  return children;
+function RootLayout(props: RootLayoutProps) {
+  return props.children;
 }
+
+RootLayout.displayName = "RootLayout";
+export default RootLayout;
