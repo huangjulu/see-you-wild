@@ -6,14 +6,17 @@ interface NavLinkProps {
   onClick?: () => void;
 }
 
-export default function NavLink({ href, label, onClick }: NavLinkProps) {
+function NavLink(props: NavLinkProps) {
   return (
     <a
-      href={href}
-      onClick={onClick}
+      href={props.href}
+      onClick={props.onClick}
       className="text-sm font-sans tracking-wider text-white/70 hover:text-white transition-colors duration-300"
     >
-      {label}
+      {props.label}
     </a>
   );
 }
+
+NavLink.displayName = "NavLink";
+export default NavLink;

@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>See You Wild — API Playground</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f4f6f5; color: #2d3a40; padding: 24px; max-width: 720px; margin: 0 auto; }
+    h1 { font-size: 24px; margin-bottom: 8px; }
+    .subtitle { color: #9eb3c2; margin-bottom: 32px; font-size: 14px; }
+    .section { margin-bottom: 16px; }
+    .section-title { font-size: 13px; font-weight: 700; color: #9eb3c2; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; padding: 0 4px; }
+
+    .card { background: #fff; border-radius: 8px; margin-bottom: 8px; overflow: hidden; border: 1px solid #e8eaeb; }
+    .card-header { display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; user-select: none; }
+    .card-header:hover { background: #f9fafa; }
+    .method { font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 4px; font-family: monospace; min-width: 56px; text-align: center; flex-shrink: 0; }
+    .method-get { background: #e8f5e9; color: #2e7d32; }
+    .method-post { background: #e3f2fd; color: #1565c0; }
+    .method-patch { background: #fff3e0; color: #e65100; }
+    .method-delete { background: #fce4ec; color: #c62828; }
+    .endpoint { font-family: monospace; font-size: 14px; flex: 1; }
+    .desc { color: #9eb3c2; font-size: 13px; flex-shrink: 0; }
+
+    .card-body { display: none; padding: 16px; border-top: 1px solid #f4f6f5; }
+    .card-body.open { display: block; }
+
+    /* Toggle selector */
+    .variant-selector { display: flex; gap: 0; margin-bottom: 12px; border: 1px solid #e8eaeb; border-radius: 6px; overflow: hidden; }
+    .variant-btn { flex: 1; padding: 8px 12px; font-size: 13px; font-weight: 600; text-align: center; cursor: pointer; background: #fafbfb; border: none; border-right: 1px solid #e8eaeb; color: #9eb3c2; transition: all 0.15s; }
+    .variant-btn:last-child { border-right: none; }
+    .variant-btn:hover { background: #f4f6f5; }
+    .variant-btn.active { background: #2d3a40; color: #f4f6f5; }
+
+    textarea { width: 100%; min-height: 160px; font-family: 'Fira Code', monospace; font-size: 13px; padding: 12px; border: 1px solid #e8eaeb; border-radius: 6px; resize: vertical; background: #fafbfb; color: #2d3a40; line-height: 1.5; }
+    label.param-label { font-size: 13px; color: #2d3a40; display: block; margin-bottom: 4px; font-weight: 600; }
+    input.param-input { font-family: monospace; font-size: 13px; padding: 8px 10px; border: 1px solid #e8eaeb; border-radius: 6px; width: 100%; margin-bottom: 12px; }
+
+    .btn-row { display: flex; gap: 8px; margin-top: 12px; align-items: center; }
+    .btn { padding: 8px 20px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .btn-run { background: #d4a373; color: #2d3a40; }
+    .btn-run:hover { background: #c4935f; }
+    .status { font-size: 13px; font-family: monospace; margin-left: 8px; }
+    .status-ok { color: #2e7d32; }
+    .status-err { color: #c62828; }
+
+    .response { margin-top: 12px; }
+    .response pre { background: #2d3a40; color: #f4f6f5; padding: 16px; border-radius: 6px; font-size: 13px; overflow-x: auto; max-height: 400px; overflow-y: auto; white-space: pre-wrap; word-break: break-word; }
+
+    .dto-tag { font-size: 11px; font-family: monospace; background: #f4f6f5; color: #9eb3c2; padding: 2px 8px; border-radius: 4px; flex-shrink: 0; }
+    .dto-usage { font-size: 13px; color: #9eb3c2; margin-bottom: 12px; line-height: 1.6; }
+    .dto-usage code { background: #f4f6f5; padding: 1px 5px; border-radius: 3px; font-size: 12px; color: #2d3a40; }
+    .dto-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .dto-table th { text-align: left; padding: 8px 12px; background: #f4f6f5; color: #9eb3c2; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e8eaeb; }
+    .dto-table td { padding: 6px 12px; border-bottom: 1px solid #f4f6f5; vertical-align: top; }
+    .dto-table td:first-child { font-family: monospace; font-weight: 600; white-space: nowrap; }
+    .dto-table td:nth-child(2) { font-family: monospace; color: #9eb3c2; white-space: nowrap; }
+    .dto-table code { background: #f4f6f5; padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+    .dto-table .group-label td { background: #f9fafa; font-weight: 700; font-size: 12px; color: #d4a373; padding: 10px 12px 4px; border-bottom: none; }
+  </style>
+</head>
+<body>
+
+<h1>See You Wild API Playground</h1>
+<p class="subtitle"><span id="baseUrl"></span> &middot; 11 endpoints &middot; Click to expand</p>
+
+<!-- ===== EVENTS ===== -->
+<div class="section">
+  <div class="section-title">Events</div>
+
+  <!-- GET /api/events -->
+  <div class="card" data-method="GET" data-path="/api/events">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="method method-get">GET</span>
+      <span class="endpoint">/api/events</span>
+      <span class="desc">活動列表 + 報名摘要</span>
+      <span class="dto-tag">EventListDto[]</span>
+    </div>
+    <div class="card-body">
+      <div class="btn-row">
+        <button class="btn btn-run" onclick="run(this)">Run</button>
+        <span class="status"></span>
+      </div>
+      <div class="response"></div>
+    </div>
+  </div>
+
+  <!-- POST /api/events -->
+  <div class="card" data-method="POST" data-path="/api/events">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="method method-post">POST</span>
+      <span class="endpoint">/api/events</span>
+      <span class="desc">建立活動</span>
+      <span class="dto-tag">EventCreateDto</span>
+    </div>
+    <div class="card-body">
+      <textarea>{
+  "id": "yilan-hotspring-T013",
+  "type": "野溪溫泉",
+  "location": "宜蘭",
+  "title": "宜蘭秘境野溪溫泉",
+  "start_date": "2026-04-20",
+  "end_date": "2026-04-20",
+  "base_price": 2980,
+  "carpool_surcharge": 300,
+  "payment_days": 7
+}</textarea>
+      <div class="btn-row">
+        <button class="btn btn-run" onclick="run(this)">Run</button>
+        <span class="status"></span>
+      </div>
+      <div class="response"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== REGISTRATIONS ===== -->
+<div class="section">
+  <div class="section-title">Registrations</div>
+
+  <!-- POST /api/registrations (with variant selector) -->
+  <div class="card" data-method="POST" data-path="/api/registrations">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="method method-post">POST</span>
+      <span class="endpoint">/api/registrations</span>
+      <span class="desc">客戶報名</span>
+      <span class="dto-tag">RegistrationCreateDto</span>
+    </div>
+    <div class="card-body">
+      <div class="variant-selector">
+        <button class="variant-btn active" onclick="selectVariant(this, 'reg-self')">自行前往</button>
+        <button class="variant-btn" onclick="selectVariant(this, 'reg-passenger')">共乘乘客</button>
+        <button class="variant-btn" onclick="selectVariant(this, 'reg-driver')">共乘車手</button>
+      </div>
+      <textarea id="reg-body"></textarea>
+      <div class="btn-row">
+        <button class="btn btn-run" onclick="run(this)">Run</button>
+        <span class="status"></span>
+      </div>
+      <div class="response"></div>
+    </div>
+  </div>
+
+  <!-- GET /api/events/{eventId}/registrations -->
+  <div class="card" data-method="GET" data-path="/api/events/{eventId}/registrations" data-param="eventId">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="method method-get">GET</span>
+      <span class="endpoint">/api/events/{eventId}/registrations</span>
+      <span class="desc">某場活動的報名列表</span>
+      <span class="dto-tag">RegistrationSummaryDto[]</span>
+    </div>
+    <div class="card-body">
+      <label class="param-label">eventId</label>
+      <input class="param-input" value="yilan-hotspring-T013">
+      <div class="btn-row">
+        <button class="btn btn-run" onclick="run(this)">Run</button>
+        <span class="status"></span>
+      </div>
+      <div class="response"></div>
+    </div>
+  </div>
+
+  <!-- GET /api/registrations/{id} -->
+  <div class="card" data-method="GET" data-path="/api/registrations/{id}" data-param="id">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="method method-get">GET</span>
+      <span class="endpoint">/api/registrations/{id}</span>
+      <span class="desc">單筆報名詳情</span>
+      <span class="dto-tag">RegistrationDetailDto</span>
+    </div>
+    <div class="card-body">
+      <label class="param-label">id (uuid)</label>
+      <input class="param-input" placeholder="從報名回傳結果複製 id 貼這裡">
+      <div class="btn-row">
+        <button class="btn btn-run" onclick="run(this)">Run</button>
+        <span class="status"></span>
+      </div>
+      <div class="response"></div>
+    </div>
+  </div>
+
+  <!-- PATCH /api/registrations/{id} -->
+  <div class="card" data-method="PATCH" data-path="/api/registrations/{id}" data-param="id">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="method method-patch">PATCH</span>
+      <span class="endpoint">/api/registrations/{id}</span>
+      <span class="desc">修改報名 / 確認付款</span>
+      <span class="dto-tag">RegistrationUpdateDto</span>
+    </div>
+    <div class="card-body">
+      <label class="param-label">id (uuid)</label>
+      <input class="param-input" placeholder="從報名回傳結果複製 id 貼這裡">
+      <div class="variant-selector">
+        <button class="variant-btn active" onclick="selectVariant(this, 'patch-paid')">確認付款</button>
+        <button class="variant-btn" onclick="selectVariant(this, 'patch-edit')">修改資料</button>
+      </div>
+      <textarea id="patch-body"></textarea>
+      <div class="btn-row">
+        <button class="btn btn-run" onclick="run(this)">Run</button>
+        <span class="status"></span>
+      </div>
+      <div class="response"></div>
+    </div>
+  </div>
+
+  <!-- PATCH /api/registrations/{id}/payment-ref -->
+  <div class="card" data-method="PATCH" data-path="/api/registrations/{id}/payment-ref" data-param="id">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="method method-patch">PATCH</span>
+      <span class="endpoint">/api/registrations/{id}/payment-ref</span>
+      <span class="desc">客戶填帳號末五碼</span>
+      <span class="dto-tag">RegistrationPaymentRefDto</span>
+    </div>
+    <div class="card-body">
+      <label class="param-label">id (uuid)</label>
+      <input class="param-input" placeholder="從報名回傳結果複製 id 貼這裡">
+      <textarea>{
+  "payment_ref": "12345",
+  "token": "PASTE_TOKEN_HERE"
+}</textarea>
+      <div class="btn-row">
+        <button class="btn btn-run" onclick="run(this)">Run</button>
+        <span class="status"></span>
+      </div>
+      <div class="response"></div>
+    </div>
+  </div>
+
+  <!-- DELETE /api/registrations/{id} -->
+  <div class="card" data-method="DELETE" data-path="/api/registrations/{id}" data-param="id">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="method method-delete">DELETE</span>
+      <span class="endpoint">/api/registrations/{id}</span>
+      <span class="desc">刪除報名</span>
+      <span class="dto-tag">void</span>
+    </div>
+    <div class="card-body">
+      <label class="param-label">id (uuid)</label>
+      <input class="param-input" placeholder="從報名回傳結果複製 id 貼這裡">
+      <div class="btn-row">
+        <button class="btn btn-run" onclick="run(this)">Run</button>
+        <span class="status"></span>
+      </div>
+      <div class="response"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CARPOOL ===== -->
+<div class="section">
+  <div class="section-title">Carpool</div>
+
+  <!-- POST /api/events/{eventId}/carpool-assignments -->
+  <div class="card" data-method="POST" data-path="/api/events/{eventId}/carpool-assignments" data-param="eventId">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="method method-post">POST</span>
+      <span class="endpoint">/api/events/{eventId}/carpool-assignments</span>
+      <span class="desc">觸發配車演算法</span>
+      <span class="dto-tag">CarpoolAssignmentDetailDto[]</span>
+    </div>
+    <div class="card-body">
+      <label class="param-label">eventId</label>
+      <input class="param-input" value="yilan-hotspring-T013">
+      <div class="btn-row">
+        <button class="btn btn-run" onclick="run(this)">Run</button>
+        <span class="status"></span>
+      </div>
+      <div class="response"></div>
+    </div>
+  </div>
+
+  <!-- GET /api/events/{eventId}/carpool-assignments -->
+  <div class="card" data-method="GET" data-path="/api/events/{eventId}/carpool-assignments" data-param="eventId">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="method method-get">GET</span>
+      <span class="endpoint">/api/events/{eventId}/carpool-assignments</span>
+      <span class="desc">查看配車結果</span>
+      <span class="dto-tag">CarpoolAssignmentDetailDto[]</span>
+    </div>
+    <div class="card-body">
+      <label class="param-label">eventId</label>
+      <input class="param-input" value="yilan-hotspring-T013">
+      <div class="btn-row">
+        <button class="btn btn-run" onclick="run(this)">Run</button>
+        <span class="status"></span>
+      </div>
+      <div class="response"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CRON ===== -->
+<div class="section">
+  <div class="section-title">Cron</div>
+
+  <!-- POST /api/cron/cleanup-expired -->
+  <div class="card" data-method="POST" data-path="/api/cron/cleanup-expired" data-auth="true">
+    <div class="card-header" onclick="toggle(this)">
+      <span class="method method-post">POST</span>
+      <span class="endpoint">/api/cron/cleanup-expired</span>
+      <span class="desc">清除過期未繳報名</span>
+      <span class="dto-tag">void</span>
+    </div>
+    <div class="card-body">
+      <label class="param-label">Authorization Bearer Token</label>
+      <input class="param-input" value="see-you-wild-cron-secret-key-2026">
+      <div class="btn-row">
+        <button class="btn btn-run" onclick="run(this)">Run</button>
+        <span class="status"></span>
+      </div>
+      <div class="response"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DTO REFERENCE ===== -->
+<div class="section" style="margin-top: 40px; border-top: 2px solid #e8eaeb; padding-top: 32px;">
+  <div class="section-title">DTO Reference</div>
+
+  <!-- EventRow / EventCreateDto / EventListDto -->
+  <div class="card">
+    <div class="card-header" onclick="toggleDto(this)">
+      <span class="method" style="background: #2d3a40; color: #f4f6f5;">DTO</span>
+      <span class="endpoint">Event</span>
+      <span class="desc">EventCreateDto · EventListDto</span>
+    </div>
+    <div class="card-body">
+      <table class="dto-table">
+        <tr><th>欄位</th><th>型別</th><th>說明</th></tr>
+        <tr><td>id</td><td>string PK</td><td>人類可讀 ID e.g. <code>yilan-hotspring-T013</code></td></tr>
+        <tr><td>type</td><td>string</td><td>活動種類 e.g. <code>野溪溫泉</code> <code>登山</code></td></tr>
+        <tr><td>location</td><td>string</td><td>活動地點 e.g. <code>宜蘭</code> <code>新北</code></td></tr>
+        <tr><td>title</td><td>string</td><td>活動標題 e.g. <code>宜蘭秘境野溪溫泉</code></td></tr>
+        <tr><td>start_date</td><td>string (date)</td><td>活動起始日，單日活動 = end_date</td></tr>
+        <tr><td>end_date</td><td>string (date)</td><td>活動結束日</td></tr>
+        <tr><td>base_price</td><td>number</td><td>基本費用（自行前往） e.g. <code>2980</code></td></tr>
+        <tr><td>carpool_surcharge</td><td>number</td><td>共乘加價 e.g. <code>300</code></td></tr>
+        <tr><td>payment_days</td><td>number</td><td>繳費寬限天數</td></tr>
+        <tr><td>min_participants</td><td>number</td><td>最低開團人數，預設 <code>3</code></td></tr>
+        <tr><td>status</td><td>enum</td><td><code>open</code> 開放報名 · <code>closed</code> 已截止</td></tr>
+        <tr><td>first_created_at</td><td>string (timestamptz)</td><td>活動首次建立時間（EventListDto only）</td></tr>
+        <tr class="group-label"><td colspan="3">EventListDto 額外欄位</td></tr>
+        <tr><td>registrations</td><td>RegistrationSummaryDto[]</td><td>該活動下所有報名摘要</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- RegistrationRow / RegistrationCreateDto / RegistrationDetailDto / RegistrationUpdateDto -->
+  <div class="card">
+    <div class="card-header" onclick="toggleDto(this)">
+      <span class="method" style="background: #2d3a40; color: #f4f6f5;">DTO</span>
+      <span class="endpoint">Registration</span>
+      <span class="desc">CreateDto · DetailDto · UpdateDto · SummaryDto · PaymentRefDto</span>
+    </div>
+    <div class="card-body">
+      <div class="variant-selector">
+        <button class="variant-btn active" onclick="showDtoTab(this, 'dto-reg-detail')">DetailDto</button>
+        <button class="variant-btn" onclick="showDtoTab(this, 'dto-reg-create')">CreateDto</button>
+        <button class="variant-btn" onclick="showDtoTab(this, 'dto-reg-summary')">SummaryDto</button>
+        <button class="variant-btn" onclick="showDtoTab(this, 'dto-reg-payref')">PaymentRefDto</button>
+      </div>
+
+      <div id="dto-reg-detail" class="dto-tab">
+        <p class="dto-usage">RegistrationDetailDto — <code>GET /api/registrations/{id}</code> response<br>RegistrationUpdateDto — <code>PATCH /api/registrations/{id}</code> request（所有欄位 optional）</p>
+        <table class="dto-table">
+          <tr><th>欄位</th><th>型別</th><th>說明</th></tr>
+          <tr><td>id</td><td>string (uuid) PK</td><td>自動產生</td></tr>
+          <tr><td>event_id</td><td>string FK</td><td>對應 <code>events.id</code></td></tr>
+          <tr class="group-label"><td colspan="3">個資</td></tr>
+          <tr><td>name</td><td>string</td><td>真實姓名</td></tr>
+          <tr><td>email</td><td>string</td><td>用於寄送繳費通知信</td></tr>
+          <tr><td>phone</td><td>string</td><td>聯絡手機</td></tr>
+          <tr><td>line_id</td><td>string | null</td><td>LINE ID，選填</td></tr>
+          <tr><td>gender</td><td>enum</td><td><code>male</code> 男 · <code>female</code> 女 · <code>other</code> 其他</td></tr>
+          <tr><td>id_number</td><td>string</td><td>身分證/護照號碼（保險用）</td></tr>
+          <tr><td>birthday</td><td>string (date)</td><td>出生日期（保險用）</td></tr>
+          <tr><td>emergency_contact_name</td><td>string</td><td>緊急聯絡人姓名</td></tr>
+          <tr><td>emergency_contact_phone</td><td>string</td><td>緊急聯絡人電話</td></tr>
+          <tr class="group-label"><td colspan="3">活動相關</td></tr>
+          <tr><td>dietary</td><td>enum</td><td><code>omnivore</code> 葷食 · <code>no_beef</code> 不吃牛 · <code>vegetarian</code> 方便素 · <code>vegan</code> 全素</td></tr>
+          <tr><td>wants_rental</td><td>boolean</td><td>是否需要租借裝備</td></tr>
+          <tr><td>notes</td><td>string | null</td><td>備註，選填</td></tr>
+          <tr class="group-label"><td colspan="3">交通與共乘</td></tr>
+          <tr><td>transport</td><td>enum</td><td><code>self</code> 自行前往 · <code>carpool</code> 共乘方案</td></tr>
+          <tr><td>pickup_location</td><td>string | null</td><td><code>taipei</code> <code>nangang</code> <code>dapinglin</code> <code>sanchong</code> <code>banqiao</code>。self = null</td></tr>
+          <tr><td>carpool_role</td><td>enum | null</td><td><code>passenger</code> 被載者 · <code>driver</code> 車手。self = null</td></tr>
+          <tr><td>seat_count</td><td>number | null</td><td>車手可載人數（不含駕駛），3-5。非車手 = null</td></tr>
+          <tr class="group-label"><td colspan="3">金流與狀態</td></tr>
+          <tr><td>amount_due</td><td>number</td><td>self = base_price · carpool = base_price + surcharge</td></tr>
+          <tr><td>payment_ref</td><td>string | null</td><td>匯款帳號末五碼，報名時 = null</td></tr>
+          <tr><td>status</td><td>enum</td><td><code>pending</code> 待繳費 · <code>paid</code> 已確認收款</td></tr>
+          <tr><td>created_at</td><td>string (timestamptz)</td><td>報名時間</td></tr>
+          <tr><td>confirmed_at</td><td>string (timestamptz) | null</td><td>確認收款時間（非實際匯款時間）</td></tr>
+          <tr><td>expires_at</td><td>string (timestamptz)</td><td>繳費期限，逾期由 cron 刪除</td></tr>
+        </table>
+      </div>
+
+      <div id="dto-reg-create" class="dto-tab" style="display:none;">
+        <p class="dto-usage">RegistrationCreateDto — <code>POST /api/registrations</code> request body<br>不含 id / amount_due / payment_ref / status / created_at / confirmed_at / expires_at（系統自動計算）</p>
+        <table class="dto-table">
+          <tr><th>欄位</th><th>型別</th><th>說明</th></tr>
+          <tr><td>event_id</td><td>string</td><td>對應 <code>events.id</code></td></tr>
+          <tr><td>name</td><td>string</td><td>真實姓名</td></tr>
+          <tr><td>email</td><td>string</td><td>email</td></tr>
+          <tr><td>phone</td><td>string</td><td>聯絡手機</td></tr>
+          <tr><td>line_id</td><td>string | null</td><td>LINE ID，選填</td></tr>
+          <tr><td>gender</td><td>enum</td><td><code>male</code> · <code>female</code> · <code>other</code></td></tr>
+          <tr><td>id_number</td><td>string</td><td>身分證/護照號碼</td></tr>
+          <tr><td>birthday</td><td>string (date)</td><td>出生日期</td></tr>
+          <tr><td>emergency_contact_name</td><td>string</td><td>緊急聯絡人姓名</td></tr>
+          <tr><td>emergency_contact_phone</td><td>string</td><td>緊急聯絡人電話</td></tr>
+          <tr><td>dietary</td><td>enum</td><td><code>omnivore</code> · <code>no_beef</code> · <code>vegetarian</code> · <code>vegan</code></td></tr>
+          <tr><td>wants_rental</td><td>boolean</td><td>是否需要租借裝備</td></tr>
+          <tr><td>notes</td><td>string | null</td><td>備註，選填</td></tr>
+          <tr><td>transport</td><td>enum</td><td><code>self</code> · <code>carpool</code></td></tr>
+          <tr><td>pickup_location</td><td>string | null</td><td>共乘上車地點。self = null</td></tr>
+          <tr><td>carpool_role</td><td>enum | null</td><td><code>passenger</code> · <code>driver</code>。self = null</td></tr>
+          <tr><td>seat_count</td><td>number | null</td><td>車手座位數 3-5。非車手 = null</td></tr>
+        </table>
+      </div>
+
+      <div id="dto-reg-summary" class="dto-tab" style="display:none;">
+        <p class="dto-usage">RegistrationSummaryDto — <code>GET /api/events/{eventId}/registrations</code> response · <code>GET /api/events</code> 巢狀欄位<br>不含敏感資料</p>
+        <table class="dto-table">
+          <tr><th>欄位</th><th>型別</th><th>說明</th></tr>
+          <tr><td>id</td><td>string (uuid)</td><td>報名 ID</td></tr>
+          <tr><td>name</td><td>string</td><td>報名者姓名</td></tr>
+          <tr><td>status</td><td>enum</td><td><code>pending</code> · <code>paid</code></td></tr>
+          <tr><td>transport</td><td>enum</td><td><code>self</code> · <code>carpool</code></td></tr>
+          <tr><td>payment_ref</td><td>string | null</td><td>匯款末五碼，未回填 = null</td></tr>
+          <tr><td>created_at</td><td>string (timestamptz)</td><td>報名時間</td></tr>
+        </table>
+      </div>
+
+      <div id="dto-reg-payref" class="dto-tab" style="display:none;">
+        <p class="dto-usage">RegistrationPaymentRefDto — <code>PATCH /api/registrations/{id}/payment-ref</code> request body</p>
+        <table class="dto-table">
+          <tr><th>欄位</th><th>型別</th><th>說明</th></tr>
+          <tr><td>payment_ref</td><td>string</td><td>匯款帳號末五碼，5 位數字</td></tr>
+          <tr><td>token</td><td>string</td><td>HMAC 驗證 token（從通知信連結取得）</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- CarpoolAssignmentRow / CarpoolAssignmentDetailDto -->
+  <div class="card">
+    <div class="card-header" onclick="toggleDto(this)">
+      <span class="method" style="background: #2d3a40; color: #f4f6f5;">DTO</span>
+      <span class="endpoint">CarpoolAssignment</span>
+      <span class="desc">CarpoolAssignmentDetailDto</span>
+    </div>
+    <div class="card-body">
+      <table class="dto-table">
+        <tr><th>欄位</th><th>型別</th><th>說明</th></tr>
+        <tr><td>id</td><td>string (uuid) PK</td><td>自動產生</td></tr>
+        <tr><td>event_id</td><td>string FK</td><td>對應 <code>events.id</code>（冗餘，方便前端查詢）</td></tr>
+        <tr><td>car_group</td><td>number</td><td>車組編號 1, 2, 3... 同編號 = 同一台車</td></tr>
+        <tr><td>pickup_location</td><td>string</td><td>最終上車地點（合併時可能與原始偏好不同）</td></tr>
+        <tr><td>registration_id</td><td>string (uuid) FK</td><td>對應 <code>registrations.id</code>，一對一</td></tr>
+        <tr><td>final_role</td><td>enum</td><td><code>driver</code> 最終車手 · <code>passenger</code> 最終乘客（含降級車手）</td></tr>
+        <tr><td>refund_amount</td><td>number</td><td>車手 = (seat_count+1) × surcharge · 乘客 = 0</td></tr>
+        <tr><td>created_at</td><td>string (timestamptz)</td><td>配車結果產生時間</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  const BASE = window.location.origin;
+  document.getElementById('baseUrl').textContent = BASE;
+
+  // --- Variant data ---
+  const variants = {
+    'reg-self': `{
+  "event_id": "yilan-hotspring-T013",
+  "name": "王小明",
+  "email": "ming@example.com",
+  "phone": "0912345678",
+  "gender": "male",
+  "id_number": "A123456789",
+  "birthday": "1995-06-15",
+  "emergency_contact_name": "王大明",
+  "emergency_contact_phone": "0987654321",
+  "dietary": "omnivore",
+  "wants_rental": true,
+  "transport": "self"
+}`,
+    'reg-passenger': `{
+  "event_id": "yilan-hotspring-T013",
+  "name": "李小華",
+  "email": "hua@example.com",
+  "phone": "0922334455",
+  "gender": "female",
+  "id_number": "B234567890",
+  "birthday": "1998-03-22",
+  "emergency_contact_name": "李大華",
+  "emergency_contact_phone": "0911223344",
+  "dietary": "no_beef",
+  "transport": "carpool",
+  "pickup_location": "taipei",
+  "carpool_role": "passenger"
+}`,
+    'reg-driver': `{
+  "event_id": "yilan-hotspring-T013",
+  "name": "張大強",
+  "email": "strong@example.com",
+  "phone": "0933445566",
+  "gender": "male",
+  "id_number": "C345678901",
+  "birthday": "1992-11-08",
+  "emergency_contact_name": "張小強",
+  "emergency_contact_phone": "0955667788",
+  "dietary": "omnivore",
+  "transport": "carpool",
+  "pickup_location": "taipei",
+  "carpool_role": "driver",
+  "seat_count": 4
+}`,
+    'patch-paid': `{
+  "status": "paid"
+}`,
+    'patch-edit': `{
+  "name": "王小明（已改名）",
+  "dietary": "no_beef"
+}`
+  };
+
+  // Init default values
+  document.getElementById('reg-body').value = variants['reg-self'];
+  document.getElementById('patch-body').value = variants['patch-paid'];
+
+  // --- Toggle ---
+  function toggle(header) {
+    const body = header.nextElementSibling;
+    const wasOpen = body.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.card-body.open').forEach(el => el.classList.remove('open'));
+    // Open clicked (if it was closed)
+    if (!wasOpen) body.classList.add('open');
+  }
+
+  // --- Variant selector ---
+  function selectVariant(btn, variantKey) {
+    const selector = btn.parentElement;
+    selector.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const textarea = selector.parentElement.querySelector('textarea');
+    if (textarea && variants[variantKey]) {
+      textarea.value = variants[variantKey];
+    }
+  }
+
+  // --- Run request ---
+  async function run(btn) {
+    const card = btn.closest('.card');
+    const body = btn.closest('.card-body');
+    const method = card.dataset.method;
+    let path = card.dataset.path;
+    const paramName = card.dataset.param;
+    const needsAuth = card.dataset.auth === 'true';
+    const statusEl = body.querySelector('.status');
+    const responseEl = body.querySelector('.response');
+    const textarea = body.querySelector('textarea');
+    const paramInput = body.querySelector('.param-input');
+
+    if (paramName && paramInput) {
+      const val = paramInput.value.trim();
+      if (!val) {
+        statusEl.className = 'status status-err';
+        statusEl.textContent = `Missing: ${paramName}`;
+        return;
+      }
+      path = path.replace(`{${paramName}}`, val);
+    }
+
+    const url = BASE + path;
+    const options = { method, headers: {} };
+
+    if (needsAuth && paramInput) {
+      options.headers['Authorization'] = `Bearer ${paramInput.value.trim()}`;
+    }
+
+    if (textarea && (method === 'POST' || method === 'PATCH')) {
+      options.headers['Content-Type'] = 'application/json';
+      options.body = textarea.value;
+    }
+
+    statusEl.className = 'status';
+    statusEl.textContent = 'Loading...';
+    responseEl.innerHTML = '';
+
+    try {
+      const res = await fetch(url, options);
+      const text = await res.text();
+      let formatted;
+      try { formatted = JSON.stringify(JSON.parse(text), null, 2); }
+      catch { formatted = text; }
+
+      statusEl.className = `status ${res.ok ? 'status-ok' : 'status-err'}`;
+      statusEl.textContent = `${res.status} ${res.statusText}`;
+      responseEl.innerHTML = `<pre>${esc(formatted)}</pre>`;
+    } catch (err) {
+      statusEl.className = 'status status-err';
+      statusEl.textContent = 'Network error';
+      responseEl.innerHTML = `<pre>${esc(err.message)}</pre>`;
+    }
+  }
+
+  function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  // --- DTO toggle (independent from API toggles) ---
+  function toggleDto(header) {
+    const body = header.nextElementSibling;
+    body.classList.toggle('open');
+  }
+
+  // --- DTO tab switch ---
+  function showDtoTab(btn, tabId) {
+    const selector = btn.parentElement;
+    const cardBody = selector.parentElement;
+    selector.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    cardBody.querySelectorAll('.dto-tab').forEach(t => t.style.display = 'none');
+    document.getElementById(tabId).style.display = 'block';
+  }
+</script>
+
+</body>
+</html>

@@ -1,5 +1,33 @@
+# Dependencies
 node_modules/
-.next/
-.env*.local
 
+# Next.js
+.next/
+out/
+
+# Environment
+.env*
+
+# Vercel
 .vercel
+
+# Docs (local only)
+docs/**/*
+
+# Claude Code
+.claude/
+CLAUDE.md
+
+# Git hooks (local setup)
+.husky/
+
+# Research (local only)
+youtube-research/
+
+# OS / Editor artifacts
+*.stackdump
+tsconfig.tsbuildinfo
+api-test.http
+
+# pnpm
+.pnpm-debug.log*

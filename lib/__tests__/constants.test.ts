@@ -1,20 +1,27 @@
 import { describe, it, expect } from "vitest";
-import { EVENTS, INSTAGRAM_URL, INSTAGRAM_HANDLE, SITE_URL, NAV_LINKS } from "../constants";
+import {
+  EVENTS_CONFIG,
+  INSTAGRAM_URL,
+  INSTAGRAM_HANDLE,
+  SITE_URL,
+  NAV_ANCHORS,
+} from "../constants";
 
-describe("EVENTS", () => {
+describe("EVENTS_CONFIG", () => {
   it("is a non-empty array", () => {
-    expect(Array.isArray(EVENTS)).toBe(true);
-    expect(EVENTS.length).toBeGreaterThan(0);
+    expect(Array.isArray(EVENTS_CONFIG)).toBe(true);
+    expect(EVENTS_CONFIG.length).toBeGreaterThan(0);
   });
 
-  it.each(EVENTS)("event '$title' has all required fields", (event) => {
-    expect(event.title).toBeTruthy();
-    expect(event.date).toBeTruthy();
-    expect(event.location ?? event.description).toBeTruthy();
-    expect(event.description).toBeTruthy();
-    expect(event.image).toBeTruthy();
-    expect(["solid", "ghost"]).toContain(event.variant);
-  });
+  it.each(EVENTS_CONFIG)(
+    "event config '$id' has all required fields",
+    (config) => {
+      expect(config.id).toBeTruthy();
+      expect(config.image).toBeTruthy();
+      expect(config.ctaUrl).toBeTruthy();
+      expect(["solid", "ghost"]).toContain(config.variant);
+    }
+  );
 });
 
 describe("Social / navigation links", () => {
@@ -30,10 +37,9 @@ describe("Social / navigation links", () => {
     expect(SITE_URL).toMatch(/^https?:\/\//);
   });
 
-  it("NAV_LINKS each have label and href", () => {
-    NAV_LINKS.forEach((link) => {
-      expect(link.label).toBeTruthy();
-      expect(link.href).toBeTruthy();
+  it("NAV_ANCHORS each have a value", () => {
+    Object.values(NAV_ANCHORS).forEach((anchor: string) => {
+      expect(anchor).toBeTruthy();
     });
   });
 });

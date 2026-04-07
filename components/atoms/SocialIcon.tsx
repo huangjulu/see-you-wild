@@ -25,16 +25,19 @@ const icons = {
   ),
 };
 
-export default function SocialIcon({ platform, href, className = "" }: SocialIconProps) {
+function SocialIcon(props: SocialIconProps) {
   return (
     <a
-      href={href}
+      href={props.href}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label={`Follow us on ${platform}`}
-      className={`text-white/70 hover:text-white transition-colors duration-300 ${className}`}
+      aria-label={`Follow us on ${props.platform}`}
+      className={`text-white/70 hover:text-white transition-colors duration-300 ${props.className ?? ""}`}
     >
-      {icons[platform]}
+      {icons[props.platform]}
     </a>
   );
 }
+
+SocialIcon.displayName = "SocialIcon";
+export default SocialIcon;

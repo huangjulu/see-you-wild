@@ -1,9 +1,12 @@
 import Heading from "@/components/atoms/Heading";
 import Text from "@/components/atoms/Text";
 import Button from "@/components/atoms/Button";
-import { PRIVATE_GROUP } from "@/lib/constants";
+import { PRIVATE_GROUP_CTA_URL } from "@/lib/constants";
+import { getTranslations } from "@/lib/i18n/server";
 
-export default function PrivateGroupSection() {
+async function PrivateGroupSection() {
+  const t = await getTranslations("home.privateGroup");
+
   return (
     <section
       id="private-group"
@@ -25,20 +28,21 @@ export default function PrivateGroupSection() {
           id="private-group-heading"
           className="text-3xl md:text-4xl font-bold"
         >
-          {PRIVATE_GROUP.title}
+          {t("title")}
         </Heading>
-        <Text className="text-xl font-serif text-accent">
-          {PRIVATE_GROUP.subtitle}
-        </Text>
+        <Text className="text-xl font-serif text-accent">{t("subtitle")}</Text>
         <Text muted className="leading-relaxed max-w-lg mx-auto">
-          {PRIVATE_GROUP.description}
+          {t("description")}
         </Text>
         <div className="pt-4">
-          <Button variant="ghost" href={PRIVATE_GROUP.ctaUrl}>
-            {PRIVATE_GROUP.cta}
+          <Button variant="ghost" href={PRIVATE_GROUP_CTA_URL}>
+            {t("cta")}
           </Button>
         </div>
       </div>
     </section>
   );
 }
+
+PrivateGroupSection.displayName = "PrivateGroupSection";
+export default PrivateGroupSection;

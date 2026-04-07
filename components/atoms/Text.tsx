@@ -4,10 +4,15 @@ interface TextProps {
   muted?: boolean;
 }
 
-export default function Text({ children, className = "", muted = false }: TextProps) {
+function Text(props: TextProps) {
   return (
-    <p className={`font-sans ${muted ? "text-text-muted" : "text-text-primary"} ${className}`}>
-      {children}
+    <p
+      className={`font-sans ${props.muted ? "text-text-muted" : "text-text-primary"} ${props.className ?? ""}`}
+    >
+      {props.children}
     </p>
   );
 }
+
+Text.displayName = "Text";
+export default Text;

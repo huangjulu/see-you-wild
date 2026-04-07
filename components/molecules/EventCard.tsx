@@ -18,27 +18,17 @@ interface EventCardProps {
   reverse?: boolean;
 }
 
-export default function EventCard({
-  tag,
-  title,
-  subtitle,
-  date,
-  description,
-  cta,
-  ctaUrl,
-  image,
-  imageAlt,
-  variant,
-  reverse = false,
-}: EventCardProps) {
+function EventCard(props: EventCardProps) {
+  const reverse = props.reverse ?? false;
+
   return (
     <article
       className={`flex flex-col ${reverse ? "md:flex-row-reverse" : "md:flex-row"} gap-8 md:gap-12 items-center`}
     >
       <div className="w-full md:w-1/2 overflow-hidden rounded-2xl">
         <Image
-          src={image}
-          alt={imageAlt}
+          src={props.image}
+          alt={props.imageAlt}
           width={800}
           height={533}
           className="w-full h-auto object-cover rounded-2xl"
@@ -46,19 +36,33 @@ export default function EventCard({
         />
       </div>
       <div className="w-full md:w-1/2 space-y-4">
-        <Tag>{tag}</Tag>
-        <Heading level="h3" className="text-2xl md:text-3xl font-semibold leading-tight">
-          {title}
+        <Tag>{props.tag}</Tag>
+        <Heading
+          level="h3"
+          className="text-2xl md:text-3xl font-semibold leading-tight"
+        >
+          {props.title}
         </Heading>
-        <Text className="text-lg text-accent font-serif">{subtitle}</Text>
-        <Text muted className="text-sm">{date}</Text>
-        <Text muted className="leading-relaxed">{description}</Text>
+        <Text className="text-lg text-accent font-serif">{props.subtitle}</Text>
+        <Text muted className="text-sm">
+          {props.date}
+        </Text>
+        <Text muted className="leading-relaxed">
+          {props.description}
+        </Text>
         <div className="pt-2">
-          <Button variant={variant} href={ctaUrl} ariaLabel={`${cta} — ${title}`}>
-            {cta}
+          <Button
+            variant={props.variant}
+            href={props.ctaUrl}
+            ariaLabel={`${props.cta} — ${props.title}`}
+          >
+            {props.cta}
           </Button>
         </div>
       </div>
     </article>
   );
 }
+
+EventCard.displayName = "EventCard";
+export default EventCard;
