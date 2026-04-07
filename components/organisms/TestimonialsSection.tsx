@@ -43,8 +43,13 @@ function TestimonialsSection() {
   const sectionRef = useRef<HTMLElement>(null);
 
   useGSAP(
-    () => {
-      gsap.utils.toArray<HTMLElement>(".testimonial-card").forEach((el, i) => {
+    function animateTestimonialCards() {
+      const prefersReduced = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+      if (prefersReduced) return;
+
+      gsap.utils.toArray<HTMLElement>(".testimonial-card").forEach((el) => {
         gsap.fromTo(
           el,
           { opacity: 0, y: 40 },
@@ -52,7 +57,6 @@ function TestimonialsSection() {
             opacity: 1,
             y: 0,
             duration: 0.8,
-            delay: i * 0.1,
             ease: "power2.out",
             scrollTrigger: {
               trigger: el,

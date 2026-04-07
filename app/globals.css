@@ -17,8 +17,25 @@
   --font-display: var(--font-playfair-display), "Playfair Display", serif;
 }
 
-html {
-  scroll-behavior: smooth;
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+.gsap-reveal {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gsap-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .animate-bounce-slow {
+    animation: none;
+  }
 }
 
 body {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { gsap, useGSAP } from "@/lib/gsap";
 import JourneyCard from "@/components/molecules/JourneyCard";
 
 const JOURNEYS = [
@@ -42,11 +42,19 @@ function JourneysSection() {
   const trackRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
-    () => {
+    function setupHorizontalScroll() {
       if (!trackRef.current || !sectionRef.current) return;
+
+      const prefersReduced = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+      if (prefersReduced) return;
 
       const track = trackRef.current;
       const scrollWidth = track.scrollWidth - track.clientWidth;
+
+      // Hide native scrollbar when GSAP takes over
+      track.style.overflow = "hidden";
 
       gsap.to(track, {
         x: -scrollWidth,
@@ -61,12 +69,6 @@ function JourneysSection() {
           invalidateOnRefresh: true,
         },
       });
-
-      return () => {
-        ScrollTrigger.getAll().forEach((st) => {
-          if (st.trigger === sectionRef.current) st.kill();
-        });
-      };
     },
     { scope: sectionRef }
   );
@@ -93,7 +95,10 @@ function JourneysSection() {
             探索旅程
           </h2>
         </div>
-        <div ref={trackRef} className="flex gap-6 px-6 md:px-12">
+        <div
+          ref={trackRef}
+          className="flex gap-6 px-6 md:px-12 overflow-x-auto"
+        >
           {JOURNEYS.map((journey) => (
             <JourneyCard
               key={journey.title}

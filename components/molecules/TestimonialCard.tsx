@@ -7,7 +7,7 @@ interface TestimonialCardProps {
 function TestimonialCard(props: TestimonialCardProps) {
   return (
     <div
-      className="testimonial-card rounded-2xl p-6 md:p-8 break-inside-avoid mb-6"
+      className="testimonial-card gsap-reveal rounded-2xl p-6 md:p-8 break-inside-avoid mb-6"
       style={{ backgroundColor: "#FDFBF7" }}
     >
       <p
