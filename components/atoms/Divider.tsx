@@ -1,4 +1,6 @@
-function Divider(props: { className?: string }) {
+import React from "react";
+
+const Divider: React.FC<{ className?: string }> = (props) => {
   return (
     <div
       className={`flex items-center justify-center py-12 ${props.className ?? ""}`}
@@ -18,7 +20,7 @@ function Divider(props: { className?: string }) {
       </svg>
     </div>
   );
-}
+};
 
 Divider.displayName = "Divider";
 export default Divider;

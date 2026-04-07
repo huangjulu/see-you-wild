@@ -6,9 +6,9 @@ interface GsapProviderProps {
   children: React.ReactNode;
 }
 
-function GsapProvider(props: GsapProviderProps) {
+const GsapProvider: React.FC<GsapProviderProps> = (props) => {
   return <>{props.children}</>;
-}
+};
 
 GsapProvider.displayName = "GsapProvider";
 export default GsapProvider;

@@ -4,7 +4,7 @@ interface TestimonialCardProps {
   trip: string;
 }
 
-function TestimonialCard(props: TestimonialCardProps) {
+const TestimonialCard: React.FC<TestimonialCardProps> = (props) => {
   return (
     <div
       className="testimonial-card gsap-reveal rounded-2xl p-6 md:p-8 break-inside-avoid mb-6"
@@ -29,7 +29,7 @@ function TestimonialCard(props: TestimonialCardProps) {
       </div>
     </div>
   );
-}
+};
 
 TestimonialCard.displayName = "TestimonialCard";
 export default TestimonialCard;

@@ -1,3 +1,5 @@
+import React from "react";
+
 interface ButtonProps {
   variant: "solid" | "ghost";
   href: string;
@@ -6,7 +8,7 @@ interface ButtonProps {
   ariaLabel?: string;
 }
 
-function Button(props: ButtonProps) {
+const Button: React.FC<ButtonProps> = (props) => {
   const base =
     "inline-block px-8 py-3 rounded-full text-sm font-sans font-medium tracking-widest uppercase transition-all duration-300";
   const variants = {
@@ -28,7 +30,7 @@ function Button(props: ButtonProps) {
       {props.children}
     </a>
   );
-}
+};
 
 Button.displayName = "Button";
 export default Button;

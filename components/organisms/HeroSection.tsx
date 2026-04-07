@@ -1,10 +1,10 @@
 "use client";
 
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 import Button from "@/components/atoms/Button";
 
-function HeroSection() {
+const HeroSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
 
   useGSAP(
@@ -13,12 +13,7 @@ function HeroSection() {
         "(prefers-reduced-motion: reduce)"
       ).matches;
 
-      if (prefersReduced) {
-        gsap.set(".hero-headline, .hero-subtitle, .hero-cta, .hero-scroll", {
-          clearProps: "all",
-        });
-        return;
-      }
+      if (prefersReduced) return;
 
       function playEntrance() {
         const tl = gsap.timeline();
@@ -115,7 +110,7 @@ function HeroSection() {
       </div>
     </section>
   );
-}
+};
 
 HeroSection.displayName = "HeroSection";
 export default HeroSection;

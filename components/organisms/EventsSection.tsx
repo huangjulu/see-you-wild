@@ -1,9 +1,10 @@
+import React from "react";
 import EventCard from "@/components/molecules/EventCard";
 import Divider from "@/components/atoms/Divider";
 import { EVENTS_CONFIG } from "@/lib/constants";
 import { getTranslations } from "@/lib/i18n/server";
 
-async function EventsSection() {
+const EventsSection: React.FC = async () => {
   const t = await getTranslations("home.events");
 
   return (
@@ -37,7 +38,7 @@ async function EventsSection() {
       </div>
     </section>
   );
-}
+};
 
 EventsSection.displayName = "EventsSection";
 export default EventsSection;

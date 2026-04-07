@@ -28,6 +28,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* !important: 覆寫 GSAP 在動畫途中設定的 inline style（mid-session 切換偏好時） */
   .gsap-reveal {
     opacity: 1 !important;
     transform: none !important;

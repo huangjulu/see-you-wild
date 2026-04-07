@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-function CookiePopup() {
+const CookiePopup: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -41,7 +41,7 @@ function CookiePopup() {
       </button>
     </div>
   );
-}
+};
 
 CookiePopup.displayName = "CookiePopup";
 export default CookiePopup;

@@ -8,7 +8,7 @@ import PrivateGroupSection from "@/components/organisms/PrivateGroupSection";
 import ContactSection from "@/components/organisms/ContactSection";
 import CookiePopup from "@/components/molecules/CookiePopup";
 
-function HomeTemplate() {
+const HomeTemplate: React.FC = () => {
   return (
     <main>
       <OpeningAnimation />
@@ -22,7 +22,7 @@ function HomeTemplate() {
       <CookiePopup />
     </main>
   );
-}
+};
 
 HomeTemplate.displayName = "HomeTemplate";
 export default HomeTemplate;

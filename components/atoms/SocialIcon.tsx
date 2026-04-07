@@ -1,3 +1,5 @@
+import React from "react";
+
 interface SocialIconProps {
   platform: "instagram";
   href: string;
@@ -25,7 +27,7 @@ const icons = {
   ),
 };
 
-function SocialIcon(props: SocialIconProps) {
+const SocialIcon: React.FC<SocialIconProps> = (props) => {
   return (
     <a
       href={props.href}
@@ -37,7 +39,7 @@ function SocialIcon(props: SocialIconProps) {
       {icons[props.platform]}
     </a>
   );
-}
+};
 
 SocialIcon.displayName = "SocialIcon";
 export default SocialIcon;

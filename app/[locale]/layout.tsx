@@ -128,7 +128,7 @@ type LocaleLayoutProps = PageProps & {
   children: React.ReactNode;
 };
 
-async function LocaleLayout(props: LocaleLayoutProps) {
+const LocaleLayout: React.FC<LocaleLayoutProps> = async (props) => {
   const locale = (await props.params).locale;
 
   if (!isValidLocale(locale)) {
@@ -153,7 +153,7 @@ async function LocaleLayout(props: LocaleLayoutProps) {
       </body>
     </html>
   );
-}
+};
 
 LocaleLayout.displayName = "LocaleLayout";
 export default LocaleLayout;

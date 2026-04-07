@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 import TestimonialCard from "@/components/molecules/TestimonialCard";
 
@@ -39,7 +39,7 @@ const TESTIMONIALS = [
   },
 ];
 
-function TestimonialsSection() {
+const TestimonialsSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
 
   useGSAP(
@@ -107,7 +107,7 @@ function TestimonialsSection() {
       </div>
     </section>
   );
-}
+};
 
 TestimonialsSection.displayName = "TestimonialsSection";
 export default TestimonialsSection;

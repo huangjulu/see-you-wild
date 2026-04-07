@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 
-function OpeningAnimation() {
+const OpeningAnimation: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const brandRef = useRef<HTMLDivElement>(null);
   const videoWrapRef = useRef<HTMLDivElement>(null);
@@ -124,7 +124,7 @@ function OpeningAnimation() {
       </div>
     </div>
   );
-}
+};
 
 OpeningAnimation.displayName = "OpeningAnimation";
 export default OpeningAnimation;

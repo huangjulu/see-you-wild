@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 import JourneyCard from "@/components/molecules/JourneyCard";
 
@@ -37,7 +37,7 @@ const JOURNEYS = [
   },
 ];
 
-function JourneysSection() {
+const JourneysSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
@@ -111,7 +111,7 @@ function JourneysSection() {
       </div>
     </section>
   );
-}
+};
 
 JourneysSection.displayName = "JourneysSection";
 export default JourneysSection;

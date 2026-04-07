@@ -4,9 +4,9 @@ type RootLayoutProps = {
   children: React.ReactNode;
 };
 
-function RootLayout(props: RootLayoutProps) {
+const RootLayout: React.FC<RootLayoutProps> = (props) => {
   return props.children;
-}
+};
 
 RootLayout.displayName = "RootLayout";
 export default RootLayout;

@@ -1,10 +1,11 @@
+import React from "react";
 import Heading from "@/components/atoms/Heading";
 import Text from "@/components/atoms/Text";
 import SocialLinks from "@/components/molecules/SocialLinks";
 import { INSTAGRAM_HANDLE } from "@/lib/constants";
 import { getTranslations } from "@/lib/i18n/server";
 
-async function ContactSection() {
+const ContactSection: React.FC = async () => {
   const t = await getTranslations("home.contact");
 
   return (
@@ -31,7 +32,7 @@ async function ContactSection() {
       </div>
     </section>
   );
-}
+};
 
 ContactSection.displayName = "ContactSection";
 export default ContactSection;

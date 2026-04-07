@@ -6,7 +6,7 @@ interface NavLinkProps {
   onClick?: () => void;
 }
 
-function NavLink(props: NavLinkProps) {
+const NavLink: React.FC<NavLinkProps> = (props) => {
   return (
     <a
       href={props.href}
@@ -16,7 +16,7 @@ function NavLink(props: NavLinkProps) {
       {props.label}
     </a>
   );
-}
+};
 
 NavLink.displayName = "NavLink";
 export default NavLink;

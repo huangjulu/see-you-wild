@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 
-function PhilosophySection() {
+const PhilosophySection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
 
   useGSAP(
@@ -86,7 +86,7 @@ function PhilosophySection() {
       </div>
     </section>
   );
-}
+};
 
 PhilosophySection.displayName = "PhilosophySection";
 export default PhilosophySection;

@@ -18,7 +18,7 @@ interface EventCardProps {
   reverse?: boolean;
 }
 
-function EventCard(props: EventCardProps) {
+const EventCard: React.FC<EventCardProps> = (props) => {
   const reverse = props.reverse ?? false;
 
   return (
@@ -62,7 +62,7 @@ function EventCard(props: EventCardProps) {
       </div>
     </article>
   );
-}
+};
 
 EventCard.displayName = "EventCard";
 export default EventCard;

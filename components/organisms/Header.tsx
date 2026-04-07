@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useTranslations, useLocale } from "@/lib/i18n/client";
 import Logo from "@/components/atoms/Logo";
 import NavLink from "@/components/molecules/NavLink";
 import { NAV_ANCHORS } from "@/lib/constants";
 
-function Header() {
+const Header: React.FC = () => {
   const t = useTranslations("common");
   const locale = useLocale();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -84,7 +84,7 @@ function Header() {
       )}
     </header>
   );
-}
+};
 
 Header.displayName = "Header";
 export default Header;

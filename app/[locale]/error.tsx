@@ -10,7 +10,7 @@ type LocaleErrorProps = {
   reset: () => void;
 };
 
-function LocaleError(props: LocaleErrorProps) {
+const LocaleError: React.FC<LocaleErrorProps> = (props) => {
   const t = useTranslations("common.error");
 
   useEffect(() => {
@@ -35,7 +35,7 @@ function LocaleError(props: LocaleErrorProps) {
       </button>
     </main>
   );
-}
+};
 
 LocaleError.displayName = "LocaleError";
 export default LocaleError;

@@ -1,10 +1,11 @@
+import React from "react";
 import Heading from "@/components/atoms/Heading";
 import Text from "@/components/atoms/Text";
 import Button from "@/components/atoms/Button";
 import { PRIVATE_GROUP_CTA_URL } from "@/lib/constants";
 import { getTranslations } from "@/lib/i18n/server";
 
-async function PrivateGroupSection() {
+const PrivateGroupSection: React.FC = async () => {
   const t = await getTranslations("home.privateGroup");
 
   return (
@@ -42,7 +43,7 @@ async function PrivateGroupSection() {
       </div>
     </section>
   );
-}
+};
 
 PrivateGroupSection.displayName = "PrivateGroupSection";
 export default PrivateGroupSection;

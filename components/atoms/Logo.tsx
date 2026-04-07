@@ -1,3 +1,4 @@
+import React from "react";
 import Image from "next/image";
 
 interface LogoProps {
@@ -5,7 +6,7 @@ interface LogoProps {
   className?: string;
 }
 
-function Logo(props: LogoProps) {
+const Logo: React.FC<LogoProps> = (props) => {
   const size = props.size ?? "lg";
   const dimensions =
     size === "lg" ? { width: 200, height: 200 } : { width: 48, height: 48 };
@@ -19,7 +20,7 @@ function Logo(props: LogoProps) {
       priority={size === "lg"}
     />
   );
-}
+};
 
 Logo.displayName = "Logo";
 export default Logo;

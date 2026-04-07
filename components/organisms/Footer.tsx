@@ -1,6 +1,7 @@
+import React from "react";
 import { getTranslations } from "@/lib/i18n/server";
 
-async function Footer() {
+const Footer: React.FC = async () => {
   const t = await getTranslations("common");
   const year = new Date().getFullYear();
 
@@ -15,7 +16,7 @@ async function Footer() {
       </div>
     </footer>
   );
-}
+};
 
 Footer.displayName = "Footer";
 export default Footer;

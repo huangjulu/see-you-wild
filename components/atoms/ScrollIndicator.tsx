@@ -1,6 +1,8 @@
 "use client";
 
-function ScrollIndicator() {
+import React from "react";
+
+const ScrollIndicator: React.FC = () => {
   return (
     <button
       onClick={() => {
@@ -26,7 +28,7 @@ function ScrollIndicator() {
       </svg>
     </button>
   );
-}
+};
 
 ScrollIndicator.displayName = "ScrollIndicator";
 export default ScrollIndicator;
