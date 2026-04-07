@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase/client";
+import { getSupabase } from "@/lib/supabase/client";
 import { paymentRefSchema } from "@/lib/validations/registrations";
 import { verifyToken } from "@/lib/token";
 
@@ -23,7 +23,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     return NextResponse.json({ error: "Invalid token" }, { status: 403 });
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from("registrations")
     .update({ payment_ref: parsed.data.payment_ref })
     .eq("id", id)

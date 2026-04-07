@@ -1,4 +1,11 @@
 import { Resend } from "resend";
-import { env } from "@/lib/env";
+import { getEnv } from "@/lib/env";
 
-export const resend = new Resend(env.RESEND_API_KEY);
+let _resend: Resend | null = null;
+
+export function getResend(): Resend {
+  if (!_resend) {
+    _resend = new Resend(getEnv().RESEND_API_KEY);
+  }
+  return _resend;
+}

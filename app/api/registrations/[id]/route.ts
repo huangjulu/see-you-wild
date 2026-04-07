@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase/client";
+import { getSupabase } from "@/lib/supabase/client";
 import { updateRegistrationSchema } from "@/lib/validations/registrations";
 
 interface RouteParams {
@@ -9,7 +9,7 @@ interface RouteParams {
 export async function GET(_request: Request, { params }: RouteParams) {
   const { id } = await params;
 
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from("registrations")
     .select("*")
     .eq("id", id)
@@ -43,7 +43,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     updateData.confirmed_at = new Date().toISOString();
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from("registrations")
     .update(updateData)
     .eq("id", id)
@@ -60,7 +60,10 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 export async function DELETE(_request: Request, { params }: RouteParams) {
   const { id } = await params;
 
-  const { error } = await supabase.from("registrations").delete().eq("id", id);
+  const { error } = await getSupabase()
+    .from("registrations")
+    .delete()
+    .eq("id", id);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

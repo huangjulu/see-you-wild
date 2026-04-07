@@ -1,5 +1,5 @@
-import { resend } from "./client";
-import { env } from "@/lib/env";
+import { getResend } from "./client";
+import { getEnv } from "@/lib/env";
 
 interface SendAdminNotificationParams {
   customerName: string;
@@ -202,8 +202,8 @@ export async function sendAdminNotification(
 </body>
 </html>`;
 
-  await resend.emails.send({
-    from: env.RESEND_FROM,
+  await getResend().emails.send({
+    from: getEnv().RESEND_FROM,
     to: adminEmail,
     subject: `新報名 — ${customerName}｜${eventTitle}`,
     html,

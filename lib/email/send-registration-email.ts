@@ -1,5 +1,5 @@
-import { resend } from "./client";
-import { env } from "@/lib/env";
+import { getResend } from "./client";
+import { getEnv } from "@/lib/env";
 import { generateToken } from "@/lib/token";
 
 interface SendRegistrationEmailParams {
@@ -256,8 +256,8 @@ export async function sendRegistrationEmail(
 </body>
 </html>`;
 
-  await resend.emails.send({
-    from: env.RESEND_FROM,
+  await getResend().emails.send({
+    from: getEnv().RESEND_FROM,
     to,
     subject: `你的報名已收到！— ${eventTitle}`,
     html,
