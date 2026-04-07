@@ -1,21 +1,43 @@
 import EventCard from "@/components/molecules/EventCard";
 import Divider from "@/components/atoms/Divider";
-import { EVENTS } from "@/lib/constants";
+import { EVENTS_CONFIG } from "@/lib/constants";
+import { getTranslations } from "@/lib/i18n/server";
 
-export default function EventsSection() {
+async function EventsSection() {
+  const t = await getTranslations("home.events");
+
   return (
-    <section id="events" className="py-20 md:py-28 px-4" aria-labelledby="events-heading">
+    <section
+      id="events"
+      className="py-20 md:py-28 px-4"
+      aria-labelledby="events-heading"
+    >
       <h2 id="events-heading" className="sr-only">
-        活動行程
+        {t("sectionLabel")}
       </h2>
       <div className="max-w-5xl mx-auto space-y-0">
-        {EVENTS.map((event, i) => (
-          <div key={event.id}>
+        {EVENTS_CONFIG.map((config, i) => (
+          <div key={config.id}>
             {i > 0 && <Divider />}
-            <EventCard {...event} reverse={i % 2 !== 0} />
+            <EventCard
+              tag={t(`items.${config.id}.tag`)}
+              title={t(`items.${config.id}.title`)}
+              subtitle={t(`items.${config.id}.subtitle`)}
+              date={t(`items.${config.id}.date`)}
+              description={t(`items.${config.id}.description`)}
+              cta={t(`items.${config.id}.cta`)}
+              ctaUrl={config.ctaUrl}
+              image={config.image}
+              imageAlt={t(`items.${config.id}.imageAlt`)}
+              variant={config.variant}
+              reverse={i % 2 !== 0}
+            />
           </div>
         ))}
       </div>
     </section>
   );
 }
+
+EventsSection.displayName = "EventsSection";
+export default EventsSection;

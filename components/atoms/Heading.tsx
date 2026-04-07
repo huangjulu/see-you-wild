@@ -7,7 +7,14 @@ interface HeadingProps {
   id?: string;
 }
 
-export default function Heading({ level, children, className = "", id }: HeadingProps) {
-  const Tag = level;
-  return <Tag id={id} className={`font-serif ${className}`}>{children}</Tag>;
+function Heading(props: HeadingProps) {
+  const Tag = props.level;
+  return (
+    <Tag id={props.id} className={`font-serif ${props.className ?? ""}`}>
+      {props.children}
+    </Tag>
+  );
 }
+
+Heading.displayName = "Heading";
+export default Heading;

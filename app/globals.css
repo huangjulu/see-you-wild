@@ -1,14 +1,20 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #38464E;
+  --color-background: #38464e;
   --color-surface: #2d3a42;
-  --color-accent: #9E7764;
-  --color-text-primary: #FFFFFF;
-  --color-text-muted: #E0E0E0;
+  --color-accent: #9e7764;
+  --color-text-primary: #ffffff;
+  --color-text-muted: #e0e0e0;
+
+  --color-warm-bg: #fdfbf7;
+  --color-warm-text: #2c352d;
+  --color-warm-accent: #a69b8d;
+  --color-dark-bg: #1a211b;
 
   --font-serif: var(--font-noto-serif-tc), "Noto Serif TC", serif;
   --font-sans: var(--font-noto-sans-tc), "Noto Sans TC", sans-serif;
+  --font-display: var(--font-playfair-display), "Playfair Display", serif;
 }
 
 html {
@@ -33,7 +39,11 @@ body {
 }
 
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
     transform: translateY(0);
   }
   40% {
@@ -53,7 +63,15 @@ body {
   animation: bounce 2s infinite;
 }
 
-.delay-100 { animation-delay: 0.1s; }
-.delay-200 { animation-delay: 0.2s; }
-.delay-300 { animation-delay: 0.3s; }
-.delay-400 { animation-delay: 0.4s; }
+.delay-100 {
+  animation-delay: 0.1s;
+}
+.delay-200 {
+  animation-delay: 0.2s;
+}
+.delay-300 {
+  animation-delay: 0.3s;
+}
+.delay-400 {
+  animation-delay: 0.4s;
+}

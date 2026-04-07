@@ -1,6 +1,9 @@
-export default function Divider({ className = "" }: { className?: string }) {
+function Divider(props: { className?: string }) {
   return (
-    <div className={`flex items-center justify-center py-12 ${className}`} aria-hidden="true">
+    <div
+      className={`flex items-center justify-center py-12 ${props.className ?? ""}`}
+      aria-hidden="true"
+    >
       <svg
         width="24"
         height="24"
@@ -16,3 +19,6 @@ export default function Divider({ className = "" }: { className?: string }) {
     </div>
   );
 }
+
+Divider.displayName = "Divider";
+export default Divider;
