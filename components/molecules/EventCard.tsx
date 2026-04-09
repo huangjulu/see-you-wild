@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 import Heading from "@/components/atoms/Heading";
 import Text from "@/components/atoms/Text";
 import Button from "@/components/atoms/Button";
@@ -14,7 +15,7 @@ interface EventCardProps {
   ctaUrl: string;
   image: string;
   imageAlt: string;
-  variant: "solid" | "ghost";
+  theme: "solid" | "ghost";
   reverse?: boolean;
 }
 
@@ -23,7 +24,10 @@ const EventCard: React.FC<EventCardProps> = (props) => {
 
   return (
     <article
-      className={`flex flex-col ${reverse ? "md:flex-row-reverse" : "md:flex-row"} gap-8 md:gap-12 items-center`}
+      className={cn(
+        "flex flex-col gap-8 md:gap-12 items-center",
+        reverse ? "md:flex-row-reverse" : "md:flex-row"
+      )}
     >
       <div className="w-full md:w-1/2 overflow-hidden rounded-2xl">
         <Image
@@ -52,7 +56,7 @@ const EventCard: React.FC<EventCardProps> = (props) => {
         </Text>
         <div className="pt-2">
           <Button
-            variant={props.variant}
+            theme={props.theme}
             href={props.ctaUrl}
             ariaLabel={`${props.cta} — ${props.title}`}
           >

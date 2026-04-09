@@ -30,7 +30,7 @@ const EventsSection: React.FC = async () => {
               ctaUrl={config.ctaUrl}
               image={config.image}
               imageAlt={t(`items.${config.id}.imageAlt`)}
-              variant={config.variant}
+              theme={config.theme}
               reverse={i % 2 !== 0}
             />
           </div>

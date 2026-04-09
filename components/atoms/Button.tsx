@@ -1,14 +1,15 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 
-type ButtonTheme = "base" | "solid" | "ghost" | "link";
+type ButtonTheme = "base" | "solid" | "ghost" | "link" | "text" | "outline";
 
 interface ButtonProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   theme?: ButtonTheme;
   href?: string;
   className?: string;
   ariaLabel?: string;
+  icon?: React.ReactNode;
 }
 
 const Button: React.FC<ButtonProps> = (props) => {
@@ -24,6 +25,12 @@ const Button: React.FC<ButtonProps> = (props) => {
       break;
     case "link":
       themeClass = "underline underline-offset-4 hover:opacity-80";
+      break;
+    case "text":
+      themeClass = "hover:opacity-80";
+      break;
+    case "outline":
+      themeClass = "border-neutral-300 hover:border-neutral-500";
       break;
     case "base":
     default:
@@ -42,9 +49,10 @@ const Button: React.FC<ButtonProps> = (props) => {
 
 Button.displayName = "Button";
 export default Button;
+export type { ButtonTheme };
 
 function renderElement(props: ButtonProps, className: string) {
-  if (props.theme === "link") {
+  if (props.href != null) {
     return (
       <a
         href={props.href}
@@ -53,6 +61,7 @@ function renderElement(props: ButtonProps, className: string) {
         className={className}
         aria-label={props.ariaLabel}
       >
+        {props.icon}
         {props.children}
       </a>
     );
@@ -60,6 +69,7 @@ function renderElement(props: ButtonProps, className: string) {
 
   return (
     <button className={className} aria-label={props.ariaLabel}>
+      {props.icon}
       {props.children}
     </button>
   );

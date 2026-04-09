@@ -20,7 +20,7 @@ const baseProps = {
   ctaUrl: "https://example.com",
   image: "/images/event.jpg",
   imageAlt: "Event image",
-  variant: "solid" as const,
+  theme: "solid" as const,
 };
 
 describe("EventCard", () => {
@@ -46,7 +46,7 @@ describe("EventCard", () => {
 
   it("renders CTA button with correct link", () => {
     render(<EventCard {...baseProps} />);
-    const cta = screen.getByRole("button", { name: /立即預約/ });
+    const cta = screen.getByRole("link", { name: /立即預約/ });
     expect(cta).toHaveAttribute("href", "https://example.com");
   });
 

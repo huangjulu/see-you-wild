@@ -11,13 +11,13 @@ export const EVENTS_CONFIG = [
     id: "camping-chef",
     image: "/images/event-camping.jpg",
     ctaUrl: "https://forms.gle/kdXfmR7BXqijwkY46",
-    variant: "solid" as const,
+    theme: "solid" as const,
   },
   {
     id: "hot-spring",
     image: "/images/event-hotspring.jpg",
     ctaUrl: "https://seeyouwild.my.canva.site/march-hotspring",
-    variant: "ghost" as const,
+    theme: "ghost" as const,
   },
 ];
 
