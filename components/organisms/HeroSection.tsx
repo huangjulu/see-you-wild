@@ -1,61 +1,50 @@
 "use client";
 
 import React, { useRef } from "react";
-import { gsap, useGSAP } from "@/lib/gsap";
+import { useTimeline } from "@/lib/gsap";
 import Button from "@/components/atoms/Button";
 
 const HeroSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
 
-  useGSAP(
-    function animateHeroEntrance() {
-      const prefersReduced = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      ).matches;
+  useTimeline(sectionRef, (tl, el) => {
+    const headline = el.querySelector(".hero-headline");
+    const subtitle = el.querySelector(".hero-subtitle");
+    const cta = el.querySelector(".hero-cta");
+    const scroll = el.querySelector(".hero-scroll");
 
-      if (prefersReduced) return;
+    function playEntrance() {
+      tl.fromTo(
+        headline,
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, duration: 1, ease: "power2.out" }
+      );
 
-      function playEntrance() {
-        const tl = gsap.timeline();
+      tl.fromTo(
+        subtitle,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
+        "-=0.5"
+      );
 
-        tl.fromTo(
-          ".hero-headline",
-          { opacity: 0, y: 40 },
-          { opacity: 1, y: 0, duration: 1, ease: "power2.out" }
-        );
+      tl.fromTo(
+        cta,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+        "-=0.4"
+      );
 
-        tl.fromTo(
-          ".hero-subtitle",
-          { opacity: 0, y: 30 },
-          { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
-          "-=0.5"
-        );
+      tl.fromTo(scroll, { opacity: 0 }, { opacity: 1, duration: 0.6 }, "-=0.2");
+    }
 
-        tl.fromTo(
-          ".hero-cta",
-          { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
-          "-=0.4"
-        );
+    window.addEventListener("opening-animation-complete", playEntrance, {
+      once: true,
+    });
 
-        tl.fromTo(
-          ".hero-scroll",
-          { opacity: 0 },
-          { opacity: 1, duration: 0.6 },
-          "-=0.2"
-        );
-      }
-
-      window.addEventListener("opening-animation-complete", playEntrance, {
-        once: true,
-      });
-
-      return () => {
-        window.removeEventListener("opening-animation-complete", playEntrance);
-      };
-    },
-    { scope: sectionRef }
-  );
+    return () => {
+      window.removeEventListener("opening-animation-complete", playEntrance);
+    };
+  });
 
   return (
     <section
@@ -75,28 +64,21 @@ const HeroSection: React.FC = () => {
           type="video/mp4"
         />
       </video>
-      <div
-        className="absolute inset-0"
-        style={{ backgroundColor: "rgba(26, 33, 27, 0.4)" }}
-        aria-hidden="true"
-      />
+      <div className="absolute inset-0 bg-neutral-950/40" aria-hidden="true" />
 
       <div className="relative z-10 flex flex-col items-center gap-6 max-w-4xl">
-        <h1
-          className="hero-headline gsap-reveal text-4xl md:text-6xl lg:text-7xl text-white leading-tight"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
+        <h1 className="hero-headline gsap-reveal typo-display text-4xl md:text-6xl lg:text-7xl text-white leading-tight">
           重塑邊界，
           <br />
           <span className="italic">Elegantly</span> 撒野。
         </h1>
-        <p className="hero-subtitle gsap-reveal text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed font-sans">
+        <p className="hero-subtitle gsap-reveal typo-body text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed">
           在山海之間，找到野性與優雅的平衡。
           <br className="hidden md:block" />
           See You Wild 帶你體驗台灣最獨特的戶外探險。
         </p>
         <div className="hero-cta gsap-reveal mt-4">
-          <Button variant="ghost" href="#journeys">
+          <Button theme="ghost" href="#journeys">
             探索旅程
           </Button>
         </div>

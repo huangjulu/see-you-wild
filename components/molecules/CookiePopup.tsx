@@ -21,21 +21,14 @@ const CookiePopup: React.FC = () => {
   if (!isVisible) return null;
 
   return (
-    <div
-      className="fixed bottom-6 left-6 right-6 md:left-auto md:right-6 md:max-w-sm z-40 rounded-2xl p-6 shadow-2xl transition-all duration-500"
-      style={{ backgroundColor: "#1A211B", color: "#FDFBF7" }}
-    >
-      <p className="text-sm leading-relaxed mb-4 font-sans">
+    <div className="fixed bottom-0 md:left-auto md:right-6 md:max-w-sm z-40 rounded-2xl p-6 shadow-2xl transition-all duration-500 bg-neutral-950 text-neutral-50">
+      <p className="typo-body text-sm leading-relaxed mb-4">
         我們使用 Cookie 來提升您的瀏覽體驗。繼續使用本站即表示您同意我們的
         Cookie 政策。
       </p>
       <button
         onClick={handleAccept}
-        className="w-full py-2.5 rounded-full text-sm font-medium tracking-wider transition-colors duration-200"
-        style={{
-          backgroundColor: "#A69B8D",
-          color: "#FDFBF7",
-        }}
+        className="typo-ui w-full py-2.5 rounded-full text-sm tracking-wider transition-colors duration-200 bg-neutral-400 text-neutral-50"
       >
         我了解了
       </button>

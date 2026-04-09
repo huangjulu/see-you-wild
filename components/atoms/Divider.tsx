@@ -1,9 +1,10 @@
 import React from "react";
+import { cn } from "@/lib/utils";
 
 const Divider: React.FC<{ className?: string }> = (props) => {
   return (
     <div
-      className={`flex items-center justify-center py-12 ${props.className ?? ""}`}
+      className={cn("flex items-center justify-center py-12", props.className)}
       aria-hidden="true"
     >
       <svg

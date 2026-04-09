@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import { gsap, useGSAP } from "@/lib/gsap";
+import { useTimeline } from "@/lib/gsap";
 import JourneyCard from "@/components/molecules/JourneyCard";
 
 const JOURNEYS = [
@@ -41,57 +41,40 @@ const JourneysSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
-  useGSAP(
-    function setupHorizontalScroll() {
-      if (!trackRef.current || !sectionRef.current) return;
+  useTimeline(sectionRef, (tl, el) => {
+    const track = trackRef.current;
+    if (!track) return;
 
-      const prefersReduced = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      ).matches;
-      if (prefersReduced) return;
+    const scrollWidth = track.scrollWidth - track.clientWidth;
+    track.style.overflow = "hidden";
 
-      const track = trackRef.current;
-      const scrollWidth = track.scrollWidth - track.clientWidth;
-
-      // Hide native scrollbar when GSAP takes over
-      track.style.overflow = "hidden";
-
-      gsap.to(track, {
-        x: -scrollWidth,
-        ease: "none",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: () => `+=${scrollWidth}`,
-          scrub: 1,
-          pin: true,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
-      });
-    },
-    { scope: sectionRef }
-  );
+    tl.to(track, {
+      x: -scrollWidth,
+      ease: "none",
+      scrollTrigger: {
+        trigger: el,
+        start: "top top",
+        end: () => `+=${scrollWidth}`,
+        scrub: 1,
+        pin: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+      },
+    });
+  });
 
   return (
     <section
       ref={sectionRef}
       id="journeys"
-      className="relative overflow-hidden"
-      style={{ backgroundColor: "#1A211B" }}
+      className="relative overflow-hidden bg-neutral-950"
     >
       <div className="h-screen flex flex-col justify-center">
         <div className="px-6 md:px-12 mb-10">
-          <p
-            className="text-sm tracking-[0.3em] uppercase mb-4"
-            style={{ color: "#A69B8D" }}
-          >
+          <p className="typo-overline text-sm mb-4 text-neutral-400">
             Journeys
           </p>
-          <h2
-            className="text-4xl md:text-5xl text-white"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
+          <h2 className="typo-display text-4xl md:text-5xl text-white">
             探索旅程
           </h2>
         </div>

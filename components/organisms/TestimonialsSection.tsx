@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import { gsap, useGSAP } from "@/lib/gsap";
+import { useScrollReveal } from "@/lib/gsap";
 import TestimonialCard from "@/components/molecules/TestimonialCard";
 
 const TESTIMONIALS = [
@@ -42,55 +42,32 @@ const TESTIMONIALS = [
 const TestimonialsSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
 
-  useGSAP(
-    function animateTestimonialCards() {
-      const prefersReduced = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      ).matches;
-      if (prefersReduced) return;
-
-      gsap.utils.toArray<HTMLElement>(".testimonial-card").forEach((el) => {
-        gsap.fromTo(
-          el,
-          { opacity: 0, y: 40 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 90%",
-              toggleActions: "play none none none",
-            },
-          }
-        );
-      });
+  useScrollReveal(sectionRef, {
+    selector: ".testimonial-card",
+    from: { opacity: 0, y: 40 },
+    to: {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      ease: "power2.out",
+      scrollTrigger: {
+        start: "top 90%",
+        toggleActions: "play none none none",
+      },
     },
-    { scope: sectionRef }
-  );
+  });
 
   return (
     <section
       ref={sectionRef}
-      className="py-24 md:py-32 px-6 md:px-12"
-      style={{ backgroundColor: "#FDFBF7" }}
+      className="py-24 md:py-32 px-6 md:px-12 bg-background"
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <p
-            className="text-sm tracking-[0.3em] uppercase mb-4"
-            style={{ color: "#A69B8D" }}
-          >
+          <p className="typo-overline text-sm mb-4 text-neutral-400">
             Testimonials
           </p>
-          <h2
-            className="text-4xl md:text-5xl"
-            style={{
-              fontFamily: "var(--font-display)",
-              color: "#2C352D",
-            }}
-          >
+          <h2 className="typo-display text-4xl md:text-5xl text-foreground">
             旅人心聲
           </h2>
         </div>

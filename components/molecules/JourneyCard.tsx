@@ -15,18 +15,10 @@ const JourneyCard: React.FC<JourneyCardProps> = (props) => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-6">
-          <p
-            className="text-sm tracking-[0.2em] uppercase mb-2"
-            style={{ color: "#A69B8D" }}
-          >
+          <p className="typo-overline text-sm mb-2 text-neutral-400">
             {props.subtitle}
           </p>
-          <h3
-            className="text-2xl text-white"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            {props.title}
-          </h3>
+          <h3 className="typo-heading text-2xl text-white">{props.title}</h3>
         </div>
       </div>
     </div>

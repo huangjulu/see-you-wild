@@ -1,4 +1,5 @@
 import React from "react";
+import { cn } from "@/lib/utils";
 
 type Level = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 
@@ -10,11 +11,11 @@ interface HeadingProps {
 }
 
 const Heading: React.FC<HeadingProps> = (props) => {
-  const Tag = props.level;
+  const HeadingTag = props.level;
   return (
-    <Tag id={props.id} className={`font-serif ${props.className ?? ""}`}>
+    <HeadingTag id={props.id} className={cn("typo-heading", props.className)}>
       {props.children}
-    </Tag>
+    </HeadingTag>
   );
 };
 

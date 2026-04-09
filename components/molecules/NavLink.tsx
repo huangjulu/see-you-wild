@@ -11,7 +11,7 @@ const NavLink: React.FC<NavLinkProps> = (props) => {
     <a
       href={props.href}
       onClick={props.onClick}
-      className="text-sm font-sans tracking-wider text-white/70 hover:text-white transition-colors duration-300"
+      className="typo-ui text-sm text-white/70 hover:text-white transition-colors duration-300"
     >
       {props.label}
     </a>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { Menu as IconMenu, X as IconX } from "lucide-react";
 import { useTranslations, useLocale } from "@/lib/i18n/client";
 import Logo from "@/components/atoms/Logo";
 import NavLink from "@/components/molecules/NavLink";
@@ -46,24 +47,7 @@ const Header: React.FC = () => {
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
         >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            {menuOpen ? (
-              <path d="M18 6L6 18M6 6l12 12" />
-            ) : (
-              <>
-                <path d="M4 6h16" />
-                <path d="M4 12h16" />
-                <path d="M4 18h16" />
-              </>
-            )}
-          </svg>
+          {menuOpen ? <IconX size={24} /> : <IconMenu size={24} />}
         </button>
       </div>
 

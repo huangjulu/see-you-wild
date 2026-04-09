@@ -1,4 +1,5 @@
 import React from "react";
+import { cn } from "@/lib/utils";
 
 interface TextProps {
   children: React.ReactNode;
@@ -9,7 +10,11 @@ interface TextProps {
 const Text: React.FC<TextProps> = (props) => {
   return (
     <p
-      className={`font-sans ${props.muted ? "text-text-muted" : "text-text-primary"} ${props.className ?? ""}`}
+      className={cn(
+        "typo-body",
+        props.muted ? "text-muted" : "text-foreground",
+        props.className
+      )}
     >
       {props.children}
     </p>

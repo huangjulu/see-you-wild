@@ -6,26 +6,13 @@ interface TestimonialCardProps {
 
 const TestimonialCard: React.FC<TestimonialCardProps> = (props) => {
   return (
-    <div
-      className="testimonial-card gsap-reveal rounded-2xl p-6 md:p-8 break-inside-avoid mb-6"
-      style={{ backgroundColor: "#FDFBF7" }}
-    >
-      <p
-        className="text-lg md:text-xl leading-relaxed mb-4"
-        style={{
-          fontFamily: "var(--font-serif)",
-          color: "#2C352D",
-        }}
-      >
+    <div className="testimonial-card gsap-reveal rounded-2xl p-6 md:p-8 break-inside-avoid mb-6 bg-background">
+      <p className="typo-body text-lg md:text-xl leading-relaxed mb-4 text-foreground">
         &ldquo;{props.quote}&rdquo;
       </p>
       <div>
-        <p className="font-medium text-sm" style={{ color: "#2C352D" }}>
-          {props.author}
-        </p>
-        <p className="text-xs mt-1" style={{ color: "#A69B8D" }}>
-          {props.trip}
-        </p>
+        <p className="typo-ui text-sm text-foreground">{props.author}</p>
+        <p className="typo-ui text-xs mt-1 text-neutral-400">{props.trip}</p>
       </div>
     </div>
   );
