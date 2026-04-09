@@ -31,3 +31,5 @@ api-test.http
 
 # pnpm
 .pnpm-debug.log*
+
+.playwright-mcp/

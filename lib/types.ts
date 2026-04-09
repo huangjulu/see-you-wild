@@ -1,3 +1,9 @@
+/**
+ * 用 B 的 key 覆蓋 A 的同名屬性。
+ * ModalCard / DialogCard 的 SlotProps 用這個收窄 Slot 的泛用 slot: string → 具體 union。
+ */
+export type Override<A, B> = Omit<A, keyof B> & B;
+
 export interface Event {
   id: string;
   tag: string;
@@ -9,7 +15,7 @@ export interface Event {
   ctaUrl: string;
   image: string;
   imageAlt: string;
-  variant: "solid" | "ghost";
+  theme: "solid" | "ghost";
 }
 
 export interface EventsApiResponse {

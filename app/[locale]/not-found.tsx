@@ -16,7 +16,7 @@ async function NotFound() {
       </Text>
       <Link
         href="/"
-        className="inline-block px-8 py-3 rounded-full text-sm font-sans font-medium tracking-widest uppercase border border-white/60 text-white hover:bg-white/10 hover:border-white transition-all duration-300"
+        className="typo-ui inline-block px-8 py-3 rounded-full text-sm tracking-widest uppercase border border-white/60 text-white hover:bg-white/10 hover:border-white transition-all duration-300"
       >
         {t("backHome")}
       </Link>
