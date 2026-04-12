@@ -10,7 +10,13 @@ const EventsSection: React.FC = async () => {
   return (
     <section
       id="events"
-      className="py-20 md:py-28 px-4"
+      className="py-20 md:py-28 px-4 bg-surface-dark"
+      style={
+        {
+          "--color-foreground": "var(--color-surface-dark-fg)",
+          "--color-muted": "var(--color-surface-deep-fg)",
+        } as React.CSSProperties
+      }
       aria-labelledby="events-heading"
     >
       <h2 id="events-heading" className="sr-only">

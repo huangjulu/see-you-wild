@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Button from "@/components/atoms/Button";
+import { X as IconX } from "lucide-react";
 
 const CookiePopup: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -22,18 +22,21 @@ const CookiePopup: React.FC = () => {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-0 md:left-auto md:right-6 md:max-w-sm z-40 rounded-2xl p-6 shadow-2xl transition-all duration-500 bg-neutral-950 text-neutral-50">
-      <p className="typo-body text-sm leading-relaxed mb-4">
-        我們使用 Cookie 來提升您的瀏覽體驗。繼續使用本站即表示您同意我們的
-        Cookie 政策。
+    <div className="fixed bottom-0 w-full bg-surface-deep/95 backdrop-blur-sm z-40 flex items-center justify-center gap-8 py-4 px-6">
+      <p className="typo-overline text-surface-deep-fg/80 text-center">
+        We use cookies to enhance your experience.
       </p>
-      <Button
-        theme="base"
-        onClick={handleAccept}
-        className="w-full py-2.5 px-0 rounded-full text-sm tracking-wider transition-colors duration-200 bg-neutral-400 text-neutral-50 border-transparent"
-      >
-        我了解了
-      </Button>
+      <div className="flex items-center gap-6">
+        <button
+          onClick={handleAccept}
+          className="typo-overline text-surface-deep-fg/80 border-b border-surface-deep-fg/30 pb-0.5 hover:border-surface-deep-fg transition-colors"
+        >
+          Accept
+        </button>
+        <button onClick={handleAccept} aria-label="Close cookie notice">
+          <IconX className="w-4 h-4 text-surface-deep-fg/50 hover:text-surface-deep-fg/80 transition-opacity" />
+        </button>
+      </div>
     </div>
   );
 };

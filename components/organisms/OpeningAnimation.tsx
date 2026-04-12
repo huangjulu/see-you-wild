@@ -60,7 +60,7 @@ const OpeningAnimation: React.FC = () => {
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-surface-deep"
     >
       <div ref={brandRef} className="absolute z-10 text-center opacity-0">
         <p className="typo-display text-5xl md:text-7xl tracking-[0.3em] text-white">

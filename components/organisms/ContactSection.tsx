@@ -11,7 +11,13 @@ const ContactSection: React.FC = async () => {
   return (
     <section
       id="contact"
-      className="py-20 md:py-28 px-4 text-center"
+      className="py-20 md:py-28 px-4 text-center bg-surface-deep"
+      style={
+        {
+          "--color-foreground": "var(--color-surface-deep-fg)",
+          "--color-muted": "var(--color-surface-deep-fg)",
+        } as React.CSSProperties
+      }
       aria-labelledby="contact-heading"
     >
       <div className="max-w-2xl mx-auto space-y-6">

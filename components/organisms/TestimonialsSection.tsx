@@ -64,7 +64,7 @@ const TestimonialsSection: React.FC = () => {
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <p className="typo-overline text-sm mb-4 text-neutral-400">
+          <p className="typo-overline text-sm mb-4 text-muted-warm">
             Testimonials
           </p>
           <h2 className="typo-display text-4xl md:text-5xl text-foreground">

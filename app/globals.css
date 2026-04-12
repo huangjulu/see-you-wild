@@ -74,8 +74,13 @@
   --color-accent-hover: #c97d35; /* primary-500 */
   --color-accent-fg: #2d3a40; /* neutral-800 */
   --color-surface: #f0f5f9; /* tertiary-50 */
-  --color-surface-dark: #242f34; /* neutral-900 */
-  --color-surface-dark-fg: #e4e8ea; /* neutral-100 */
+  --color-surface-dark: #de954e; /* primary-400 — 橘色交錯區塊 */
+  --color-surface-dark-fg: #ffffff; /* 白 — 橘色區塊文字 */
+  --color-surface-deep: #1a2226; /* neutral-950 — loader, footer 極深 */
+  --color-surface-deep-fg: #c8d0d5; /* neutral-200 — 極深背景文字 */
+  --color-surface-warm: #fef6ee; /* primary-50 — 深色 section 內嵌 CTA */
+  --color-surface-warm-fg: #3c4a52; /* neutral-700 — 暖底文字 */
+  --color-muted-warm: #c97d35; /* primary-500 — overline subtitle 暖色 accent */
   --color-border: #c8d0d5; /* neutral-200 */
   --color-border-strong: #a5b2ba; /* neutral-300 */
   --color-ring: #fad1ae; /* primary-200 */

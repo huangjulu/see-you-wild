@@ -36,7 +36,7 @@ const PrivateGroupSection: React.FC = async () => {
           {t("description")}
         </Text>
         <div className="pt-4">
-          <Button theme="ghost" href={PRIVATE_GROUP_CTA_URL}>
+          <Button theme="solid" href={PRIVATE_GROUP_CTA_URL}>
             {t("cta")}
           </Button>
         </div>

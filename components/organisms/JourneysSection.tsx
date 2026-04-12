@@ -67,14 +67,14 @@ const JourneysSection: React.FC = () => {
     <section
       ref={sectionRef}
       id="journeys"
-      className="relative overflow-hidden bg-neutral-950"
+      className="relative overflow-hidden bg-surface-dark"
     >
-      <div className="h-screen flex flex-col justify-center">
+      <div className="h-screen flex flex-col justify-center pt-16">
         <div className="px-6 md:px-12 mb-10">
-          <p className="typo-overline text-sm mb-4 text-neutral-400">
+          <p className="typo-overline text-sm mb-4 text-surface-dark-fg/70">
             Journeys
           </p>
-          <h2 className="typo-display text-4xl md:text-5xl text-white">
+          <h2 className="typo-display text-4xl md:text-5xl text-surface-dark-fg">
             探索旅程
           </h2>
         </div>

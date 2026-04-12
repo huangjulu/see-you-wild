@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Menu as IconMenu, X as IconX } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useTranslations, useLocale } from "@/lib/i18n/client";
 import Logo from "@/components/atoms/Logo";
 import NavLink from "@/components/molecules/NavLink";
@@ -11,6 +12,13 @@ const Header: React.FC = () => {
   const t = useTranslations("common");
   const locale = useLocale();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(function trackScroll() {
+    const handler = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handler, { passive: true });
+    return () => window.removeEventListener("scroll", handler);
+  }, []);
 
   const navLinks = [
     { label: t("nav.events"), href: NAV_ANCHORS.events },
@@ -19,8 +27,20 @@ const Header: React.FC = () => {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-white/10">
-      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+    <header
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
+        scrolled
+          ? "bg-background/90 backdrop-blur-md border-b border-border/30"
+          : "bg-transparent border-b border-transparent"
+      )}
+    >
+      <div
+        className={cn(
+          "max-w-6xl mx-auto px-4 h-16 flex items-center justify-between transition-colors duration-500",
+          scrolled ? "text-foreground" : "text-white"
+        )}
+      >
         <a
           href={locale === "zh-TW" ? "/" : `/${locale}`}
           className="flex items-center gap-3"
@@ -42,7 +62,7 @@ const Header: React.FC = () => {
         </nav>
 
         <button
-          className="md:hidden text-white p-2"
+          className="md:hidden p-2"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
@@ -53,7 +73,7 @@ const Header: React.FC = () => {
 
       {menuOpen && (
         <nav
-          className="md:hidden bg-background/95 backdrop-blur-md border-t border-white/10 px-4 py-4 flex flex-col gap-4"
+          className="md:hidden bg-background/95 backdrop-blur-md border-t border-border/30 px-4 py-4 flex flex-col gap-4 text-foreground"
           aria-label="Mobile navigation"
         >
           {navLinks.map((link) => (
