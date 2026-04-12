@@ -30,6 +30,7 @@ const LargeBrandText: React.FC = () => {
           start: "top bottom",
           end: "bottom bottom",
           scrub: true,
+          invalidateOnRefresh: true,
         },
       }
     );

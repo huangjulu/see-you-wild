@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import gsap from "gsap";
 import { useTimeline } from "@/lib/gsap";
 import JourneyCard from "@/components/molecules/JourneyCard";
+import Button from "@/components/atoms/Button";
 
 const JOURNEYS = [
   {
@@ -47,8 +48,7 @@ const JourneysSection: React.FC = () => {
     if (!track) return;
 
     const cards = track.querySelectorAll(".journey-card");
-    const scrollWidth = track.scrollWidth - track.clientWidth;
-    track.style.overflow = "hidden";
+    const getDistance = () => -(track.scrollWidth - window.innerWidth);
 
     // Card entrance stagger (one-shot, not scrub)
     gsap.fromTo(
@@ -70,12 +70,12 @@ const JourneysSection: React.FC = () => {
 
     // Horizontal scrub scroll
     tl.to(track, {
-      x: -scrollWidth,
+      x: getDistance,
       ease: "none",
       scrollTrigger: {
         trigger: el,
         start: "top top",
-        end: () => `+=${scrollWidth}`,
+        end: () => `+=${track.scrollWidth - window.innerWidth}`,
         scrub: 1,
         pin: true,
         anticipatePin: 1,
@@ -91,18 +91,24 @@ const JourneysSection: React.FC = () => {
       className="relative overflow-hidden bg-surface-dark"
     >
       <div className="h-screen flex flex-col justify-center pt-16">
-        <div className="px-6 md:px-12 mb-10">
-          <p className="typo-overline text-sm mb-4 text-surface-dark-fg/70">
-            Journeys
-          </p>
-          <h2 className="typo-display text-4xl md:text-5xl text-surface-dark-fg">
-            探索旅程
-          </h2>
+        <div className="flex items-end justify-between px-6 md:px-12 mb-10">
+          <div>
+            <p className="typo-overline text-sm mb-4 text-surface-dark-fg/70">
+              Journeys
+            </p>
+            <h2 className="typo-display text-4xl md:text-5xl text-surface-dark-fg">
+              探索旅程
+            </h2>
+          </div>
+          <Button
+            theme="link"
+            href="/journeys"
+            className="text-surface-dark-fg/70 hover:text-surface-dark-fg"
+          >
+            探索更多 →
+          </Button>
         </div>
-        <div
-          ref={trackRef}
-          className="flex gap-6 px-6 md:px-12 overflow-x-auto"
-        >
+        <div ref={trackRef} className="flex gap-6 px-6 md:px-12 w-fit">
           {JOURNEYS.map((journey) => (
             <JourneyCard
               key={journey.title}

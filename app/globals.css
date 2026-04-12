@@ -184,6 +184,7 @@ body {
   background-color: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-serif);
+  overflow-x: hidden; /* 防止 ScrollTrigger pin-spacer 造成水平溢出 */
 }
 
 @keyframes fadeInUp {
