@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
+import gsap from "gsap";
 import { useTimeline } from "@/lib/gsap";
 import JourneyCard from "@/components/molecules/JourneyCard";
 
@@ -45,9 +46,29 @@ const JourneysSection: React.FC = () => {
     const track = trackRef.current;
     if (!track) return;
 
+    const cards = track.querySelectorAll(".journey-card");
     const scrollWidth = track.scrollWidth - track.clientWidth;
     track.style.overflow = "hidden";
 
+    // Card entrance stagger (one-shot, not scrub)
+    gsap.fromTo(
+      cards,
+      { opacity: 0, x: 60 },
+      {
+        opacity: 1,
+        x: 0,
+        duration: 0.8,
+        stagger: 0.15,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: el,
+          start: "top 80%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
+    // Horizontal scrub scroll
     tl.to(track, {
       x: -scrollWidth,
       ease: "none",

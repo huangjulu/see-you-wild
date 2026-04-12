@@ -8,14 +8,14 @@ const PhilosophySection: React.FC = () => {
 
   useScrollReveal(sectionRef, {
     selector: ".reveal-up",
-    from: { opacity: 0, y: 60 },
+    from: { opacity: 0, y: 40 },
     to: {
       opacity: 1,
       y: 0,
-      duration: 1,
-      ease: "power2.out",
+      duration: 1.3,
+      ease: "power3.out",
       scrollTrigger: {
-        start: "top 85%",
+        start: "top 88%",
         toggleActions: "play none none none",
       },
     },

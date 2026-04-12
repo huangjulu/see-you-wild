@@ -38,7 +38,6 @@ function renderHeader() {
 describe("Header", () => {
   it("renders nav links", () => {
     renderHeader();
-    expect(screen.getByText("活動行程")).toBeInTheDocument();
     expect(screen.getByText("包團諮詢")).toBeInTheDocument();
     expect(screen.getByText("聯絡我們")).toBeInTheDocument();
   });

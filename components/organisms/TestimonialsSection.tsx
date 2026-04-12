@@ -48,10 +48,10 @@ const TestimonialsSection: React.FC = () => {
     to: {
       opacity: 1,
       y: 0,
-      duration: 0.8,
-      ease: "power2.out",
+      duration: 1,
+      ease: "power3.out",
       scrollTrigger: {
-        start: "top 90%",
+        start: "top 80%",
         toggleActions: "play none none none",
       },
     },

@@ -175,6 +175,11 @@
   }
 }
 
+/* ScrollTrigger pin-spacer 用頁面底色，避免被 pinned section 的背景色填滿 */
+.pin-spacer {
+  background: var(--color-background) !important;
+}
+
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);

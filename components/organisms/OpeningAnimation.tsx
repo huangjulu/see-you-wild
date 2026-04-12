@@ -25,18 +25,20 @@ const OpeningAnimation: React.FC = () => {
 
       tl.fromTo(videoWrap, { opacity: 0 }, { opacity: 1, duration: 0.3 });
       tl.to(videoWrap, {
-        width: "70vw",
-        height: "50vh",
+        scale: 0.7,
         borderRadius: "2rem",
         duration: 1,
         ease: "power3.inOut",
       });
 
-      tl.to(brand, { opacity: 0, duration: 0.4, ease: "power2.in" }, "-=0.6");
+      tl.to(
+        brand,
+        { opacity: 0, y: -30, duration: 0.4, ease: "power3.in" },
+        "-=0.6"
+      );
 
       tl.to(videoWrap, {
-        width: "100vw",
-        height: "100vh",
+        scale: 1,
         borderRadius: "0rem",
         duration: 1,
         ease: "power3.inOut",

@@ -21,7 +21,6 @@ const Header: React.FC = () => {
   }, []);
 
   const navLinks = [
-    { label: t("nav.events"), href: NAV_ANCHORS.events },
     { label: t("nav.privateGroup"), href: NAV_ANCHORS.privateGroup },
     { label: t("nav.contact"), href: NAV_ANCHORS.contact },
   ];
@@ -31,14 +30,14 @@ const Header: React.FC = () => {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
         scrolled
-          ? "bg-background/90 backdrop-blur-md border-b border-border/30"
+          ? "bg-surface-deep/80 backdrop-blur-md border-b border-surface-deep-fg/10"
           : "bg-transparent border-b border-transparent"
       )}
     >
       <div
         className={cn(
           "max-w-6xl mx-auto px-4 h-16 flex items-center justify-between transition-colors duration-500",
-          scrolled ? "text-foreground" : "text-white"
+          scrolled ? "text-surface-deep-fg" : "text-white"
         )}
       >
         <a

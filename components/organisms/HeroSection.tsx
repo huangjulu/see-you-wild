@@ -16,25 +16,25 @@ const HeroSection: React.FC = () => {
     function playEntrance() {
       tl.fromTo(
         headline,
-        { opacity: 0, y: 40 },
-        { opacity: 1, y: 0, duration: 1, ease: "power2.out" }
+        { opacity: 0, y: 60 },
+        { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" }
       );
 
       tl.fromTo(
         subtitle,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
-        "-=0.5"
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, duration: 1, ease: "power3.out" },
+        "-=0.6"
       );
 
       tl.fromTo(
         cta,
         { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
-        "-=0.4"
+        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
+        "-=0.5"
       );
 
-      tl.fromTo(scroll, { opacity: 0 }, { opacity: 1, duration: 0.6 }, "-=0.2");
+      tl.fromTo(scroll, { opacity: 0 }, { opacity: 1, duration: 0.8 }, "-=0.3");
     }
 
     window.addEventListener("opening-animation-complete", playEntrance, {
