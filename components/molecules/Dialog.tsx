@@ -3,13 +3,14 @@ import { resolveSlots } from "@/lib/slot";
 import Slot, { type SlottableComponent } from "@/components/atoms/Slot";
 import type { Override } from "@/lib/types";
 import Button from "@/components/atoms/Button";
+import { X as IconX } from "lucide-react";
 
 /* ─── Slot Types ─── */
 
 type SlotProps = Override<
   React.ComponentProps<typeof Slot>,
   {
-    slot: "buttons" | "children" | "loader";
+    slot: "buttons" | "children" | "close" | "loader";
   }
 >;
 
@@ -19,10 +20,23 @@ type DialogSlot = SlotProps["slot"];
 
 interface ButtonProps extends React.ComponentPropsWithRef<typeof Button> {}
 
+const CloseButton: SlottableComponent<ButtonProps> = Object.assign(
+  (props: ButtonProps) => (
+    <Slot slot="close">
+      <Button
+        theme="text"
+        icon={<IconX className="size-4 text-primary-400" />}
+        {...props}
+      />
+    </Slot>
+  ),
+  { slotName: "close", displayName: "DialogCloseButton" }
+);
+
 const DangerButton: SlottableComponent<ButtonProps> = Object.assign(
   (props: ButtonProps) => (
     <Slot slot="buttons">
-      <Button theme="solid" {...props}>
+      <Button theme="danger" {...props}>
         {props.children}
       </Button>
     </Slot>
@@ -33,7 +47,7 @@ const DangerButton: SlottableComponent<ButtonProps> = Object.assign(
 const OutlineButton: SlottableComponent<ButtonProps> = Object.assign(
   (props: ButtonProps) => (
     <Slot slot="buttons">
-      <Button theme="ghost" {...props}>
+      <Button theme="outline" {...props}>
         {props.children}
       </Button>
     </Slot>
@@ -100,27 +114,33 @@ const _Dialog: React.FC<DialogProps> = (props) => {
       )}
     >
       <div className="flex flex-col gap-4 p-6">
-        <div>
-          {title != null && (
-            <div className="typo-sub-heading text-xl text-foreground">
-              {title}
-            </div>
-          )}
-          {message != null && (
-            <div className="typo-body text-sm leading-relaxed text-muted">
-              {message}
-            </div>
-          )}
-          {slots["children"]}
+        <div className="flex items-start gap-4">
+          <div className="flex-1">
+            {title != null && (
+              <div className="typo-sub-heading text-xl text-foreground">
+                {title}
+              </div>
+            )}
+            {message != null && (
+              <div className="typo-body text-sm leading-relaxed text-muted">
+                {message}
+              </div>
+            )}
+            {slots["children"]}
+          </div>
+          {slots["close"]}
         </div>
         {slots["loader"]}
-        {slots["buttons"] && <div>{slots["buttons"]}</div>}
+        {slots["buttons"] && (
+          <div className="flex justify-end gap-3">{slots["buttons"]}</div>
+        )}
       </div>
     </div>
   );
 };
 
 const Dialog = Object.assign(_Dialog, {
+  CloseButton,
   DangerButton,
   Loader,
   OutlineButton,

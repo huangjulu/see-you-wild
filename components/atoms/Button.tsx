@@ -1,7 +1,14 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 
-type ButtonTheme = "base" | "solid" | "ghost" | "link" | "text" | "outline";
+type ButtonTheme =
+  | "base"
+  | "solid"
+  | "ghost"
+  | "link"
+  | "text"
+  | "outline"
+  | "danger";
 
 interface ButtonProps {
   children?: React.ReactNode;
@@ -12,25 +19,46 @@ interface ButtonProps {
   icon?: React.ReactNode;
 }
 
+// 所有 box-shaped theme 的共用 layout。
+// link 不套用（link 是 inline text，沒有 box）；base 是首頁 Hero 的大 CTA，自成一格。
+const BOX_LAYOUT =
+  "inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md";
+
 const Button: React.FC<ButtonProps> = (props) => {
   let themeClass: string;
   switch (props.theme) {
     case "solid":
-      themeClass =
-        "bg-accent text-white hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/30";
+      themeClass = cn(
+        BOX_LAYOUT,
+        "bg-accent text-white border-transparent hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/30"
+      );
+      break;
+    case "danger":
+      themeClass = cn(
+        BOX_LAYOUT,
+        "bg-red-500 text-white border-transparent hover:bg-red-600 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-red-500/30"
+      );
       break;
     case "ghost":
-      themeClass =
-        "border-white/60 text-white hover:bg-white/10 hover:border-white";
+      themeClass = cn(
+        BOX_LAYOUT,
+        "border-white/60 text-white hover:bg-white/10 hover:border-white"
+      );
+      break;
+    case "outline":
+      themeClass = cn(
+        BOX_LAYOUT,
+        "border-border-strong text-foreground hover:border-foreground"
+      );
+      break;
+    case "text":
+      themeClass = cn(
+        BOX_LAYOUT,
+        "border-transparent text-foreground hover:opacity-80"
+      );
       break;
     case "link":
       themeClass = "underline underline-offset-4 hover:opacity-80";
-      break;
-    case "text":
-      themeClass = "hover:opacity-80";
-      break;
-    case "outline":
-      themeClass = "border-neutral-300 hover:border-neutral-500";
       break;
     case "base":
     default:
