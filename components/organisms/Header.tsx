@@ -26,7 +26,7 @@ const Header: React.FC = () => {
           className="flex items-center gap-3"
           aria-label={t("siteName")}
         >
-          {/* <Logo size="sm" /> */}
+          <Logo size="sm" />
           <span className="font-serif text-lg font-semibold hidden sm:inline">
             {t("siteName")}
           </span>

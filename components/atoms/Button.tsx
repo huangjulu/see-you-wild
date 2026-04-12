@@ -17,6 +17,7 @@ interface ButtonProps {
   className?: string;
   ariaLabel?: string;
   icon?: React.ReactNode;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 // 所有 box-shaped theme 的共用 layout。
@@ -96,7 +97,11 @@ function renderElement(props: ButtonProps, className: string) {
   }
 
   return (
-    <button className={className} aria-label={props.ariaLabel}>
+    <button
+      className={className}
+      aria-label={props.ariaLabel}
+      onClick={props.onClick}
+    >
       {props.icon}
       {props.children}
     </button>

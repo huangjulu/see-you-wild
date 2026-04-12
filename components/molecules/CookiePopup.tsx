@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Button from "@/components/atoms/Button";
 
 const CookiePopup: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
 
-  useEffect(() => {
+  useEffect(function checkCookieConsent() {
     const dismissed = localStorage.getItem("cookie-consent");
     if (!dismissed) {
       const timer = setTimeout(() => setIsVisible(true), 2000);
@@ -26,12 +27,13 @@ const CookiePopup: React.FC = () => {
         我們使用 Cookie 來提升您的瀏覽體驗。繼續使用本站即表示您同意我們的
         Cookie 政策。
       </p>
-      <button
+      <Button
+        theme="base"
         onClick={handleAccept}
-        className="typo-ui w-full py-2.5 rounded-full text-sm tracking-wider transition-colors duration-200 bg-neutral-400 text-neutral-50"
+        className="w-full py-2.5 px-0 rounded-full text-sm tracking-wider transition-colors duration-200 bg-neutral-400 text-neutral-50 border-transparent"
       >
         我了解了
-      </button>
+      </Button>
     </div>
   );
 };

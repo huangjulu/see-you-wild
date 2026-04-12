@@ -16,7 +16,6 @@ import { SITE_URL } from "@/lib/constants";
 
 type LocaleLayoutProps = PageProps & {
   children: React.ReactNode;
-  // className?: string;
 };
 
 const LocaleLayout: React.FC<LocaleLayoutProps> = async (props) => {
@@ -142,8 +141,7 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
       },
     },
     icons: {
-      icon: "/icons/favicon.ico",
-      apple: "/icons/apple-touch-icon.png",
+      icon: "/icons/favicon.png",
     },
   };
 }

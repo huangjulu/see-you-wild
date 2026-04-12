@@ -2,6 +2,7 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
+import Button from "@/components/atoms/Button";
 import Dialog from "@/components/molecules/Dialog";
 import ModalCard from "@/components/molecules/ModalCard";
 import {
@@ -425,19 +426,35 @@ const PalettePreviewPage: React.FC = () => {
       {/* ═══ BUTTONS ═══ */}
       <section className="mb-16">
         <SectionLabel>Button Styles</SectionLabel>
-        <div className="flex flex-wrap items-center gap-4">
-          <button className="typo-ui rounded-full bg-foreground px-8 py-3 text-sm tracking-widest text-white transition-colors">
-            報名活動
-          </button>
-          <button className="typo-ui rounded-full border border-neutral-300 px-8 py-3 text-sm tracking-widest text-foreground transition-colors">
-            了解更多
-          </button>
-          <button className="typo-ui rounded-full bg-accent px-8 py-3 text-sm tracking-widest text-foreground transition-colors">
-            立即預訂
-          </button>
-          <button className="typo-ui text-sm text-primary-500 underline underline-offset-4">
-            查看所有活動
-          </button>
+        <div className="flex flex-wrap items-center gap-6">
+          <div className="flex flex-col items-center gap-2">
+            <Button theme="base">報名活動</Button>
+            <span className="typo-ui text-xs text-muted">base</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <Button theme="solid">立即預訂</Button>
+            <span className="typo-ui text-xs text-muted">solid</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <Button theme="ghost">了解更多</Button>
+            <span className="typo-ui text-xs text-muted">ghost</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <Button theme="outline">查看活動</Button>
+            <span className="typo-ui text-xs text-muted">outline</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <Button theme="text">聯繫我們</Button>
+            <span className="typo-ui text-xs text-muted">text</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <Button theme="link">查看所有活動</Button>
+            <span className="typo-ui text-xs text-muted">link</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <Button theme="danger">取消報名</Button>
+            <span className="typo-ui text-xs text-muted">danger</span>
+          </div>
         </div>
       </section>
 
@@ -616,9 +633,9 @@ const PalettePreviewPage: React.FC = () => {
             <p className="typo-ui text-sm text-muted">
               為你的團隊量身打造戶外探險行程。
             </p>
-            <button className="typo-ui mt-4 flex items-center gap-2 text-sm text-primary-500">
+            <Button theme="text" className="mt-4 text-primary-500">
               聯繫我們 <IconArrowRight className="size-4" />
-            </button>
+            </Button>
           </div>
           <div className="bg-surface-dark p-8 text-neutral-100">
             <p className="typo-overline mb-1 text-xs text-neutral-400">
@@ -644,7 +661,7 @@ const PalettePreviewPage: React.FC = () => {
           ).map(([key, v]) => (
             <div
               key={key}
-              className="flex w-[380px] flex-col gap-3 rounded-lg border-l-4 p-4 shadow-md"
+              className="flex w-95 flex-col gap-3 rounded-lg border-l-4 p-4 shadow-md"
               style={{
                 backgroundColor: v.bg,
                 borderLeftColor: v.border,
