@@ -106,7 +106,7 @@
 /* ─── SerifDigits: 數字用 Chiron Sung HK，unicode-range 攔截 0-9 和常見符號 ─── */
 @font-face {
   font-family: "SerifDigits";
-  src: local("Chiron Sung HK"), local("Noto Serif TC");
+  src: local("Noto Serif TC");
   font-weight: 100 900;
   font-display: swap;
   unicode-range: U+0030-0039, U+002C, U+002E, U+0025, U+002F, U+2013, U+2014;
