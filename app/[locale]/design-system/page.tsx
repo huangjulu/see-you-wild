@@ -2,6 +2,8 @@
 
 import React from "react";
 import { cn } from "@/lib/utils";
+import Dialog from "@/components/molecules/Dialog";
+import ModalCard from "@/components/molecules/ModalCard";
 import {
   CheckCircle as IconCheckCircle,
   AlertCircle as IconAlertCircle,
@@ -267,12 +269,10 @@ const Swatch: React.FC<{
         props.highlight && "ring-2 ring-black/10"
       )}
     />
-    <span className="font-mono text-[10px]" style={{ color: neutral[500] }}>
+    <span className="font-mono text-[10px] text-neutral-500">
       {props.color}
     </span>
-    <span className="text-[10px]" style={{ color: neutral[400] }}>
-      {props.label}
-    </span>
+    <span className="text-[10px] text-neutral-400">{props.label}</span>
   </div>
 );
 
@@ -297,10 +297,7 @@ const ScaleRow: React.FC<{
 );
 
 const SectionLabel: React.FC<{ children: React.ReactNode }> = (props) => (
-  <h2
-    className="mb-6 text-xs font-medium uppercase tracking-widest"
-    style={{ color: neutral[400] }}
-  >
+  <h2 className="mb-6 text-xs font-medium uppercase tracking-widest text-neutral-400">
     {props.children}
   </h2>
 );
@@ -353,30 +350,21 @@ const PalettePreviewPage: React.FC = () => {
       {/* ═══ TYPOGRAPHY ═══ */}
       <section className="mb-16">
         <SectionLabel>Typography Scale</SectionLabel>
-        <div
-          className="space-y-0 overflow-hidden rounded-xl border"
-          style={{ borderColor: neutral[200] }}
-        >
+        <div className="space-y-0 overflow-hidden rounded-xl border border-border">
           {typoScale.map((t, i) => (
             <div
               key={t.token}
-              className="flex gap-6 border-b p-6 last:border-b-0"
-              style={{
-                borderColor: neutral[200],
-                backgroundColor: i % 2 === 0 ? neutral[50] : tertiary[50],
-              }}
+              className={cn(
+                "flex gap-6 border-b border-border p-6 last:border-b-0",
+                i % 2 === 0 ? "bg-background" : "bg-surface"
+              )}
             >
               {/* Token info */}
               <div className="w-48 shrink-0">
-                <p
-                  className="font-mono text-xs font-medium"
-                  style={{ color: primary[400] }}
-                >
+                <p className="font-mono text-xs font-medium text-accent">
                   {t.token}
                 </p>
-                <p className="mt-1 text-xs" style={{ color: neutral[400] }}>
-                  {t.desc}
-                </p>
+                <p className="mt-1 text-xs text-neutral-400">{t.desc}</p>
                 <div className="mt-2 flex flex-wrap gap-1">
                   {[
                     `w:${t.weight}`,
@@ -388,8 +376,7 @@ const PalettePreviewPage: React.FC = () => {
                     .map((cls) => (
                       <span
                         key={cls}
-                        className="rounded bg-black/5 px-1.5 py-0.5 font-mono text-[10px]"
-                        style={{ color: neutral[600] }}
+                        className="rounded bg-black/5 px-1.5 py-0.5 font-mono text-[10px] text-neutral-600"
                       >
                         {cls}
                       </span>
@@ -410,36 +397,21 @@ const PalettePreviewPage: React.FC = () => {
         </div>
 
         {/* RWD breakpoint reference */}
-        <div
-          className="mt-6 rounded-lg p-4"
-          style={{ backgroundColor: tertiary[50] }}
-        >
-          <p
-            className="mb-2 text-xs font-medium"
-            style={{ color: neutral[500] }}
-          >
+        <div className="mt-6 rounded-lg bg-surface p-4">
+          <p className="mb-2 text-xs font-medium text-muted">
             RWD Breakpoints（Tailwind 預設）
           </p>
-          <div
-            className="flex flex-wrap gap-4 font-mono text-xs"
-            style={{ color: neutral[600] }}
-          >
+          <div className="flex flex-wrap gap-4 font-mono text-xs text-neutral-600">
             <span>sm: 640px</span>
             <span>md: 768px</span>
             <span>lg: 1024px</span>
             <span>xl: 1280px</span>
             <span>2xl: 1536px</span>
           </div>
-          <p
-            className="mt-3 mb-2 text-xs font-medium"
-            style={{ color: neutral[500] }}
-          >
+          <p className="mt-3 mb-2 text-xs font-medium text-muted">
             現有 RWD typography 用法
           </p>
-          <div
-            className="space-y-1 font-mono text-xs"
-            style={{ color: neutral[600] }}
-          >
+          <div className="space-y-1 font-mono text-xs text-neutral-600">
             <p>Hero: text-4xl → md:text-6xl → lg:text-7xl</p>
             <p>Section: text-4xl → md:text-5xl</p>
             <p>Card: text-2xl → md:text-3xl</p>
@@ -466,6 +438,140 @@ const PalettePreviewPage: React.FC = () => {
           <button className="typo-ui text-sm text-primary-500 underline underline-offset-4">
             查看所有活動
           </button>
+        </div>
+      </section>
+
+      {/* ═══ SLOT-BASED COMPONENTS (Dialog / ModalCard) ═══ */}
+      <section className="mb-16">
+        <SectionLabel>Slot-based Components (Dialog / ModalCard)</SectionLabel>
+        <p className="typo-ui mb-6 text-xs text-neutral-400">
+          Dialog / ModalCard 使用 slot 系統分類子元件。消費端傳入 sub-component
+          （如 Dialog.DangerButton），父元件透過 resolveSlots 讀取 slotName
+          分類到對應 slot 區域，子元件順序與 DOM 結構解耦。
+        </p>
+
+        {/* ─── Dialog ─── */}
+        <div className="mb-10">
+          <h3 className="typo-ui mb-4 text-sm text-foreground">Dialog</h3>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="space-y-2">
+              <p className="typo-ui text-xs text-muted">
+                破壞性確認 + CloseButton
+              </p>
+              <Dialog title="刪除活動" message="此操作無法復原，確定要刪除嗎？">
+                <Dialog.CloseButton />
+                <Dialog.DangerButton>刪除</Dialog.DangerButton>
+                <Dialog.OutlineButton>取消</Dialog.OutlineButton>
+              </Dialog>
+            </div>
+
+            <div className="space-y-2">
+              <p className="typo-ui text-xs text-muted">一般確認</p>
+              <Dialog title="儲存成功" message="你的變更已儲存。">
+                <Dialog.PrimaryButton>確定</Dialog.PrimaryButton>
+              </Dialog>
+            </div>
+
+            <div className="space-y-2">
+              <p className="typo-ui text-xs text-muted">Loading</p>
+              <Dialog title="處理中" message="請稍候...">
+                <Dialog.Loader />
+              </Dialog>
+            </div>
+
+            <div className="space-y-2">
+              <p className="typo-ui text-xs text-muted">自訂 children</p>
+              <Dialog title="自訂內容">
+                <p className="typo-body text-foreground">
+                  這是一段自訂的段落，不是預設的 message prop。
+                </p>
+                <Dialog.PrimaryButton>了解</Dialog.PrimaryButton>
+              </Dialog>
+            </div>
+          </div>
+        </div>
+
+        {/* ─── ModalCard ─── */}
+        <div>
+          <h3 className="typo-ui mb-4 text-sm text-foreground">ModalCard</h3>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="space-y-2">
+              <p className="typo-ui text-xs text-muted">完整組合</p>
+              <ModalCard>
+                <ModalCard.Header title="報名確認" description="請確認以下資訊">
+                  <ModalCard.Header.CloseButton />
+                </ModalCard.Header>
+                <ModalCard.Main>
+                  <p className="typo-body">姓名：王小明</p>
+                  <p className="typo-body">活動：溪谷探險 2026/05</p>
+                </ModalCard.Main>
+                <ModalCard.Footer>
+                  <ModalCard.Footer.BackButton>
+                    上一步
+                  </ModalCard.Footer.BackButton>
+                  <ModalCard.Footer.CancelButton>
+                    取消
+                  </ModalCard.Footer.CancelButton>
+                  <ModalCard.Footer.ConfirmButton>
+                    確認報名
+                  </ModalCard.Footer.ConfirmButton>
+                </ModalCard.Footer>
+              </ModalCard>
+            </div>
+
+            <div className="space-y-2">
+              <p className="typo-ui text-xs text-muted">Header + Main</p>
+              <ModalCard>
+                <ModalCard.Header title="活動詳情" />
+                <ModalCard.Main>
+                  <p className="typo-body">這裡是活動的詳細說明內容。</p>
+                </ModalCard.Main>
+              </ModalCard>
+            </div>
+
+            <div className="space-y-2">
+              <p className="typo-ui text-xs text-muted">Main + Footer</p>
+              <ModalCard>
+                <ModalCard.Main>
+                  <p className="typo-body">
+                    你確定要離開嗎？未儲存的變更將會遺失。
+                  </p>
+                </ModalCard.Main>
+                <ModalCard.Footer>
+                  <ModalCard.Footer.ConfirmButton>
+                    離開
+                  </ModalCard.Footer.ConfirmButton>
+                </ModalCard.Footer>
+              </ModalCard>
+            </div>
+
+            <div className="space-y-2">
+              <p className="typo-ui text-xs text-muted">自訂 Header children</p>
+              <ModalCard>
+                <ModalCard.Header>
+                  <div className="flex items-center gap-3">
+                    <span className="typo-overline text-xs text-accent">
+                      NEW
+                    </span>
+                    <h3 className="typo-heading text-lg">自訂 Header</h3>
+                  </div>
+                </ModalCard.Header>
+                <ModalCard.Main>
+                  <p className="typo-body">
+                    Header 使用自訂 children 取代 title/description。
+                  </p>
+                </ModalCard.Main>
+                <ModalCard.Footer>
+                  <ModalCard.Footer.CancelButton>
+                    關閉
+                  </ModalCard.Footer.CancelButton>
+                  <ModalCard.Footer.ConfirmButton>
+                    送出
+                  </ModalCard.Footer.ConfirmButton>
+                </ModalCard.Footer>
+              </ModalCard>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -583,85 +689,40 @@ const PalettePreviewPage: React.FC = () => {
       <section className="mb-16">
         <SectionLabel>Typography Contrast Check</SectionLabel>
         <div className="grid grid-cols-2 gap-4">
-          <div
-            className="rounded-lg p-6"
-            style={{
-              backgroundColor: neutral[50],
-              border: `1px solid ${neutral[200]}`,
-            }}
-          >
-            <p className="mb-1 text-xs" style={{ color: neutral[400] }}>
+          <div className="rounded-lg border border-border bg-background p-6">
+            <p className="mb-1 text-xs text-neutral-400">
               On base-bg (#f4f6f5)
             </p>
-            <p className="text-lg" style={{ color: neutral[800] }}>
-              標題文字 Heading
-            </p>
-            <p className="text-sm" style={{ color: neutral[500] }}>
-              次要文字 Secondary text
-            </p>
-            <p className="text-sm" style={{ color: primary[400] }}>
-              強調色文字 Primary accent
-            </p>
-            <p className="text-sm" style={{ color: green[500] }}>
-              成功色文字 Success
-            </p>
-            <p className="text-sm" style={{ color: red[400] }}>
-              錯誤色文字 Error
-            </p>
+            <p className="text-lg text-foreground">標題文字 Heading</p>
+            <p className="text-sm text-muted">次要文字 Secondary text</p>
+            <p className="text-sm text-accent">強調色文字 Primary accent</p>
+            <p className="text-sm text-success">成功色文字 Success</p>
+            <p className="text-sm text-error">錯誤色文字 Error</p>
           </div>
-          <div
-            className="rounded-lg p-6"
-            style={{ backgroundColor: tertiary[50] }}
-          >
-            <p className="mb-1 text-xs" style={{ color: neutral[400] }}>
+          <div className="rounded-lg bg-surface p-6">
+            <p className="mb-1 text-xs text-neutral-400">
               On tertiary-50 (#f0f5f9)
             </p>
-            <p className="text-lg" style={{ color: neutral[800] }}>
-              標題文字 Heading
-            </p>
-            <p className="text-sm" style={{ color: neutral[500] }}>
-              次要文字 Secondary text
-            </p>
-            <p className="text-sm" style={{ color: primary[400] }}>
-              強調色文字 Primary accent
-            </p>
+            <p className="text-lg text-foreground">標題文字 Heading</p>
+            <p className="text-sm text-muted">次要文字 Secondary text</p>
+            <p className="text-sm text-accent">強調色文字 Primary accent</p>
           </div>
-          <div
-            className="rounded-lg p-6"
-            style={{ backgroundColor: neutral[900] }}
-          >
-            <p className="mb-1 text-xs" style={{ color: neutral[400] }}>
+          <div className="rounded-lg bg-surface-dark p-6">
+            <p className="mb-1 text-xs text-neutral-400">
               On neutral-900 (#242f34)
             </p>
-            <p className="text-lg" style={{ color: neutral[100] }}>
-              標題文字 Heading
-            </p>
-            <p className="text-sm" style={{ color: neutral[400] }}>
-              次要文字 Secondary text
-            </p>
-            <p className="text-sm" style={{ color: primary[400] }}>
-              強調色文字 Primary accent
-            </p>
-            <p className="text-sm" style={{ color: tertiary[400] }}>
-              Tertiary accent
-            </p>
+            <p className="text-lg text-neutral-100">標題文字 Heading</p>
+            <p className="text-sm text-neutral-400">次要文字 Secondary text</p>
+            <p className="text-sm text-accent">強調色文字 Primary accent</p>
+            <p className="text-sm text-info">Tertiary accent</p>
           </div>
-          <div
-            className="rounded-lg p-6"
-            style={{ backgroundColor: primary[400] }}
-          >
-            <p className="mb-1 text-xs" style={{ color: primary[900] }}>
+          <div className="rounded-lg bg-primary-400 p-6">
+            <p className="mb-1 text-xs text-primary-900">
               On primary-400 (#DE954E)
             </p>
-            <p className="text-lg" style={{ color: neutral[800] }}>
-              標題文字 Heading
-            </p>
-            <p className="text-sm" style={{ color: neutral[700] }}>
-              次要文字 Secondary text
-            </p>
-            <p className="text-sm" style={{ color: "#ffffff" }}>
-              白色文字 White text
-            </p>
+            <p className="text-lg text-foreground">標題文字 Heading</p>
+            <p className="text-sm text-neutral-700">次要文字 Secondary text</p>
+            <p className="text-sm text-white">白色文字 White text</p>
           </div>
         </div>
       </section>
@@ -883,10 +944,7 @@ const PalettePreviewPage: React.FC = () => {
       {/* ═══ TOKEN MAP ═══ */}
       <section className="mb-16">
         <SectionLabel>Proposed globals.css Token Map</SectionLabel>
-        <pre
-          className="overflow-x-auto rounded-lg p-6 font-mono text-xs leading-relaxed"
-          style={{ backgroundColor: neutral[900], color: neutral[300] }}
-        >
+        <pre className="overflow-x-auto rounded-lg bg-surface-dark p-6 font-mono text-xs leading-relaxed text-neutral-300">
           {`@theme {
   /* ─── Primary（暖砂橘 #DE954E）─── */
   --color-primary-50:  ${primary[50]};
