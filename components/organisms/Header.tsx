@@ -28,9 +28,9 @@ const Header: React.FC = () => {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b border-surface-brand",
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
         scrolled
-          ? "bg-linear-180 from-surface-deep/80 to-white/20 backdrop-blur-sm border-surface-brand/50"
+          ? "bg-linear-180 from-surface-deep/80 to-surface-deep/20 backdrop-blur-sm border-b border-surface-deep/50"
           : "bg-transparent border-transparent"
       )}
     >
