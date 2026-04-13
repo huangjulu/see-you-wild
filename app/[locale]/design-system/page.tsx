@@ -111,8 +111,8 @@ const semantic = {
   "button-fg": "#ffffff",
   "button-hover": neutral[700],
   surface: tertiary[50],
-  "surface-dark": neutral[900],
-  "surface-dark-fg": neutral[100],
+  "surface-brand": neutral[900],
+  "surface-brand-fg": neutral[100],
   border: neutral[200],
   "border-strong": neutral[300],
   ring: primary[200],
@@ -636,7 +636,7 @@ const PalettePreviewPage: React.FC = () => {
               聯繫我們 <IconArrowRight className="size-4" />
             </Button>
           </div>
-          <div className="bg-surface-dark p-8 text-neutral-100">
+          <div className="bg-surface-brand p-8 text-neutral-100">
             <p className="typo-overline mb-1 text-xs text-neutral-400">
               neutral-900 (#242f34)（Footer）
             </p>
@@ -723,7 +723,7 @@ const PalettePreviewPage: React.FC = () => {
             <p className="text-sm text-muted">次要文字 Secondary text</p>
             <p className="text-sm text-accent">強調色文字 Primary accent</p>
           </div>
-          <div className="rounded-lg bg-surface-dark p-6">
+          <div className="rounded-lg bg-surface-brand p-6">
             <p className="mb-1 text-xs text-neutral-400">
               On neutral-900 (#242f34)
             </p>
@@ -786,7 +786,7 @@ const PalettePreviewPage: React.FC = () => {
               ))}
             </div>
           </div>
-          <div className="bg-surface-dark p-8">
+          <div className="bg-surface-brand p-8">
             <h3 className="typo-sub-heading mb-2 text-2xl text-neutral-100">
               See You Wild
             </h3>
@@ -802,7 +802,7 @@ const PalettePreviewPage: React.FC = () => {
         <SectionLabel>全站模擬 — Rufina + Chiron Sung HK</SectionLabel>
         <div className="overflow-hidden rounded-xl border border-border">
           {/* Hero */}
-          <div className="relative bg-surface-dark p-12 pb-16">
+          <div className="relative bg-surface-brand p-12 pb-16">
             <p className="typo-overline mb-2 text-xs text-accent">
               Taiwan Outdoor Adventure
             </p>
@@ -942,7 +942,7 @@ const PalettePreviewPage: React.FC = () => {
           </div>
 
           {/* Footer */}
-          <div className="bg-surface-dark p-8">
+          <div className="bg-surface-brand p-8">
             <h3 className="typo-display mb-1 text-xl text-neutral-100">
               See You Wild
             </h3>
@@ -960,7 +960,7 @@ const PalettePreviewPage: React.FC = () => {
       {/* ═══ TOKEN MAP ═══ */}
       <section className="mb-16">
         <SectionLabel>Proposed globals.css Token Map</SectionLabel>
-        <pre className="overflow-x-auto rounded-lg bg-surface-dark p-6 font-mono text-xs leading-relaxed text-neutral-300">
+        <pre className="overflow-x-auto rounded-lg bg-surface-brand p-6 font-mono text-xs leading-relaxed text-neutral-300">
           {`@theme {
   /* ─── Primary（暖砂橘 #DE954E）─── */
   --color-primary-50:  ${primary[50]};
@@ -1033,7 +1033,7 @@ const PalettePreviewPage: React.FC = () => {
   --color-muted: ${neutral[500]};
   --color-accent: ${primary[400]};
   --color-surface: ${tertiary[50]};
-  --color-surface-dark: ${neutral[900]};
+  --color-surface-brand: ${neutral[900]};
   --color-border: ${neutral[200]};
   --color-success: ${green[500]};
   --color-error: ${red[400]};

@@ -1,39 +1,23 @@
 "use client";
 
 import { useRef } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { useContext } from "react";
-import { ReducedMotionContext } from "@/stores/motion";
+import { useScrollReveal } from "@/lib/gsap";
 
 const LargeBrandText: React.FC = () => {
   const textRef = useRef<HTMLHeadingElement>(null);
-  const reduceMotion = useContext(ReducedMotionContext);
 
-  useGSAP(function animateFooterText() {
-    const el = textRef.current;
-    if (!el || reduceMotion) return;
-
-    const footerEl = el.closest("footer");
-    if (!footerEl) return;
-
-    gsap.fromTo(
-      el,
-      { y: 100, opacity: 0 },
-      {
-        y: 0,
-        opacity: 0.1,
-        duration: 2,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: footerEl,
-          start: "top bottom",
-          end: "bottom bottom",
-          scrub: true,
-          invalidateOnRefresh: true,
-        },
-      }
-    );
+  useScrollReveal(textRef, {
+    from: { y: 100, opacity: 0 },
+    to: {
+      y: 0,
+      opacity: 0.1,
+      duration: 2,
+      ease: "power3.out",
+      scrollTrigger: {
+        start: "top 60%",
+        toggleActions: "play none none none",
+      },
+    },
   });
 
   return (

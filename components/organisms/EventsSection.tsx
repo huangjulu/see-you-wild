@@ -9,10 +9,10 @@ const EventsSection: React.FC = async () => {
   return (
     <section
       id="events"
-      className="py-20 md:py-28 px-4 bg-surface-dark"
+      className="py-20 md:py-28 px-4 bg-surface-brand"
       style={
         {
-          "--color-foreground": "var(--color-surface-dark-fg)",
+          "--color-foreground": "var(--color-surface-brand-fg)",
           "--color-muted": "var(--color-surface-deep-fg)",
         } as React.CSSProperties
       }

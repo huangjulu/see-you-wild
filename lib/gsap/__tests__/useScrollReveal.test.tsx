@@ -182,6 +182,44 @@ describe("useScrollReveal", () => {
     });
   });
 
+  // ---- stagger batching ----
+
+  describe("stagger batching", () => {
+    it("有 stagger + selector 時用單一 gsap.fromTo 呼叫（array）", () => {
+      const scope = createScopeRef(
+        '<div class="card">1</div><div class="card">2</div><div class="card">3</div>'
+      );
+      const from = { opacity: 0, y: 40 };
+      const to = { opacity: 1, y: 0, stagger: 0.1 };
+
+      renderHook(
+        () => useScrollReveal(scope, { from, to, selector: ".card" }),
+        { wrapper: wrapper(false) }
+      );
+
+      // 應該只呼叫一次，傳入 array
+      expect(mockFromTo).toHaveBeenCalledOnce();
+      const callTarget = (mockFromTo as Mock).mock.calls[0][0];
+      expect(Array.isArray(callTarget)).toBe(true);
+      expect(callTarget).toHaveLength(3);
+    });
+
+    it("沒有 stagger 時維持逐一呼叫", () => {
+      const scope = createScopeRef(
+        '<div class="card">1</div><div class="card">2</div>'
+      );
+      const from = { opacity: 0 };
+      const to = { opacity: 1 };
+
+      renderHook(
+        () => useScrollReveal(scope, { from, to, selector: ".card" }),
+        { wrapper: wrapper(false) }
+      );
+
+      expect(mockFromTo).toHaveBeenCalledTimes(2);
+    });
+  });
+
   // ---- 無 config ----
 
   describe("無 config 時", () => {

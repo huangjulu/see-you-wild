@@ -18,11 +18,11 @@ interface ScrollRevealConfig {
  * 宣告式 scroll 進場動畫，自動處理 reduced motion。
  *
  * @param target  動畫作用的 DOM ref（同時當 useGSAP 的 scope）
- * @param config  from / to / selector
+ * @param reveal  from / to / selector
  */
 function useScrollReveal(
   target: RefObject<HTMLElement | null>,
-  config?: ScrollRevealConfig
+  reveal?: ScrollRevealConfig
 ): void {
   const reduceMotion = useContext(ReducedMotionContext);
 
@@ -32,17 +32,31 @@ function useScrollReveal(
       // reduced motion：跳過動畫，元素直接以最終狀態呈現
       if (reduceMotion) return;
 
-      const elements = config?.selector
-        ? gsap.utils.toArray<HTMLElement>(config.selector, target.current)
+      const elements = reveal?.selector
+        ? gsap.utils.toArray<HTMLElement>(reveal.selector, target.current)
         : [target.current];
 
-      elements.forEach((el) => {
-        if (config?.from) {
-          gsap.fromTo(el, config.from, config.to ?? {});
-        } else if (config?.to) {
-          gsap.to(el, config.to);
+      const to = reveal?.to ?? {};
+
+      // 有 selector（多元素）且設了 stagger → 整包丟給 GSAP 處理交錯
+      // 否則逐一呼叫，讓每個元素各自觸發 ScrollTrigger
+      const shouldBatch = reveal?.selector && to.stagger != null;
+
+      if (shouldBatch) {
+        if (reveal?.from) {
+          gsap.fromTo(elements, reveal.from, to);
+        } else {
+          gsap.to(elements, to);
         }
-      });
+      } else {
+        elements.forEach((el) => {
+          if (reveal?.from) {
+            gsap.fromTo(el, reveal.from, to);
+          } else if (reveal?.to) {
+            gsap.to(el, to);
+          }
+        });
+      }
     },
     { scope: target }
   );

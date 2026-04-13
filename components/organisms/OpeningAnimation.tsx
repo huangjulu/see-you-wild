@@ -23,19 +23,23 @@ const OpeningAnimation: React.FC = () => {
 
       tl.to(brand, { duration: 0.6 });
 
-      tl.fromTo(videoWrap, { opacity: 0 }, { opacity: 1, duration: 0.3 });
+      tl.fromTo(
+        videoWrap,
+        { opacity: 0 },
+        {
+          opacity: 1,
+          filter: "blur(15px)",
+          duration: 0.3,
+          ease: "power3.inOut",
+        }
+      );
       tl.to(videoWrap, {
         scale: 0.7,
-        borderRadius: "2rem",
+        borderRadius: "2.5rem",
+        filter: "blur(0px)",
         duration: 1,
         ease: "power3.inOut",
       });
-
-      tl.to(
-        brand,
-        { opacity: 0, y: -30, duration: 0.4, ease: "power3.in" },
-        "-=0.6"
-      );
 
       tl.to(videoWrap, {
         scale: 1,
@@ -65,8 +69,8 @@ const OpeningAnimation: React.FC = () => {
       className="fixed inset-0 z-50 flex items-center justify-center bg-surface-deep"
     >
       <div ref={brandRef} className="absolute z-10 text-center opacity-0">
-        <p className="typo-display text-5xl md:text-7xl tracking-[0.3em] text-white">
-          AURA WILD
+        <p className="typo-display text-4xl md:text-6xl lg:text-7xl text-white">
+          See You Wild
         </p>
       </div>
       <div

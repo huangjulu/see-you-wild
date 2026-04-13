@@ -22,8 +22,7 @@ interface ButtonProps {
 
 // 所有 box-shaped theme 的共用 layout。
 // link 不套用（link 是 inline text，沒有 box）；base 是首頁 Hero 的大 CTA，自成一格。
-const BOX_LAYOUT =
-  "inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md";
+const BOX_LAYOUT = "items-center justify-center gap-2 px-4 py-2 rounded-md";
 
 const Button: React.FC<ButtonProps> = (props) => {
   let themeClass: string;
@@ -59,7 +58,7 @@ const Button: React.FC<ButtonProps> = (props) => {
       );
       break;
     case "link":
-      themeClass = "underline underline-offset-4 hover:opacity-80";
+      themeClass = "border-none underline underline-offset-4 hover:opacity-80";
       break;
     case "base":
     default:
@@ -82,13 +81,13 @@ export type { ButtonTheme };
 
 function renderElement(props: ButtonProps, className: string) {
   if (props.href != null) {
-    const isExternal = props.external ?? true;
     return (
       <a
         href={props.href}
-        {...(isExternal
-          ? { target: "_blank", rel: "noopener noreferrer" }
-          : {})}
+        {...(props.external && {
+          target: "_blank",
+          rel: "noopener noreferrer",
+        })}
         className={className}
         aria-label={props.ariaLabel}
       >
