@@ -15,7 +15,7 @@ const JOURNEY_KEYS = [
 ] as const;
 
 const JOURNEY_IMAGES = [
-  "https://images.unsplash.com/photo-1600298881979-66e5d5e29a09?w=600&q=80",
+  "https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=600&q=80",
   "https://images.unsplash.com/photo-1504851149312-7a075b496cc7?w=600&q=80",
   "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80",
   "https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&q=80",
