@@ -648,6 +648,81 @@ const PalettePreviewPage: React.FC = () => {
         </div>
       </section>
 
+      {/* ═══ TESTIMONIAL CARD ═══ */}
+      <section className="mb-16">
+        <SectionLabel>Testimonial Card（便利貼風格）</SectionLabel>
+        <p className="typo-ui mb-6 text-xs text-neutral-400">
+          直角卡片 + 紙張邊緣 shadow。預設帶散落旋轉角度，hover
+          時抬起擺正（剝牌效果）。背景層為 SVG ghost cards + radial gradient
+          mask，外包 rounded-3xl clip 容器。
+        </p>
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          {/* Default state */}
+          <div className="space-y-2">
+            <p className="typo-ui text-xs text-muted">Default — 散落</p>
+            <div className="flex justify-center rounded-lg border border-border bg-neutral-50 p-10">
+              <div
+                className={cn(
+                  "w-72 bg-surface-warm px-8 py-10",
+                  "border border-primary-200/40",
+                  "shadow-[0_1px_0_0_rgba(200,180,160,0.3),0_2px_4px_-1px_rgba(45,58,64,0.06),1px_0_0_0_rgba(200,180,160,0.15),-1px_0_0_0_rgba(200,180,160,0.15)]",
+                  "rotate-[-2.5deg]"
+                )}
+              >
+                <p className="typo-body text-base font-light leading-relaxed text-foreground mb-8">
+                  在野溪溫泉裡仰望星空的那一刻，我覺得這才是人生該有的樣子。
+                </p>
+                <p className="typo-ui text-[11px] font-medium tracking-[0.2em] uppercase text-foreground">
+                  Ava L.
+                </p>
+                <p className="typo-ui text-[10px] tracking-[0.15em] text-accent mt-1">
+                  野溪溫泉秘境團
+                </p>
+              </div>
+            </div>
+          </div>
+          {/* Hover state */}
+          <div className="space-y-2">
+            <p className="typo-ui text-xs text-muted">Hover — 挑起</p>
+            <div className="flex justify-center rounded-lg border border-border bg-neutral-50 p-10">
+              <div
+                className={cn(
+                  "w-72 bg-surface-warm px-8 py-10",
+                  "border border-primary-200/40",
+                  "shadow-[0_1px_0_0_rgba(200,180,160,0.4),0_14px_40px_-8px_rgba(45,58,64,0.13),1px_0_0_0_rgba(200,180,160,0.2),-1px_0_0_0_rgba(200,180,160,0.2)]",
+                  "rotate-0 -translate-y-2"
+                )}
+              >
+                <p className="typo-body text-base font-light leading-relaxed text-foreground mb-8">
+                  在野溪溫泉裡仰望星空的那一刻，我覺得這才是人生該有的樣子。
+                </p>
+                <p className="typo-ui text-[11px] font-medium tracking-[0.2em] uppercase text-foreground">
+                  Ava L.
+                </p>
+                <p className="typo-ui text-[10px] tracking-[0.15em] text-accent mt-1">
+                  野溪溫泉秘境團
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Spec notes */}
+        <div className="mt-6 rounded-lg bg-surface p-4">
+          <p className="mb-2 text-xs font-medium text-muted">Motion Spec</p>
+          <div className="space-y-1 font-mono text-xs text-neutral-600">
+            <p>
+              Scroll reveal: opacity 0→1, duration 1s, power3.out（整組一次，不
+              stagger）
+            </p>
+            <p>
+              Hover: translateY(-8px) + rotate(0deg) + shadow-lg, 500ms
+              cubic-bezier(0.23, 1, 0.32, 1)
+            </p>
+            <p>Reduced motion: 跳過 fade-in，hover 保留</p>
+          </div>
+        </div>
+      </section>
+
       {/* ═══ TOAST ═══ */}
       <section className="mb-16">
         <SectionLabel>Toast Variants</SectionLabel>

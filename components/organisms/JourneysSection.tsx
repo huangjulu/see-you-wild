@@ -2,11 +2,29 @@
 
 import React, { useRef } from "react";
 import gsap from "gsap";
+import { useTranslations } from "@/lib/i18n/client";
 import { useTimeline } from "@/lib/gsap";
 import JourneyCard from "@/components/molecules/JourneyCard";
 import Button from "@/components/atoms/Button";
 
+const JOURNEY_KEYS = [
+  "hot-spring",
+  "camping",
+  "sup",
+  "tree-climbing",
+  "river-tracing",
+] as const;
+
+const JOURNEY_IMAGES = [
+  "https://images.unsplash.com/photo-1600298881979-66e5d5e29a09?w=600&q=80",
+  "https://images.unsplash.com/photo-1504851149312-7a075b496cc7?w=600&q=80",
+  "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80",
+  "https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&q=80",
+  "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&q=80",
+];
+
 const JourneysSection: React.FC = () => {
+  const t = useTranslations("home.journeys");
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
@@ -59,10 +77,10 @@ const JourneysSection: React.FC = () => {
         <div className="flex items-end justify-between px-6 md:px-12 mb-10">
           <div>
             <p className="typo-overline text-sm mb-4 text-surface-brand-fg/70">
-              Journeys
+              {t("overline")}
             </p>
             <h2 className="typo-display text-4xl md:text-5xl text-surface-brand-fg">
-              探索旅程
+              {t("title")}
             </h2>
           </div>
           <Button
@@ -70,16 +88,16 @@ const JourneysSection: React.FC = () => {
             href="/journeys"
             className="text-surface-brand-fg/70 hover:text-surface-brand-fg"
           >
-            探索更多 →
+            {t("exploreMore")}
           </Button>
         </div>
         <div ref={trackRef} className="flex gap-6 px-6 md:px-12 w-fit">
-          {JOURNEYS.map((journey) => (
+          {JOURNEY_KEYS.map((key, i) => (
             <JourneyCard
-              key={journey.title}
-              title={journey.title}
-              subtitle={journey.subtitle}
-              image={journey.image}
+              key={key}
+              title={t(`items.${key}.title`)}
+              subtitle={t(`items.${key}.subtitle`)}
+              image={JOURNEY_IMAGES[i]}
             />
           ))}
         </div>
@@ -90,36 +108,3 @@ const JourneysSection: React.FC = () => {
 
 JourneysSection.displayName = "JourneysSection";
 export default JourneysSection;
-
-const JOURNEYS = [
-  {
-    title: "野溪溫泉秘境",
-    subtitle: "Hot Spring",
-    image:
-      "https://images.unsplash.com/photo-1600298881979-66e5d5e29a09?w=600&q=80",
-  },
-  {
-    title: "星空野營私廚",
-    subtitle: "Wild Camping",
-    image:
-      "https://images.unsplash.com/photo-1504851149312-7a075b496cc7?w=600&q=80",
-  },
-  {
-    title: "SUP 立槳日出團",
-    subtitle: "Paddleboarding",
-    image:
-      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80",
-  },
-  {
-    title: "攀樹森林浴",
-    subtitle: "Tree Climbing",
-    image:
-      "https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&q=80",
-  },
-  {
-    title: "溯溪探險",
-    subtitle: "River Tracing",
-    image:
-      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&q=80",
-  },
-];

@@ -3,8 +3,8 @@
     "siteName": "See You Wild",
     "nav": {
       "events": "Events",
-      "privateGroup": "Private Group",
-      "contact": "Contact"
+      "contact": "Contact",
+      "exploreCta": "Explore"
     },
     "footer": {
       "rights": "All rights reserved."
@@ -15,9 +15,10 @@
       "retry": "Try again"
     },
     "notFound": {
-      "heading": "404",
-      "message": "Page not found",
-      "backHome": "Back to Home"
+      "code": "404",
+      "title": "Trail Not Found",
+      "message": "This trail hasn't been explored yet. Let's head back to camp.",
+      "backHome": "Back to Camp"
     },
     "cookie": {
       "message": "We use cookies to enhance your experience.",
@@ -28,6 +29,94 @@
     "hero": {
       "tagline": "Between Mountains & Sea — Set Your Soul Free",
       "heroImageAlt": "Outdoor river valley camping scene surrounded by mountains and water"
+    },
+    "philosophy": {
+      "overline": "Our Philosophy",
+      "title": "In nature,\nfind your true self.",
+      "body1": "We believe the most profound experiences come between mountains and sea. Each journey is a dialogue with nature — in the vastness of sky and earth, shed the weight of the city and feel the rhythm of life once more.",
+      "body2": "See You Wild is not just outdoor adventure, but a journey of the soul set free. We meticulously craft every detail so you find your own rhythm between wildness and grace.",
+      "imageAlt": "Nature philosophy"
+    },
+    "journeys": {
+      "overline": "Journeys",
+      "title": "Explore Journeys",
+      "exploreMore": "See All →",
+      "items": {
+        "hot-spring": {
+          "title": "Hidden Hot Springs",
+          "subtitle": "Hot Spring"
+        },
+        "camping": { "title": "Starlit Wild Chef", "subtitle": "Wild Camping" },
+        "sup": { "title": "SUP Sunrise Tour", "subtitle": "Paddleboarding" },
+        "tree-climbing": {
+          "title": "Tree Climbing Forest Bath",
+          "subtitle": "Tree Climbing"
+        },
+        "river-tracing": {
+          "title": "River Tracing Adventure",
+          "subtitle": "River Tracing"
+        }
+      }
+    },
+    "whyChooseUs": {
+      "overline": "Why Choose Us",
+      "title": "Why Choose Us",
+      "items": {
+        "safety": {
+          "title": "Safety First",
+          "desc": "Every guide holds professional certifications with regular training and equipment maintenance, so you can enjoy every moment with peace of mind."
+        },
+        "experience": {
+          "title": "Deep Experiences",
+          "desc": "We don't follow tourist routes. Every trail is scouted firsthand to show you Taiwan's most pristine beauty."
+        },
+        "quality": {
+          "title": "Quality in Details",
+          "desc": "From pre-trip preparation to post-adventure photo records, every detail is polished to leave you with memories worth treasuring."
+        }
+      }
+    },
+    "testimonials": {
+      "overline": "Stories",
+      "title": "Voices from the Wild",
+      "items": {
+        "ava": {
+          "quote": "The moment I looked up at the stars from the wild hot spring, I knew this is what life should feel like.",
+          "author": "Ava L.",
+          "trip": "Wild Hot Spring Tour"
+        },
+        "james": {
+          "quote": "The private chef's dishes taste completely different in the wilderness — every bite was pure happiness. The team took care of every detail, worry-free.",
+          "author": "James K.",
+          "trip": "Starlit Wild Chef"
+        },
+        "mei": {
+          "quote": "Paddling out on the SUP at sunrise, the ocean was like a mirror. The most peaceful moment I've ever experienced.",
+          "author": "Mei W.",
+          "trip": "SUP Sunrise Tour"
+        },
+        "chris": {
+          "quote": "Tree climbing gave me an entirely new perspective on the forest. The world in the canopy is absolutely breathtaking.",
+          "author": "Chris T.",
+          "trip": "Tree Climbing Forest Bath"
+        },
+        "sophie": {
+          "quote": "I thought it was just regular camping, but it turned out to be a complete sensory experience. Already booked the next one!",
+          "author": "Sophie C.",
+          "trip": "Wild Chef Experience"
+        },
+        "david": {
+          "quote": "River tracing was both challenging and full of surprises. The coaches were incredibly professional, letting us enjoy every moment with confidence.",
+          "author": "David H.",
+          "trip": "River Tracing Tour"
+        }
+      }
+    },
+    "cta": {
+      "title": "begin your journey",
+      "description": "Discover our curated expeditions and find the journey that best elevates your wild experience.",
+      "button": "Explore More",
+      "imageAlt": "Wilderness camp scene looking out from tent into forest"
     },
     "events": {
       "sectionLabel": "Events",
@@ -51,12 +140,6 @@
           "imageAlt": "Wild hot spring scene with natural springs emerging between rocks and streams"
         }
       }
-    },
-    "privateGroup": {
-      "title": "Friends Private Group",
-      "subtitle": "4 People to Go — You Pick the Date",
-      "description": "Gather friends, pick a date — your own outdoor adventure. Minimum 4 people, customized itinerary for the ultimate freedom experience.",
-      "cta": "Inquire Now"
     },
     "contact": {
       "heading": "Follow Us",

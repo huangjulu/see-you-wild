@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useRef } from "react";
+import { useTranslations } from "@/lib/i18n/client";
 import { useScrollReveal } from "@/lib/gsap";
 
 const PhilosophySection: React.FC = () => {
+  const t = useTranslations("home.philosophy");
   const sectionRef = useRef<HTMLElement>(null);
 
   useScrollReveal(sectionRef, {
@@ -30,26 +32,30 @@ const PhilosophySection: React.FC = () => {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
         <div className="space-y-8">
           <p className="reveal-up gsap-reveal typo-overline text-sm text-muted-warm">
-            Our Philosophy
+            {t("overline")}
           </p>
           <h2 className="reveal-up gsap-reveal typo-display text-4xl md:text-5xl lg:text-6xl leading-tight text-foreground">
-            在自然中，
-            <br />
-            找到真實的自己。
+            {t("title")
+              .split("\n")
+              .map((line, i) => (
+                <React.Fragment key={i}>
+                  {i > 0 && <br />}
+                  {line}
+                </React.Fragment>
+              ))}
           </h2>
           <p className="reveal-up gsap-reveal typo-body text-lg leading-relaxed text-foreground/70">
-            我們相信，最深刻的體驗來自山林與海洋之間。每一趟旅程都是一次與自然的對話，在遼闊的天地間，卸下城市的枷鎖，重新感受生命的律動。
+            {t("body1")}
           </p>
           <p className="reveal-up gsap-reveal typo-body text-lg leading-relaxed text-foreground/70">
-            See You Wild
-            不只是戶外探險，而是一場靈魂的撒野。我們精心策劃每一個細節，讓你在野性與優雅之間，找到屬於自己的節奏。
+            {t("body2")}
           </p>
         </div>
         <div className="reveal-up gsap-reveal">
           <div className="relative rounded-2xl overflow-hidden aspect-[3/4]">
             <img
               src="https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=800&q=80"
-              alt="Nature philosophy"
+              alt={t("imageAlt")}
               className="w-full h-full object-cover"
             />
           </div>

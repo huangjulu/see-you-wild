@@ -21,7 +21,7 @@ const Header: React.FC = () => {
   }, []);
 
   const navLinks = [
-    { label: t("nav.privateGroup"), href: NAV_ANCHORS.privateGroup },
+    { label: t("nav.events"), href: NAV_ANCHORS.events },
     { label: t("nav.contact"), href: NAV_ANCHORS.contact },
   ];
 
@@ -58,6 +58,12 @@ const Header: React.FC = () => {
           {navLinks.map((link) => (
             <NavLink key={link.href} href={link.href} label={link.label} />
           ))}
+          <a
+            href="/journeys"
+            className="typo-ui ml-2 rounded-full bg-accent px-5 py-1.5 text-xs tracking-widest text-white transition-all duration-300 hover:bg-accent-hover"
+          >
+            {t("nav.exploreCta")}
+          </a>
         </nav>
 
         <button
@@ -86,6 +92,13 @@ const Header: React.FC = () => {
             onClick={() => setMenuOpen(false)}
           />
         ))}
+        <a
+          href="/journeys"
+          className="typo-ui rounded-full bg-accent px-5 py-2 text-center text-xs tracking-widest text-white transition-all duration-300 hover:bg-accent-hover"
+          onClick={() => setMenuOpen(false)}
+        >
+          {t("nav.exploreCta")}
+        </a>
       </nav>
     </header>
   );

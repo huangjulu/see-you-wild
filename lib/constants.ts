@@ -30,11 +30,7 @@ export const EVENTS_CONFIG: EventConfig[] = [
   },
 ];
 
-export const PRIVATE_GROUP_CTA_URL =
-  "https://www.instagram.com/c_you_wild?igsh=cGE3aGl0MGJvOTFt";
-
 export const NAV_ANCHORS = {
   events: "#events",
-  privateGroup: "#private-group",
   contact: "#contact",
 };

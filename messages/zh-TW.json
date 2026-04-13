@@ -3,8 +3,8 @@
     "siteName": "See You Wild 西揪團",
     "nav": {
       "events": "活動行程",
-      "privateGroup": "包團諮詢",
-      "contact": "聯絡我們"
+      "contact": "聯絡我們",
+      "exploreCta": "開始探索"
     },
     "footer": {
       "rights": "All rights reserved."
@@ -15,9 +15,10 @@
       "retry": "重新嘗試"
     },
     "notFound": {
-      "heading": "404",
-      "message": "找不到這個頁面",
-      "backHome": "回到首頁"
+      "code": "404",
+      "title": "走進了未知的山徑",
+      "message": "這條路似乎還沒有人走過，讓我們回到營地重新出發。",
+      "backHome": "回到營地"
     },
     "cookie": {
       "message": "我們使用 cookie 來提升您的體驗。",
@@ -28,6 +29,85 @@
     "hero": {
       "tagline": "山海之間・野放靈魂",
       "heroImageAlt": "戶外溪谷露營場景，青山綠水環繞"
+    },
+    "philosophy": {
+      "overline": "Our Philosophy",
+      "title": "在自然中，\n找到真實的自己。",
+      "body1": "我們相信，最深刻的體驗來自山林與海洋之間。每一趟旅程都是一次與自然的對話，在遼闊的天地間，卸下城市的枷鎖，重新感受生命的律動。",
+      "body2": "See You Wild 不只是戶外探險，而是一場靈魂的撒野。我們精心策劃每一個細節，讓你在野性與優雅之間，找到屬於自己的節奏。",
+      "imageAlt": "自然哲學"
+    },
+    "journeys": {
+      "overline": "Journeys",
+      "title": "探索旅程",
+      "exploreMore": "探索更多 →",
+      "items": {
+        "hot-spring": { "title": "野溪溫泉秘境", "subtitle": "Hot Spring" },
+        "camping": { "title": "星空野營私廚", "subtitle": "Wild Camping" },
+        "sup": { "title": "SUP 立槳日出團", "subtitle": "Paddleboarding" },
+        "tree-climbing": { "title": "攀樹森林浴", "subtitle": "Tree Climbing" },
+        "river-tracing": { "title": "溯溪探險", "subtitle": "River Tracing" }
+      }
+    },
+    "whyChooseUs": {
+      "overline": "Why Choose Us",
+      "title": "為什麼選擇我們",
+      "items": {
+        "safety": {
+          "title": "安全至上",
+          "desc": "每位嚮導均持有專業證照，定期訓練與裝備檢修，讓妳安心享受每一刻。"
+        },
+        "experience": {
+          "title": "深度體驗",
+          "desc": "我們不走觀光路線，每條路線都經過實地探勘，帶妳看見台灣最原始的美。"
+        },
+        "quality": {
+          "title": "質感細節",
+          "desc": "從行前準備到活動後的照片紀錄，每個環節都為妳精心打磨，留下值得珍藏的記憶。"
+        }
+      }
+    },
+    "testimonials": {
+      "overline": "Stories",
+      "title": "野地裡的真心話",
+      "items": {
+        "ava": {
+          "quote": "在野溪溫泉裡仰望星空的那一刻，我覺得這才是人生該有的樣子。",
+          "author": "Ava L.",
+          "trip": "野溪溫泉秘境團"
+        },
+        "james": {
+          "quote": "私廚的料理在大自然裡吃起來特別不同，每一口都是幸福。團隊把每個細節都照顧得很好，完全不用擔心。",
+          "author": "James K.",
+          "trip": "星空野營私廚"
+        },
+        "mei": {
+          "quote": "SUP 在日出時分划出去，海面像鏡子一樣。這是我體驗過最平靜的時刻。",
+          "author": "Mei W.",
+          "trip": "SUP 立槳日出團"
+        },
+        "chris": {
+          "quote": "攀樹讓我用全新的視角看森林，樹冠層的世界太令人驚嘆了。",
+          "author": "Chris T.",
+          "trip": "攀樹森林浴"
+        },
+        "sophie": {
+          "quote": "原本以為只是普通的露營，結果是一場完整的五感體驗。已經預約下一團了！",
+          "author": "Sophie C.",
+          "trip": "野營私廚體驗"
+        },
+        "david": {
+          "quote": "溯溪的過程有挑戰也有驚喜，教練非常專業，讓我們安心享受每一刻。",
+          "author": "David H.",
+          "trip": "溯溪探險團"
+        }
+      }
+    },
+    "cta": {
+      "title": "begin your journey",
+      "description": "探索我們精心策劃的旅程，找到最能提升你野外體驗的那一趟。",
+      "button": "探索更多",
+      "imageAlt": "帳篷內望向森林的露營場景"
     },
     "events": {
       "sectionLabel": "活動行程",
@@ -51,12 +131,6 @@
           "imageAlt": "野溪溫泉場景，溪水與岩石間冒出天然溫泉"
         }
       }
-    },
-    "privateGroup": {
-      "title": "摯友微包團",
-      "subtitle": "4人即刻成行・日期你決定",
-      "description": "揪好友、選日期，專屬於你們的戶外冒險。4 人即可成團，行程客製化，給你最自由的野放體驗。",
-      "cta": "立即諮詢"
     },
     "contact": {
       "heading": "Follow Us",

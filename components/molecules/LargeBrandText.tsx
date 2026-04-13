@@ -14,8 +14,9 @@ const LargeBrandText: React.FC = () => {
       duration: 2,
       ease: "power3.out",
       scrollTrigger: {
-        start: "top 60%",
-        toggleActions: "play none none none",
+        start: "top 80%",
+        end: "bottom 20%",
+        scrub: 1,
       },
     },
   });

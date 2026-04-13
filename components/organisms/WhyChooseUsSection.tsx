@@ -6,9 +6,14 @@ import {
   Mountain as IconMountain,
   Sparkles as IconSparkles,
 } from "lucide-react";
+import { useTranslations } from "@/lib/i18n/client";
 import { useScrollReveal } from "@/lib/gsap";
 
+const VALUE_KEYS = ["safety", "experience", "quality"] as const;
+const VALUE_ICONS = [IconShield, IconMountain, IconSparkles];
+
 const WhyChooseUsSection: React.FC = () => {
+  const t = useTranslations("home.whyChooseUs");
   const sectionRef = useRef<HTMLElement>(null);
 
   useScrollReveal(sectionRef, {
@@ -35,29 +40,32 @@ const WhyChooseUsSection: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <p className="typo-overline text-sm mb-4 text-muted-warm">
-            Why Choose Us
+            {t("overline")}
           </p>
           <h2 className="typo-display text-4xl md:text-5xl text-foreground">
-            為什麼選擇我們
+            {t("title")}
           </h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-          {VALUES.map((item) => (
-            <div
-              key={item.title}
-              className="why-item flex flex-col items-center text-center space-y-4"
-            >
-              <div className="flex size-14 items-center justify-center rounded-full bg-primary-100">
-                <item.icon className="size-6 text-accent" />
+          {VALUE_KEYS.map((key, i) => {
+            const Icon = VALUE_ICONS[i];
+            return (
+              <div
+                key={key}
+                className="why-item flex flex-col items-center text-center space-y-4"
+              >
+                <div className="flex size-14 items-center justify-center rounded-full bg-primary-100">
+                  <Icon className="size-6 text-accent" />
+                </div>
+                <h3 className="typo-sub-heading text-xl text-foreground">
+                  {t(`items.${key}.title`)}
+                </h3>
+                <p className="typo-body text-base leading-relaxed text-foreground/70">
+                  {t(`items.${key}.desc`)}
+                </p>
               </div>
-              <h3 className="typo-sub-heading text-xl text-foreground">
-                {item.title}
-              </h3>
-              <p className="typo-body text-base leading-relaxed text-foreground/70">
-                {item.desc}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
@@ -66,21 +74,3 @@ const WhyChooseUsSection: React.FC = () => {
 
 WhyChooseUsSection.displayName = "WhyChooseUsSection";
 export default WhyChooseUsSection;
-
-const VALUES = [
-  {
-    icon: IconShield,
-    title: "安全至上",
-    desc: "每位嚮導均持有專業證照，定期訓練與裝備檢修，讓妳安心享受每一刻。",
-  },
-  {
-    icon: IconMountain,
-    title: "深度體驗",
-    desc: "我們不走觀光路線，每條路線都經過實地探勘，帶妳看見台灣最原始的美。",
-  },
-  {
-    icon: IconSparkles,
-    title: "質感細節",
-    desc: "從行前準備到活動後的照片紀錄，每個環節都為妳精心打磨，留下值得珍藏的記憶。",
-  },
-];

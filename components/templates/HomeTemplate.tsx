@@ -2,9 +2,9 @@ import HeroSection from "@/components/organisms/HeroSection";
 import OpeningAnimation from "@/components/organisms/OpeningAnimation";
 import PhilosophySection from "@/components/organisms/PhilosophySection";
 import JourneysSection from "@/components/organisms/JourneysSection";
+import CTASection from "@/components/organisms/CTASection";
 import WhyChooseUsSection from "@/components/organisms/WhyChooseUsSection";
 import TestimonialsSection from "@/components/organisms/TestimonialsSection";
-import PrivateGroupSection from "@/components/organisms/PrivateGroupSection";
 import ContactSection from "@/components/organisms/ContactSection";
 import CookiePopup from "@/components/molecules/CookiePopup";
 
@@ -16,8 +16,8 @@ const HomeTemplate: React.FC = () => {
       <PhilosophySection />
       <JourneysSection />
       <WhyChooseUsSection />
+      <CTASection />
       <TestimonialsSection />
-      <PrivateGroupSection />
       <ContactSection />
       <CookiePopup />
     </main>
