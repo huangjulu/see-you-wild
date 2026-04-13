@@ -2,13 +2,13 @@
 
 import React, { useRef } from "react";
 import { useTranslations } from "@/lib/i18n/client";
-import { useScrollReveal } from "@/lib/gsap";
+import { useTween } from "@/lib/gsap";
 
 const PhilosophySection: React.FC = () => {
   const t = useTranslations("home.philosophy");
   const sectionRef = useRef<HTMLElement>(null);
 
-  useScrollReveal(sectionRef, {
+  useTween(sectionRef, {
     selector: ".reveal-up",
     from: { opacity: 0, y: 40 },
     to: {

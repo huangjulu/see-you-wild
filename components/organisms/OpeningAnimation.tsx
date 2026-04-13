@@ -72,11 +72,15 @@ const OpeningAnimation: React.FC = () => {
     },
     {
       lockScroll: true,
-      hideOnDone: true,
-      onDone: () => {
-        window.dispatchEvent(new CustomEvent("opening-animation-complete"));
+      onComplete: () => {
+        const el = containerRef.current;
+        if (el) {
+          el.style.display = "none";
+          el.setAttribute("aria-hidden", "true");
+        }
       },
-    }
+    },
+    "opening-done"
   );
 
   return (

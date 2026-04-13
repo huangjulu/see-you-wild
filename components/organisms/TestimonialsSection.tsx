@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import { useScrollReveal } from "@/lib/gsap";
+import { useTween } from "@/lib/gsap";
 import { useTranslations } from "@/lib/i18n/client";
 import TestimonialCard from "@/components/molecules/TestimonialCard";
 
@@ -129,7 +129,7 @@ const TestimonialsSection: React.FC = () => {
   const t = useTranslations("home.testimonials");
   const sectionRef = useRef<HTMLElement>(null);
 
-  useScrollReveal(sectionRef, {
+  useTween(sectionRef, {
     selector: ".testimonial-card",
     from: { opacity: 0 },
     to: {

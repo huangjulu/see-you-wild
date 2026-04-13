@@ -7,7 +7,7 @@ import {
   Sparkles as IconSparkles,
 } from "lucide-react";
 import { useTranslations } from "@/lib/i18n/client";
-import { useScrollReveal } from "@/lib/gsap";
+import { useTween } from "@/lib/gsap";
 
 const VALUE_KEYS = ["safety", "experience", "quality"] as const;
 const VALUE_ICONS = [IconShield, IconMountain, IconSparkles];
@@ -16,7 +16,7 @@ const WhyChooseUsSection: React.FC = () => {
   const t = useTranslations("home.whyChooseUs");
   const sectionRef = useRef<HTMLElement>(null);
 
-  useScrollReveal(sectionRef, {
+  useTween(sectionRef, {
     selector: ".why-item",
     from: { opacity: 0, y: 50 },
     to: {
