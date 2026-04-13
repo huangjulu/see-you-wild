@@ -16,6 +16,19 @@ function scrollLock() {
   };
 }
 
+/**
+ * 建立一條 GSAP timeline，自動處理 reduced motion 與生命週期。
+ *
+ * @param scope   動畫容器 ref（同時限定 GSAP 選擇器查詢範圍）
+ * @param animate 拿到 timeline 和 DOM 元素後排動畫的 callback
+ * @param control gsap.TimelineVars 擴展選項，包含：
+ *                - lockScroll?: boolean — mount 時鎖住 body 滾動，onComplete 或 unmount 時自動解鎖
+ *                - paused?: boolean — 初始暫停（需搭配 cue 使用）
+ *                - onComplete?: () => void — 內部會依序執行：unlock → 使用者 onComplete → 若 !paused 則 dispatch cue
+ * @param cue     CustomEvent 名稱，用於元件間溝通：無 cue 時忽略；
+ *                - paused: false（default）— 動畫完成時 dispatch event
+ *                - paused: true — 監聽 cue event 並自動觸發 timeline.play()
+ */
 function useTimeline(
   scope: RefObject<HTMLElement | null>,
   animate: (tl: gsap.core.Timeline, el: HTMLElement) => void,
@@ -30,7 +43,7 @@ function useTimeline(
       const el = scope.current;
 
       if (reduceMotion) {
-        control?.onComplete?.call(undefined);
+        control?.onComplete?.();
         if (cue && !control?.paused) {
           window.dispatchEvent(new CustomEvent(cue));
         }
@@ -46,7 +59,7 @@ function useTimeline(
       const userOnComplete = timelineVars.onComplete;
       timelineVars.onComplete = function mergedOnComplete() {
         unlock?.();
-        userOnComplete?.call(undefined);
+        userOnComplete?.();
         if (cue && !control?.paused) {
           window.dispatchEvent(new CustomEvent(cue));
         }
