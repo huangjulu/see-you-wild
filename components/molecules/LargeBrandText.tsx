@@ -1,12 +1,12 @@
 "use client";
 
 import { useRef } from "react";
-import { useScrollReveal } from "@/lib/gsap";
+import { useTween } from "@/lib/gsap";
 
 const LargeBrandText: React.FC = () => {
   const textRef = useRef<HTMLHeadingElement>(null);
 
-  useScrollReveal(textRef, {
+  useTween(textRef, {
     from: { y: 100, opacity: 0 },
     to: {
       y: 0,
