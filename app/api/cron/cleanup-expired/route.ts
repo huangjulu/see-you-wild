@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase/client";
+import { getSupabase } from "@/lib/supabase/client";
 
 export async function POST(request: Request) {
   const authHeader = request.headers.get("authorization");
@@ -9,7 +9,7 @@ export async function POST(request: Request) {
 
   const now = new Date().toISOString();
 
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from("registrations")
     .delete()
     .eq("status", "pending")

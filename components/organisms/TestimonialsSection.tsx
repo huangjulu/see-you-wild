@@ -1,8 +1,58 @@
 "use client";
 
-import { useRef } from "react";
-import { gsap, useGSAP } from "@/lib/gsap";
+import React, { useRef } from "react";
+import { useScrollReveal } from "@/lib/gsap";
 import TestimonialCard from "@/components/molecules/TestimonialCard";
+
+const TestimonialsSection: React.FC = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useScrollReveal(sectionRef, {
+    selector: ".testimonial-card",
+    from: { opacity: 0, y: 40 },
+    to: {
+      opacity: 1,
+      y: 0,
+      duration: 1,
+      ease: "power3.out",
+      scrollTrigger: {
+        start: "top 80%",
+        toggleActions: "play none none none",
+      },
+    },
+  });
+
+  return (
+    <section
+      ref={sectionRef}
+      className="py-24 md:py-32 px-6 md:px-12 bg-primary-100"
+    >
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <p className="typo-overline text-sm mb-4 text-muted-warm">
+            Testimonials
+          </p>
+          <h2 className="typo-display text-4xl md:text-5xl text-foreground">
+            旅人心聲
+          </h2>
+        </div>
+        <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
+          {TESTIMONIALS.map((testimonial) => (
+            <TestimonialCard
+              key={testimonial.author}
+              quote={testimonial.quote}
+              author={testimonial.author}
+              trip={testimonial.trip}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+TestimonialsSection.displayName = "TestimonialsSection";
+export default TestimonialsSection;
 
 const TESTIMONIALS = [
   {
@@ -38,72 +88,3 @@ const TESTIMONIALS = [
     trip: "溯溪探險團",
   },
 ];
-
-function TestimonialsSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useGSAP(
-    () => {
-      gsap.utils.toArray<HTMLElement>(".testimonial-card").forEach((el, i) => {
-        gsap.fromTo(
-          el,
-          { opacity: 0, y: 40 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            delay: i * 0.1,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 90%",
-              toggleActions: "play none none none",
-            },
-          }
-        );
-      });
-    },
-    { scope: sectionRef }
-  );
-
-  return (
-    <section
-      ref={sectionRef}
-      className="py-24 md:py-32 px-6 md:px-12"
-      style={{ backgroundColor: "#FDFBF7" }}
-    >
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <p
-            className="text-sm tracking-[0.3em] uppercase mb-4"
-            style={{ color: "#A69B8D" }}
-          >
-            Testimonials
-          </p>
-          <h2
-            className="text-4xl md:text-5xl"
-            style={{
-              fontFamily: "var(--font-display)",
-              color: "#2C352D",
-            }}
-          >
-            旅人心聲
-          </h2>
-        </div>
-        <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
-          {TESTIMONIALS.map((testimonial) => (
-            <TestimonialCard
-              key={testimonial.author}
-              quote={testimonial.quote}
-              author={testimonial.author}
-              trip={testimonial.trip}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-TestimonialsSection.displayName = "TestimonialsSection";
-export default TestimonialsSection;

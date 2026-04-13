@@ -16,12 +16,12 @@ describe("Text", () => {
 
   it("applies primary text color by default", () => {
     render(<Text>Primary</Text>);
-    expect(screen.getByText("Primary").className).toContain("text-text-primary");
+    expect(screen.getByText("Primary").className).toContain("text-foreground");
   });
 
   it("applies muted text color when muted=true", () => {
     render(<Text muted>Muted</Text>);
-    expect(screen.getByText("Muted").className).toContain("text-text-muted");
+    expect(screen.getByText("Muted").className).toContain("text-muted");
   });
 
   it("merges custom className", () => {

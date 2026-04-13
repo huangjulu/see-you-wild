@@ -5,21 +5,27 @@ interface LogoProps {
   className?: string;
 }
 
-function Logo(props: LogoProps) {
-  const size = props.size ?? "lg";
-  const dimensions =
-    size === "lg" ? { width: 200, height: 200 } : { width: 48, height: 48 };
+const Logo: React.FC<LogoProps> = (props) => {
+  const { size = "lg" } = props;
 
   return (
     <Image
-      src="/images/logo.png"
-      alt="See You Wild 西揪團 — 石虎貓咪戴護目鏡品牌 Logo"
-      {...dimensions}
-      className={props.className ?? ""}
-      priority={size === "lg"}
+      className={props.className}
+      width={size == "lg" ? LG_SIZE : SM_SIZE}
+      height={size == "lg" ? LG_SIZE : SM_SIZE}
+      priority={size == "lg"}
+      {...logoConfig}
     />
   );
-}
+};
 
 Logo.displayName = "Logo";
 export default Logo;
+
+const LG_SIZE = 200;
+const SM_SIZE = 48;
+
+const logoConfig = {
+  src: "/images/logo.png",
+  alt: "See You Wild 西揪團 — 石虎貓咪戴護目鏡品牌 Logo",
+} as const;

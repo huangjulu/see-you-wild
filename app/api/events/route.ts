@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase/client";
+import { getSupabase } from "@/lib/supabase/client";
 import { createEventSchema } from "@/lib/validations/events";
 import type {
   EventRow,
@@ -8,7 +8,7 @@ import type {
 } from "@/lib/types/database";
 
 export async function GET() {
-  const { data: events, error: eventsError } = await supabase
+  const { data: events, error: eventsError } = await getSupabase()
     .from("events")
     .select("*")
     .order("start_date", { ascending: true });
@@ -20,7 +20,7 @@ export async function GET() {
   const result: EventListDto[] = [];
 
   for (const event of events as EventRow[]) {
-    const { data: registrations, error: regError } = await supabase
+    const { data: registrations, error: regError } = await getSupabase()
       .from("registrations")
       .select("id, name, status, transport, payment_ref, created_at")
       .eq("event_id", event.id);
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from("events")
     .insert(parsed.data)
     .select()

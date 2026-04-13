@@ -1,6 +1,6 @@
-import Link from "next/link";
 import Heading from "@/components/atoms/Heading";
 import Text from "@/components/atoms/Text";
+import Button from "@/components/atoms/Button";
 import { getTranslations } from "@/lib/i18n/server";
 
 async function NotFound() {
@@ -14,12 +14,9 @@ async function NotFound() {
       <Text muted className="text-xl mb-8">
         {t("message")}
       </Text>
-      <Link
-        href="/"
-        className="inline-block px-8 py-3 rounded-full text-sm font-sans font-medium tracking-widest uppercase border border-white/60 text-white hover:bg-white/10 hover:border-white transition-all duration-300"
-      >
+      <Button href="/" external={false} theme="ghost">
         {t("backHome")}
-      </Link>
+      </Button>
     </main>
   );
 }

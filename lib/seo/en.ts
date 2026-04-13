@@ -19,8 +19,8 @@ export const seoData = {
       name: "Wild Camp Chef — Private Dining",
       description:
         "Campfire dinner × SUP paddleboarding × tree climbing. Limited seats for your exclusive glamping experience.",
-      startDate: "2025-03-14",
-      endDate: "2025-03-15",
+      startDate: "2026-05-01",
+      endDate: "2026-05-31",
       offerUrl: "https://forms.gle/kdXfmR7BXqijwkY46",
       availability: "https://schema.org/LimitedAvailability",
       locationName: "Taiwan",
@@ -30,8 +30,8 @@ export const seoData = {
       name: "Hidden Wild Hot Springs",
       description:
         "Led by professional guides, explore Taiwan's hidden wild hot springs with safety escorts.",
-      startDate: "2025-03-01",
-      endDate: "2025-03-31",
+      startDate: "2026-05-01",
+      endDate: "2026-05-31",
       offerUrl: "https://seeyouwild.my.canva.site/march-hotspring",
       availability: "https://schema.org/InStock",
       locationName: "Hidden Wild Stream, Taiwan",

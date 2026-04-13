@@ -1,30 +1,192 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #38464e;
-  --color-surface: #2d3a42;
-  --color-accent: #9e7764;
-  --color-text-primary: #ffffff;
-  --color-text-muted: #e0e0e0;
+  /* ─── Primary（暖砂橘 #DE954E）─── */
+  --color-primary-50: #fef6ee;
+  --color-primary-100: #fdead8;
+  --color-primary-200: #fad1ae;
+  --color-primary-300: #f0b47a;
+  --color-primary-400: #de954e; /* base */
+  --color-primary-500: #c97d35;
+  --color-primary-600: #a8632a;
+  --color-primary-700: #8a4e24;
+  --color-primary-800: #6d3d20;
+  --color-primary-900: #59331d;
+  --color-primary-950: #371c0f;
 
-  --color-warm-bg: #fdfbf7;
-  --color-warm-text: #2c352d;
-  --color-warm-accent: #a69b8d;
-  --color-dark-bg: #1a211b;
+  /* ─── Neutral（深炭藍 #2d3a40）─── */
+  --color-neutral-50: #f4f6f5; /* = background */
+  --color-neutral-100: #e4e8ea;
+  --color-neutral-200: #c8d0d5;
+  --color-neutral-300: #a5b2ba;
+  --color-neutral-400: #7e909a;
+  --color-neutral-500: #5f727d;
+  --color-neutral-600: #4a5b65;
+  --color-neutral-700: #3c4a52;
+  --color-neutral-800: #2d3a40; /* = foreground */
+  --color-neutral-900: #242f34;
+  --color-neutral-950: #1a2226;
 
-  --font-serif: var(--font-noto-serif-tc), "Noto Serif TC", serif;
+  /* ─── Tertiary（冷灰藍 #6B9DC2）─── */
+  --color-tertiary-50: #f0f5f9;
+  --color-tertiary-100: #dde9f1;
+  --color-tertiary-200: #bdd5e5;
+  --color-tertiary-300: #92bbd4;
+  --color-tertiary-400: #6b9dc2; /* base */
+  --color-tertiary-500: #4a80a8;
+  --color-tertiary-600: #3b678d;
+  --color-tertiary-700: #325474;
+  --color-tertiary-800: #2c4760;
+  --color-tertiary-900: #293c51;
+  --color-tertiary-950: #1b2836;
+
+  /* ─── Green（自然綠 #1FAD87）─── */
+  --color-green-50: #edfdf6;
+  --color-green-100: #d3fae8;
+  --color-green-200: #aaf4d5;
+  --color-green-300: #72e8bc;
+  --color-green-400: #39d49e;
+  --color-green-500: #1fad87; /* base */
+  --color-green-600: #0b9470;
+  --color-green-700: #09765c;
+  --color-green-800: #0b5d4a;
+  --color-green-900: #0a4d3e;
+  --color-green-950: #042b23;
+
+  /* ─── Red（磚紅 #C46743）─── */
+  --color-red-50: #fdf3ef;
+  --color-red-100: #fbe4da;
+  --color-red-200: #f5c5b4;
+  --color-red-300: #ee9f84;
+  --color-red-400: #c46743; /* base */
+  --color-red-500: #d4764f;
+  --color-red-600: #b55636;
+  --color-red-700: #96432c;
+  --color-red-800: #7a3928;
+  --color-red-900: #653224;
+  --color-red-950: #371712;
+
+  /* ─── Semantic: Text & UI ─── */
+  --color-background: #f4f6f5; /* neutral-50 */
+  --color-foreground: #2d3a40; /* neutral-800 */
+  --color-muted: #5f727d; /* neutral-500 */
+  --color-muted-warm: #c97d35; /* primary-500 — overline subtitle 暖色 accent */
+  --color-accent: #de954e; /* primary-400 */
+  --color-accent-hover: #c97d35; /* primary-500 */
+  --color-accent-fg: #2d3a40; /* neutral-800 */
+  --color-border: #c8d0d5; /* neutral-200 */
+  --color-border-strong: #a5b2ba; /* neutral-300 */
+  --color-ring: #fad1ae; /* primary-200 */
+  --color-button-bg: #2d3a40; /* neutral-800 */
+  --color-button-fg: #ffffff;
+  --color-button-hover: #3c4a52; /* neutral-700 */
+  --color-success: #1fad87; /* green-500 */
+  --color-error: #c46743; /* red-400 */
+  --color-warning: #c97d35; /* primary-500 */
+  --color-info: #6b9dc2; /* tertiary-400 */
+
+  /* ─── Semantic: Surfaces ─── */
+  --color-surface: #f0f5f9; /* tertiary-50 */
+  --color-surface-brand: #de954e; /* primary-400 — 品牌色區塊（Journeys, Events） */
+  --color-surface-brand-fg: #ffffff; /* 白 — 品牌色區塊文字 */
+  --color-surface-deep: #1a2226; /* neutral-950 — loader, footer 極深 */
+  --color-surface-deep-fg: #c8d0d5; /* neutral-200 — 極深背景文字 */
+  --color-surface-warm: #fef6ee; /* primary-50 — 深色 section 內嵌 CTA */
+  --color-surface-warm-fg: #3c4a52; /* neutral-700 — 暖底文字 */
+
+  /* ─── Fonts ─── */
+  --font-serif:
+    "SerifDigits", var(--font-rufina), "Rufina", var(--font-chiron-sung-hk),
+    "Chiron Sung HK", var(--font-noto-serif-tc), "Noto Serif TC", serif;
   --font-sans: var(--font-noto-sans-tc), "Noto Sans TC", sans-serif;
-  --font-display: var(--font-playfair-display), "Playfair Display", serif;
+
+  /* ─── Font Weights ─── */
+  --font-weight-heading: 800;
+  --font-weight-heading-2: 700;
+  --font-weight-body: 500;
+  --font-weight-ui: 600;
+
+  /* ─── Letter Spacing ─── */
+  --tracking-body: 0.025em;
 }
 
-html {
-  scroll-behavior: smooth;
+/* ─── SerifDigits: 數字用 Chiron Sung HK，unicode-range 攔截 0-9 和常見符號 ─── */
+@font-face {
+  font-family: "SerifDigits";
+  src: local("Noto Serif TC");
+  font-weight: 100 900;
+  font-display: swap;
+  unicode-range: U+0030-0039, U+002C, U+002E, U+0025, U+002F, U+2013, U+2014;
+}
+
+/* ─── Typography Utilities ─── */
+
+@utility typo-display {
+  font-family: var(--font-serif);
+  font-weight: var(--font-weight-heading);
+}
+
+@utility typo-heading {
+  font-family: var(--font-serif);
+  font-weight: var(--font-weight-heading);
+}
+
+@utility typo-sub-heading {
+  font-family: var(--font-serif);
+  font-weight: var(--font-weight-heading-2);
+}
+
+@utility typo-body {
+  font-family: var(--font-serif);
+  font-weight: var(--font-weight-body);
+  letter-spacing: var(--tracking-body);
+}
+
+@utility typo-ui {
+  font-family: var(--font-serif);
+  font-weight: var(--font-weight-ui);
+  letter-spacing: var(--tracking-body);
+}
+
+@utility typo-overline {
+  font-family: var(--font-serif);
+  font-weight: var(--font-weight-ui);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+.gsap-reveal {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* !important: 覆寫 GSAP 在動畫途中設定的 inline style（mid-session 切換偏好時） */
+  .gsap-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .animate-bounce-slow {
+    animation: none;
+  }
+}
+
+/* ScrollTrigger pin-spacer 用頁面底色，避免被 pinned section 的背景色填滿 */
+.pin-spacer {
+  background: var(--color-background) !important;
 }
 
 body {
   background-color: var(--color-background);
-  color: var(--color-text-primary);
-  font-family: var(--font-sans);
+  color: var(--color-foreground);
+  font-family: var(--font-serif);
+  overflow-x: hidden; /* 防止 ScrollTrigger pin-spacer 造成水平溢出 */
 }
 
 @keyframes fadeInUp {
@@ -60,18 +222,5 @@ body {
 }
 
 .animate-bounce-slow {
-  animation: bounce 2s infinite;
-}
-
-.delay-100 {
-  animation-delay: 0.1s;
-}
-.delay-200 {
-  animation-delay: 0.2s;
-}
-.delay-300 {
-  animation-delay: 0.3s;
-}
-.delay-400 {
-  animation-delay: 0.4s;
+  animation: bounce 2s 4;
 }

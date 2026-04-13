@@ -3,13 +3,19 @@ import Divider from "@/components/atoms/Divider";
 import { EVENTS_CONFIG } from "@/lib/constants";
 import { getTranslations } from "@/lib/i18n/server";
 
-async function EventsSection() {
+const EventsSection: React.FC = async () => {
   const t = await getTranslations("home.events");
 
   return (
     <section
       id="events"
-      className="py-20 md:py-28 px-4"
+      className="py-20 md:py-28 px-4 bg-surface-brand"
+      style={
+        {
+          "--color-foreground": "var(--color-surface-brand-fg)",
+          "--color-muted": "var(--color-surface-deep-fg)",
+        } as React.CSSProperties
+      }
       aria-labelledby="events-heading"
     >
       <h2 id="events-heading" className="sr-only">
@@ -29,7 +35,7 @@ async function EventsSection() {
               ctaUrl={config.ctaUrl}
               image={config.image}
               imageAlt={t(`items.${config.id}.imageAlt`)}
-              variant={config.variant}
+              theme={config.theme}
               reverse={i % 2 !== 0}
             />
           </div>
@@ -37,7 +43,7 @@ async function EventsSection() {
       </div>
     </section>
   );
-}
+};
 
 EventsSection.displayName = "EventsSection";
 export default EventsSection;

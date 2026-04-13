@@ -19,7 +19,7 @@ describe("EVENTS_CONFIG", () => {
       expect(config.id).toBeTruthy();
       expect(config.image).toBeTruthy();
       expect(config.ctaUrl).toBeTruthy();
-      expect(["solid", "ghost"]).toContain(config.variant);
+      expect(["solid", "ghost"]).toContain(config.theme);
     }
   );
 });

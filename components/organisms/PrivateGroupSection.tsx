@@ -4,7 +4,7 @@ import Button from "@/components/atoms/Button";
 import { PRIVATE_GROUP_CTA_URL } from "@/lib/constants";
 import { getTranslations } from "@/lib/i18n/server";
 
-async function PrivateGroupSection() {
+const PrivateGroupSection: React.FC = async () => {
   const t = await getTranslations("home.privateGroup");
 
   return (
@@ -14,11 +14,11 @@ async function PrivateGroupSection() {
       aria-labelledby="private-group-heading"
     >
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-accent/5"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-125 h-125 rounded-full bg-accent/5"
         aria-hidden="true"
       />
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-accent/10"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-75 h-75 rounded-full bg-accent/10"
         aria-hidden="true"
       />
 
@@ -35,14 +35,14 @@ async function PrivateGroupSection() {
           {t("description")}
         </Text>
         <div className="pt-4">
-          <Button variant="ghost" href={PRIVATE_GROUP_CTA_URL}>
+          <Button theme="solid" href={PRIVATE_GROUP_CTA_URL}>
             {t("cta")}
           </Button>
         </div>
       </div>
     </section>
   );
-}
+};
 
 PrivateGroupSection.displayName = "PrivateGroupSection";
 export default PrivateGroupSection;

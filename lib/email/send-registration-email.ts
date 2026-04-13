@@ -1,5 +1,5 @@
-import { resend } from "./client";
-import { env } from "@/lib/env";
+import { getResend } from "./client";
+import { getEnv } from "@/lib/env";
 import { generateToken } from "@/lib/token";
 
 interface SendRegistrationEmailParams {
@@ -15,24 +15,17 @@ interface SendRegistrationEmailParams {
 export async function sendRegistrationEmail(
   params: SendRegistrationEmailParams
 ) {
-  const {
-    registrationId,
-    to,
-    customerName,
-    eventTitle,
-    amountDue,
-    expiresAt,
-    baseUrl,
-  } = params;
-
-  const token = generateToken(registrationId);
-  const paymentRefUrl = `${baseUrl}/payment-ref?id=${registrationId}&token=${token}`;
-  const formattedAmount = amountDue.toLocaleString("zh-TW");
-  const formattedExpiry = new Date(expiresAt).toLocaleDateString("zh-TW", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const token = generateToken(params.registrationId);
+  const paymentRefUrl = `${params.baseUrl}/payment-ref?id=${params.registrationId}&token=${token}`;
+  const formattedAmount = params.amountDue.toLocaleString("zh-TW");
+  const formattedExpiry = new Date(params.expiresAt).toLocaleDateString(
+    "zh-TW",
+    {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }
+  );
 
   const html = `<!DOCTYPE html>
 <html lang="zh-Hant" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -41,7 +34,7 @@ export async function sendRegistrationEmail(
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="x-apple-disable-message-reformatting">
-  <title>你的報名已收到！— ${eventTitle}</title>
+  <title>你的報名已收到！— ${params.eventTitle}</title>
   <!--[if mso]>
   <noscript>
     <xml>
@@ -70,7 +63,7 @@ export async function sendRegistrationEmail(
 
   <!-- Preheader (hidden preview text) -->
   <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;">
-    ${customerName}，你的 ${eventTitle} 報名已收到，請於 ${formattedExpiry} 前完成繳費以確認名額。
+    ${params.customerName}，你的 ${params.eventTitle} 報名已收到，請於 ${formattedExpiry} 前完成繳費以確認名額。
   </div>
 
   <!-- Outer wrapper -->
@@ -102,7 +95,7 @@ export async function sendRegistrationEmail(
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr>
                   <td style="color: #2d3a40; font-size: 22px; font-weight: 700; line-height: 1.4; padding-bottom: 8px;">
-                    Hi ${customerName}
+                    Hi ${params.customerName}
                   </td>
                 </tr>
                 <tr>
@@ -125,7 +118,7 @@ export async function sendRegistrationEmail(
                       </tr>
                       <tr>
                         <td style="color: #2d3a40; font-size: 16px; font-weight: 600; line-height: 1.5; padding-bottom: 20px;">
-                          ${eventTitle}
+                          ${params.eventTitle}
                         </td>
                       </tr>
                       <!-- Amount -->
@@ -256,10 +249,10 @@ export async function sendRegistrationEmail(
 </body>
 </html>`;
 
-  await resend.emails.send({
-    from: env.RESEND_FROM,
-    to,
-    subject: `你的報名已收到！— ${eventTitle}`,
+  await getResend().emails.send({
+    from: getEnv().RESEND_FROM,
+    to: params.to,
+    subject: `你的報名已收到！— ${params.eventTitle}`,
     html,
   });
 }

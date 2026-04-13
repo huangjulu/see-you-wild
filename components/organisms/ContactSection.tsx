@@ -4,13 +4,19 @@ import SocialLinks from "@/components/molecules/SocialLinks";
 import { INSTAGRAM_HANDLE } from "@/lib/constants";
 import { getTranslations } from "@/lib/i18n/server";
 
-async function ContactSection() {
+const ContactSection: React.FC = async () => {
   const t = await getTranslations("home.contact");
 
   return (
     <section
       id="contact"
-      className="py-20 md:py-28 px-4 text-center"
+      className="py-20 md:py-28 px-4 text-center bg-surface-deep"
+      style={
+        {
+          "--color-foreground": "var(--color-surface-deep-fg)",
+          "--color-muted": "var(--color-surface-deep-fg)",
+        } as React.CSSProperties
+      }
       aria-labelledby="contact-heading"
     >
       <div className="max-w-2xl mx-auto space-y-6">
@@ -31,7 +37,7 @@ async function ContactSection() {
       </div>
     </section>
   );
-}
+};
 
 ContactSection.displayName = "ContactSection";
 export default ContactSection;

@@ -13,7 +13,7 @@ describe("Tag", () => {
     const el = screen.getByText("Badge");
     expect(el.className).toContain("inline-block");
     expect(el.className).toContain("rounded-full");
-    expect(el.className).toContain("uppercase");
+    expect(el.className).toContain("typo-overline");
   });
 
   it("merges custom className", () => {

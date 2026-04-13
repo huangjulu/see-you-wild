@@ -4,4 +4,5 @@ import { useGSAP } from "@gsap/react";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-export { gsap, ScrollTrigger, useGSAP };
+export { useScrollReveal } from "./useScrollReveal";
+export { useTimeline } from "./useTimeline";

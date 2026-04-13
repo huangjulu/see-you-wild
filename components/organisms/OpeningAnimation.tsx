@@ -1,95 +1,97 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { gsap, useGSAP } from "@/lib/gsap";
+import React, { useRef } from "react";
+import { SplitText } from "gsap/SplitText";
+import { useTimeline } from "@/lib/gsap";
 
-function OpeningAnimation() {
+const OpeningAnimation: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isDone, setIsDone] = useState(false);
+  const brandRef = useRef<HTMLDivElement>(null);
+  const videoWrapRef = useRef<HTMLDivElement>(null);
 
-  useGSAP(
-    () => {
-      const tl = gsap.timeline({
-        onComplete: () => {
-          document.body.style.overflow = "";
-          setIsDone(true);
-        },
+  useTimeline(
+    containerRef,
+    (tl, el) => {
+      const brand = brandRef.current;
+      const videoWrap = videoWrapRef.current;
+      if (!brand || !videoWrap) return;
+
+      tl.to(brand, { duration: 0.5 });
+
+      const split = SplitText.create(brand, {
+        type: "words",
+        mask: "words",
       });
+      tl.set(brand, { opacity: 1 });
 
-      document.body.style.overflow = "hidden";
+      tl.addLabel("reveal");
 
-      // Phase 1: Brand text fades in
-      tl.fromTo(
-        ".opening-brand",
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 1, ease: "power2.out" }
+      tl.from(
+        split.words,
+        {
+          y: "100%",
+          stagger: 0.15,
+          duration: 1,
+          ease: "expo.out",
+        },
+        "reveal"
       );
 
-      // Phase 2: Hold brand text
-      tl.to(".opening-brand", { duration: 0.6 });
-
-      // Phase 3: Video shrinks to rounded card
       tl.fromTo(
-        ".opening-video-wrap",
+        videoWrap,
         { opacity: 0 },
-        { opacity: 1, duration: 0.3 }
+        {
+          opacity: 1,
+          filter: "blur(15px)",
+          duration: 1,
+          ease: "power3.inOut",
+        },
+        "reveal+=0.3"
       );
-      tl.to(".opening-video-wrap", {
-        width: "70vw",
-        height: "50vh",
-        borderRadius: "2rem",
+
+      tl.to(videoWrap, {
+        scale: 0.7,
+        borderRadius: "2.5rem",
+        filter: "blur(0px)",
         duration: 1,
         ease: "power3.inOut",
       });
 
-      // Phase 4: Brand text fades out
-      tl.to(
-        ".opening-brand",
-        { opacity: 0, duration: 0.4, ease: "power2.in" },
-        "-=0.6"
-      );
-
-      // Phase 5: Video expands back to fullscreen
-      tl.to(".opening-video-wrap", {
-        width: "100vw",
-        height: "100vh",
+      tl.to(videoWrap, {
+        scale: 1,
         borderRadius: "0rem",
         duration: 1,
         ease: "power3.inOut",
       });
 
-      // Phase 6: Overlay fades out to reveal the page
-      tl.to(".opening-overlay", {
+      tl.to(el, {
         opacity: 0,
         duration: 0.6,
         ease: "power2.out",
       });
     },
-    { scope: containerRef }
+    {
+      lockScroll: true,
+      hideOnDone: true,
+      onDone: () => {
+        window.dispatchEvent(new CustomEvent("opening-animation-complete"));
+      },
+    }
   );
-
-  if (isDone) return null;
 
   return (
     <div
       ref={containerRef}
-      className="opening-overlay fixed inset-0 z-50 flex items-center justify-center"
-      style={{ backgroundColor: "#1A211B" }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-surface-deep"
     >
-      <div
-        className="opening-brand absolute z-10 text-center"
-        style={{ opacity: 0 }}
-      >
-        <p
-          className="text-5xl md:text-7xl tracking-[0.3em] text-white"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          AURA WILD
+      <div ref={brandRef} className="absolute z-10 text-center opacity-0">
+        <p className="typo-display text-4xl md:text-6xl lg:text-7xl text-white">
+          See You Wild
         </p>
       </div>
       <div
-        className="opening-video-wrap relative overflow-hidden flex items-center justify-center"
-        style={{ width: "100vw", height: "100vh", opacity: 0 }}
+        ref={videoWrapRef}
+        className="relative overflow-hidden flex items-center justify-center w-screen h-screen opacity-0"
       >
         <video
           autoPlay
@@ -106,7 +108,7 @@ function OpeningAnimation() {
       </div>
     </div>
   );
-}
+};
 
 OpeningAnimation.displayName = "OpeningAnimation";
 export default OpeningAnimation;

@@ -18,6 +18,10 @@
       "heading": "404",
       "message": "找不到這個頁面",
       "backHome": "回到首頁"
+    },
+    "cookie": {
+      "message": "我們使用 cookie 來提升您的體驗。",
+      "accept": "接受"
     }
   },
   "home": {

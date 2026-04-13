@@ -1,6 +1,8 @@
 "use client";
 
-function ScrollIndicator() {
+import { ChevronsDown as IconChevronsDown } from "lucide-react";
+
+const ScrollIndicator: React.FC = () => {
   return (
     <button
       onClick={() => {
@@ -9,24 +11,12 @@ function ScrollIndicator() {
           ?.scrollIntoView({ behavior: "smooth" });
       }}
       className="animate-bounce-slow text-white/60 hover:text-white transition-colors"
-      aria-label="Scroll down to events"
+      aria-label="向下捲動至活動區塊"
     >
-      <svg
-        width="32"
-        height="32"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M7 13l5 5 5-5" />
-        <path d="M7 6l5 5 5-5" />
-      </svg>
+      <IconChevronsDown size={32} />
     </button>
   );
-}
+};
 
 ScrollIndicator.displayName = "ScrollIndicator";
 export default ScrollIndicator;

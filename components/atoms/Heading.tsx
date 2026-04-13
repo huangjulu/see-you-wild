@@ -1,3 +1,5 @@
+import { cn } from "@/lib/utils";
+
 type Level = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 
 interface HeadingProps {
@@ -7,14 +9,14 @@ interface HeadingProps {
   id?: string;
 }
 
-function Heading(props: HeadingProps) {
-  const Tag = props.level;
+const Heading: React.FC<HeadingProps> = (props) => {
+  const HeadingTag = props.level;
   return (
-    <Tag id={props.id} className={`font-serif ${props.className ?? ""}`}>
+    <HeadingTag id={props.id} className={cn("typo-heading", props.className)}>
       {props.children}
-    </Tag>
+    </HeadingTag>
   );
-}
+};
 
 Heading.displayName = "Heading";
 export default Heading;

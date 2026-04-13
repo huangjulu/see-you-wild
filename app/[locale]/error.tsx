@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useTranslations } from "@/lib/i18n/client";
+import Button from "@/components/atoms/Button";
 import Heading from "@/components/atoms/Heading";
 import Text from "@/components/atoms/Text";
 
@@ -10,14 +11,23 @@ type LocaleErrorProps = {
   reset: () => void;
 };
 
-function LocaleError(props: LocaleErrorProps) {
+const LocaleError: React.FC<LocaleErrorProps> = (props) => {
   const t = useTranslations("common.error");
 
-  useEffect(() => {
-    if (props.error.name === "ChunkLoadError") {
-      window.location.reload();
-    }
-  }, [props.error]);
+  useEffect(
+    function handleChunkLoadError() {
+      if (props.error.name === "ChunkLoadError") {
+        const hasReloaded = sessionStorage.getItem("chunk_reload_attempted");
+        if (hasReloaded) {
+          return;
+        } else {
+          sessionStorage.setItem("chunk_reload_attempted", "true");
+          window.location.reload();
+        }
+      }
+    },
+    [props.error]
+  );
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center text-center px-4 pt-16">
@@ -27,15 +37,12 @@ function LocaleError(props: LocaleErrorProps) {
       <Text muted className="text-xl mb-8">
         {t("message")}
       </Text>
-      <button
-        onClick={props.reset}
-        className="inline-block px-8 py-3 rounded-full text-sm font-sans font-medium tracking-widest uppercase border border-white/60 text-white hover:bg-white/10 hover:border-white transition-all duration-300"
-      >
+      <Button theme="ghost" onClick={props.reset}>
         {t("retry")}
-      </button>
+      </Button>
     </main>
   );
-}
+};
 
 LocaleError.displayName = "LocaleError";
 export default LocaleError;

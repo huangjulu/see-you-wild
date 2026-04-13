@@ -7,4 +7,13 @@ const envSchema = z.object({
   RESEND_FROM: z.string().trim().min(1),
 });
 
-export const env = envSchema.parse(process.env);
+type Env = z.infer<typeof envSchema>;
+
+let _env: Env | null = null;
+
+export function getEnv(): Env {
+  if (!_env) {
+    _env = envSchema.parse(process.env);
+  }
+  return _env;
+}

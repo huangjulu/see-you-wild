@@ -27,7 +27,13 @@ youtube-research/
 # OS / Editor artifacts
 *.stackdump
 tsconfig.tsbuildinfo
+
+# TypeScript declaration output (except next-env.d.ts)
+*.d.ts
+!next-env.d.ts
 api-test.http
 
 # pnpm
 .pnpm-debug.log*
+
+.playwright-mcp/

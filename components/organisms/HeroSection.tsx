@@ -1,45 +1,53 @@
 "use client";
 
-import { useRef } from "react";
-import { gsap, useGSAP } from "@/lib/gsap";
+import React, { useRef } from "react";
+import { useTimeline } from "@/lib/gsap";
 import Button from "@/components/atoms/Button";
 
-function HeroSection() {
+const HeroSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const subtitlesRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  useGSAP(
-    () => {
-      const tl = gsap.timeline({ delay: 4.5 });
+  useTimeline(sectionRef, (tl) => {
+    const cta = ctaRef.current;
+    const scroll = scrollRef.current;
+    const subtitles = subtitlesRef.current?.children;
+
+    function playEntrance() {
+      if (!subtitles || !cta || !scroll) return;
 
       tl.fromTo(
-        ".hero-headline",
-        { opacity: 0, y: 40 },
-        { opacity: 1, y: 0, duration: 1, ease: "power2.out" }
-      );
-
-      tl.fromTo(
-        ".hero-subtitle",
+        subtitles,
         { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" },
-        "-=0.5"
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          ease: "power3.out",
+          stagger: 0.2,
+        }
       );
 
       tl.fromTo(
-        ".hero-cta",
+        cta,
         { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
         "-=0.4"
       );
 
-      tl.fromTo(
-        ".hero-scroll",
-        { opacity: 0 },
-        { opacity: 1, duration: 0.6 },
-        "-=0.2"
-      );
-    },
-    { scope: sectionRef }
-  );
+      tl.fromTo(scroll, { opacity: 0 }, { opacity: 1, duration: 0.8 }, "-=0.3");
+    }
+
+    window.addEventListener("opening-animation-complete", playEntrance, {
+      once: true,
+    });
+
+    return () => {
+      window.removeEventListener("opening-animation-complete", playEntrance);
+    };
+  });
 
   return (
     <section
@@ -59,40 +67,30 @@ function HeroSection() {
           type="video/mp4"
         />
       </video>
-      <div
-        className="absolute inset-0"
-        style={{ backgroundColor: "rgba(26, 33, 27, 0.4)" }}
-        aria-hidden="true"
-      />
+      <div className="absolute inset-0 bg-neutral-950/40" aria-hidden="true" />
 
-      <div className="relative z-10 flex flex-col items-center gap-6 max-w-4xl">
-        <h1
-          className="hero-headline text-4xl md:text-6xl lg:text-7xl text-white leading-tight"
-          style={{ fontFamily: "var(--font-display)", opacity: 0 }}
-        >
-          重塑邊界，
-          <br />
-          <span className="italic">Elegantly</span> 撒野。
+      <div className="relative z-10 flex flex-col items-center max-w-4xl">
+        <h1 className="typo-display text-4xl md:text-6xl lg:text-7xl text-white leading-tight">
+          See You Wild
         </h1>
-        <p
-          className="hero-subtitle text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed font-sans"
-          style={{ opacity: 0 }}
-        >
-          在山海之間，找到野性與優雅的平衡。
-          <br className="hidden md:block" />
-          See You Wild 帶你體驗台灣最獨特的戶外探險。
-        </p>
-        <div className="hero-cta mt-4" style={{ opacity: 0 }}>
-          <Button variant="ghost" href="#journeys">
-            探索旅程
-          </Button>
+        <div className="absolute top-full mt-6 flex flex-col items-center gap-4">
+          <div ref={subtitlesRef} className="flex flex-col items-center gap-4">
+            <p className="typo-body text-lg md:text-xl text-white/80 opacity-0">
+              在山與海之間
+            </p>
+            <p className="text-3xl md:text-lg text-white/60 italic opacity-0 tracking-widest">
+              Where wild meets grace
+            </p>
+          </div>
+          <div ref={ctaRef} className="mt-2 opacity-0">
+            <Button theme="ghost" href="#journeys">
+              探索旅程
+            </Button>
+          </div>
         </div>
       </div>
 
-      <div
-        className="hero-scroll absolute bottom-8 z-10"
-        style={{ opacity: 0 }}
-      >
+      <div ref={scrollRef} className="absolute bottom-8 z-10">
         <div className="flex flex-col items-center gap-2 text-white/60">
           <span className="text-xs tracking-[0.2em] uppercase">Scroll</span>
           <div className="w-px h-8 bg-white/40 animate-bounce-slow" />
@@ -100,7 +98,7 @@ function HeroSection() {
       </div>
     </section>
   );
-}
+};
 
 HeroSection.displayName = "HeroSection";
 export default HeroSection;

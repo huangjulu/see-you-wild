@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase/client";
+import { getSupabase } from "@/lib/supabase/client";
 import { createRegistrationSchema } from "@/lib/validations/registrations";
 import { sendRegistrationEmail } from "@/lib/email/send-registration-email";
 import { sendAdminNotification } from "@/lib/email/send-admin-notification";
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
 
   const input = parsed.data;
 
-  const { data: event, error: eventError } = await supabase
+  const { data: event, error: eventError } = await getSupabase()
     .from("events")
     .select("*")
     .eq("id", input.event_id)
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
   const expires_at = new Date();
   expires_at.setDate(expires_at.getDate() + typedEvent.payment_days);
 
-  const { data: registration, error: insertError } = await supabase
+  const { data: registration, error: insertError } = await getSupabase()
     .from("registrations")
     .insert({
       ...input,

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase/client";
+import { getSupabase } from "@/lib/supabase/client";
 import type { RegistrationRow, EventRow } from "@/lib/types/database";
 
 interface RouteParams {
@@ -9,7 +9,7 @@ interface RouteParams {
 export async function GET(_request: Request, { params }: RouteParams) {
   const { eventId } = await params;
 
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from("carpool_assignments")
     .select("*, registrations(name, email, phone)")
     .eq("event_id", eventId)
@@ -25,7 +25,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
 export async function POST(_request: Request, { params }: RouteParams) {
   const { eventId } = await params;
 
-  const { data: event, error: eventError } = await supabase
+  const { data: event, error: eventError } = await getSupabase()
     .from("events")
     .select("*")
     .eq("id", eventId)
@@ -37,7 +37,7 @@ export async function POST(_request: Request, { params }: RouteParams) {
 
   const typedEvent = event as EventRow;
 
-  const { data: registrations, error: regError } = await supabase
+  const { data: registrations, error: regError } = await getSupabase()
     .from("registrations")
     .select("*")
     .eq("event_id", eventId)
@@ -57,7 +57,10 @@ export async function POST(_request: Request, { params }: RouteParams) {
     );
   }
 
-  await supabase.from("carpool_assignments").delete().eq("event_id", eventId);
+  await getSupabase()
+    .from("carpool_assignments")
+    .delete()
+    .eq("event_id", eventId);
 
   const byLocation = new Map<string, RegistrationRow[]>();
   for (const reg of carpoolRegs) {
@@ -136,7 +139,7 @@ export async function POST(_request: Request, { params }: RouteParams) {
     }
   }
 
-  const { data: inserted, error: insertError } = await supabase
+  const { data: inserted, error: insertError } = await getSupabase()
     .from("carpool_assignments")
     .insert(assignments)
     .select();
