@@ -28,15 +28,15 @@ const Header: React.FC = () => {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white/10 border-b border-surface-brand",
         scrolled
-          ? "bg-surface-deep/80 backdrop-blur-md border-b border-surface-deep-fg/10"
-          : "bg-transparent border-b border-transparent"
+          ? "bg-linear-180 from-surface-deep/80 to-white/20 backdrop-blur-sm border-surface-brand/50"
+          : "bg-transparent border-transparent"
       )}
     >
       <div
         className={cn(
-          "max-w-6xl mx-auto px-4 h-16 flex items-center justify-between transition-colors duration-500",
+          "max-w-6xl mx-auto px-4 h-16 flex items-center justify-between transition-colors",
           scrolled ? "text-surface-deep-fg" : "text-white"
         )}
       >

@@ -25,7 +25,7 @@ const TestimonialsSection: React.FC = () => {
   return (
     <section
       ref={sectionRef}
-      className="py-24 md:py-32 px-6 md:px-12 bg-background"
+      className="py-24 md:py-32 px-6 md:px-12 bg-primary-100"
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">

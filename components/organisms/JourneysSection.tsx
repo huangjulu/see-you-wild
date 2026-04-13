@@ -28,7 +28,7 @@ const JourneysSection: React.FC = () => {
         ease: "power3.out",
         scrollTrigger: {
           start: "top 60%",
-          toggleActions: "play none none none",
+          toggleActions: "play reverse play reverse",
         },
       }
     );

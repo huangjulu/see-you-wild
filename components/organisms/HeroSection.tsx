@@ -78,7 +78,7 @@ const HeroSection: React.FC = () => {
             <p className="typo-body text-lg md:text-xl text-white/80 opacity-0">
               在山與海之間
             </p>
-            <p className="typo-body text-base md:text-lg text-white/60 italic opacity-0">
+            <p className="text-3xl md:text-lg text-white/60 italic opacity-0 tracking-widest">
               Where wild meets grace
             </p>
           </div>

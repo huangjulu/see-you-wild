@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
+import { SplitText } from "gsap/SplitText";
 import { useTimeline } from "@/lib/gsap";
 
 const OpeningAnimation: React.FC = () => {
@@ -15,13 +16,26 @@ const OpeningAnimation: React.FC = () => {
       const videoWrap = videoWrapRef.current;
       if (!brand || !videoWrap) return;
 
-      tl.fromTo(
-        brand,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 1, ease: "power2.out" }
-      );
+      tl.to(brand, { duration: 0.5 });
 
-      tl.to(brand, { duration: 0.6 });
+      const split = SplitText.create(brand, {
+        type: "words",
+        mask: "words",
+      });
+      tl.set(brand, { opacity: 1 });
+
+      tl.addLabel("reveal");
+
+      tl.from(
+        split.words,
+        {
+          y: "100%",
+          stagger: 0.15,
+          duration: 1,
+          ease: "expo.out",
+        },
+        "reveal"
+      );
 
       tl.fromTo(
         videoWrap,
@@ -29,10 +43,12 @@ const OpeningAnimation: React.FC = () => {
         {
           opacity: 1,
           filter: "blur(15px)",
-          duration: 0.3,
+          duration: 1,
           ease: "power3.inOut",
-        }
+        },
+        "reveal+=0.3"
       );
+
       tl.to(videoWrap, {
         scale: 0.7,
         borderRadius: "2.5rem",
