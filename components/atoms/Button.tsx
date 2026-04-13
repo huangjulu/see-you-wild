@@ -1,4 +1,3 @@
-import React from "react";
 import { cn } from "@/lib/utils";
 
 type ButtonTheme =
@@ -18,6 +17,7 @@ interface ButtonProps {
   ariaLabel?: string;
   icon?: React.ReactNode;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  external?: boolean;
 }
 
 // 所有 box-shaped theme 的共用 layout。
@@ -82,11 +82,13 @@ export type { ButtonTheme };
 
 function renderElement(props: ButtonProps, className: string) {
   if (props.href != null) {
+    const isExternal = props.external ?? true;
     return (
       <a
         href={props.href}
-        target="_blank"
-        rel="noopener noreferrer"
+        {...(isExternal
+          ? { target: "_blank", rel: "noopener noreferrer" }
+          : {})}
         className={className}
         aria-label={props.ariaLabel}
       >

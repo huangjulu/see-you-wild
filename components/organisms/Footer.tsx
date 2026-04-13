@@ -1,4 +1,3 @@
-import React from "react";
 import { getTranslations } from "@/lib/i18n/server";
 import LargeBrandText from "../molecules/LargeBrandText";
 

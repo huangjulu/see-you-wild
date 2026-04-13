@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Menu as IconMenu, X as IconX } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations, useLocale } from "@/lib/i18n/client";
@@ -61,7 +61,7 @@ const Header: React.FC = () => {
         </nav>
 
         <button
-          className="md:hidden p-2"
+          className="md:hidden p-2.5"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
@@ -70,21 +70,23 @@ const Header: React.FC = () => {
         </button>
       </div>
 
-      {menuOpen && (
-        <nav
-          className="md:hidden bg-background/95 backdrop-blur-md border-t border-border/30 px-4 py-4 flex flex-col gap-4 text-foreground"
-          aria-label="Mobile navigation"
-        >
-          {navLinks.map((link) => (
-            <NavLink
-              key={link.href}
-              href={link.href}
-              label={link.label}
-              onClick={() => setMenuOpen(false)}
-            />
-          ))}
-        </nav>
-      )}
+      <nav
+        className={cn(
+          "md:hidden bg-background/95 backdrop-blur-md border-t border-border/30 px-4 flex flex-col gap-4 text-foreground overflow-hidden transition-all duration-300",
+          menuOpen ? "max-h-60 py-4 opacity-100" : "max-h-0 py-0 opacity-0"
+        )}
+        aria-label="Mobile navigation"
+        aria-hidden={!menuOpen}
+      >
+        {navLinks.map((link) => (
+          <NavLink
+            key={link.href}
+            href={link.href}
+            label={link.label}
+            onClick={() => setMenuOpen(false)}
+          />
+        ))}
+      </nav>
     </header>
   );
 };

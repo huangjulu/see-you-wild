@@ -1,4 +1,3 @@
-import React from "react";
 import EventCard from "@/components/molecules/EventCard";
 import Divider from "@/components/atoms/Divider";
 import { EVENTS_CONFIG } from "@/lib/constants";

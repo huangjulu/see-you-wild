@@ -1,4 +1,3 @@
-import React from "react";
 import Heading from "@/components/atoms/Heading";
 import Text from "@/components/atoms/Text";
 import Button from "@/components/atoms/Button";

@@ -6,7 +6,7 @@ interface JourneyCardProps {
 
 const JourneyCard: React.FC<JourneyCardProps> = (props) => {
   return (
-    <div className="journey-card shrink-0 w-60 md:w-80 group cursor-pointer">
+    <div className="journey-card shrink-0 w-60 md:w-[420px] group cursor-pointer">
       <div className="relative h-80 md:h-100 rounded-2xl overflow-hidden">
         <img
           src={props.image}

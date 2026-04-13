@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import Heading from "@/components/atoms/Heading";
 import Text from "@/components/atoms/Text";
 import Button from "@/components/atoms/Button";
+import type { ButtonTheme } from "@/components/atoms/Button";
 import Tag from "@/components/atoms/Tag";
 
 interface EventCardProps {
@@ -15,7 +16,7 @@ interface EventCardProps {
   ctaUrl: string;
   image: string;
   imageAlt: string;
-  theme: "solid" | "ghost";
+  theme: ButtonTheme;
   reverse?: boolean;
 }
 

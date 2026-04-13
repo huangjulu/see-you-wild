@@ -1,23 +1,32 @@
 // Non-text configuration — display text lives in lib/dictionary/
 
+import type { ButtonTheme } from "@/components/atoms/Button";
+
 export const SITE_URL = "https://seeyouwild.com";
 
 export const INSTAGRAM_URL =
   "https://www.instagram.com/c_you_wild?igsh=MTZ5eXU1aWNna3Zqdw==";
 export const INSTAGRAM_HANDLE = "@c_you_wild";
 
-export const EVENTS_CONFIG = [
+interface EventConfig {
+  id: string;
+  image: string;
+  ctaUrl: string;
+  theme: ButtonTheme;
+}
+
+export const EVENTS_CONFIG: EventConfig[] = [
   {
     id: "camping-chef",
     image: "/images/event-camping.jpg",
     ctaUrl: "https://forms.gle/kdXfmR7BXqijwkY46",
-    theme: "solid" as const,
+    theme: "solid",
   },
   {
     id: "hot-spring",
     image: "/images/event-hotspring.jpg",
     ctaUrl: "https://seeyouwild.my.canva.site/march-hotspring",
-    theme: "ghost" as const,
+    theme: "ghost",
   },
 ];
 

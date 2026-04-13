@@ -1,8 +1,7 @@
-import React from "react";
 import { cn } from "@/lib/utils";
 
 interface SocialIconProps {
-  platform: "instagram";
+  platform: keyof typeof icons;
   href: string;
   className?: string;
 }
@@ -36,7 +35,7 @@ const SocialIcon: React.FC<SocialIconProps> = (props) => {
       rel="noopener noreferrer"
       aria-label={`Follow us on ${props.platform}`}
       className={cn(
-        "text-white/70 hover:text-white transition-colors duration-300",
+        "inline-flex items-center justify-center min-w-11 min-h-11 text-white/70 hover:text-white transition-colors duration-300",
         props.className
       )}
     >

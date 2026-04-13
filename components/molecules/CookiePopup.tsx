@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { X as IconX } from "lucide-react";
+import { useTranslations } from "@/lib/i18n/client";
 
 const CookiePopup: React.FC = () => {
+  const t = useTranslations("common");
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(function checkCookieConsent() {
@@ -24,14 +26,14 @@ const CookiePopup: React.FC = () => {
   return (
     <div className="fixed bottom-0 w-full bg-surface-deep/95 backdrop-blur-sm z-40 flex items-center justify-center gap-8 py-4 px-6">
       <p className="typo-overline text-surface-deep-fg/80 text-center">
-        We use cookies to enhance your experience.
+        {t("cookie.message")}
       </p>
       <div className="flex items-center gap-6">
         <button
           onClick={handleAccept}
           className="typo-overline text-surface-deep-fg/80 border-b border-surface-deep-fg/30 pb-0.5 hover:border-surface-deep-fg transition-colors"
         >
-          Accept
+          {t("cookie.accept")}
         </button>
         <button onClick={handleAccept} aria-label="Close cookie notice">
           <IconX className="w-4 h-4 text-surface-deep-fg/50 hover:text-surface-deep-fg/80 transition-opacity" />

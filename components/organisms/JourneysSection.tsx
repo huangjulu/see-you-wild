@@ -53,16 +53,16 @@ const JourneysSection: React.FC = () => {
     // Card entrance stagger (one-shot, not scrub)
     gsap.fromTo(
       cards,
-      { opacity: 0, x: 60 },
+      { opacity: 0, y: 40 },
       {
         opacity: 1,
-        x: 0,
+        y: 0,
         duration: 0.8,
-        stagger: 0.15,
+        stagger: 0.2,
         ease: "power3.out",
         scrollTrigger: {
           trigger: el,
-          start: "top 80%",
+          start: "top 60%",
           toggleActions: "play none none none",
         },
       }

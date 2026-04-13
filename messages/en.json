@@ -18,6 +18,10 @@
       "heading": "404",
       "message": "Page not found",
       "backHome": "Back to Home"
+    },
+    "cookie": {
+      "message": "We use cookies to enhance your experience.",
+      "accept": "Accept"
     }
   },
   "home": {

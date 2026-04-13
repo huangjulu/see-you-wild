@@ -38,8 +38,9 @@ function renderHeader() {
 describe("Header", () => {
   it("renders nav links", () => {
     renderHeader();
-    expect(screen.getByText("包團諮詢")).toBeInTheDocument();
-    expect(screen.getByText("聯絡我們")).toBeInTheDocument();
+    // desktop nav + mobile nav 各一組，共 2 個
+    expect(screen.getAllByText("包團諮詢")).toHaveLength(2);
+    expect(screen.getAllByText("聯絡我們")).toHaveLength(2);
   });
 
   it("renders hamburger button", () => {
