@@ -22,11 +22,12 @@ const WhyChooseUsSection: React.FC = () => {
     to: {
       opacity: 1,
       y: 0,
-      duration: 0.7,
-      stagger: 0.15,
+      duration: 0.9,
+      stagger: 0.1,
       ease: "power3.out",
       scrollTrigger: {
-        start: "top 75%",
+        trigger: "[data-reveal-trigger]",
+        start: "top 60%",
         toggleActions: "play none none none",
       },
     },
@@ -35,14 +36,14 @@ const WhyChooseUsSection: React.FC = () => {
   return (
     <section
       ref={sectionRef}
-      className="py-24 md:py-32 px-6 md:px-12 bg-background"
+      className="pt-24 pb-28 md:py-32 px-6 md:px-12 bg-background"
     >
-      <div className="max-w-7xl mx-auto">
+      <div data-reveal-trigger className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <p className="typo-overline text-sm mb-4 text-muted-warm">
+          <p className="why-item typo-overline text-sm mb-4 text-muted-warm">
             {t("overline")}
           </p>
-          <h2 className="typo-display text-4xl md:text-5xl text-foreground">
+          <h2 className="why-item typo-display text-4xl md:text-5xl text-foreground">
             {t("title")}
           </h2>
         </div>

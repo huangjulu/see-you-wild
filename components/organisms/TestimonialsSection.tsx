@@ -1,69 +1,184 @@
 "use client";
 
-import React, { useRef } from "react";
-import { useTween } from "@/lib/gsap";
+import React, { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger, useTimeline } from "@/lib/gsap";
+import { useReducedMotion } from "@/stores/motion";
 import { useTranslations } from "@/lib/i18n/client";
 import TestimonialCard from "@/components/molecules/TestimonialCard";
+
+const GHOST_PARALLAX_FACTOR = -25; // 背景反向
+const REPEL_RANGE = 320; // 卡片感應鼠標的半徑（px），超出不反應
+const REPEL_MAX = 10; // 被鼠標推開的最大距離（px）
+const LIFT_MAX = 35; // 越靠近鼠標 translateZ 越大，前景浮起感
 
 const TestimonialsSection: React.FC = () => {
   const t = useTranslations("home.testimonials");
   const sectionRef = useRef<HTMLElement>(null);
+  const ghostRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
 
-  useTween(sectionRef, {
-    selector: ".testimonial-card",
-    from: { opacity: 0 },
-    to: {
-      opacity: 1,
-      duration: 1,
-      ease: "power3.out",
-      scrollTrigger: {
-        start: "top 80%",
-        toggleActions: "play none none none",
-      },
+  useTimeline(
+    sectionRef,
+    (tl, el) => {
+      const cards = gsap.utils.toArray<HTMLElement>(".testimonial-card", el);
+      cards.forEach((card, i) => {
+        const dir = CARD_OFFSETS[i];
+        tl.fromTo(
+          card,
+          { x: dir.fromX, y: dir.fromY, opacity: 0 },
+          {
+            x: 0,
+            y: 0,
+            opacity: 1,
+            duration: 1.3,
+            ease: "power3.out",
+          },
+          i * 0.18
+        );
+      });
+      ScrollTrigger.create({
+        trigger: el,
+        start: "top 40%",
+        animation: tl,
+        toggleActions: "play reverse play reverse",
+      });
     },
-  });
+    { paused: true }
+  );
+
+  // TODO(抽成 useMouseParallax hook)：未來若其他 section 也要做滑鼠視差，
+  // 把這段提取到 lib/gsap/useMouseParallax.ts，參數接 scope ref / target ref / factor / duration。
+  useEffect(
+    function mouseParallax() {
+      if (reduceMotion) return;
+      const section = sectionRef.current;
+      const ghost = ghostRef.current;
+      if (!section || !ghost) return;
+      if (!window.matchMedia("(pointer: fine)").matches) return;
+
+      const ghostX = gsap.quickTo(ghost, "x", {
+        duration: 0.6,
+        ease: "power3",
+      });
+      const ghostY = gsap.quickTo(ghost, "y", {
+        duration: 0.6,
+        ease: "power3",
+      });
+
+      const repels = gsap.utils
+        .toArray<HTMLElement>(".testimonial-repel", section)
+        .map((el) => ({
+          el,
+          xTo: gsap.quickTo(el, "x", { duration: 0.5, ease: "power3" }),
+          yTo: gsap.quickTo(el, "y", { duration: 0.5, ease: "power3" }),
+          zTo: gsap.quickTo(el, "z", { duration: 0.5, ease: "power3" }),
+        }));
+
+      let isInView = false;
+      const observer = new IntersectionObserver(
+        (entries) => {
+          isInView = entries[0]?.isIntersecting ?? false;
+        },
+        { threshold: 0 }
+      );
+      observer.observe(section);
+
+      const handleMove = (e: PointerEvent) => {
+        if (!isInView) return;
+        const nx = e.clientX / window.innerWidth - 0.5;
+        const ny = e.clientY / window.innerHeight - 0.5;
+        ghostX(nx * GHOST_PARALLAX_FACTOR);
+        ghostY(ny * GHOST_PARALLAX_FACTOR);
+
+        repels.forEach(({ el, xTo, yTo, zTo }) => {
+          const rect = el.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const dx = e.clientX - cx;
+          const dy = e.clientY - cy;
+          const distance = Math.hypot(dx, dy);
+
+          if (distance > REPEL_RANGE) {
+            xTo(0);
+            yTo(0);
+            zTo(0);
+            return;
+          }
+
+          const intensity = 1 - distance / REPEL_RANGE; // 0 ~ 1，越近越強
+          const dirX = distance === 0 ? 0 : -dx / distance;
+          const dirY = distance === 0 ? 0 : -dy / distance;
+
+          xTo(dirX * REPEL_MAX * intensity);
+          yTo(dirY * REPEL_MAX * intensity);
+          zTo(intensity * LIFT_MAX);
+        });
+      };
+      window.addEventListener("pointermove", handleMove);
+
+      return () => {
+        window.removeEventListener("pointermove", handleMove);
+        observer.disconnect();
+      };
+    },
+    [reduceMotion]
+  );
 
   return (
-    <section ref={sectionRef} className="py-24 md:py-32 px-6 md:px-12">
-      {/* Rounded clip container */}
-      <div className="rounded-3xl overflow-hidden">
-        <div className="relative bg-neutral-50 py-24 md:py-32 px-6 md:px-12">
-          {/* SVG ghost cards background */}
+    <section
+      ref={sectionRef}
+      className="bg-linear-180 from-background to-primary-100"
+    >
+      <div
+        className="relative py-24 md:py-32 px-6 md:px-12 "
+        style={{
+          maskImage:
+            "linear-gradient(to bottom, transparent 0%, black 12%, black 95%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, transparent 0%, black 12%, black 95%, transparent 100%)",
+        }}
+      >
+        <div
+          ref={ghostRef}
+          className="absolute inset-0 will-change-transform pointer-events-none"
+          aria-hidden="true"
+        >
           <GhostCardsSvg />
+        </div>
 
-          {/* Radial gradient mask — fade out edge ghost cards */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(ellipse 70% 60% at 50% 50%, transparent 40%, var(--color-neutral-50) 90%)",
-            }}
-            aria-hidden="true"
-          />
+        {/* Radial gradient mask — fade out edge ghost cards */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(ellipse 70% 60% at 50% 50%, transparent 40%, var(--color-primary-100) 90%)",
+          }}
+          aria-hidden="true"
+        />
 
-          {/* Content */}
-          <div className="relative z-10 max-w-6xl mx-auto">
-            <div className="text-center mb-20">
-              <p className="typo-overline text-sm mb-4 text-muted-warm">
-                {t("overline")}
-              </p>
-              <h2 className="typo-display text-4xl md:text-5xl text-foreground">
-                {t("title")}
-              </h2>
-            </div>
+        {/* Content */}
+        <div className="relative z-10 max-w-6xl mx-auto">
+          <div className="text-center mb-20">
+            <p className="typo-overline text-sm mb-4 text-muted-warm">
+              {t("overline")}
+            </p>
+            <h2 className="typo-display text-4xl md:text-5xl text-foreground">
+              {t("title")}
+            </h2>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10 md:gap-y-14 max-w-5xl mx-auto">
-              {TESTIMONIAL_KEYS.map((key, i) => (
-                <TestimonialCard
-                  key={key}
-                  quote={t(`items.${key}.quote`)}
-                  author={t(`items.${key}.author`)}
-                  trip={t(`items.${key}.trip`)}
-                  rotate={CARD_OFFSETS[i].rotate}
-                  wrapperOffset={CARD_OFFSETS[i].wrapper}
-                />
-              ))}
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10 md:gap-y-14 max-w-5xl mx-auto [perspective:1200px]">
+            {TESTIMONIAL_KEYS.map((key, i) => (
+              <TestimonialCard
+                key={key}
+                quote={t(`items.${key}.quote`)}
+                author={t(`items.${key}.author`)}
+                trip={t(`items.${key}.trip`)}
+                rotate={CARD_OFFSETS[i].rotate}
+                wrapperOffset={CARD_OFFSETS[i].wrapper}
+              />
+            ))}
           </div>
         </div>
       </div>
@@ -75,12 +190,42 @@ TestimonialsSection.displayName = "TestimonialsSection";
 export default TestimonialsSection;
 
 const CARD_OFFSETS = [
-  { rotate: "rotate-[-2.5deg]", wrapper: "md:translate-y-0" },
-  { rotate: "rotate-[1.8deg]", wrapper: "md:translate-y-6" },
-  { rotate: "rotate-[-1.2deg]", wrapper: "md:-translate-y-3" },
-  { rotate: "rotate-[2.2deg]", wrapper: "md:translate-y-8" },
-  { rotate: "rotate-[-1.8deg]", wrapper: "md:translate-y-2" },
-  { rotate: "rotate-[1deg]", wrapper: "md:-translate-y-4" },
+  {
+    rotate: "rotate-[-2.5deg]",
+    wrapper: "md:translate-y-0",
+    fromX: -220,
+    fromY: -140,
+  },
+  {
+    rotate: "rotate-[1.8deg]",
+    wrapper: "md:translate-y-6",
+    fromX: 0,
+    fromY: -200,
+  },
+  {
+    rotate: "rotate-[-1.2deg]",
+    wrapper: "md:-translate-y-3",
+    fromX: 220,
+    fromY: -140,
+  },
+  {
+    rotate: "rotate-[2.2deg]",
+    wrapper: "md:translate-y-8",
+    fromX: -220,
+    fromY: 140,
+  },
+  {
+    rotate: "rotate-[-1.8deg]",
+    wrapper: "md:translate-y-2",
+    fromX: 0,
+    fromY: 200,
+  },
+  {
+    rotate: "rotate-[1deg]",
+    wrapper: "md:-translate-y-4",
+    fromX: 220,
+    fromY: 140,
+  },
 ];
 
 const TESTIMONIAL_KEYS = [
@@ -139,7 +284,7 @@ const GhostCardsSvg: React.FC = () => (
         <rect
           width={card.w}
           height={card.h}
-          fill="var(--color-neutral-100)"
+          fill="var(--color-primary-200)"
           opacity="0.5"
         />
         <rect
@@ -148,7 +293,7 @@ const GhostCardsSvg: React.FC = () => (
           width={card.w * 0.76}
           height={4}
           rx={2}
-          fill="var(--color-neutral-200)"
+          fill="var(--color-primary-300)"
           opacity="0.7"
         />
         <rect
@@ -157,7 +302,7 @@ const GhostCardsSvg: React.FC = () => (
           width={card.w * 0.6}
           height={4}
           rx={2}
-          fill="var(--color-neutral-200)"
+          fill="var(--color-primary-300)"
           opacity="0.7"
         />
         <rect
@@ -166,7 +311,7 @@ const GhostCardsSvg: React.FC = () => (
           width={card.w * 0.68}
           height={4}
           rx={2}
-          fill="var(--color-neutral-200)"
+          fill="var(--color-primary-300)"
           opacity="0.7"
         />
         <rect
@@ -175,7 +320,7 @@ const GhostCardsSvg: React.FC = () => (
           width={card.w * 0.45}
           height={4}
           rx={2}
-          fill="var(--color-neutral-200)"
+          fill="var(--color-primary-300)"
           opacity="0.7"
         />
         <rect
@@ -184,7 +329,7 @@ const GhostCardsSvg: React.FC = () => (
           width={card.w * 0.3}
           height={3}
           rx={1.5}
-          fill="var(--color-neutral-200)"
+          fill="var(--color-primary-300)"
           opacity="0.5"
         />
         <rect
@@ -193,7 +338,7 @@ const GhostCardsSvg: React.FC = () => (
           width={card.w * 0.4}
           height={3}
           rx={1.5}
-          fill="var(--color-neutral-200)"
+          fill="var(--color-primary-300)"
           opacity="0.4"
         />
       </g>

@@ -14,22 +14,43 @@ const PhilosophySection: React.FC = () => {
     to: {
       opacity: 1,
       y: 0,
-      duration: 1.3,
+      duration: 0.9,
+      stagger: 0.1,
       ease: "power3.out",
       scrollTrigger: {
-        start: "top 88%",
+        trigger: "[data-reveal-trigger]",
+        start: "top 60%",
         toggleActions: "play none none none",
+      },
+    },
+  });
+
+  useTween(sectionRef, {
+    selector: ".philosophy-image",
+    from: { yPercent: -20, scale: 1.4 },
+    to: {
+      yPercent: 20,
+      scale: 1.4,
+      ease: "power3.out",
+      scrollTrigger: {
+        start: "top bottom",
+        end: "bottom top",
+        scrub: true,
+        invalidateOnRefresh: true,
       },
     },
   });
 
   return (
     <section
-      ref={sectionRef}
       id="about"
+      ref={sectionRef}
       className="py-24 md:py-32 px-6 md:px-12 bg-background"
     >
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
+      <div
+        data-reveal-trigger
+        className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center"
+      >
         <div className="space-y-8">
           <p className="reveal-up gsap-reveal typo-overline text-sm text-muted-warm">
             {t("overline")}
@@ -54,9 +75,9 @@ const PhilosophySection: React.FC = () => {
         <div className="reveal-up gsap-reveal">
           <div className="relative rounded-2xl overflow-hidden aspect-[3/4]">
             <img
-              src="https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=800&q=80"
+              src="https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=1200&q=80"
               alt={t("imageAlt")}
-              className="w-full h-full object-cover"
+              className="philosophy-image absolute inset-0 w-full h-full object-cover will-change-transform"
             />
           </div>
         </div>

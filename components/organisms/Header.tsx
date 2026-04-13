@@ -4,9 +4,12 @@ import { useState, useEffect } from "react";
 import { Menu as IconMenu, X as IconX } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations, useLocale } from "@/lib/i18n/client";
+import Button from "@/components/atoms/Button";
 import Logo from "@/components/atoms/Logo";
-import NavLink from "@/components/molecules/NavLink";
 import { NAV_ANCHORS } from "@/lib/constants";
+
+const NAV_LINK_CLASS =
+  "text-sm hover:[text-shadow:0_0.5px_16px_color-mix(in_srgb,var(--color-primary-800)_80%,transparent)] hover:text-white focus-visible:opacity-100 focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-current rounded-sm";
 
 const Header: React.FC = () => {
   const t = useTranslations("common");
@@ -28,16 +31,16 @@ const Header: React.FC = () => {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b border-surface-brand",
+        "fixed top-0 left-0 right-0 z-50 px-6 md:px-12 transition-all duration-500",
         scrolled
-          ? "bg-linear-180 from-surface-deep/80 to-white/20 backdrop-blur-sm border-surface-brand/50"
+          ? "bg-linear-180 from-surface-deep/25 from-0% to-surface-brand/20 to-200% backdrop-blur-sm"
           : "bg-transparent border-transparent"
       )}
     >
       <div
         className={cn(
-          "max-w-6xl mx-auto px-4 h-16 flex items-center justify-between transition-colors",
-          scrolled ? "text-surface-deep-fg" : "text-white"
+          "max-w-6xl mx-auto h-16 flex items-center justify-between transition-colors",
+          scrolled ? "text-white text-shadow-md" : "text-surface-deep-fg"
         )}
       >
         <a
@@ -46,7 +49,7 @@ const Header: React.FC = () => {
           aria-label={t("siteName")}
         >
           <Logo size="sm" />
-          <span className="font-serif text-lg font-semibold hidden sm:inline">
+          <span className="font-serif text-lg font-semibold hidden sm:inline [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-accent-fg)_50%,transparent)]">
             {t("siteName")}
           </span>
         </a>
@@ -56,14 +59,29 @@ const Header: React.FC = () => {
           aria-label="Main navigation"
         >
           {navLinks.map((link) => (
-            <NavLink key={link.href} href={link.href} label={link.label} />
+            <Button
+              key={link.href}
+              theme="link"
+              href={link.href}
+              underline={false}
+              className={NAV_LINK_CLASS}
+            >
+              {link.label}
+            </Button>
           ))}
-          <a
+          <Button
+            underline={false}
+            theme="link"
             href="/journeys"
-            className="typo-ui ml-2 rounded-full bg-accent px-5 py-1.5 text-xs tracking-widest text-white transition-all duration-300 hover:bg-accent-hover"
+            className={cn(
+              "ml-2 rounded-full px-5 py-1.5 text-sm tracking-widest",
+              scrolled
+                ? " border-accent bg-primary-500 hover:bg-primary-400 text-white hover:shadow-none"
+                : "text-surface-deep-fg ring-1 ring-surface-deep-fg"
+            )}
           >
             {t("nav.exploreCta")}
-          </a>
+          </Button>
         </nav>
 
         <button
@@ -78,19 +96,23 @@ const Header: React.FC = () => {
 
       <nav
         className={cn(
-          "md:hidden bg-background/95 backdrop-blur-md border-t border-border/30 px-4 flex flex-col gap-4 text-foreground overflow-hidden transition-all duration-300",
+          "md:hidden  backdrop-blur-md border-t border-border/30 px-4 flex flex-col gap-4 text-foreground overflow-hidden transition-all duration-300",
           menuOpen ? "max-h-60 py-4 opacity-100" : "max-h-0 py-0 opacity-0"
         )}
         aria-label="Mobile navigation"
         aria-hidden={!menuOpen}
       >
         {navLinks.map((link) => (
-          <NavLink
+          <Button
             key={link.href}
+            theme="link"
             href={link.href}
-            label={link.label}
+            underline={false}
+            className={NAV_LINK_CLASS}
             onClick={() => setMenuOpen(false)}
-          />
+          >
+            {link.label}
+          </Button>
         ))}
         <a
           href="/journeys"

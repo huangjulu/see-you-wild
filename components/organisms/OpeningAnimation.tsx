@@ -93,12 +93,12 @@ const OpeningAnimation: React.FC = () => {
       className="fixed inset-0 z-50 flex items-center justify-center bg-surface-deep"
     >
       <div ref={brandRef} className="absolute z-10 text-center opacity-0">
-        <p
-          className="typo-display text-4xl md:text-6xl lg:text-7xl text-white leading-tight"
+        <h1
+          className="typo-display text-6xl md:text-6xl lg:text-7xl text-white leading-tight [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-accent-fg)_50%,transparent)]"
           aria-hidden="true"
         >
           See You Wild
-        </p>
+        </h1>
       </div>
       <div
         ref={videoWrapRef}

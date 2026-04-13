@@ -2,25 +2,9 @@
 
 import React, { useRef } from "react";
 import { useTranslations } from "@/lib/i18n/client";
-import { useTimeline, useTween } from "@/lib/gsap";
+import { ScrollTrigger, useTimeline, useTween } from "@/lib/gsap";
 import JourneyCard from "@/components/molecules/JourneyCard";
 import Button from "@/components/atoms/Button";
-
-const JOURNEY_KEYS = [
-  "hot-spring",
-  "camping",
-  "sup",
-  "tree-climbing",
-  "river-tracing",
-] as const;
-
-const JOURNEY_IMAGES = [
-  "https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=600&q=80",
-  "https://images.unsplash.com/photo-1504851149312-7a075b496cc7?w=600&q=80",
-  "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80",
-  "https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&q=80",
-  "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&q=80",
-];
 
 const JourneysSection: React.FC = () => {
   const t = useTranslations("home.journeys");
@@ -35,7 +19,7 @@ const JourneysSection: React.FC = () => {
       y: 0,
       duration: 0.8,
       stagger: 0.2,
-      ease: "power3.out",
+      ease: "power2.in",
       scrollTrigger: {
         start: "top 60%",
         toggleActions: "play reverse play reverse",
@@ -50,15 +34,18 @@ const JourneysSection: React.FC = () => {
     tl.to(track, {
       x: () => -(track.scrollWidth - window.innerWidth),
       ease: "none",
-      scrollTrigger: {
-        trigger: el,
-        start: "top top",
-        end: () => `+=${track.scrollWidth - window.innerWidth}`,
-        scrub: 1,
-        pin: true,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-      },
+      duration: 1,
+    }).to({}, { duration: 0.5, ease: "power2.out" });
+
+    ScrollTrigger.create({
+      trigger: el,
+      start: "top top",
+      end: () => `+=${(track.scrollWidth - window.innerWidth) * 1.5}`,
+      scrub: 1,
+      pin: true,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      animation: tl,
     });
   });
 
@@ -66,27 +53,32 @@ const JourneysSection: React.FC = () => {
     <section
       ref={sectionRef}
       id="journeys"
-      className="relative overflow-hidden bg-surface-brand"
+      className="relative overflow-hidden bg-surface-brand bg-linear-180 from-[#4F90C1] to-surface-brand from-[-15%] to-105%"
     >
-      <div className="h-screen flex flex-col justify-center pt-16">
-        <div className="flex items-end justify-between px-6 md:px-12 mb-10">
-          <div>
-            <p className="typo-overline text-sm mb-4 text-surface-brand-fg/70">
-              {t("overline")}
-            </p>
-            <h2 className="typo-display text-4xl md:text-5xl text-surface-brand-fg">
-              {t("title")}
-            </h2>
+      <div className="h-screen flex flex-col justify-center py-8">
+        <div className="max-w-7xl mx-auto w-full px-6 md:px-12 mb-10">
+          <div className="flex items-end justify-between">
+            <div>
+              <p className="typo-overline text-sm mb-4 text-surface-brand-fg/70">
+                {t("overline")}
+              </p>
+              <h2 className="typo-display text-4xl md:text-5xl text-surface-brand-fg">
+                {t("title")}
+              </h2>
+            </div>
+            <Button
+              theme="link"
+              href="/journeys"
+              className="text-surface-brand-fg/70 hover:text-surface-brand-fg"
+            >
+              {t("exploreMore")}
+            </Button>
           </div>
-          <Button
-            theme="link"
-            href="/journeys"
-            className="text-surface-brand-fg/70 hover:text-surface-brand-fg"
-          >
-            {t("exploreMore")}
-          </Button>
         </div>
-        <div ref={trackRef} className="flex gap-6 px-6 md:px-12 w-fit">
+        <div
+          ref={trackRef}
+          className="flex gap-6 px-[max(calc((100vw-80rem)/2+1.5rem),1.5rem)] md:px-[max(calc((100vw-80rem)/2+3rem),3rem)] w-fit"
+        >
           {JOURNEY_KEYS.map((key, i) => (
             <JourneyCard
               key={key}
@@ -103,3 +95,19 @@ const JourneysSection: React.FC = () => {
 
 JourneysSection.displayName = "JourneysSection";
 export default JourneysSection;
+
+const JOURNEY_KEYS = [
+  "hot-spring",
+  "camping",
+  "sup",
+  "tree-climbing",
+  "river-tracing",
+] as const;
+
+const JOURNEY_IMAGES = [
+  "https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=600&q=80",
+  "https://images.unsplash.com/photo-1504851149312-7a075b496cc7?w=600&q=80",
+  "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80",
+  "https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&q=80",
+  "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&q=80",
+];

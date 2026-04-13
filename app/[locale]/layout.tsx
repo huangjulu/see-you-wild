@@ -141,7 +141,7 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
       },
     },
     icons: {
-      icon: "/icons/favicon.png",
+      icon: "/icons/icon-192.png",
     },
   };
 }

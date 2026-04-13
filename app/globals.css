@@ -182,11 +182,15 @@
   background: var(--color-background) !important;
 }
 
+html {
+  overflow-x: clip; /* iOS Safari 不吃 body 的 overflow-x，必須在 html 層攔截 */
+}
+
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-serif);
-  overflow-x: hidden; /* 防止 ScrollTrigger pin-spacer 造成水平溢出 */
+  overflow-x: clip; /* clip 比 hidden 好：不建立 scroll container、不破壞 position:sticky */
 }
 
 @keyframes fadeInUp {

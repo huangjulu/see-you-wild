@@ -6,6 +6,7 @@ import Button from "@/components/atoms/Button";
 
 const HeroSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const h1Ref = useRef<HTMLHeadingElement>(null);
   const subtitlesRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -62,10 +63,9 @@ const HeroSection: React.FC = () => {
     },
   });
 
-  useTween(sectionRef, {
-    selector: "h1",
+  const parallaxTween = {
     to: {
-      y: () => -window.innerHeight * 0.15,
+      y: () => window.innerHeight * -0.15,
       ease: "none",
       scrollTrigger: {
         trigger: "[aria-label='Hero']",
@@ -75,12 +75,17 @@ const HeroSection: React.FC = () => {
         invalidateOnRefresh: true,
       },
     },
-  });
+  };
+
+  useTween(h1Ref, parallaxTween);
+  useTween(subtitlesRef, parallaxTween);
+  useTween(ctaRef, parallaxTween);
+  useTween(scrollRef, parallaxTween);
 
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden"
+      className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 md:px-12 overflow-hidden"
       aria-label="Hero"
     >
       <video
@@ -99,15 +104,18 @@ const HeroSection: React.FC = () => {
       <div className="absolute inset-0 bg-neutral-950/40" aria-hidden="true" />
 
       <div className="relative z-10 flex flex-col items-center max-w-4xl">
-        <h1 className="typo-display text-4xl md:text-6xl lg:text-7xl text-white leading-tight">
+        <h1
+          ref={h1Ref}
+          className="typo-display text-6xl md:text-6xl lg:text-7xl text-white leading-tight [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-accent-fg)_50%,transparent)]"
+        >
           See You Wild
         </h1>
         <div className="absolute top-full mt-6 flex flex-col items-center gap-4">
-          <div ref={subtitlesRef} className="flex flex-col items-center gap-4">
-            <p className="typo-body text-lg md:text-xl text-white/80 opacity-0">
+          <div ref={subtitlesRef} className="flex flex-col items-center">
+            <p className="typo-body text-lg md:text-xl text-white/80 opacity-0 text-shadow-md">
               在山與海之間
             </p>
-            <p className="text-3xl md:text-lg text-white/60 italic opacity-0 tracking-widest">
+            <p className="text-3xl md:text-lg text-white/60 italic opacity-0 tracking-widest text-shadow-md">
               Where wild meets grace
             </p>
           </div>
@@ -120,7 +128,7 @@ const HeroSection: React.FC = () => {
       </div>
 
       <div ref={scrollRef} className="absolute bottom-8 z-10">
-        <div className="flex flex-col items-center gap-2 text-white/60">
+        <div className="flex flex-col items-center gap-2 text-white/60 text-shadow-md">
           <span className="text-xs tracking-[0.2em] uppercase">Scroll</span>
           <div className="w-px h-8 bg-white/40 animate-bounce-slow" />
         </div>

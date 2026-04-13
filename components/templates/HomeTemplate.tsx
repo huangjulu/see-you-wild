@@ -5,7 +5,6 @@ import JourneysSection from "@/components/organisms/JourneysSection";
 import CTASection from "@/components/organisms/CTASection";
 import WhyChooseUsSection from "@/components/organisms/WhyChooseUsSection";
 import TestimonialsSection from "@/components/organisms/TestimonialsSection";
-import ContactSection from "@/components/organisms/ContactSection";
 import CookiePopup from "@/components/molecules/CookiePopup";
 
 const HomeTemplate: React.FC = () => {
@@ -16,9 +15,8 @@ const HomeTemplate: React.FC = () => {
       <PhilosophySection />
       <JourneysSection />
       <WhyChooseUsSection />
-      <CTASection />
       <TestimonialsSection />
-      <ContactSection />
+      <CTASection />
       <CookiePopup />
     </main>
   );
