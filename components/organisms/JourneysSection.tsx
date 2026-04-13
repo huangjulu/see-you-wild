@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useRef } from "react";
-import gsap from "gsap";
 import { useTranslations } from "@/lib/i18n/client";
-import { useTimeline } from "@/lib/gsap";
+import { useTimeline, useTween } from "@/lib/gsap";
 import JourneyCard from "@/components/molecules/JourneyCard";
 import Button from "@/components/atoms/Button";
 
@@ -28,32 +27,28 @@ const JourneysSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
+  useTween(trackRef, {
+    selector: ".journey-card",
+    from: { opacity: 0, y: 40 },
+    to: {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      stagger: 0.2,
+      ease: "power3.out",
+      scrollTrigger: {
+        start: "top 60%",
+        toggleActions: "play reverse play reverse",
+      },
+    },
+  });
+
   useTimeline(sectionRef, (tl, el) => {
     const track = trackRef.current;
     if (!track) return;
 
-    const cards = track.children;
-    const getDistance = () => -(track.scrollWidth - window.innerWidth);
-
-    gsap.fromTo(
-      cards,
-      { opacity: 0, y: 40 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        stagger: 0.2,
-        ease: "power3.out",
-        scrollTrigger: {
-          start: "top 60%",
-          toggleActions: "play reverse play reverse",
-        },
-      }
-    );
-
-    // Horizontal scrub scroll
     tl.to(track, {
-      x: getDistance,
+      x: () => -(track.scrollWidth - window.innerWidth),
       ease: "none",
       scrollTrigger: {
         trigger: el,

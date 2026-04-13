@@ -10,12 +10,12 @@ const HeroSection: React.FC = () => {
   const ctaRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  useTimeline(sectionRef, (tl) => {
-    const cta = ctaRef.current;
-    const scroll = scrollRef.current;
-    const subtitles = subtitlesRef.current?.children;
-
-    function playEntrance() {
+  useTimeline(
+    sectionRef,
+    (tl) => {
+      const cta = ctaRef.current;
+      const scroll = scrollRef.current;
+      const subtitles = subtitlesRef.current?.children;
       if (!subtitles || !cta || !scroll) return;
 
       tl.fromTo(
@@ -38,16 +38,10 @@ const HeroSection: React.FC = () => {
       );
 
       tl.fromTo(scroll, { opacity: 0 }, { opacity: 1, duration: 0.8 }, "-=0.3");
-    }
-
-    window.addEventListener("opening-animation-complete", playEntrance, {
-      once: true,
-    });
-
-    return () => {
-      window.removeEventListener("opening-animation-complete", playEntrance);
-    };
-  });
+    },
+    { paused: true },
+    "opening-done"
+  );
 
   return (
     <section
