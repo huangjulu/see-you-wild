@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { type RefObject, type ReactNode } from "react";
 import { ReducedMotionContext } from "@/stores/motion";
-import { useScrollReveal } from "../useScrollReveal";
+import { useTween } from "../useTween";
 
 // ---------------------------------------------------------------------------
 // GSAP mocks
@@ -73,14 +73,14 @@ beforeEach(() => {
 // Tests
 // ---------------------------------------------------------------------------
 
-describe("useScrollReveal", () => {
+describe("useTween", () => {
   // ---- reduced motion ----
 
   describe("reduced motion 啟用時", () => {
     it("不執行任何動畫", () => {
       const scope = createScopeRef();
 
-      renderHook(() => useScrollReveal(scope, { from: { opacity: 0 } }), {
+      renderHook(() => useTween(scope, { from: { opacity: 0 } }), {
         wrapper: wrapper(true),
       });
 
@@ -95,7 +95,7 @@ describe("useScrollReveal", () => {
     it("不執行任何動畫", () => {
       const scope: RefObject<HTMLElement | null> = { current: null };
 
-      renderHook(() => useScrollReveal(scope, { from: { opacity: 0 } }), {
+      renderHook(() => useTween(scope, { from: { opacity: 0 } }), {
         wrapper: wrapper(false),
       });
 
@@ -112,7 +112,7 @@ describe("useScrollReveal", () => {
       const from = { opacity: 0, y: 40 };
       const to = { opacity: 1, y: 0 };
 
-      renderHook(() => useScrollReveal(scope, { from, to }), {
+      renderHook(() => useTween(scope, { from, to }), {
         wrapper: wrapper(false),
       });
 
@@ -124,7 +124,7 @@ describe("useScrollReveal", () => {
       const scope = createScopeRef();
       const to = { opacity: 1 };
 
-      renderHook(() => useScrollReveal(scope, { to }), {
+      renderHook(() => useTween(scope, { to }), {
         wrapper: wrapper(false),
       });
 
@@ -137,7 +137,7 @@ describe("useScrollReveal", () => {
       const scope = createScopeRef();
       const from = { opacity: 0 };
 
-      renderHook(() => useScrollReveal(scope, { from }), {
+      renderHook(() => useTween(scope, { from }), {
         wrapper: wrapper(false),
       });
 
@@ -157,7 +157,7 @@ describe("useScrollReveal", () => {
       const to = { opacity: 1 };
 
       renderHook(
-        () => useScrollReveal(scope, { from, to, selector: ".item" }),
+        () => useTween(scope, { from, to, selector: ".item" }),
         { wrapper: wrapper(false) }
       );
 
@@ -170,7 +170,7 @@ describe("useScrollReveal", () => {
 
       renderHook(
         () =>
-          useScrollReveal(scope, {
+          useTween(scope, {
             from: { opacity: 0 },
             selector: ".nonexistent",
           }),
@@ -193,7 +193,7 @@ describe("useScrollReveal", () => {
       const to = { opacity: 1, y: 0, stagger: 0.1 };
 
       renderHook(
-        () => useScrollReveal(scope, { from, to, selector: ".card" }),
+        () => useTween(scope, { from, to, selector: ".card" }),
         { wrapper: wrapper(false) }
       );
 
@@ -212,7 +212,7 @@ describe("useScrollReveal", () => {
       const to = { opacity: 1 };
 
       renderHook(
-        () => useScrollReveal(scope, { from, to, selector: ".card" }),
+        () => useTween(scope, { from, to, selector: ".card" }),
         { wrapper: wrapper(false) }
       );
 
@@ -226,7 +226,7 @@ describe("useScrollReveal", () => {
     it("不執行任何動畫", () => {
       const scope = createScopeRef();
 
-      renderHook(() => useScrollReveal(scope), {
+      renderHook(() => useTween(scope), {
         wrapper: wrapper(false),
       });
 
