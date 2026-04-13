@@ -96,7 +96,7 @@ const JOURNEYS = [
     title: "野溪溫泉秘境",
     subtitle: "Hot Spring",
     image:
-      "https://images.unsplash.com/photo-1600298881979-66e5d5e29a09?w=600&q=80",
+      "https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=600&q=80",
   },
   {
     title: "星空野營私廚",
