@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import { useTimeline } from "@/lib/gsap";
+import { useTimeline, useTween } from "@/lib/gsap";
 import Button from "@/components/atoms/Button";
 
 const HeroSection: React.FC = () => {
@@ -9,6 +9,7 @@ const HeroSection: React.FC = () => {
   const subtitlesRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useTimeline(
     sectionRef,
@@ -43,6 +44,39 @@ const HeroSection: React.FC = () => {
     "opening-done"
   );
 
+  const OFFSET_TOP = 0.4; // 要跟 OpeningAnimation video 的 translate-y-[40vh] 同步
+  const PARALLEX_ANIMATE = 0.3; // offset + 0.3 ≤ video h-180% 的 buffer (0.8) 才不會露出空白
+
+  useTween(sectionRef, {
+    selector: "video",
+    from: { y: () => window.innerHeight * OFFSET_TOP },
+    to: {
+      y: () => window.innerHeight * (OFFSET_TOP + PARALLEX_ANIMATE),
+      scrollTrigger: {
+        trigger: "[aria-label='Hero']",
+        start: "top top",
+        end: "+=100%",
+        scrub: true,
+        invalidateOnRefresh: true,
+      },
+    },
+  });
+
+  useTween(sectionRef, {
+    selector: "h1",
+    to: {
+      y: () => -window.innerHeight * 0.15,
+      ease: "none",
+      scrollTrigger: {
+        trigger: "[aria-label='Hero']",
+        start: "top top",
+        end: "+=100%",
+        scrub: true,
+        invalidateOnRefresh: true,
+      },
+    },
+  });
+
   return (
     <section
       ref={sectionRef}
@@ -50,11 +84,12 @@ const HeroSection: React.FC = () => {
       aria-label="Hero"
     >
       <video
+        ref={videoRef}
         autoPlay
         muted
         loop
         playsInline
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute bottom-0 left-0 w-full h-[180%] object-cover will-change-transform"
       >
         <source
           src="https://assets.mixkit.co/videos/1943/1943-720.mp4"

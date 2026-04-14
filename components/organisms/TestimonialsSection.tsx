@@ -5,6 +5,84 @@ import { useTween } from "@/lib/gsap";
 import { useTranslations } from "@/lib/i18n/client";
 import TestimonialCard from "@/components/molecules/TestimonialCard";
 
+const TestimonialsSection: React.FC = () => {
+  const t = useTranslations("home.testimonials");
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useTween(sectionRef, {
+    selector: ".testimonial-card",
+    from: { opacity: 0 },
+    to: {
+      opacity: 1,
+      duration: 1,
+      ease: "power3.out",
+      scrollTrigger: {
+        start: "top 80%",
+        toggleActions: "play none none none",
+      },
+    },
+  });
+
+  return (
+    <section ref={sectionRef} className="py-24 md:py-32 px-6 md:px-12">
+      {/* Rounded clip container */}
+      <div className="rounded-3xl overflow-hidden">
+        <div className="relative bg-neutral-50 py-24 md:py-32 px-6 md:px-12">
+          {/* SVG ghost cards background */}
+          <GhostCardsSvg />
+
+          {/* Radial gradient mask — fade out edge ghost cards */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(ellipse 70% 60% at 50% 50%, transparent 40%, var(--color-neutral-50) 90%)",
+            }}
+            aria-hidden="true"
+          />
+
+          {/* Content */}
+          <div className="relative z-10 max-w-6xl mx-auto">
+            <div className="text-center mb-20">
+              <p className="typo-overline text-sm mb-4 text-muted-warm">
+                {t("overline")}
+              </p>
+              <h2 className="typo-display text-4xl md:text-5xl text-foreground">
+                {t("title")}
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10 md:gap-y-14 max-w-5xl mx-auto">
+              {TESTIMONIAL_KEYS.map((key, i) => (
+                <TestimonialCard
+                  key={key}
+                  quote={t(`items.${key}.quote`)}
+                  author={t(`items.${key}.author`)}
+                  trip={t(`items.${key}.trip`)}
+                  rotate={CARD_OFFSETS[i].rotate}
+                  wrapperOffset={CARD_OFFSETS[i].wrapper}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+TestimonialsSection.displayName = "TestimonialsSection";
+export default TestimonialsSection;
+
+const CARD_OFFSETS = [
+  { rotate: "rotate-[-2.5deg]", wrapper: "md:translate-y-0" },
+  { rotate: "rotate-[1.8deg]", wrapper: "md:translate-y-6" },
+  { rotate: "rotate-[-1.2deg]", wrapper: "md:-translate-y-3" },
+  { rotate: "rotate-[2.2deg]", wrapper: "md:translate-y-8" },
+  { rotate: "rotate-[-1.8deg]", wrapper: "md:translate-y-2" },
+  { rotate: "rotate-[1deg]", wrapper: "md:-translate-y-4" },
+];
+
 const TESTIMONIAL_KEYS = [
   "ava",
   "james",
@@ -122,83 +200,3 @@ const GhostCardsSvg: React.FC = () => (
     ))}
   </svg>
 );
-
-/* ─── Main Section ─── */
-
-const TestimonialsSection: React.FC = () => {
-  const t = useTranslations("home.testimonials");
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useTween(sectionRef, {
-    selector: ".testimonial-card",
-    from: { opacity: 0 },
-    to: {
-      opacity: 1,
-      duration: 1,
-      ease: "power3.out",
-      scrollTrigger: {
-        start: "top 80%",
-        toggleActions: "play none none none",
-      },
-    },
-  });
-
-  return (
-    <section ref={sectionRef} className="py-24 md:py-32 px-6 md:px-12">
-      {/* Rounded clip container */}
-      <div className="rounded-3xl overflow-hidden">
-        <div className="relative bg-neutral-50 py-24 md:py-32 px-6 md:px-12">
-          {/* SVG ghost cards background */}
-          <GhostCardsSvg />
-
-          {/* Radial gradient mask — fade out edge ghost cards */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(ellipse 70% 60% at 50% 50%, transparent 40%, var(--color-neutral-50) 90%)",
-            }}
-            aria-hidden="true"
-          />
-
-          {/* Content */}
-          <div className="relative z-10 max-w-6xl mx-auto">
-            <div className="text-center mb-20">
-              <p className="typo-overline text-sm mb-4 text-muted-warm">
-                {t("overline")}
-              </p>
-              <h2 className="typo-display text-4xl md:text-5xl text-foreground">
-                {t("title")}
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10 md:gap-y-14 max-w-5xl mx-auto">
-              {TESTIMONIAL_KEYS.map((key, i) => (
-                <TestimonialCard
-                  key={key}
-                  quote={t(`items.${key}.quote`)}
-                  author={t(`items.${key}.author`)}
-                  trip={t(`items.${key}.trip`)}
-                  rotate={CARD_OFFSETS[i].rotate}
-                  wrapperOffset={CARD_OFFSETS[i].wrapper}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-TestimonialsSection.displayName = "TestimonialsSection";
-export default TestimonialsSection;
-
-const CARD_OFFSETS = [
-  { rotate: "rotate-[-2.5deg]", wrapper: "md:translate-y-0" },
-  { rotate: "rotate-[1.8deg]", wrapper: "md:translate-y-6" },
-  { rotate: "rotate-[-1.2deg]", wrapper: "md:-translate-y-3" },
-  { rotate: "rotate-[2.2deg]", wrapper: "md:translate-y-8" },
-  { rotate: "rotate-[-1.8deg]", wrapper: "md:translate-y-2" },
-  { rotate: "rotate-[1deg]", wrapper: "md:-translate-y-4" },
-];
