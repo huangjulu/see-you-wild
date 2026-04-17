@@ -136,5 +136,15 @@
       "heading": "Follow Us",
       "description": "追蹤我們的 Instagram 獲取最新活動資訊"
     }
+  },
+  "events": {
+    "title": "活動行程",
+    "overline": "Events",
+    "noResults": "沒有找到符合條件的活動",
+    "searchPlaceholder": "搜尋活動...",
+    "allTypes": "所有類型",
+    "allLocations": "所有地點",
+    "typeLabel": "活動類型",
+    "locationLabel": "地點"
   }
 }

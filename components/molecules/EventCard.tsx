@@ -1,69 +1,42 @@
-import Image from "next/image";
 import { cn } from "@/lib/utils";
-import Heading from "@/components/atoms/Heading";
-import Text from "@/components/atoms/Text";
-import Button from "@/components/atoms/Button";
-import type { ButtonTheme } from "@/components/atoms/Button";
 import Tag from "@/components/atoms/Tag";
 
 interface EventCardProps {
-  tag: string;
+  id: string;
+  type: string;
+  location: string;
   title: string;
-  subtitle: string;
-  date: string;
-  description: string;
-  cta: string;
-  ctaUrl: string;
+  startDate: string;
+  endDate: string;
+  basePrice: number;
+  status: "open" | "closed";
   image: string;
   imageAlt: string;
-  theme: ButtonTheme;
-  reverse?: boolean;
 }
 
 const EventCard: React.FC<EventCardProps> = (props) => {
-  const reverse = props.reverse ?? false;
+  const formattedPrice = props.basePrice.toLocaleString("zh-TW");
 
   return (
     <article
       className={cn(
-        "flex flex-col gap-8 md:gap-12 items-center",
-        reverse ? "md:flex-row-reverse" : "md:flex-row"
+        "group overflow-hidden rounded-2xl bg-surface transition-shadow duration-300 hover:shadow-lg"
       )}
     >
-      <div className="w-full md:w-1/2 overflow-hidden rounded-2xl">
-        <Image
+      <div className="relative aspect-[4/3] overflow-hidden">
+        <img
           src={props.image}
           alt={props.imageAlt}
-          width={800}
-          height={533}
-          className="w-full h-auto object-cover rounded-2xl"
-          sizes="(max-width: 768px) 100vw, 50vw"
+          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
       </div>
-      <div className="w-full md:w-1/2 space-y-4">
-        <Tag>{props.tag}</Tag>
-        <Heading
-          level="h3"
-          className="text-2xl md:text-3xl font-semibold leading-tight"
-        >
-          {props.title}
-        </Heading>
-        <Text className="text-lg text-accent font-serif">{props.subtitle}</Text>
-        <Text muted className="text-sm">
-          {props.date}
-        </Text>
-        <Text muted className="leading-relaxed">
-          {props.description}
-        </Text>
-        <div className="pt-2">
-          <Button
-            theme={props.theme}
-            href={props.ctaUrl}
-            ariaLabel={`${props.cta} — ${props.title}`}
-          >
-            {props.cta}
-          </Button>
-        </div>
+      <div className="space-y-2 p-4">
+        <Tag>{props.type}</Tag>
+        <h3 className="typo-heading text-lg">{props.title}</h3>
+        <p className="typo-body text-sm text-muted">
+          {props.location} · {props.startDate}
+        </p>
+        <p className="typo-ui text-base font-semibold">NT$ {formattedPrice}</p>
       </div>
     </article>
   );

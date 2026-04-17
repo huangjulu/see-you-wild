@@ -68,7 +68,7 @@ const JourneysSection: React.FC = () => {
             </div>
             <Button
               theme="link"
-              href="/journeys"
+              href="/events"
               className="text-surface-brand-fg/70 hover:text-surface-brand-fg"
             >
               {t("exploreMore")}
@@ -85,6 +85,7 @@ const JourneysSection: React.FC = () => {
               title={t(`items.${key}.title`)}
               subtitle={t(`items.${key}.subtitle`)}
               image={JOURNEY_IMAGES[i]}
+              href={`/events?type=${key}`}
             />
           ))}
         </div>

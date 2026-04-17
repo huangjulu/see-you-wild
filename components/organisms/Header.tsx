@@ -72,7 +72,7 @@ const Header: React.FC = () => {
           <Button
             underline={false}
             theme="link"
-            href="/journeys"
+            href="/events"
             className={cn(
               "ml-2 rounded-full px-5 py-1.5 text-sm tracking-widest",
               scrolled
@@ -115,7 +115,7 @@ const Header: React.FC = () => {
           </Button>
         ))}
         <a
-          href="/journeys"
+          href="/events"
           className="typo-ui rounded-full bg-accent px-5 py-2 text-center text-xs tracking-widest text-white transition-all duration-300 hover:bg-accent-hover"
           onClick={() => setMenuOpen(false)}
         >

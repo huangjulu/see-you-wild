@@ -13,7 +13,7 @@ const CTASection: React.FC = async () => {
           title={t("title")}
           description={t("description")}
           buttonText={t("button")}
-          buttonHref="/journeys"
+          buttonHref="/events"
         />
       </div>
     </section>

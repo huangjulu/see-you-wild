@@ -145,5 +145,15 @@
       "heading": "Follow Us",
       "description": "Follow our Instagram for the latest event updates"
     }
+  },
+  "events": {
+    "title": "Events",
+    "overline": "Events",
+    "noResults": "No events found matching your criteria",
+    "searchPlaceholder": "Search events...",
+    "allTypes": "All Types",
+    "allLocations": "All Locations",
+    "typeLabel": "Activity Type",
+    "locationLabel": "Location"
   }
 }
