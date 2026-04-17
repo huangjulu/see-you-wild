@@ -1,4 +1,10 @@
 {
   "installCommand": "pnpm install",
-  "buildCommand": "rm -rf .next && pnpm run build"
+  "buildCommand": "rm -rf .next && pnpm run build",
+  "crons": [
+    {
+      "path": "/api/cron/keepalive",
+      "schedule": "0 0 * * *"
+    }
+  ]
 }
