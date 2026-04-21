@@ -155,5 +155,26 @@
     "allLocations": "All Locations",
     "typeLabel": "Activity Type",
     "locationLabel": "Location"
+  },
+  "eventDetail": {
+    "backToEvents": "Back to Events",
+    "eventDetails": "Event Details",
+    "viewDetails": "View Details",
+    "collapse": "Collapse",
+    "safetyPolicy": "Safety Policy",
+    "viewPolicy": "View Policy",
+    "packageOptions": "Package Options",
+    "eventDate": "Event Date",
+    "pickupPlace": "Pickup Location",
+    "selfArrival": "Self-arrival",
+    "price": "Price",
+    "checkDates": "Check Available Dates",
+    "bookNow": "Book Now",
+    "perPerson": "/ per person",
+    "carpoolIncluded": "Incl. carpool NT$",
+    "selectOptionsHint": "Please select date and transport first",
+    "transport": "Transport",
+    "carpoolPickup": "Carpool Pickup",
+    "carpoolSurchargeLabel": "+NT$ {0}"
   }
 }

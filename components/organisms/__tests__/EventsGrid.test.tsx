@@ -1,7 +1,16 @@
 import { describe, it, expect } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+import { NextIntlClientProvider } from "next-intl";
 import EventsGrid from "../EventsGrid";
 import type { MockEvent } from "@/server/mockdata/mock-events";
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="zh-TW" messages={{}}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
 
 const mockEvents: MockEvent[] = [
   {
@@ -44,14 +53,14 @@ const mockEvents: MockEvent[] = [
 
 describe("EventsGrid", () => {
   it("顯示所有活動卡片", () => {
-    render(<EventsGrid events={mockEvents} />);
+    renderWithIntl(<EventsGrid events={mockEvents} />);
     expect(screen.getByText("野營私廚｜阿里山")).toBeInTheDocument();
     expect(screen.getByText("SUP 日出團｜花蓮")).toBeInTheDocument();
     expect(screen.getByText("野溪溫泉｜栗松")).toBeInTheDocument();
   });
 
   it("搜尋文字過濾活動", () => {
-    render(<EventsGrid events={mockEvents} />);
+    renderWithIntl(<EventsGrid events={mockEvents} />);
     const input = screen.getByPlaceholderText(/搜尋/);
     fireEvent.change(input, { target: { value: "SUP" } });
     expect(screen.getByText("SUP 日出團｜花蓮")).toBeInTheDocument();
@@ -59,7 +68,7 @@ describe("EventsGrid", () => {
   });
 
   it("type filter 過濾活動", () => {
-    render(<EventsGrid events={mockEvents} />);
+    renderWithIntl(<EventsGrid events={mockEvents} />);
     const typeSelect = screen.getByLabelText(/活動類型/);
     fireEvent.change(typeSelect, { target: { value: "camping" } });
     expect(screen.getByText("野營私廚｜阿里山")).toBeInTheDocument();
@@ -67,7 +76,7 @@ describe("EventsGrid", () => {
   });
 
   it("location filter 過濾活動", () => {
-    render(<EventsGrid events={mockEvents} />);
+    renderWithIntl(<EventsGrid events={mockEvents} />);
     const locationSelect = screen.getByLabelText(/地點/);
     fireEvent.change(locationSelect, { target: { value: "花蓮" } });
     expect(screen.getByText("SUP 日出團｜花蓮")).toBeInTheDocument();
@@ -75,14 +84,14 @@ describe("EventsGrid", () => {
   });
 
   it("無結果時顯示提示訊息", () => {
-    render(<EventsGrid events={mockEvents} />);
+    renderWithIntl(<EventsGrid events={mockEvents} />);
     const input = screen.getByPlaceholderText(/搜尋/);
     fireEvent.change(input, { target: { value: "找不到的活動" } });
     expect(screen.getByText(/沒有找到/)).toBeInTheDocument();
   });
 
   it("接受 initialType 設定預設篩選", () => {
-    render(<EventsGrid events={mockEvents} initialType="sup" />);
+    renderWithIntl(<EventsGrid events={mockEvents} initialType="sup" />);
     expect(screen.getByText("SUP 日出團｜花蓮")).toBeInTheDocument();
     expect(screen.queryByText("野營私廚｜阿里山")).not.toBeInTheDocument();
   });

@@ -19,6 +19,7 @@ interface ButtonProps {
   onClick?: React.MouseEventHandler<HTMLElement>;
   external?: boolean;
   underline?: boolean;
+  disabled?: boolean;
 }
 
 // 所有 box-shaped theme 的共用 layout。
@@ -73,6 +74,7 @@ const Button: React.FC<ButtonProps> = (props) => {
   const className = cn(
     themeClass,
     "typo-ui border transition-all duration-300",
+    props.disabled && "opacity-50 cursor-not-allowed",
     props.className
   );
 
@@ -107,6 +109,7 @@ function renderElement(props: ButtonProps, className: string) {
       className={className}
       aria-label={props.ariaLabel}
       onClick={props.onClick}
+      disabled={props.disabled}
     >
       {props.icon}
       {props.children}

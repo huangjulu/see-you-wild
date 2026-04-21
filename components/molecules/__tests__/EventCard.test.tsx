@@ -1,6 +1,15 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { NextIntlClientProvider } from "next-intl";
 import EventCard from "../EventCard";
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="zh-TW" messages={{}}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
 
 const baseProps = {
   id: "camping-chef-alishan-202605",
@@ -18,39 +27,39 @@ const baseProps = {
 
 describe("EventCard", () => {
   it("顯示活動標題", () => {
-    render(<EventCard {...baseProps} />);
+    renderWithIntl(<EventCard {...baseProps} />);
     expect(screen.getByText("野營私廚｜阿里山秘境")).toBeInTheDocument();
   });
 
   it("顯示活動類型 tag", () => {
-    render(<EventCard {...baseProps} />);
+    renderWithIntl(<EventCard {...baseProps} />);
     expect(screen.getByText("camping")).toBeInTheDocument();
   });
 
   it("顯示地點", () => {
-    render(<EventCard {...baseProps} />);
+    renderWithIntl(<EventCard {...baseProps} />);
     expect(screen.getByText(/阿里山 · 2026-05-18/)).toBeInTheDocument();
   });
 
   it("顯示價格", () => {
-    render(<EventCard {...baseProps} />);
+    renderWithIntl(<EventCard {...baseProps} />);
     expect(screen.getByText(/4,800/)).toBeInTheDocument();
   });
 
   it("顯示活動圖片與 alt text", () => {
-    render(<EventCard {...baseProps} />);
+    renderWithIntl(<EventCard {...baseProps} />);
     const img = screen.getByAltText("阿里山野營");
     expect(img).toBeInTheDocument();
     expect(img).toHaveAttribute("src", baseProps.image);
   });
 
   it("整張卡片是 article 元素", () => {
-    const { container } = render(<EventCard {...baseProps} />);
+    const { container } = renderWithIntl(<EventCard {...baseProps} />);
     expect(container.querySelector("article")).toBeInTheDocument();
   });
 
   it("顯示日期", () => {
-    render(<EventCard {...baseProps} />);
+    renderWithIntl(<EventCard {...baseProps} />);
     expect(screen.getByText(/2026-05-18/)).toBeInTheDocument();
   });
 });
