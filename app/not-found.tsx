@@ -6,7 +6,7 @@ function RootNotFound() {
       <body>
         <main className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
           <Image
-            src="/event-camping.jpg"
+            src="/images/event-camping.jpg"
             alt=""
             fill
             className="object-cover"

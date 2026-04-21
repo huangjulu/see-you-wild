@@ -17,7 +17,7 @@ const Logo: React.FC<LogoProps> = (props) => {
       )}
       width={size == "lg" ? LG_SIZE : SM_SIZE}
       height={size == "lg" ? LG_SIZE : SM_SIZE}
-      priority={size == "lg"}
+      priority
       {...logoConfig}
     />
   );

@@ -97,7 +97,7 @@
   /* ─── Fonts ─── */
   --font-serif:
     "SerifDigits", var(--font-rufina), "Rufina", var(--font-chiron-sung-hk),
-    "Chiron Sung HK", var(--font-noto-serif-tc), "Noto Serif TC", serif;
+    var(--font-noto-serif-tc), "Noto Serif TC", serif;
   --font-sans: var(--font-noto-sans-tc), "Noto Sans TC", sans-serif;
 
   /* ─── Font Weights ─── */
