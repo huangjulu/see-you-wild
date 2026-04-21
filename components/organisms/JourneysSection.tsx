@@ -1,51 +1,51 @@
 "use client";
 
 import React, { useRef } from "react";
-import gsap from "gsap";
-import { useTimeline } from "@/lib/gsap";
+import { useTranslations } from "@/lib/i18n/client";
+import { ScrollTrigger, useTimeline, useTween } from "@/lib/gsap";
 import JourneyCard from "@/components/molecules/JourneyCard";
 import Button from "@/components/atoms/Button";
 
 const JourneysSection: React.FC = () => {
+  const t = useTranslations("home.journeys");
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+
+  useTween(trackRef, {
+    selector: ".journey-card",
+    from: { opacity: 0, y: 40 },
+    to: {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      stagger: 0.2,
+      ease: "power2.in",
+      scrollTrigger: {
+        start: "top 60%",
+        toggleActions: "play reverse play reverse",
+      },
+    },
+  });
 
   useTimeline(sectionRef, (tl, el) => {
     const track = trackRef.current;
     if (!track) return;
 
-    const cards = track.children;
-    const getDistance = () => -(track.scrollWidth - window.innerWidth);
-
-    gsap.fromTo(
-      cards,
-      { opacity: 0, y: 40 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        stagger: 0.2,
-        ease: "power3.out",
-        scrollTrigger: {
-          start: "top 60%",
-          toggleActions: "play reverse play reverse",
-        },
-      }
-    );
-
-    // Horizontal scrub scroll
     tl.to(track, {
-      x: getDistance,
+      x: () => -(track.scrollWidth - window.innerWidth),
       ease: "none",
-      scrollTrigger: {
-        trigger: el,
-        start: "top top",
-        end: () => `+=${track.scrollWidth - window.innerWidth}`,
-        scrub: 1,
-        pin: true,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-      },
+      duration: 1,
+    }).to({}, { duration: 0.5, ease: "power2.out" });
+
+    ScrollTrigger.create({
+      trigger: el,
+      start: "top top",
+      end: () => `+=${(track.scrollWidth - window.innerWidth) * 1.5}`,
+      scrub: 1,
+      pin: true,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      animation: tl,
     });
   });
 
@@ -53,33 +53,39 @@ const JourneysSection: React.FC = () => {
     <section
       ref={sectionRef}
       id="journeys"
-      className="relative overflow-hidden bg-surface-brand"
+      className="relative overflow-hidden bg-surface-brand bg-linear-180 from-[#4F90C1] to-surface-brand from-[-15%] to-105%"
     >
-      <div className="h-screen flex flex-col justify-center pt-16">
-        <div className="flex items-end justify-between px-6 md:px-12 mb-10">
-          <div>
-            <p className="typo-overline text-sm mb-4 text-surface-brand-fg/70">
-              Journeys
-            </p>
-            <h2 className="typo-display text-4xl md:text-5xl text-surface-brand-fg">
-              探索旅程
-            </h2>
+      <div className="h-screen flex flex-col justify-center py-8">
+        <div className="max-w-7xl mx-auto w-full px-6 md:px-12 mb-10">
+          <div className="flex items-end justify-between">
+            <div>
+              <p className="typo-overline text-sm mb-4 text-surface-brand-fg/70">
+                {t("overline")}
+              </p>
+              <h2 className="typo-display text-4xl md:text-5xl text-surface-brand-fg">
+                {t("title")}
+              </h2>
+            </div>
+            <Button
+              theme="link"
+              href="/events"
+              className="text-surface-brand-fg/70 hover:text-surface-brand-fg"
+            >
+              {t("exploreMore")}
+            </Button>
           </div>
-          <Button
-            theme="link"
-            href="/journeys"
-            className="text-surface-brand-fg/70 hover:text-surface-brand-fg"
-          >
-            探索更多 →
-          </Button>
         </div>
-        <div ref={trackRef} className="flex gap-6 px-6 md:px-12 w-fit">
-          {JOURNEYS.map((journey) => (
+        <div
+          ref={trackRef}
+          className="flex gap-6 px-[max(calc((100vw-80rem)/2+1.5rem),1.5rem)] md:px-[max(calc((100vw-80rem)/2+3rem),3rem)] w-fit"
+        >
+          {JOURNEY_KEYS.map((key, i) => (
             <JourneyCard
-              key={journey.title}
-              title={journey.title}
-              subtitle={journey.subtitle}
-              image={journey.image}
+              key={key}
+              title={t(`items.${key}.title`)}
+              subtitle={t(`items.${key}.subtitle`)}
+              image={JOURNEY_IMAGES[i]}
+              href={`/events?type=${key}`}
             />
           ))}
         </div>
@@ -91,35 +97,18 @@ const JourneysSection: React.FC = () => {
 JourneysSection.displayName = "JourneysSection";
 export default JourneysSection;
 
-const JOURNEYS = [
-  {
-    title: "野溪溫泉秘境",
-    subtitle: "Hot Spring",
-    image:
-      "https://images.unsplash.com/photo-1600298881979-66e5d5e29a09?w=600&q=80",
-  },
-  {
-    title: "星空野營私廚",
-    subtitle: "Wild Camping",
-    image:
-      "https://images.unsplash.com/photo-1504851149312-7a075b496cc7?w=600&q=80",
-  },
-  {
-    title: "SUP 立槳日出團",
-    subtitle: "Paddleboarding",
-    image:
-      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80",
-  },
-  {
-    title: "攀樹森林浴",
-    subtitle: "Tree Climbing",
-    image:
-      "https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&q=80",
-  },
-  {
-    title: "溯溪探險",
-    subtitle: "River Tracing",
-    image:
-      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&q=80",
-  },
+const JOURNEY_KEYS = [
+  "hot-spring",
+  "camping",
+  "sup",
+  "tree-climbing",
+  "river-tracing",
+] as const;
+
+const JOURNEY_IMAGES = [
+  "https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=600&q=80",
+  "https://images.unsplash.com/photo-1504851149312-7a075b496cc7?w=600&q=80",
+  "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80",
+  "https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&q=80",
+  "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&q=80",
 ];

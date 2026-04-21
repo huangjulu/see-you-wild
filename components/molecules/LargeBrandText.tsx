@@ -1,12 +1,12 @@
 "use client";
 
 import { useRef } from "react";
-import { useScrollReveal } from "@/lib/gsap";
+import { useTween } from "@/lib/gsap";
 
 const LargeBrandText: React.FC = () => {
   const textRef = useRef<HTMLHeadingElement>(null);
 
-  useScrollReveal(textRef, {
+  useTween(textRef, {
     from: { y: 100, opacity: 0 },
     to: {
       y: 0,
@@ -14,8 +14,9 @@ const LargeBrandText: React.FC = () => {
       duration: 2,
       ease: "power3.out",
       scrollTrigger: {
-        start: "top 60%",
-        toggleActions: "play none none none",
+        start: "top 80%",
+        end: "bottom 20%",
+        scrub: 1,
       },
     },
   });
@@ -23,9 +24,9 @@ const LargeBrandText: React.FC = () => {
   return (
     <h1
       ref={textRef}
-      className="absolute bottom-[-5%] inset-x-0 mx-auto w-max font-playfair text-[20vw] text-background whitespace-nowrap pointer-events-none opacity-0 leading-none"
+      className="absolute bottom-[-10%] tracking-tighter inset-x-0 mx-auto w-max font-playfair text-[18vw] text-background whitespace-nowrap pointer-events-none opacity-0 leading-none"
     >
-      aura wild
+      See You Wild
     </h1>
   );
 };

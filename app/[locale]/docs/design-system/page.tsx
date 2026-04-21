@@ -1,9 +1,13 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import Button from "@/components/atoms/Button";
+import EventCalendar from "@/components/molecules/EventCalendar";
+import RadioOption from "@/components/atoms/RadioOption";
 import Dialog from "@/components/molecules/Dialog";
 import ModalCard from "@/components/molecules/ModalCard";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
   CheckCircle as IconCheckCircle,
   AlertCircle as IconAlertCircle,
@@ -12,21 +16,6 @@ import {
   X as IconX,
   ArrowRight as IconArrowRight,
 } from "lucide-react";
-
-/**
- * 暫時預覽頁：新 color palette + typography 設計 token
- * 確認後刪除此頁
- *
- * 五色基底：
- *   base-bg:    #f4f6f5  淺灰白（全站底色）
- *   base-fg:    #2d3a40  深炭藍（主文字 / primary button）
- *   primary:    #DE954E  暖砂橘（品牌主色）
- *   tertiary:   #6B9DC2  冷灰藍（第二強調色 / 交錯區塊）
- *   success:    #1FAD87  自然綠
- *   error:      #C46743  磚紅
- */
-
-/* ─── Color Scales ─── */
 
 const primary = {
   50: "#fef6ee",
@@ -302,9 +291,76 @@ const SectionLabel: React.FC<{ children: React.ReactNode }> = (props) => (
   </h2>
 );
 
+const sections = [
+  { id: "color-scales", label: "Color Scales" },
+  { id: "semantic-tokens", label: "Semantic Tokens" },
+  { id: "typography", label: "Typography" },
+  { id: "buttons", label: "Buttons" },
+  { id: "slot-components", label: "Dialog / ModalCard" },
+  { id: "shadcn-components", label: "shadcn/ui Components" },
+  { id: "section-rhythm", label: "Section Rhythm" },
+  { id: "testimonial-card", label: "Testimonial Card" },
+  { id: "toast", label: "Toast" },
+  { id: "contrast-check", label: "Contrast Check" },
+  { id: "mixed-pairing", label: "Mixed Pairing" },
+  { id: "full-page-sim", label: "Full Page Sim" },
+  { id: "token-map", label: "Token Map" },
+];
+
 const PalettePreviewPage: React.FC = () => {
+  const [activeSection, setActiveSection] = useState<string>("color-scales");
+
+  useEffect(function observeSections() {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        }
+      },
+      { rootMargin: "-20% 0px -70% 0px", threshold: 0 }
+    );
+
+    for (const { id } of sections) {
+      const el = document.getElementById(id);
+      if (el != null) {
+        observer.observe(el);
+      }
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background p-8 pt-24 font-serif text-foreground">
+      {/* ─── Scroll Spy ─── */}
+      <nav className="fixed top-24 right-8 z-50 hidden bg-background/80 backdrop-blur-sm rounded-lg p-3 shadow-sm border border-border xl:block">
+        <ul className="space-y-1">
+          {sections.map((s) => (
+            <li key={s.id}>
+              <a
+                href={`#${s.id}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  document
+                    .getElementById(s.id)
+                    ?.scrollIntoView({ behavior: "smooth" });
+                }}
+                className={cn(
+                  "block text-xs transition-colors",
+                  activeSection === s.id
+                    ? "text-accent font-medium"
+                    : "text-muted hover:text-foreground"
+                )}
+              >
+                {s.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
       <h1 className="typo-heading mb-1 text-3xl">Design System Preview</h1>
       <p className="typo-ui mb-10 text-sm text-muted">
         #f4f6f5 / #2d3a40 / #DE954E / #6B9DC2 / #1FAD87 / #C46743
@@ -312,7 +368,7 @@ const PalettePreviewPage: React.FC = () => {
       </p>
 
       {/* ═══ COLOR SCALES ═══ */}
-      <section className="mb-16">
+      <section id="color-scales" className="mb-16">
         <SectionLabel>Color Scales</SectionLabel>
         <ScaleRow
           name="Primary（暖砂橘 #DE954E）"
@@ -338,7 +394,7 @@ const PalettePreviewPage: React.FC = () => {
       </section>
 
       {/* ═══ SEMANTIC TOKENS ═══ */}
-      <section className="mb-16">
+      <section id="semantic-tokens" className="mb-16">
         <SectionLabel>Semantic Tokens</SectionLabel>
         <div className="flex flex-wrap gap-3">
           {Object.entries(semantic).map(([name, color]) => (
@@ -348,7 +404,7 @@ const PalettePreviewPage: React.FC = () => {
       </section>
 
       {/* ═══ TYPOGRAPHY ═══ */}
-      <section className="mb-16">
+      <section id="typography" className="mb-16">
         <SectionLabel>Typography Scale</SectionLabel>
         <div className="space-y-0 overflow-hidden rounded-xl border border-border">
           {typoScale.map((t, i) => (
@@ -423,7 +479,7 @@ const PalettePreviewPage: React.FC = () => {
       </section>
 
       {/* ═══ BUTTONS ═══ */}
-      <section className="mb-16">
+      <section id="buttons" className="mb-16">
         <SectionLabel>Button Styles</SectionLabel>
         <div className="flex flex-wrap items-center gap-6">
           <div className="flex flex-col items-center gap-2">
@@ -458,7 +514,7 @@ const PalettePreviewPage: React.FC = () => {
       </section>
 
       {/* ═══ SLOT-BASED COMPONENTS (Dialog / ModalCard) ═══ */}
-      <section className="mb-16">
+      <section id="slot-components" className="mb-16">
         <SectionLabel>Slot-based Components (Dialog / ModalCard)</SectionLabel>
         <p className="typo-ui mb-6 text-xs text-neutral-400">
           Dialog / ModalCard 使用 slot 系統分類子元件。消費端傳入 sub-component
@@ -591,8 +647,117 @@ const PalettePreviewPage: React.FC = () => {
         </div>
       </section>
 
+      {/* ═══ SHADCN/UI COMPONENTS ═══ */}
+      <section id="shadcn-components" className="mb-16">
+        <SectionLabel>shadcn/ui Components</SectionLabel>
+
+        {/* ─── Calendar ─── */}
+        <div className="mb-10">
+          <h3 className="typo-ui mb-4 text-sm text-foreground">Calendar</h3>
+          <div className="flex flex-wrap gap-8">
+            <div className="flex flex-col gap-2">
+              <p className="typo-ui text-xs text-muted">Single date</p>
+              <EventCalendar mode="single" />
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="typo-ui text-xs text-muted">Date range</p>
+              <EventCalendar mode="range" />
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="typo-ui text-xs text-muted">Available dates only</p>
+              <EventCalendar
+                mode="single"
+                availableDates={[
+                  new Date(2026, 3, 22),
+                  new Date(2026, 3, 25),
+                  new Date(2026, 3, 28),
+                  new Date(2026, 4, 3),
+                ]}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* ─── RadioOption ─── */}
+        <div className="mb-10">
+          <h3 className="typo-ui mb-4 text-sm text-foreground">RadioOption</h3>
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-2">
+              <p className="typo-ui text-xs text-muted">集合站選項</p>
+              <div className="flex flex-wrap gap-2">
+                <RadioOption
+                  name="demo-pickup"
+                  value="taipei"
+                  label="台北車站"
+                />
+                <RadioOption
+                  name="demo-pickup"
+                  value="banqiao"
+                  label="板橋車站"
+                />
+                <RadioOption
+                  name="demo-pickup"
+                  value="taoyuan"
+                  label="桃園高鐵"
+                />
+                <RadioOption name="demo-pickup" value="self" label="自行前往" />
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="typo-ui text-xs text-muted">Disabled</p>
+              <div className="flex flex-wrap gap-2">
+                <RadioOption
+                  name="demo-disabled"
+                  value="taipei"
+                  label="台北車站"
+                />
+                <RadioOption
+                  name="demo-disabled"
+                  value="banqiao"
+                  label="板橋車站"
+                  disabled
+                />
+                <RadioOption
+                  name="demo-disabled"
+                  value="taoyuan"
+                  label="桃園高鐵"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ─── ToggleGroup ─── */}
+        <div>
+          <h3 className="typo-ui mb-4 text-sm text-foreground">ToggleGroup</h3>
+          <div className="flex flex-wrap gap-8">
+            <div className="flex flex-col gap-2">
+              <p className="typo-ui text-xs text-muted">Horizontal</p>
+              <ToggleGroup multiple={false} variant="outline" spacing={1}>
+                <ToggleGroupItem value="week">本週</ToggleGroupItem>
+                <ToggleGroupItem value="month">本月</ToggleGroupItem>
+                <ToggleGroupItem value="all">全部</ToggleGroupItem>
+              </ToggleGroup>
+            </div>
+            <div className="flex flex-col gap-2">
+              <p className="typo-ui text-xs text-muted">Vertical</p>
+              <ToggleGroup
+                multiple={false}
+                variant="outline"
+                orientation="vertical"
+                spacing={1}
+              >
+                <ToggleGroupItem value="week">本週</ToggleGroupItem>
+                <ToggleGroupItem value="month">本月</ToggleGroupItem>
+                <ToggleGroupItem value="all">全部</ToggleGroupItem>
+              </ToggleGroup>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ═══ SECTION RHYTHM ═══ */}
-      <section className="mb-16">
+      <section id="section-rhythm" className="mb-16">
         <SectionLabel>Section Rhythm（頁面區塊交錯）</SectionLabel>
         <div className="overflow-hidden rounded-xl border border-border">
           <div className="bg-background p-8">
@@ -648,8 +813,83 @@ const PalettePreviewPage: React.FC = () => {
         </div>
       </section>
 
+      {/* ═══ TESTIMONIAL CARD ═══ */}
+      <section id="testimonial-card" className="mb-16">
+        <SectionLabel>Testimonial Card（便利貼風格）</SectionLabel>
+        <p className="typo-ui mb-6 text-xs text-neutral-400">
+          直角卡片 + 紙張邊緣 shadow。預設帶散落旋轉角度，hover
+          時抬起擺正（剝牌效果）。背景層為 SVG ghost cards + radial gradient
+          mask，外包 rounded-3xl clip 容器。
+        </p>
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          {/* Default state */}
+          <div className="space-y-2">
+            <p className="typo-ui text-xs text-muted">Default — 散落</p>
+            <div className="flex justify-center rounded-lg border border-border bg-neutral-50 p-10">
+              <div
+                className={cn(
+                  "w-72 bg-surface-warm px-8 py-10",
+                  "border border-primary-200/40",
+                  "shadow-[0_1px_0_0_rgba(200,180,160,0.3),0_2px_4px_-1px_rgba(45,58,64,0.06),1px_0_0_0_rgba(200,180,160,0.15),-1px_0_0_0_rgba(200,180,160,0.15)]",
+                  "rotate-[-2.5deg]"
+                )}
+              >
+                <p className="typo-body text-base font-light leading-relaxed text-foreground mb-8">
+                  在野溪溫泉裡仰望星空的那一刻，我覺得這才是人生該有的樣子。
+                </p>
+                <p className="typo-ui text-[11px] font-medium tracking-[0.2em] uppercase text-foreground">
+                  Ava L.
+                </p>
+                <p className="typo-ui text-[10px] tracking-[0.15em] text-accent mt-1">
+                  野溪溫泉秘境團
+                </p>
+              </div>
+            </div>
+          </div>
+          {/* Hover state */}
+          <div className="space-y-2">
+            <p className="typo-ui text-xs text-muted">Hover — 挑起</p>
+            <div className="flex justify-center rounded-lg border border-border bg-neutral-50 p-10">
+              <div
+                className={cn(
+                  "w-72 bg-surface-warm px-8 py-10",
+                  "border border-primary-200/40",
+                  "shadow-[0_1px_0_0_rgba(200,180,160,0.4),0_14px_40px_-8px_rgba(45,58,64,0.13),1px_0_0_0_rgba(200,180,160,0.2),-1px_0_0_0_rgba(200,180,160,0.2)]",
+                  "rotate-0 -translate-y-2"
+                )}
+              >
+                <p className="typo-body text-base font-light leading-relaxed text-foreground mb-8">
+                  在野溪溫泉裡仰望星空的那一刻，我覺得這才是人生該有的樣子。
+                </p>
+                <p className="typo-ui text-[11px] font-medium tracking-[0.2em] uppercase text-foreground">
+                  Ava L.
+                </p>
+                <p className="typo-ui text-[10px] tracking-[0.15em] text-accent mt-1">
+                  野溪溫泉秘境團
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Spec notes */}
+        <div className="mt-6 rounded-lg bg-surface p-4">
+          <p className="mb-2 text-xs font-medium text-muted">Motion Spec</p>
+          <div className="space-y-1 font-mono text-xs text-neutral-600">
+            <p>
+              Scroll reveal: opacity 0→1, duration 1s, power3.out（整組一次，不
+              stagger）
+            </p>
+            <p>
+              Hover: translateY(-8px) + rotate(0deg) + shadow-lg, 500ms
+              cubic-bezier(0.23, 1, 0.32, 1)
+            </p>
+            <p>Reduced motion: 跳過 fade-in，hover 保留</p>
+          </div>
+        </div>
+      </section>
+
       {/* ═══ TOAST ═══ */}
-      <section className="mb-16">
+      <section id="toast" className="mb-16">
         <SectionLabel>Toast Variants</SectionLabel>
         <div className="flex flex-col gap-4">
           {(
@@ -702,7 +942,7 @@ const PalettePreviewPage: React.FC = () => {
       </section>
 
       {/* ═══ CONTRAST CHECK ═══ */}
-      <section className="mb-16">
+      <section id="contrast-check" className="mb-16">
         <SectionLabel>Typography Contrast Check</SectionLabel>
         <div className="grid grid-cols-2 gap-4">
           <div className="rounded-lg border border-border bg-background p-6">
@@ -744,7 +984,7 @@ const PalettePreviewPage: React.FC = () => {
       </section>
 
       {/* ═══ MIXED PAIRING ═══ */}
-      <section className="mb-16">
+      <section id="mixed-pairing" className="mb-16">
         <SectionLabel>
           搭配組合 — Rufina（英文）+ Chiron Sung HK（中文）
         </SectionLabel>
@@ -798,7 +1038,7 @@ const PalettePreviewPage: React.FC = () => {
       </section>
 
       {/* ═══ FULL PAGE SIMULATION ═══ */}
-      <section className="mb-16">
+      <section id="full-page-sim" className="mb-16">
         <SectionLabel>全站模擬 — Rufina + Chiron Sung HK</SectionLabel>
         <div className="overflow-hidden rounded-xl border border-border">
           {/* Hero */}
@@ -958,7 +1198,7 @@ const PalettePreviewPage: React.FC = () => {
       </section>
 
       {/* ═══ TOKEN MAP ═══ */}
-      <section className="mb-16">
+      <section id="token-map" className="mb-16">
         <SectionLabel>Proposed globals.css Token Map</SectionLabel>
         <pre className="overflow-x-auto rounded-lg bg-surface-brand p-6 font-mono text-xs leading-relaxed text-neutral-300">
           {`@theme {

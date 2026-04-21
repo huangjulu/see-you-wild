@@ -8,7 +8,7 @@ const messages = {
     siteName: "See You Wild 西揪團",
     nav: {
       events: "活動行程",
-      privateGroup: "包團諮詢",
+      exploreCta: "開始探索",
       contact: "聯絡我們",
     },
     footer: {
@@ -39,7 +39,7 @@ describe("Header", () => {
   it("renders nav links", () => {
     renderHeader();
     // desktop nav + mobile nav 各一組，共 2 個
-    expect(screen.getAllByText("包團諮詢")).toHaveLength(2);
+    expect(screen.getAllByText("活動行程")).toHaveLength(2);
     expect(screen.getAllByText("聯絡我們")).toHaveLength(2);
   });
 

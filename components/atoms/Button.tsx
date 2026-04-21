@@ -16,8 +16,10 @@ interface ButtonProps {
   className?: string;
   ariaLabel?: string;
   icon?: React.ReactNode;
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  onClick?: React.MouseEventHandler<HTMLElement>;
   external?: boolean;
+  underline?: boolean;
+  disabled?: boolean;
 }
 
 // 所有 box-shaped theme 的共用 layout。
@@ -58,7 +60,10 @@ const Button: React.FC<ButtonProps> = (props) => {
       );
       break;
     case "link":
-      themeClass = "border-none underline underline-offset-4 hover:opacity-80";
+      themeClass = cn(
+        "border-none underline-offset-4 hover:opacity-80",
+        (props.underline ?? true) && "underline"
+      );
       break;
     case "base":
     default:
@@ -69,6 +74,7 @@ const Button: React.FC<ButtonProps> = (props) => {
   const className = cn(
     themeClass,
     "typo-ui border transition-all duration-300",
+    props.disabled && "opacity-50 cursor-not-allowed",
     props.className
   );
 
@@ -90,6 +96,7 @@ function renderElement(props: ButtonProps, className: string) {
         })}
         className={className}
         aria-label={props.ariaLabel}
+        onClick={props.onClick}
       >
         {props.icon}
         {props.children}
@@ -102,6 +109,7 @@ function renderElement(props: ButtonProps, className: string) {
       className={className}
       aria-label={props.ariaLabel}
       onClick={props.onClick}
+      disabled={props.disabled}
     >
       {props.icon}
       {props.children}

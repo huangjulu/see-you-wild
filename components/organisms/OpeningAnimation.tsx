@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import { SplitText } from "gsap/SplitText";
-import { useTimeline } from "@/lib/gsap";
+import { useTimeline, ScrollTrigger } from "@/lib/gsap";
 
 const OpeningAnimation: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -36,6 +36,8 @@ const OpeningAnimation: React.FC = () => {
         },
         "reveal"
       );
+
+      tl.call(() => split.revert(), [], "reveal+=1.3");
 
       tl.fromTo(
         videoWrap,
@@ -72,11 +74,17 @@ const OpeningAnimation: React.FC = () => {
     },
     {
       lockScroll: true,
-      hideOnDone: true,
-      onDone: () => {
-        window.dispatchEvent(new CustomEvent("opening-animation-complete"));
+      onComplete: () => {
+        const el = containerRef.current;
+        if (el) {
+          el.style.display = "none";
+          el.setAttribute("aria-hidden", "true");
+        }
+        // lockScroll 解除後，layout 可能改變，叫 ScrollTrigger 重算位置。
+        ScrollTrigger.refresh();
       },
-    }
+    },
+    "opening-done"
   );
 
   return (
@@ -85,20 +93,24 @@ const OpeningAnimation: React.FC = () => {
       className="fixed inset-0 z-50 flex items-center justify-center bg-surface-deep"
     >
       <div ref={brandRef} className="absolute z-10 text-center opacity-0">
-        <p className="typo-display text-4xl md:text-6xl lg:text-7xl text-white">
+        <h1
+          className="typo-display text-6xl md:text-6xl lg:text-7xl text-white leading-tight [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-accent-fg)_50%,transparent)]"
+          aria-hidden="true"
+        >
           See You Wild
-        </p>
+        </h1>
       </div>
       <div
         ref={videoWrapRef}
         className="relative overflow-hidden flex items-center justify-center w-screen h-screen opacity-0"
       >
+        {/* translate-y 要跟 HeroSection video 的 useTween from.y 同步，否則 Opening→Hero 接手會跳。 */}
         <video
           autoPlay
           muted
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute bottom-0 left-0 w-full h-[180%] object-cover translate-y-[40vh]"
         >
           <source
             src="https://assets.mixkit.co/videos/1943/1943-720.mp4"

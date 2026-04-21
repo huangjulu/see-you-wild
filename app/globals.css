@@ -1,4 +1,8 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 @theme {
   /* ─── Primary（暖砂橘 #DE954E）─── */
@@ -97,7 +101,7 @@
   /* ─── Fonts ─── */
   --font-serif:
     "SerifDigits", var(--font-rufina), "Rufina", var(--font-chiron-sung-hk),
-    "Chiron Sung HK", var(--font-noto-serif-tc), "Noto Serif TC", serif;
+    var(--font-noto-serif-tc), "Noto Serif TC", serif;
   --font-sans: var(--font-noto-sans-tc), "Noto Sans TC", sans-serif;
 
   /* ─── Font Weights ─── */
@@ -182,11 +186,15 @@
   background: var(--color-background) !important;
 }
 
+html {
+  overflow-x: clip; /* iOS Safari 不吃 body 的 overflow-x，必須在 html 層攔截 */
+}
+
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-serif);
-  overflow-x: hidden; /* 防止 ScrollTrigger pin-spacer 造成水平溢出 */
+  overflow-x: clip; /* clip 比 hidden 好：不建立 scroll container、不破壞 position:sticky */
 }
 
 @keyframes fadeInUp {
@@ -223,4 +231,30 @@ body {
 
 .animate-bounce-slow {
   animation: bounce 2s 4;
+}
+
+/* ─── shadcn/ui token bridge ─── */
+/* 只定義 shadcn 獨有、SYW @theme 尚未覆蓋的 token。 */
+/* background/foreground/muted/accent/border/ring 已在 @theme 定義，不重複。 */
+@theme inline {
+  --color-card: var(--color-neutral-50);
+  --color-card-foreground: var(--color-neutral-800);
+  --color-popover: var(--color-neutral-50);
+  --color-popover-foreground: var(--color-neutral-800);
+  --color-primary-foreground: #ffffff;
+  --color-secondary: var(--color-neutral-100);
+  --color-secondary-foreground: var(--color-neutral-800);
+  --color-muted-foreground: var(--color-neutral-500);
+  --color-accent-foreground: var(--color-neutral-800);
+  --color-destructive: var(--color-red-400);
+  --color-input: var(--color-neutral-200);
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: var(--radius);
+  --radius-xl: 0.875rem;
+  --radius-2xl: 1.125rem;
+}
+
+:root {
+  --radius: 0.625rem;
 }
