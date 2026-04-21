@@ -7,6 +7,7 @@ import { useTween } from "@/lib/gsap";
 const PhilosophySection: React.FC = () => {
   const t = useTranslations("home.philosophy");
   const sectionRef = useRef<HTMLElement>(null);
+  const revealTriggerRef = useRef<HTMLDivElement>(null);
 
   useTween(sectionRef, {
     selector: ".reveal-up",
@@ -18,7 +19,7 @@ const PhilosophySection: React.FC = () => {
       stagger: 0.1,
       ease: "power3.out",
       scrollTrigger: {
-        trigger: "[data-reveal-trigger]",
+        trigger: revealTriggerRef,
         start: "top 60%",
         toggleActions: "play none none none",
       },
@@ -48,7 +49,7 @@ const PhilosophySection: React.FC = () => {
       className="py-24 md:py-32 px-6 md:px-12 bg-background"
     >
       <div
-        data-reveal-trigger
+        ref={revealTriggerRef}
         className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center"
       >
         <div className="space-y-8">

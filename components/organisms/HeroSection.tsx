@@ -54,7 +54,7 @@ const HeroSection: React.FC = () => {
     to: {
       y: () => window.innerHeight * (OFFSET_TOP + PARALLEX_ANIMATE),
       scrollTrigger: {
-        trigger: "[aria-label='Hero']",
+        trigger: sectionRef,
         start: "top top",
         end: "+=100%",
         scrub: true,
@@ -68,7 +68,7 @@ const HeroSection: React.FC = () => {
       y: () => window.innerHeight * -0.15,
       ease: "none",
       scrollTrigger: {
-        trigger: "[aria-label='Hero']",
+        trigger: sectionRef,
         start: "top top",
         end: "+=100%",
         scrub: true,

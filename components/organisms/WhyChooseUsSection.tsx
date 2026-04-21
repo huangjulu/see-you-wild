@@ -15,6 +15,7 @@ const VALUE_ICONS = [IconShield, IconMountain, IconSparkles];
 const WhyChooseUsSection: React.FC = () => {
   const t = useTranslations("home.whyChooseUs");
   const sectionRef = useRef<HTMLElement>(null);
+  const revealTriggerRef = useRef<HTMLDivElement>(null);
 
   useTween(sectionRef, {
     selector: ".why-item",
@@ -26,7 +27,7 @@ const WhyChooseUsSection: React.FC = () => {
       stagger: 0.1,
       ease: "power3.out",
       scrollTrigger: {
-        trigger: "[data-reveal-trigger]",
+        trigger: revealTriggerRef,
         start: "top 60%",
         toggleActions: "play none none none",
       },
@@ -38,7 +39,7 @@ const WhyChooseUsSection: React.FC = () => {
       ref={sectionRef}
       className="pt-24 pb-28 md:py-32 px-6 md:px-12 bg-background"
     >
-      <div data-reveal-trigger className="max-w-7xl mx-auto">
+      <div ref={revealTriggerRef} className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <p className="why-item typo-overline text-sm mb-4 text-muted-warm">
             {t("overline")}
