@@ -95,16 +95,14 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
         <div className="space-y-2">
           <h3 className="typo-ui text-sm text-foreground">{t("eventDate")}</h3>
           <EventCalendar
-            mode="single"
             size="lg"
             className="w-full"
-            selected={selectedDateObj}
-            onSelect={handleDateSelect}
+            value={selectedDateObj}
+            onChange={handleDateSelect}
             availableDates={availableDateObjects}
             minAdvanceDays={3}
             visibleWeeks={2}
             expandLabel="展開完整月份"
-            collapseLabel="收合日曆"
             defaultMonth={defaultMonth}
           />
         </div>

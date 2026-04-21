@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import Button from "@/components/atoms/Button";
+import Calendar from "@/components/atoms/Calendar";
 import EventCalendar from "@/components/molecules/EventCalendar";
 import RadioOption from "@/components/atoms/RadioOption";
 import Dialog from "@/components/molecules/Dialog";
@@ -657,22 +658,36 @@ const PalettePreviewPage: React.FC = () => {
           <div className="flex flex-wrap gap-8">
             <div className="flex flex-col gap-2">
               <p className="typo-ui text-xs text-muted">Single date</p>
-              <EventCalendar mode="single" />
+              <Calendar mode="single" defaultMonth={new Date(2026, 3, 1)} />
             </div>
             <div className="flex flex-col gap-2">
-              <p className="typo-ui text-xs text-muted">Date range</p>
-              <EventCalendar mode="range" />
+              <p className="typo-ui text-xs text-muted">Compact (2 weeks)</p>
+              <Calendar
+                mode="single"
+                defaultMonth={new Date(2026, 3, 1)}
+                visibleWeeks={2}
+                expandLabel="展開完整月份"
+              />
             </div>
+          </div>
+        </div>
+
+        {/* ─── EventCalendar ─── */}
+        <div className="mb-10">
+          <h3 className="typo-ui mb-4 text-sm text-foreground">
+            EventCalendar
+          </h3>
+          <div className="flex flex-wrap gap-8">
             <div className="flex flex-col gap-2">
               <p className="typo-ui text-xs text-muted">Available dates only</p>
               <EventCalendar
-                mode="single"
                 availableDates={[
                   new Date(2026, 3, 22),
                   new Date(2026, 3, 25),
                   new Date(2026, 3, 28),
                   new Date(2026, 4, 3),
                 ]}
+                defaultMonth={new Date(2026, 3, 1)}
               />
             </div>
           </div>
