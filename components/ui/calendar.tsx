@@ -60,12 +60,12 @@ function Calendar({
         ),
         button_previous: cn(
           buttonVariants({ variant: buttonVariant }),
-          "size-(--cell-size) p-0 select-none aria-disabled:opacity-50",
+          "size-(--cell-size) p-0 select-none aria-disabled:opacity-50 hover:bg-primary-100!",
           defaultClassNames.button_previous
         ),
         button_next: cn(
           buttonVariants({ variant: buttonVariant }),
-          "size-(--cell-size) p-0 select-none aria-disabled:opacity-50",
+          "size-(--cell-size) p-0 select-none aria-disabled:opacity-50 hover:bg-primary-100!",
           defaultClassNames.button_next
         ),
         month_caption: cn(
@@ -123,7 +123,7 @@ function Calendar({
           defaultClassNames.range_end
         ),
         today: cn(
-          "rounded-(--cell-radius) bg-muted text-foreground data-[selected=true]:rounded-none",
+          "rounded-(--cell-radius) bg-transparent text-foreground data-[selected=true]:rounded-none",
           defaultClassNames.today
         ),
         outside: cn(
@@ -205,7 +205,9 @@ function CalendarDayButton({
     <Button
       variant="ghost"
       size="icon"
-      data-day={day.date.toLocaleDateString(locale?.code)}
+      // SYW fix: toLocaleDateString causes hydration mismatch (server/client Intl diff)
+      // ref: https://github.com/shadcn-ui/ui/issues/7553
+      data-day={`${day.date.getFullYear()}-${String(day.date.getMonth() + 1).padStart(2, "0")}-${String(day.date.getDate()).padStart(2, "0")}`}
       data-selected-single={
         modifiers.selected &&
         !modifiers.range_start &&
