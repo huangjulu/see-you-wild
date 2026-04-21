@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { zhTW } from "react-day-picker/locale";
 import type { DateRange, DayButton } from "react-day-picker";
 import {
@@ -10,35 +10,43 @@ import {
 import { cn } from "@/lib/utils";
 
 type CalendarSize = "sm" | "md" | "lg";
+type VisibleWeeks = 1 | 2 | 3 | 4 | "all";
 
-interface CalendarProps {
+interface EventCalendarProps {
   mode: "single" | "range";
   size?: CalendarSize;
   selected?: Date | { from: Date; to: Date };
   onSelect?: (value: Date | { from: Date; to: Date } | undefined) => void;
   availableDates?: Date[];
   minAdvanceDays?: number;
+  visibleWeeks?: VisibleWeeks;
+  expandLabel?: string;
+  collapseLabel?: string;
   defaultMonth?: Date;
   className?: string;
 }
 
-const Calendar: React.FC<CalendarProps> = (props) => {
+const EventCalendar: React.FC<EventCalendarProps> = (props) => {
   const { availableDates, minAdvanceDays } = props;
   const size = props.size ?? "md";
   const hasAvailableDates = availableDates != null;
+  const defaultVisibleWeeks = props.visibleWeeks ?? "all";
+  const monthMode = defaultVisibleWeeks === "all";
+
+  const [expanded, setExpanded] = useState(monthMode);
+
+  const activeWeeks =
+    expanded || defaultVisibleWeeks === "all" ? null : defaultVisibleWeeks;
 
   const minDate = useMemo(() => {
     if (minAdvanceDays == null) return startOfDay(new Date());
     return addDays(new Date(), minAdvanceDays);
   }, [minAdvanceDays]);
 
-  // Only past + too-soon dates are disabled
-  // Full dates (3天後 but not in availableDates) use pointer-events-none instead
   const disabled = useMemo(() => {
     return (date: Date) => date < minDate;
   }, [minDate]);
 
-  // "客滿" modifier: 3天後 + not in availableDates
   const fullMatcher = useMemo(() => {
     if (availableDates == null) return undefined;
     return (date: Date) => {
@@ -47,7 +55,6 @@ const Calendar: React.FC<CalendarProps> = (props) => {
     };
   }, [availableDates, minDate]);
 
-  // "可供選擇" modifier: in availableDates + past minDate
   const availableMatcher = useMemo(() => {
     if (availableDates == null) return undefined;
     return (date: Date) => {
@@ -82,6 +89,21 @@ const Calendar: React.FC<CalendarProps> = (props) => {
   const selectedDate =
     props.selected instanceof Date ? props.selected : undefined;
 
+  // Anchor for compact week calculation
+  const anchorDate = useMemo(() => {
+    if (activeWeeks == null || availableDates == null) return null;
+    const today = new Date();
+    const nearest = availableDates
+      .filter((d) => d >= today)
+      .sort((a, b) => a.getTime() - b.getTime())[0];
+    return nearest ?? null;
+  }, [activeWeeks, availableDates]);
+
+  const anchorWeekStart = useMemo(() => {
+    if (anchorDate == null) return null;
+    return getMonday(anchorDate);
+  }, [anchorDate]);
+
   function CustomDayButton(
     buttonProps: React.ComponentProps<typeof DayButton>
   ) {
@@ -107,24 +129,75 @@ const Calendar: React.FC<CalendarProps> = (props) => {
           isFull &&
             cn(
               "pointer-events-none cursor-default",
-              "after:content-[var(--calendar-full-label)] after:text-muted-foreground",
+              "after:content-(--calendar-full-label) after:text-muted-foreground",
               labelClass
             ),
           isAvailable &&
             !isSelected &&
             cn(
               "text-primary-500",
-              "after:content-[var(--calendar-available-label)] after:text-primary-500",
+              "after:content-(--calendar-available-label) after:text-primary-500",
               labelClass
             ),
           isSelected &&
             cn(
               "text-primary-800! bg-primary-200!",
-              "after:content-[var(--calendar-selected-label)] after:text-primary-800",
+              "after:content-(--calendar-selected-label) after:text-primary-800",
               labelClass
             )
         )}
       />
+    );
+  }
+
+  function CustomWeek(
+    weekProps: React.HTMLAttributes<HTMLTableRowElement> & {
+      week: { days: { date: Date }[] };
+    }
+  ) {
+    const { week, ...trProps } = weekProps;
+
+    if (activeWeeks != null && anchorWeekStart != null) {
+      const weekMonday = getMonday(week.days[0].date);
+      const diffWeeks = Math.floor(
+        (weekMonday.getTime() - anchorWeekStart.getTime()) /
+          (7 * 24 * 60 * 60 * 1000)
+      );
+      const hidden = diffWeeks < 0 || diffWeeks >= activeWeeks;
+      return (
+        <tr {...trProps} style={hidden ? { display: "none" } : undefined} />
+      );
+    }
+
+    return <tr {...trProps} />;
+  }
+
+  // Expand/collapse banner — only shown when visibleWeeks is not "all"
+  const showToggle = !monthMode;
+  const toggleLabel = expanded ? props.collapseLabel : props.expandLabel;
+
+  function CustomMonthCaption(
+    captionProps: React.HTMLAttributes<HTMLDivElement> & {
+      calendarMonth: unknown;
+      displayIndex: number;
+    }
+  ) {
+    const { calendarMonth, displayIndex, ...divProps } = captionProps;
+    return (
+      <>
+        <div {...divProps} />
+        {showToggle && toggleLabel != null && (
+          <button
+            type="button"
+            onClick={function handleToggle() {
+              setExpanded((prev) => !prev);
+            }}
+            className="w-full rounded-lg bg-primary-50 py-2 text-center typo-ui text-sm text-accent hover:bg-primary-100 transition-colors"
+          >
+            {toggleLabel}
+          </button>
+        )}
+      </>
     );
   }
 
@@ -142,6 +215,8 @@ const Calendar: React.FC<CalendarProps> = (props) => {
     modifiers,
     components: {
       DayButton: CustomDayButton,
+      Week: CustomWeek,
+      MonthCaption: CustomMonthCaption,
     },
   };
 
@@ -188,8 +263,10 @@ const Calendar: React.FC<CalendarProps> = (props) => {
   );
 };
 
-Calendar.displayName = "Calendar";
-export default Calendar;
+EventCalendar.displayName = "EventCalendar";
+export default EventCalendar;
+
+/* ─── Constants ─── */
 
 const CELL_SIZE: Record<CalendarSize, string> = {
   sm: "[--cell-size:--spacing(6)]",
@@ -208,6 +285,8 @@ const LABEL_SIZE: Record<CalendarSize, string> = {
   md: "after:text-[10px]",
   lg: "after:text-xs",
 };
+
+/* ─── Helpers ─── */
 
 function isSameDay(a: Date, b: Date): boolean {
   return (
@@ -228,4 +307,13 @@ function startOfDay(date: Date): Date {
   const result = new Date(date);
   result.setHours(0, 0, 0, 0);
   return result;
+}
+
+function getMonday(date: Date): Date {
+  const d = new Date(date);
+  const day = d.getDay();
+  const offset = day === 0 ? 6 : day - 1;
+  d.setDate(d.getDate() - offset);
+  d.setHours(0, 0, 0, 0);
+  return d;
 }

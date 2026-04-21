@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { useTranslations } from "@/lib/i18n/client";
 import ModalCard from "@/components/molecules/ModalCard";
-import Calendar from "@/components/atoms/Calendar";
+import EventCalendar from "@/components/molecules/EventCalendar";
 import RadioOption from "@/components/atoms/RadioOption";
 import type { PackageSelection } from "./packageOptions.types";
 
@@ -94,7 +94,7 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
         {/* Event Date */}
         <div className="space-y-2">
           <h3 className="typo-ui text-sm text-foreground">{t("eventDate")}</h3>
-          <Calendar
+          <EventCalendar
             mode="single"
             size="lg"
             className="w-full"
@@ -102,6 +102,9 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
             onSelect={handleDateSelect}
             availableDates={availableDateObjects}
             minAdvanceDays={3}
+            visibleWeeks={2}
+            expandLabel="展開完整月份"
+            collapseLabel="收合日曆"
             defaultMonth={defaultMonth}
           />
         </div>

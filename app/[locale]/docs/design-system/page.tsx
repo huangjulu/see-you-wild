@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import Button from "@/components/atoms/Button";
-import Calendar from "@/components/atoms/Calendar";
+import EventCalendar from "@/components/molecules/EventCalendar";
 import RadioOption from "@/components/atoms/RadioOption";
 import Dialog from "@/components/molecules/Dialog";
 import ModalCard from "@/components/molecules/ModalCard";
@@ -16,21 +16,6 @@ import {
   X as IconX,
   ArrowRight as IconArrowRight,
 } from "lucide-react";
-
-/**
- * 暫時預覽頁：新 color palette + typography 設計 token
- * 確認後刪除此頁
- *
- * 五色基底：
- *   base-bg:    #f4f6f5  淺灰白（全站底色）
- *   base-fg:    #2d3a40  深炭藍（主文字 / primary button）
- *   primary:    #DE954E  暖砂橘（品牌主色）
- *   tertiary:   #6B9DC2  冷灰藍（第二強調色 / 交錯區塊）
- *   success:    #1FAD87  自然綠
- *   error:      #C46743  磚紅
- */
-
-/* ─── Color Scales ─── */
 
 const primary = {
   50: "#fef6ee",
@@ -672,15 +657,15 @@ const PalettePreviewPage: React.FC = () => {
           <div className="flex flex-wrap gap-8">
             <div className="flex flex-col gap-2">
               <p className="typo-ui text-xs text-muted">Single date</p>
-              <Calendar mode="single" />
+              <EventCalendar mode="single" />
             </div>
             <div className="flex flex-col gap-2">
               <p className="typo-ui text-xs text-muted">Date range</p>
-              <Calendar mode="range" />
+              <EventCalendar mode="range" />
             </div>
             <div className="flex flex-col gap-2">
               <p className="typo-ui text-xs text-muted">Available dates only</p>
-              <Calendar
+              <EventCalendar
                 mode="single"
                 availableDates={[
                   new Date(2026, 3, 22),
