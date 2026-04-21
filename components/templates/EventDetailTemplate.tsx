@@ -2,9 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { useTranslations } from "@/lib/i18n/client";
-import { useLocale } from "@/lib/i18n/client";
-import Link from "next/link";
-import { ArrowLeft as IconArrowLeft } from "lucide-react";
+
 import EventGallery from "@/components/molecules/EventGallery";
 import EventDetailSection from "@/components/molecules/EventDetailSection";
 import EventPriceSidebar from "@/components/molecules/EventPriceSidebar";
@@ -18,7 +16,6 @@ interface EventDetailTemplateProps {
 
 const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
   const t = useTranslations("eventDetail");
-  const locale = useLocale();
   const event = props.event;
 
   const [selection, setSelection] = useState<PackageSelection>({
@@ -70,15 +67,15 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
 
   return (
     <main className="bg-background pb-24 md:pb-16">
-      {/* Back link — pt-24 clears fixed Header */}
+      {/* Title + description — pt-24 clears fixed Header */}
       <div className="mx-auto max-w-7xl px-6 md:px-12 pt-24">
-        <Link
-          href={`/${locale}/events`}
-          className="inline-flex items-center gap-1.5 typo-ui text-sm text-muted hover:text-foreground hover:underline transition-colors focus-visible:outline-ring"
-        >
-          <IconArrowLeft className="size-4" />
-          {t("backToEvents")}
-        </Link>
+        <h1 className="typo-heading text-3xl md:text-4xl text-foreground mb-2">
+          {event.title}
+        </h1>
+        <p className="typo-body text-sm text-muted">
+          {event.location} · {event.start_date}
+          {event.end_date !== event.start_date && ` — ${event.end_date}`}
+        </p>
       </div>
 
       {/* Gallery */}
@@ -90,16 +87,6 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
       <div className="mx-auto max-w-7xl px-6 md:px-12 mt-8 md:grid md:grid-cols-[1fr_320px] md:gap-8">
         {/* Left column */}
         <div className="space-y-10">
-          <div>
-            <h1 className="typo-heading text-3xl md:text-4xl text-foreground mb-2">
-              {event.title}
-            </h1>
-            <p className="typo-body text-sm text-muted">
-              {event.location} · {event.start_date}
-              {event.end_date !== event.start_date && ` — ${event.end_date}`}
-            </p>
-          </div>
-
           <EventDetailSection
             title={t("eventDetails")}
             content={event.description}
