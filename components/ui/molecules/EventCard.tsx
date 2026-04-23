@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import Tag from "@/components/atoms/Tag";
+import Tag from "@/components/ui/atoms/Tag";
 import { useLocale } from "@/lib/i18n/client";
 
 interface EventCardProps {
@@ -26,10 +26,10 @@ const EventCard: React.FC<EventCardProps> = (props) => {
     <Link href={`/${locale}/events/${props.id}`} className="block">
       <article
         className={cn(
-          "group overflow-hidden rounded-2xl bg-surface transition-shadow duration-300 hover:shadow-lg"
+          "group overflow-hidden rounded-2xl bg-surface transition-shadow duration-300 hover:shadow-lg border border-neutral-100 shadow-2xs"
         )}
       >
-        <div className="relative aspect-[4/3] overflow-hidden">
+        <div className="relative aspect-4/3 overflow-hidden">
           <img
             src={props.image}
             alt={props.imageAlt}

@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import EventCard from "@/components/molecules/EventCard";
-import EventSearchBar from "@/components/molecules/EventSearchBar";
+import EventCard from "@/components/ui/molecules/EventCard";
+import EventSearchBar from "@/components/ui/molecules/EventSearchBar";
 import type { MockEvent } from "@/server/mockdata/mock-events";
 
 interface EventsGridProps {
@@ -72,6 +72,7 @@ const EventsGrid: React.FC<EventsGridProps> = (props) => {
           ))}
         </div>
       ) : (
+        // TODO: 未來會改成統一的Empty state
         <p className="typo-body py-12 text-center text-muted">
           沒有找到符合條件的活動
         </p>

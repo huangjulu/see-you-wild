@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { ChevronDown as IconChevronDown } from "lucide-react";
 
@@ -8,7 +8,7 @@ import { ChevronDown as IconChevronDown } from "lucide-react";
 
 const VARIANTS: Record<string, string> = {
   "reg-self": `{
-  "event_id": "yilan-hotspring-T013",
+  "event_id": "camping-chef-alishan-202605",
   "name": "王小明",
   "email": "ming@example.com",
   "phone": "0912345678",
@@ -22,7 +22,7 @@ const VARIANTS: Record<string, string> = {
   "transport": "self"
 }`,
   "reg-passenger": `{
-  "event_id": "yilan-hotspring-T013",
+  "event_id": "camping-chef-alishan-202605",
   "name": "李小華",
   "email": "hua@example.com",
   "phone": "0922334455",
@@ -33,11 +33,11 @@ const VARIANTS: Record<string, string> = {
   "emergency_contact_phone": "0911223344",
   "dietary": "no_beef",
   "transport": "carpool",
-  "pickup_location": "taipei",
+  "pickup_location": "台北車站",
   "carpool_role": "passenger"
 }`,
   "reg-driver": `{
-  "event_id": "yilan-hotspring-T013",
+  "event_id": "camping-chef-alishan-202605",
   "name": "張大強",
   "email": "strong@example.com",
   "phone": "0933445566",
@@ -48,7 +48,7 @@ const VARIANTS: Record<string, string> = {
   "emergency_contact_phone": "0955667788",
   "dietary": "omnivore",
   "transport": "carpool",
-  "pickup_location": "taipei",
+  "pickup_location": "台北車站",
   "carpool_role": "driver",
   "seat_count": 4
 }`,
@@ -126,14 +126,14 @@ const SECTIONS: { title: string; endpoints: EndpointCardProps[] }[] = [
         desc: "建立活動",
         dtoTag: "EventCreateDto",
         defaultBody: `{
-  "id": "yilan-hotspring-T013",
-  "type": "野溪溫泉",
-  "location": "宜蘭",
-  "title": "宜蘭秘境野溪溫泉",
-  "start_date": "2026-04-20",
-  "end_date": "2026-04-20",
-  "base_price": 2980,
-  "carpool_surcharge": 300,
+  "id": "camping-chef-alishan-202605",
+  "type": "camping",
+  "location": "阿里山",
+  "title": "野營私廚｜阿里山秘境",
+  "start_date": "2026-05-18",
+  "end_date": "2026-05-19",
+  "base_price": 4800,
+  "carpool_surcharge": 450,
   "payment_days": 7
 }`,
       },
@@ -161,7 +161,7 @@ const SECTIONS: { title: string; endpoints: EndpointCardProps[] }[] = [
         dtoTag: "RegistrationSummaryDto[]",
         paramName: "eventId",
         paramLabel: "eventId",
-        paramDefault: "yilan-hotspring-T013",
+        paramDefault: "camping-chef-alishan-202605",
       },
       {
         method: "GET",
@@ -220,7 +220,7 @@ const SECTIONS: { title: string; endpoints: EndpointCardProps[] }[] = [
         dtoTag: "CarpoolAssignmentDetailDto[]",
         paramName: "eventId",
         paramLabel: "eventId",
-        paramDefault: "yilan-hotspring-T013",
+        paramDefault: "camping-chef-alishan-202605",
       },
       {
         method: "GET",
@@ -229,7 +229,7 @@ const SECTIONS: { title: string; endpoints: EndpointCardProps[] }[] = [
         dtoTag: "CarpoolAssignmentDetailDto[]",
         paramName: "eventId",
         paramLabel: "eventId",
-        paramDefault: "yilan-hotspring-T013",
+        paramDefault: "camping-chef-alishan-202605",
       },
     ],
   },
@@ -259,7 +259,7 @@ const DTO_CARDS: DtoCardProps[] = [
       {
         field: "id",
         type: "string PK",
-        desc: "人類可讀 ID e.g. yilan-hotspring-T013",
+        desc: "人類可讀 ID e.g. camping-chef-alishan-202605",
       },
       { field: "type", type: "string", desc: "活動種類 e.g. 野溪溫泉 登山" },
       { field: "location", type: "string", desc: "活動地點 e.g. 宜蘭 新北" },

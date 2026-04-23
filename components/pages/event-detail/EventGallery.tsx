@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback } from "react";
 import { cn } from "@/lib/utils";
-import EventLightbox from "@/components/molecules/EventLightbox";
+import EventLightbox from "@/components/ui/molecules/EventLightbox";
 import {
   ChevronLeft as IconChevronLeft,
   ChevronRight as IconChevronRight,

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
-import Calendar from "@/components/atoms/Calendar";
+import Calendar from "@/components/ui/atoms/Calendar";
 
 /* ─── Types ─── */
 

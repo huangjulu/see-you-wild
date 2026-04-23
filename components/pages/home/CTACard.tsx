@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { useReducedMotion } from "@/stores/motion";
-import Button from "@/components/atoms/Button";
+import Button from "@/components/ui/atoms/Button";
 
 interface CTACardProps {
   imageSrc: string;

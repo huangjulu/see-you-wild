@@ -2,9 +2,9 @@
 
 import { useEffect } from "react";
 import { useTranslations } from "@/lib/i18n/client";
-import Button from "@/components/atoms/Button";
-import Heading from "@/components/atoms/Heading";
-import Text from "@/components/atoms/Text";
+import Button from "@/components/ui/atoms/Button";
+import Heading from "@/components/ui/atoms/Heading";
+import Text from "@/components/ui/atoms/Text";
 
 type LocaleErrorProps = {
   error: Error & { digest?: string };

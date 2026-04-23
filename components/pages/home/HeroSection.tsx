@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import { useTimeline, useTween } from "@/lib/gsap";
-import Button from "@/components/atoms/Button";
+import Button from "@/components/ui/atoms/Button";
 
 const HeroSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);

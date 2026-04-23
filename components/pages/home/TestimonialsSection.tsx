@@ -5,7 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger, useTimeline } from "@/lib/gsap";
 import { useReducedMotion } from "@/stores/motion";
 import { useTranslations } from "@/lib/i18n/client";
-import TestimonialCard from "@/components/molecules/TestimonialCard";
+import TestimonialCard from "@/components/pages/home/TestimonialCard";
 
 const GHOST_PARALLAX_FACTOR = -25; // 背景反向
 const REPEL_RANGE = 320; // 卡片感應鼠標的半徑（px），超出不反應

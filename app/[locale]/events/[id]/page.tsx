@@ -1,7 +1,7 @@
 import type React from "react";
 import { notFound } from "next/navigation";
 import { MOCK_EVENTS } from "@/server/mockdata/mock-events";
-import EventDetailTemplate from "@/components/templates/EventDetailTemplate";
+import EventDetailTemplate from "@/components/pages/event-detail/EventDetailTemplate";
 
 interface PageProps {
   params: Promise<{ locale: string; id: string }>;

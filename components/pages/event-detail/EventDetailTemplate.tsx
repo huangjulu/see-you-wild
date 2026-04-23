@@ -3,11 +3,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useTranslations } from "@/lib/i18n/client";
 
-import EventGallery from "@/components/molecules/EventGallery";
-import EventDetailSection from "@/components/molecules/EventDetailSection";
-import EventPriceSidebar from "@/components/molecules/EventPriceSidebar";
-import PackageOptions from "@/components/organisms/PackageOptions";
-import type { PackageSelection } from "@/components/organisms/packageOptions.types";
+import EventGallery from "@/components/pages/event-detail/EventGallery";
+import EventDetailSection from "@/components/pages/event-detail/EventDetailSection";
+import EventPriceSidebar from "@/components/pages/event-detail/EventPriceSidebar";
+import PackageOptions from "@/components/pages/event-detail/PackageOptions";
+import type { PackageSelection } from "@/components/pages/event-detail/packageOptions.types";
 import type { MockEventDetail } from "@/server/mockdata/mock-events";
 
 interface EventDetailTemplateProps {

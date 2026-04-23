@@ -3,8 +3,8 @@
 import React from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "@/lib/i18n/client";
-import EventsGrid from "@/components/organisms/EventsGrid";
-import Heading from "@/components/atoms/Heading";
+import EventsGrid from "@/components/ui/molecules/EventsGrid";
+import Heading from "@/components/ui/atoms/Heading";
 import { MOCK_EVENTS } from "@/server/mockdata/mock-events";
 
 const EventsTemplate: React.FC = () => {

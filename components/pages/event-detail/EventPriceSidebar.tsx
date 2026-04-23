@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useTranslations } from "@/lib/i18n/client";
-import Button from "@/components/atoms/Button";
+import Button from "@/components/ui/atoms/Button";
 
 interface EventPriceSidebarProps {
   basePrice: number;

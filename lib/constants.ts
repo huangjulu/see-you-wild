@@ -1,6 +1,6 @@
 // Non-text configuration — display text lives in lib/dictionary/
 
-import type { ButtonTheme } from "@/components/atoms/Button";
+import type { ButtonTheme } from "@/components/ui/atoms/Button";
 
 export const SITE_URL = "https://seeyouwild.com";
 

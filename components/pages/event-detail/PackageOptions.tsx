@@ -2,9 +2,9 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import { useTranslations } from "@/lib/i18n/client";
-import ModalCard from "@/components/molecules/ModalCard";
-import EventCalendar from "@/components/molecules/EventCalendar";
-import RadioOption from "@/components/atoms/RadioOption";
+import ModalCard from "@/components/ui/molecules/ModalCard";
+import EventCalendar from "@/components/ui/molecules/EventCalendar";
+import RadioOption from "@/components/ui/atoms/RadioOption";
 import type { PackageSelection } from "./packageOptions.types";
 
 interface PackageOptionsProps {

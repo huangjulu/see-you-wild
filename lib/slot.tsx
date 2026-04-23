@@ -1,5 +1,5 @@
 import { Children, cloneElement, isValidElement } from "react";
-import { isSlot, getSlot } from "@/components/atoms/Slot";
+import { isSlot, getSlot } from "@/components/ui/atoms/Slot";
 
 /**
  * 掃描 React children，依據子元件的 slot 歸屬分類到各 slot。

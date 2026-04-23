@@ -6,10 +6,6 @@ out/
 .env*
 .vercel
 
-docs/**/*
-
-.claude/
-CLAUDE.md
 
 .husky/
 
@@ -25,3 +21,4 @@ api-test.http
 .playwright-mcp/
 
 supabase/.temp/
+.gitnexus

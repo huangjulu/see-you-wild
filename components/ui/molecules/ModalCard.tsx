@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
 import { resolveSlots } from "@/lib/slot";
-import Slot, { type SlottableComponent } from "@/components/atoms/Slot";
+import Slot, { type SlottableComponent } from "@/components/ui/atoms/Slot";
 import type { Override } from "@/lib/types";
-import Button from "@/components/atoms/Button";
+import Button from "@/components/ui/atoms/Button";
 import { X as IconX, ArrowLeft as IconArrowLeft } from "lucide-react";
 
 /* ─── Slot Types ─── */

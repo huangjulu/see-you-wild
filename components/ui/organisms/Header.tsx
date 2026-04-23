@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { Menu as IconMenu, X as IconX } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations, useLocale } from "@/lib/i18n/client";
-import Button from "@/components/atoms/Button";
-import Logo from "@/components/atoms/Logo";
+import Button from "@/components/ui/atoms/Button";
+import Logo from "@/components/ui/atoms/Logo";
 import { NAV_ANCHORS } from "@/lib/constants";
 
 const NAV_LINK_CLASS =

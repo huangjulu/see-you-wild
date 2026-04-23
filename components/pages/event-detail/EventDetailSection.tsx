@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
-import ModalCard from "@/components/molecules/ModalCard";
+import ModalCard from "@/components/ui/molecules/ModalCard";
 
 interface EventDetailSectionProps {
   title: string;

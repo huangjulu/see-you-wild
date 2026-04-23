@@ -1,4 +1,4 @@
-import CTACard from "@/components/molecules/CTACard";
+import CTACard from "@/components/pages/home/CTACard";
 import { getTranslations } from "@/lib/i18n/server";
 
 const CTASection: React.FC = async () => {

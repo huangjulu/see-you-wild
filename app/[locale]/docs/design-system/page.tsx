@@ -2,13 +2,16 @@
 
 import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import Button from "@/components/atoms/Button";
-import Calendar from "@/components/atoms/Calendar";
-import EventCalendar from "@/components/molecules/EventCalendar";
-import RadioOption from "@/components/atoms/RadioOption";
-import Dialog from "@/components/molecules/Dialog";
-import ModalCard from "@/components/molecules/ModalCard";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import Button from "@/components/ui/atoms/Button";
+import Calendar from "@/components/ui/atoms/Calendar";
+import EventCalendar from "@/components/ui/molecules/EventCalendar";
+import RadioOption from "@/components/ui/atoms/RadioOption";
+import Dialog from "@/components/ui/molecules/Dialog";
+import ModalCard from "@/components/ui/molecules/ModalCard";
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@/components/ui/molecules/ToggleGroup";
 import {
   CheckCircle as IconCheckCircle,
   AlertCircle as IconAlertCircle,

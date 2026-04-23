@@ -3,8 +3,8 @@
 import React, { useRef } from "react";
 import { useTranslations } from "@/lib/i18n/client";
 import { ScrollTrigger, useTimeline, useTween } from "@/lib/gsap";
-import JourneyCard from "@/components/molecules/JourneyCard";
-import Button from "@/components/atoms/Button";
+import JourneyCard from "@/components/pages/home/JourneyCard";
+import Button from "@/components/ui/atoms/Button";
 
 const JourneysSection: React.FC = () => {
   const t = useTranslations("home.journeys");

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import HomeTemplate from "@/components/templates/HomeTemplate";
+import HomeTemplate from "@/components/pages/home/HomeTemplate";
 import { isValidLocale } from "@/lib/i18n";
 import type { Locale, PageProps } from "@/lib/i18n";
 import { getLocalBusinessSchema, getEventSchemas } from "@/lib/seo/schemas";

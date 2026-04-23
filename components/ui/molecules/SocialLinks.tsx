@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import SocialIcon from "@/components/atoms/SocialIcon";
+import SocialIcon from "@/components/ui/atoms/SocialIcon";
 import { INSTAGRAM_URL } from "@/lib/constants";
 
 const SocialLinks: React.FC<{ className?: string }> = (props) => {
