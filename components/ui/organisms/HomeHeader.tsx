@@ -7,21 +7,17 @@ import { useTranslations, useLocale } from "@/lib/i18n/client";
 import Button from "@/components/ui/atoms/Button";
 import Logo from "@/components/ui/atoms/Logo";
 import { NAV_ANCHORS } from "@/lib/constants";
+import { useScrolled } from "@/lib/hooks/useScrolled";
 
 const NAV_LINK_CLASS =
   "text-sm hover:[text-shadow:0_0.5px_16px_color-mix(in_srgb,var(--color-primary-800)_80%,transparent)] hover:text-white focus-visible:opacity-100 focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-current rounded-sm";
 
-const Header: React.FC = () => {
+const HomeHeader: React.FC = () => {
   const t = useTranslations("common");
   const locale = useLocale();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const scrolled = useScrolled(50);
 
-  useEffect(function trackScroll() {
-    const handler = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handler, { passive: true });
-    return () => window.removeEventListener("scroll", handler);
-  }, []);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const navLinks = [
     { label: t("nav.events"), href: NAV_ANCHORS.events },
@@ -126,5 +122,5 @@ const Header: React.FC = () => {
   );
 };
 
-Header.displayName = "Header";
-export default Header;
+HomeHeader.displayName = "HomeHeader";
+export default HomeHeader;
