@@ -9,9 +9,7 @@ interface EventPriceSidebarProps {
   carpoolSurcharge: number;
   isSelfArrival: boolean;
   allOptionsSelected: boolean;
-  isSidebarAtOrigin: boolean;
-  isInView: boolean;
-  onScrollToOptions: () => void;
+  selectedDate: string | null;
   onBook: () => void;
 }
 
@@ -20,21 +18,8 @@ const EventPriceSidebar: React.FC<EventPriceSidebarProps> = (props) => {
   const totalPrice =
     props.basePrice + (props.isSelfArrival ? 0 : props.carpoolSurcharge);
   const formattedPrice = totalPrice.toLocaleString("zh-TW");
-
-  // Wireframe CTA logic:
-  // - Sidebar at origin (not sticking yet) → "查看可選日期" → scroll to calendar
-  // - Sidebar floating (sticking) → "立即預約" → disabled until all options filled
-  const desktopIsOrigin = props.isSidebarAtOrigin;
-  const desktopCtaLabel = desktopIsOrigin ? t("checkDates") : t("bookNow");
-  const desktopDisabled = !desktopIsOrigin && !props.allOptionsSelected;
-  const desktopAction = desktopIsOrigin
-    ? props.onScrollToOptions
-    : props.onBook;
-
-  // Mobile: same logic but based on isInView (PackageOptions visibility)
-  const mobileCtaLabel = props.isInView ? t("checkDates") : t("bookNow");
-  const mobileDisabled = !props.isInView && !props.allOptionsSelected;
-  const mobileAction = props.isInView ? props.onScrollToOptions : props.onBook;
+  const dateLabel = formatSelectedDate(props.selectedDate);
+  const disabled = !props.allOptionsSelected;
 
   return (
     <>
@@ -56,15 +41,22 @@ const EventPriceSidebar: React.FC<EventPriceSidebarProps> = (props) => {
               {props.carpoolSurcharge.toLocaleString("zh-TW")}
             </p>
           )}
-          <Button
-            theme="solid"
-            className="w-full"
-            disabled={desktopDisabled}
-            onClick={desktopAction}
-          >
-            {desktopCtaLabel}
-          </Button>
-          {desktopDisabled && !desktopIsOrigin && (
+          <div className="space-y-2">
+            {dateLabel != null && (
+              <p className="typo-body text-sm text-muted text-center">
+                {dateLabel}
+              </p>
+            )}
+            <Button
+              theme="solid"
+              className="w-full"
+              disabled={disabled}
+              onClick={props.onBook}
+            >
+              {t("bookNow")}
+            </Button>
+          </div>
+          {disabled && (
             <p className="typo-body text-xs text-center text-muted">
               {t("selectOptionsHint")}
             </p>
@@ -80,9 +72,14 @@ const EventPriceSidebar: React.FC<EventPriceSidebarProps> = (props) => {
           </p>
           <p className="typo-body text-xs text-muted">{t("perPerson")}</p>
         </div>
-        <Button theme="solid" disabled={mobileDisabled} onClick={mobileAction}>
-          {mobileCtaLabel}
-        </Button>
+        <div className="flex flex-col items-end gap-1">
+          {dateLabel != null && (
+            <p className="typo-body text-sm text-muted">{dateLabel}</p>
+          )}
+          <Button theme="solid" disabled={disabled} onClick={props.onBook}>
+            {t("bookNow")}
+          </Button>
+        </div>
       </div>
     </>
   );
@@ -90,3 +87,13 @@ const EventPriceSidebar: React.FC<EventPriceSidebarProps> = (props) => {
 
 EventPriceSidebar.displayName = "EventPriceSidebar";
 export default EventPriceSidebar;
+
+/* ─── Helpers ─── */
+
+const WEEKDAYS_ZH = ["日", "一", "二", "三", "四", "五", "六"];
+
+function formatSelectedDate(iso: string | null): string | null {
+  if (iso == null) return null;
+  const d = new Date(iso + "T00:00:00");
+  return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} (${WEEKDAYS_ZH[d.getDay()]})`;
+}

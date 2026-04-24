@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { useTranslations } from "@/lib/i18n/client";
 
 import EventGallery from "@/components/pages/event-detail/EventGallery";
@@ -24,42 +24,9 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
     isSelfArrival: false,
   });
 
-  // Sentinel: detects when sidebar leaves its natural position (starts sticking)
-  const sidebarSentinelRef = useRef<HTMLDivElement>(null);
-  const [isSidebarAtOrigin, setIsSidebarAtOrigin] = useState(true);
-
-  useEffect(function observeSidebarSentinel() {
-    const el = sidebarSentinelRef.current;
-    if (el == null) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsSidebarAtOrigin(entry.isIntersecting),
-      { threshold: 0 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  const optionsRef = useRef<HTMLDivElement>(null);
-  const [isOptionsInView, setIsOptionsInView] = useState(true);
-
-  useEffect(function observeOptions() {
-    const el = optionsRef.current;
-    if (el == null) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsOptionsInView(entry.isIntersecting),
-      { threshold: 0.1 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
   const allOptionsSelected =
     selection.selectedDate !== null &&
     (selection.isSelfArrival || selection.selectedPickup !== null);
-
-  function handleScrollToOptions() {
-    optionsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
 
   function handleBook() {
     // Placeholder for future registration flow
@@ -94,14 +61,12 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
             collapseLabel={t("collapse")}
           />
 
-          <div ref={optionsRef} className="scroll-mt-20">
-            <PackageOptions
-              availableDates={event.availableDates}
-              pickupLocations={event.pickupLocations}
-              carpoolSurcharge={event.carpoolSurcharge}
-              onSelectionChange={setSelection}
-            />
-          </div>
+          <PackageOptions
+            availableDates={event.availableDates}
+            pickupLocations={event.pickupLocations}
+            carpoolSurcharge={event.carpoolSurcharge}
+            onSelectionChange={setSelection}
+          />
 
           <EventDetailSection
             title={t("safetyPolicy")}
@@ -111,19 +76,14 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
           />
         </div>
 
-        {/* Right column: sentinel + Price Sidebar */}
+        {/* Right column: Price Sidebar */}
         <div>
-          {/* Sentinel: invisible element at sidebar's natural position.
-              When it scrolls out of view, sidebar is "sticking" → CTA switches. */}
-          <div ref={sidebarSentinelRef} className="h-0" />
           <EventPriceSidebar
             basePrice={event.base_price}
             carpoolSurcharge={event.carpoolSurcharge}
             isSelfArrival={selection.isSelfArrival}
             allOptionsSelected={allOptionsSelected}
-            isSidebarAtOrigin={isSidebarAtOrigin}
-            isInView={isOptionsInView}
-            onScrollToOptions={handleScrollToOptions}
+            selectedDate={selection.selectedDate}
             onBook={handleBook}
           />
         </div>

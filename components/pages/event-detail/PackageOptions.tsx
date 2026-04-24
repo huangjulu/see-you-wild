@@ -60,7 +60,8 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
   }
 
   function handleDateSelect(date: Date | { from: Date; to: Date } | undefined) {
-    const dateStr = date instanceof Date ? toDateStr(date) : null;
+    if (!(date instanceof Date)) return;
+    const dateStr = toDateStr(date);
     setSelectedDate(dateStr);
     notify(dateStr, selectedPickup, transport === "self");
   }
@@ -72,7 +73,9 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
       setSelectedPickup(null);
       notify(selectedDate, null, true);
     } else {
-      notify(selectedDate, selectedPickup, false);
+      const firstPickup = props.pickupLocations[0] ?? null;
+      setSelectedPickup(firstPickup);
+      notify(selectedDate, firstPickup, false);
     }
   }
 
