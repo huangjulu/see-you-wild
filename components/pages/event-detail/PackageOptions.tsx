@@ -67,16 +67,14 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
   }
 
   function handleTransportChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const value = e.target.value as "carpool" | "self";
-    setTransport(value);
-    if (value === "self") {
-      setSelectedPickup(null);
-      notify(selectedDate, null, true);
-    } else {
-      const firstPickup = props.pickupLocations[0] ?? null;
-      setSelectedPickup(firstPickup);
-      notify(selectedDate, firstPickup, false);
-    }
+    const raw = e.target.value;
+    if (raw !== "carpool" && raw !== "self") return;
+    const isSelf = raw === "self";
+    const pickup = isSelf ? null : (props.pickupLocations[0] ?? null);
+
+    setTransport(raw);
+    setSelectedPickup(pickup);
+    notify(selectedDate, pickup, isSelf);
   }
 
   function handlePickupChange(e: React.ChangeEvent<HTMLInputElement>) {
