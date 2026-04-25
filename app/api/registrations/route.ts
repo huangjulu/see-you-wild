@@ -3,6 +3,7 @@ import { getSupabase } from "@/lib/supabase/client";
 import { createRegistrationSchema } from "@/lib/validations/registrations";
 import { sendRegistrationEmail } from "@/lib/email/send-registration-email";
 import { sendAdminNotification } from "@/lib/email/send-admin-notification";
+import { createRegistrationService } from "@/lib/services/registrations";
 import type { EventRow } from "@/lib/types/database";
 
 export async function POST(request: Request) {
@@ -29,21 +30,17 @@ export async function POST(request: Request) {
   }
 
   const typedEvent = event as EventRow;
+  const service = createRegistrationService(typedEvent);
 
-  if (typedEvent.status !== "open") {
+  if (!service.isOpen()) {
     return NextResponse.json(
       { error: "Event registration is closed" },
       { status: 400 }
     );
   }
 
-  const amount_due =
-    input.transport === "carpool"
-      ? typedEvent.base_price + typedEvent.carpool_surcharge
-      : typedEvent.base_price;
-
-  const expires_at = new Date();
-  expires_at.setDate(expires_at.getDate() + typedEvent.payment_days);
+  const amount_due = service.calculateAmountDue(input.transport);
+  const expires_at = service.calculateExpiresAt();
 
   const { data: registration, error: insertError } = await getSupabase()
     .from("registrations")
