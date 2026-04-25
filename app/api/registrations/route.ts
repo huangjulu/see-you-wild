@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase/client";
 import { createRegistrationSchema } from "@/lib/validations/registrations";
-import { sendRegistrationEmail } from "@/lib/email/send-registration-email";
-import { sendAdminNotification } from "@/lib/email/send-admin-notification";
 import { createRegistrationService } from "@/lib/services/registrations";
-import type { EventRow } from "@/lib/types/database";
+import { createRegistrationNotifier } from "@/lib/services/notifier";
+import type { EventRow, RegistrationRow } from "@/lib/types/database";
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -57,26 +56,16 @@ export async function POST(request: Request) {
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://seeyouwild.com";
-
-  // Fire-and-forget emails
-  sendRegistrationEmail({
-    registrationId: registration.id,
-    to: input.email,
-    customerName: input.name,
-    eventTitle: typedEvent.title,
-    amountDue: amount_due,
-    expiresAt: expires_at.toISOString(),
+  const notifier = createRegistrationNotifier({
+    registration: registration as RegistrationRow,
+    event: typedEvent,
     baseUrl,
-  }).catch((err) => console.error("Failed to send registration email:", err));
-
-  sendAdminNotification({
-    customerName: input.name,
-    eventTitle: typedEvent.title,
-    amountDue: amount_due,
-    expiresAt: expires_at.toISOString(),
-    adminUrl: `${baseUrl}/admin/registrations/${registration.id}`,
-    adminEmail: process.env.ADMIN_EMAIL || "admin@seeyouwild.com",
-  }).catch((err) => console.error("Failed to send admin notification:", err));
+  });
+  notifier
+    .notifyAll()
+    .catch((err) =>
+      console.error("Failed to send registration notifications:", err)
+    );
 
   return NextResponse.json(registration, { status: 201 });
 }
