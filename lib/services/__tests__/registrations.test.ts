@@ -12,10 +12,12 @@ vi.mock("@/lib/token", () => ({
 import { getSupabase } from "@/lib/supabase/client";
 import { paymentToken } from "@/lib/token";
 import {
+  createRegistration,
   createRegistrationService,
   submitPaymentRef,
 } from "@/lib/services/registrations";
 import {
+  AlreadyRegisteredError,
   EventClosedError,
   EventNotFoundError,
   InternalError,
@@ -24,6 +26,7 @@ import {
   RegistrationNotFoundError,
   RegistrationPaidError,
 } from "@/lib/errors/domain";
+import type { CreateRegistrationInput } from "@/lib/validations/registrations";
 import type { EventRow } from "@/lib/types/database";
 
 const baseEvent: EventRow = {
@@ -58,6 +61,36 @@ function makeUpdateChain(result: { error: unknown }) {
     }),
   };
 }
+
+function makeInsertSingleChain(result: { data: unknown; error: unknown }) {
+  return {
+    insert: () => ({
+      select: () => ({
+        single: vi.fn().mockResolvedValue(result),
+      }),
+    }),
+  };
+}
+
+const baseRegistrationInput: CreateRegistrationInput = {
+  event_id: "evt-1",
+  name: "Test User",
+  email: "test@example.com",
+  phone: "0900000000",
+  line_id: null,
+  gender: "other",
+  id_number: "A123456789",
+  birthday: "1990-01-01",
+  emergency_contact_name: "Em",
+  emergency_contact_phone: "0911111111",
+  dietary: "omnivore",
+  wants_rental: false,
+  notes: null,
+  transport: "self",
+  pickup_location: null,
+  carpool_role: null,
+  seat_count: null,
+};
 
 function setupSupabaseMock(chains: unknown[]) {
   const fromMock = vi.fn();
@@ -116,6 +149,146 @@ describe("createRegistrationService", () => {
 
     expect(expires.getTime()).toBeGreaterThanOrEqual(beforeExpected.getTime());
     expect(expires.getTime()).toBeLessThanOrEqual(afterExpected.getTime());
+  });
+});
+
+describe("createRegistration", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("event 不存在時 throw EventNotFoundError", async () => {
+    setupSupabaseMock([
+      makeSingleChain({ data: null, error: { message: "not found" } }),
+    ]);
+
+    await expect(createRegistration(baseRegistrationInput)).rejects.toThrow(
+      EventNotFoundError
+    );
+  });
+
+  it("event.status='closed' 時 throw EventClosedError", async () => {
+    setupSupabaseMock([
+      makeSingleChain({
+        data: { ...baseEvent, status: "closed" },
+        error: null,
+      }),
+    ]);
+
+    await expect(createRegistration(baseRegistrationInput)).rejects.toThrow(
+      EventClosedError
+    );
+  });
+
+  it("insert 23505 + constraint 名含 registrations_event_email → throw AlreadyRegisteredError", async () => {
+    setupSupabaseMock([
+      makeSingleChain({ data: baseEvent, error: null }),
+      makeInsertSingleChain({
+        data: null,
+        error: {
+          code: "23505",
+          message:
+            'duplicate key value violates unique constraint "registrations_event_email_idx"',
+        },
+      }),
+    ]);
+
+    await expect(createRegistration(baseRegistrationInput)).rejects.toThrow(
+      AlreadyRegisteredError
+    );
+  });
+
+  it("insert 23505 但其他 constraint 名 → throw InternalError（不誤判成已報名）", async () => {
+    setupSupabaseMock([
+      makeSingleChain({ data: baseEvent, error: null }),
+      makeInsertSingleChain({
+        data: null,
+        error: {
+          code: "23505",
+          message:
+            'duplicate key value violates unique constraint "carpool_assignments_registration_id_key"',
+        },
+      }),
+    ]);
+
+    await expect(createRegistration(baseRegistrationInput)).rejects.toThrow(
+      InternalError
+    );
+    await expect(createRegistration(baseRegistrationInput)).rejects.not.toThrow(
+      AlreadyRegisteredError
+    );
+  });
+
+  it("insert 其他 PostgreSQL error → throw InternalError", async () => {
+    setupSupabaseMock([
+      makeSingleChain({ data: baseEvent, error: null }),
+      makeInsertSingleChain({
+        data: null,
+        error: { code: "08000", message: "connection failure" },
+      }),
+    ]);
+
+    await expect(createRegistration(baseRegistrationInput)).rejects.toThrow(
+      InternalError
+    );
+  });
+
+  it("event open + insert 成功 → 回傳 registration row（含 amount_due/expires_at）", async () => {
+    const insertedRow = {
+      id: "reg-new",
+      ...baseRegistrationInput,
+      amount_due: 1000,
+      expires_at: "2026-05-02T00:00:00Z",
+      payment_ref: null,
+      status: "pending",
+      created_at: "2026-04-25T00:00:00Z",
+      confirmed_at: null,
+    };
+
+    setupSupabaseMock([
+      makeSingleChain({ data: baseEvent, error: null }),
+      makeInsertSingleChain({ data: insertedRow, error: null }),
+    ]);
+
+    const result = await createRegistration(baseRegistrationInput);
+
+    expect(result).toEqual(insertedRow);
+  });
+
+  it("transport='carpool' → amount_due 為 base_price + carpool_surcharge", async () => {
+    const carpoolInput: CreateRegistrationInput = {
+      ...baseRegistrationInput,
+      transport: "carpool",
+      pickup_location: "台北",
+      carpool_role: "passenger",
+    };
+
+    let capturedInsert: Record<string, unknown> = {};
+    const fromMock = vi.fn();
+    fromMock.mockReturnValueOnce(
+      makeSingleChain({ data: baseEvent, error: null })
+    );
+    fromMock.mockReturnValueOnce({
+      insert: (row: Record<string, unknown>) => {
+        capturedInsert = row;
+        return {
+          select: () => ({
+            single: vi.fn().mockResolvedValue({
+              data: { id: "reg-new", ...row },
+              error: null,
+            }),
+          }),
+        };
+      },
+    });
+    vi.mocked(getSupabase).mockReturnValue({
+      from: fromMock,
+    } as unknown as SupabaseClient);
+
+    await createRegistration(carpoolInput);
+
+    expect(capturedInsert.amount_due).toBe(1100);
+    expect(capturedInsert.expires_at).toBeTypeOf("string");
   });
 });
 

@@ -1,6 +1,7 @@
 import { getSupabase } from "@/lib/supabase/client";
 import { paymentToken } from "@/lib/token";
 import {
+  AlreadyRegisteredError,
   EventClosedError,
   EventNotFoundError,
   InternalError,
@@ -9,7 +10,12 @@ import {
   RegistrationNotFoundError,
   RegistrationPaidError,
 } from "@/lib/errors/domain";
-import type { EventRow, Transport } from "@/lib/types/database";
+import type { CreateRegistrationInput } from "@/lib/validations/registrations";
+import type {
+  EventRow,
+  RegistrationRow,
+  Transport,
+} from "@/lib/types/database";
 
 /**
  * Amount calculation strategies keyed by transport mode.
@@ -46,6 +52,60 @@ export function createRegistrationService(event: EventRow) {
   }
 
   return { isOpen, calculateAmountDue, calculateExpiresAt };
+}
+
+/**
+ * Customer-side command: create a new registration row for an event.
+ * Validates event existence and open status, computes amount/expiry via
+ * createRegistrationService, and translates Postgres unique-violation
+ * (constraint name `registrations_event_email...`) into AlreadyRegisteredError
+ * so the route returns 409 instead of leaking a 500.
+ *
+ * Other 23505 codes (e.g. carpool unique) flow through as InternalError
+ * to avoid mis-attributing them as "already registered".
+ */
+export async function createRegistration(
+  input: CreateRegistrationInput
+): Promise<RegistrationRow> {
+  const { data: event, error: eventError } = await getSupabase()
+    .from("events")
+    .select("*")
+    .eq("id", input.event_id)
+    .single();
+
+  if (eventError || !event) {
+    throw new EventNotFoundError();
+  }
+
+  const service = createRegistrationService(event as EventRow);
+  if (!service.isOpen()) {
+    throw new EventClosedError();
+  }
+
+  const amount_due = service.calculateAmountDue(input.transport);
+  const expires_at = service.calculateExpiresAt();
+
+  const { data: registration, error: insertError } = await getSupabase()
+    .from("registrations")
+    .insert({
+      ...input,
+      amount_due,
+      expires_at: expires_at.toISOString(),
+    })
+    .select()
+    .single();
+
+  if (insertError) {
+    if (
+      insertError.code === "23505" &&
+      insertError.message?.includes("registrations_event_email")
+    ) {
+      throw new AlreadyRegisteredError();
+    }
+    throw new InternalError(insertError.message, insertError);
+  }
+
+  return registration as RegistrationRow;
 }
 
 interface SubmitPaymentRefInput {

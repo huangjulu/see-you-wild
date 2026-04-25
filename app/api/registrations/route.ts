@@ -1,71 +1,42 @@
-import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase/client";
 import { createRegistrationSchema } from "@/lib/validations/registrations";
-import { createRegistrationService } from "@/lib/services/registrations";
+import { createRegistration } from "@/lib/services/registrations";
 import { createRegistrationNotifier } from "@/lib/services/notifier";
-import type { EventRow, RegistrationRow } from "@/lib/types/database";
+import { apiOk } from "@/lib/api-response";
+import { handleError } from "@/lib/api/handle-error";
+import type { EventRow } from "@/lib/types/database";
 
 export async function POST(request: Request) {
-  const body = await request.json();
-  const parsed = createRegistrationSchema.safeParse(body);
+  try {
+    const body = await request.json();
+    const parsed = createRegistrationSchema.parse(body);
+    const registration = await createRegistration(parsed);
 
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: "Validation failed", details: parsed.error.flatten() },
-      { status: 400 }
-    );
+    // Notifier reloads event so the service signature stays narrow (RegistrationRow only).
+    // The extra query runs in the fire-and-forget path, off the response critical path.
+    const { data: event } = await getSupabase()
+      .from("events")
+      .select("*")
+      .eq("id", registration.event_id)
+      .single();
+
+    if (event) {
+      const baseUrl =
+        process.env.NEXT_PUBLIC_BASE_URL || "https://seeyouwild.com";
+      const notifier = createRegistrationNotifier({
+        registration,
+        event: event as EventRow,
+        baseUrl,
+      });
+      notifier
+        .notifyAll()
+        .catch((err) =>
+          console.error("Failed to send registration notifications:", err)
+        );
+    }
+
+    return apiOk(registration, 201);
+  } catch (err) {
+    return handleError(err);
   }
-
-  const input = parsed.data;
-
-  const { data: event, error: eventError } = await getSupabase()
-    .from("events")
-    .select("*")
-    .eq("id", input.event_id)
-    .single();
-
-  if (eventError || !event) {
-    return NextResponse.json({ error: "Event not found" }, { status: 404 });
-  }
-
-  const typedEvent = event as EventRow;
-  const service = createRegistrationService(typedEvent);
-
-  if (!service.isOpen()) {
-    return NextResponse.json(
-      { error: "Event registration is closed" },
-      { status: 400 }
-    );
-  }
-
-  const amount_due = service.calculateAmountDue(input.transport);
-  const expires_at = service.calculateExpiresAt();
-
-  const { data: registration, error: insertError } = await getSupabase()
-    .from("registrations")
-    .insert({
-      ...input,
-      amount_due,
-      expires_at: expires_at.toISOString(),
-    })
-    .select()
-    .single();
-
-  if (insertError) {
-    return NextResponse.json({ error: insertError.message }, { status: 500 });
-  }
-
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://seeyouwild.com";
-  const notifier = createRegistrationNotifier({
-    registration: registration as RegistrationRow,
-    event: typedEvent,
-    baseUrl,
-  });
-  notifier
-    .notifyAll()
-    .catch((err) =>
-      console.error("Failed to send registration notifications:", err)
-    );
-
-  return NextResponse.json(registration, { status: 201 });
 }
