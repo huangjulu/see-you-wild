@@ -9,10 +9,6 @@ import RadioOption from "@/components/ui/atoms/RadioOption";
 import Dialog from "@/components/ui/molecules/Dialog";
 import ModalCard from "@/components/ui/molecules/ModalCard";
 import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from "@/components/ui/molecules/ToggleGroup";
-import {
   CheckCircle as IconCheckCircle,
   AlertCircle as IconAlertCircle,
   AlertTriangle as IconAlertTriangle,
@@ -741,34 +737,6 @@ const PalettePreviewPage: React.FC = () => {
                   label="桃園高鐵"
                 />
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ─── ToggleGroup ─── */}
-        <div>
-          <h3 className="typo-ui mb-4 text-sm text-foreground">ToggleGroup</h3>
-          <div className="flex flex-wrap gap-8">
-            <div className="flex flex-col gap-2">
-              <p className="typo-ui text-xs text-muted">Horizontal</p>
-              <ToggleGroup multiple={false} variant="outline" spacing={1}>
-                <ToggleGroupItem value="week">本週</ToggleGroupItem>
-                <ToggleGroupItem value="month">本月</ToggleGroupItem>
-                <ToggleGroupItem value="all">全部</ToggleGroupItem>
-              </ToggleGroup>
-            </div>
-            <div className="flex flex-col gap-2">
-              <p className="typo-ui text-xs text-muted">Vertical</p>
-              <ToggleGroup
-                multiple={false}
-                variant="outline"
-                orientation="vertical"
-                spacing={1}
-              >
-                <ToggleGroupItem value="week">本週</ToggleGroupItem>
-                <ToggleGroupItem value="month">本月</ToggleGroupItem>
-                <ToggleGroupItem value="all">全部</ToggleGroupItem>
-              </ToggleGroup>
             </div>
           </div>
         </div>
