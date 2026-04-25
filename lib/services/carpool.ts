@@ -80,7 +80,7 @@ export async function assignCarpool(
   return ok((inserted ?? []) as CarpoolAssignment[]);
 }
 
-function buildAssignments(
+export function buildAssignments(
   eventId: string,
   event: EventRow,
   carpoolRegs: RegistrationRow[]
