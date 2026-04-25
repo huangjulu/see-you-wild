@@ -1,3 +1,6 @@
+import { getSupabase } from "@/lib/supabase/client";
+import { paymentToken } from "@/lib/token";
+import { ok, fail, type ServiceResult } from "./result";
 import type { EventRow, Transport } from "@/lib/types/database";
 
 /**
@@ -35,4 +38,79 @@ export function createRegistrationService(event: EventRow) {
   }
 
   return { isOpen, calculateAmountDue, calculateExpiresAt };
+}
+
+interface SubmitPaymentRefInput {
+  registrationId: string;
+  token: string;
+  paymentRef: string;
+}
+
+interface SubmitPaymentRefOutput {
+  registrationId: string;
+  paymentRef: string;
+}
+
+/**
+ * Customer-side command: write the bank-transfer reference back to a registration.
+ * Owns every business rule between "incoming HMAC token" and "registration row updated":
+ * token validity, registration existence, paid/expired state, and event-open guard.
+ *
+ * The route reduces to validation + result translation.
+ */
+export async function submitPaymentRef(
+  input: SubmitPaymentRefInput
+): Promise<ServiceResult<SubmitPaymentRefOutput>> {
+  // ─── Authentication ────────────────────────────────────────
+  if (!paymentToken().verify(input.registrationId, input.token)) {
+    return fail("Invalid token", 403);
+  }
+
+  // ─── Load registration ─────────────────────────────────────
+  const { data: registration, error: regError } = await getSupabase()
+    .from("registrations")
+    .select("status, expires_at, event_id")
+    .eq("id", input.registrationId)
+    .single();
+
+  if (regError || !registration) {
+    return fail("Registration not found", 404);
+  }
+
+  // ─── Registration-state guards ─────────────────────────────
+  if (registration.status === "paid") {
+    return fail("Registration already paid", 409);
+  }
+  if (new Date(registration.expires_at) < new Date()) {
+    return fail("Registration expired", 410);
+  }
+
+  // ─── Event-state guard ─────────────────────────────────────
+  const { data: event, error: eventError } = await getSupabase()
+    .from("events")
+    .select("status")
+    .eq("id", registration.event_id)
+    .single();
+
+  if (eventError || !event) {
+    return fail("Event not found", 404);
+  }
+  if (event.status !== "open") {
+    return fail("Event registration is closed", 400);
+  }
+
+  // ─── Mutation ──────────────────────────────────────────────
+  const { error: updateError } = await getSupabase()
+    .from("registrations")
+    .update({ payment_ref: input.paymentRef })
+    .eq("id", input.registrationId);
+
+  if (updateError) {
+    return fail(updateError.message, 500);
+  }
+
+  return ok({
+    registrationId: input.registrationId,
+    paymentRef: input.paymentRef,
+  });
 }

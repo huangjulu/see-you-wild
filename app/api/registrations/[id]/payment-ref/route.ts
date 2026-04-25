@@ -1,7 +1,6 @@
-import { NextResponse } from "next/server";
-import { getSupabase } from "@/lib/supabase/client";
 import { paymentRefSchema } from "@/lib/validations/registrations";
-import { paymentToken } from "@/lib/token";
+import { submitPaymentRef } from "@/lib/services/registrations";
+import { apiOk, apiError } from "@/lib/api-response";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -13,26 +12,19 @@ export async function PATCH(request: Request, { params }: RouteParams) {
   const parsed = paymentRefSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json(
-      { error: "Validation failed", details: parsed.error.flatten() },
-      { status: 400 }
-    );
+    return apiError("Validation failed", 400, parsed.error.flatten());
   }
 
-  if (!paymentToken().verify(id, parsed.data.token)) {
-    return NextResponse.json({ error: "Invalid token" }, { status: 403 });
-  }
+  const result = await submitPaymentRef({
+    registrationId: id,
+    token: parsed.data.token,
+    paymentRef: parsed.data.payment_ref,
+  });
 
-  const { data, error } = await getSupabase()
-    .from("registrations")
-    .update({ payment_ref: parsed.data.payment_ref })
-    .eq("id", id)
-    .select("id, payment_ref")
-    .single();
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  return NextResponse.json(data);
+  return result.ok
+    ? apiOk({
+        id: result.value.registrationId,
+        payment_ref: result.value.paymentRef,
+      })
+    : apiError(result.error, result.status);
 }
