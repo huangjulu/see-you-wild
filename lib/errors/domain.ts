@@ -61,6 +61,13 @@ export class InvalidTokenError extends DomainError {
   }
 }
 
+export class UnauthorizedError extends DomainError {
+  readonly status = 401;
+  constructor(message = "Unauthorized") {
+    super(message);
+  }
+}
+
 /**
  * Catch-all for unexpected failures (DB connection drops, unknown PG errors, etc.).
  * `cause` carries the original error for server-side logging — never serialised to the client.
