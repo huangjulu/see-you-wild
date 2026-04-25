@@ -53,7 +53,7 @@ const JourneysSection: React.FC = () => {
     <section
       ref={sectionRef}
       id="journeys"
-      className="relative overflow-hidden bg-surface-brand bg-linear-180 from-[#4F90C1] to-surface-brand from-[-15%] to-105%"
+      className="relative overflow-hidden bg-surface-brand bg-linear-180 from-journeys-gradient-from to-surface-brand from-[-15%] to-105%"
     >
       <div className="h-screen flex flex-col justify-center py-8">
         <div className="max-w-7xl mx-auto w-full px-6 md:px-12 mb-10">

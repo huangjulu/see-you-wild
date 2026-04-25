@@ -98,6 +98,9 @@
   --color-surface-warm: #fef6ee; /* primary-50 — 深色 section 內嵌 CTA */
   --color-surface-warm-fg: #3c4a52; /* neutral-700 — 暖底文字 */
 
+  /* ─── Section-specific accents ─── */
+  --color-journeys-gradient-from: #4f90c1; /* JourneysSection 漸層起始色（冷藍 → 暖橘 surface-brand） */
+
   /* ─── Fonts ─── */
   --font-serif:
     "SerifDigits", var(--font-rufina), "Rufina", var(--font-chiron-sung-hk),
