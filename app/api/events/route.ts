@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase/client";
 import { createEventSchema } from "@/lib/validations/events";
+import { apiOk, apiError } from "@/lib/api-response";
 import type {
   EventRow,
   EventListDto,
@@ -14,28 +14,30 @@ export async function GET() {
     .order("start_date", { ascending: true });
 
   if (eventsError) {
-    return NextResponse.json({ error: eventsError.message }, { status: 500 });
+    return apiError(eventsError.message, 500);
   }
 
-  const result: EventListDto[] = [];
+  const typedEvents = (events ?? []) as EventRow[];
+  const eventIds = typedEvents.map((e) => e.id);
 
-  for (const event of events as EventRow[]) {
-    const { data: registrations, error: regError } = await getSupabase()
-      .from("registrations")
-      .select("id, name, status, transport, payment_ref, created_at")
-      .eq("event_id", event.id);
+  // Single batched read instead of N+1 per-event queries (SYW-036 I7).
+  const { data: allRegistrations, error: regError } = await getSupabase()
+    .from("registrations")
+    .select("id, name, status, transport, payment_ref, created_at, event_id")
+    .in("event_id", eventIds);
 
-    if (regError) {
-      return NextResponse.json({ error: regError.message }, { status: 500 });
-    }
-
-    result.push({
-      ...event,
-      registrations: (registrations ?? []) as RegistrationSummaryDto[],
-    });
+  if (regError) {
+    return apiError(regError.message, 500);
   }
 
-  return NextResponse.json(result);
+  const byEvent = groupRegistrationsByEvent(allRegistrations ?? []);
+
+  const result: EventListDto[] = typedEvents.map((event) => ({
+    ...event,
+    registrations: byEvent.get(event.id) ?? [],
+  }));
+
+  return apiOk(result);
 }
 
 export async function POST(request: Request) {
@@ -43,10 +45,7 @@ export async function POST(request: Request) {
   const parsed = createEventSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json(
-      { error: "Validation failed", details: parsed.error.flatten() },
-      { status: 400 }
-    );
+    return apiError("Validation failed", 400, parsed.error.flatten());
   }
 
   const { data, error } = await getSupabase()
@@ -56,8 +55,20 @@ export async function POST(request: Request) {
     .single();
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return apiError(error.message, 500);
   }
 
-  return NextResponse.json(data, { status: 201 });
+  return apiOk(data, 201);
+}
+
+function groupRegistrationsByEvent(
+  registrations: unknown[]
+): Map<string, RegistrationSummaryDto[]> {
+  type Joined = RegistrationSummaryDto & { event_id: string };
+  const map = new Map<string, RegistrationSummaryDto[]>();
+  for (const reg of registrations as Joined[]) {
+    if (!map.has(reg.event_id)) map.set(reg.event_id, []);
+    map.get(reg.event_id)!.push(reg);
+  }
+  return map;
 }
