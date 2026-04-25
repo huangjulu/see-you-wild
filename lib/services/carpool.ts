@@ -1,5 +1,5 @@
 import { getSupabase } from "@/lib/supabase/client";
-import { ok, fail, type ServiceResult } from "./result";
+import { EventNotFoundError, InternalError } from "@/lib/errors/domain";
 import type { EventRow, RegistrationRow } from "@/lib/types/database";
 
 interface CarpoolAssignment {
@@ -24,7 +24,7 @@ interface CarpoolAssignment {
  */
 export async function assignCarpool(
   eventId: string
-): Promise<ServiceResult<CarpoolAssignment[]>> {
+): Promise<CarpoolAssignment[]> {
   // ─── Load event ─────────────────────────────────────────────
   const { data: event, error: eventError } = await getSupabase()
     .from("events")
@@ -33,7 +33,7 @@ export async function assignCarpool(
     .single();
 
   if (eventError || !event) {
-    return fail("Event not found", 404);
+    throw new EventNotFoundError();
   }
   const typedEvent = event as EventRow;
 
@@ -46,12 +46,12 @@ export async function assignCarpool(
     .eq("transport", "carpool");
 
   if (regError) {
-    return fail(regError.message, 500);
+    throw new InternalError(regError.message, regError);
   }
 
   const carpoolRegs = (registrations ?? []) as RegistrationRow[];
   if (carpoolRegs.length === 0) {
-    return ok([]);
+    return [];
   }
 
   // ─── Reset previous assignments ─────────────────────────────
@@ -61,7 +61,7 @@ export async function assignCarpool(
     .eq("event_id", eventId);
 
   if (deleteError) {
-    return fail(deleteError.message, 500);
+    throw new InternalError(deleteError.message, deleteError);
   }
 
   // ─── Build assignments per location ────────────────────────
@@ -74,10 +74,10 @@ export async function assignCarpool(
     .select();
 
   if (insertError) {
-    return fail(insertError.message, 500);
+    throw new InternalError(insertError.message, insertError);
   }
 
-  return ok((inserted ?? []) as CarpoolAssignment[]);
+  return (inserted ?? []) as CarpoolAssignment[];
 }
 
 export function buildAssignments(

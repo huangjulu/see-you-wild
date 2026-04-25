@@ -15,6 +15,15 @@ import {
   createRegistrationService,
   submitPaymentRef,
 } from "@/lib/services/registrations";
+import {
+  EventClosedError,
+  EventNotFoundError,
+  InternalError,
+  InvalidTokenError,
+  RegistrationExpiredError,
+  RegistrationNotFoundError,
+  RegistrationPaidError,
+} from "@/lib/errors/domain";
 import type { EventRow } from "@/lib/types/database";
 
 const baseEvent: EventRow = {
@@ -139,47 +148,39 @@ describe("submitPaymentRef", () => {
     });
 
     expect(result).toEqual({
-      ok: true,
-      value: { registrationId: "reg-1", paymentRef: "12345" },
-    });
-  });
-
-  it("HMAC token 無效時立即 fail(403) 不查 DB", async () => {
-    setupPaymentToken(false);
-
-    const result = await submitPaymentRef({
       registrationId: "reg-1",
-      token: "bad-token",
       paymentRef: "12345",
     });
-
-    expect(result).toEqual({
-      ok: false,
-      error: "Invalid token",
-      status: 403,
-    });
   });
 
-  it("registration 不存在時回 fail(404)", async () => {
+  it("HMAC token 無效時 throw InvalidTokenError 不查 DB", async () => {
+    setupPaymentToken(false);
+
+    await expect(
+      submitPaymentRef({
+        registrationId: "reg-1",
+        token: "bad-token",
+        paymentRef: "12345",
+      })
+    ).rejects.toThrow(InvalidTokenError);
+  });
+
+  it("registration 不存在時 throw RegistrationNotFoundError", async () => {
     setupPaymentToken(true);
     setupSupabaseMock([
       makeSingleChain({ data: null, error: { message: "not found" } }),
     ]);
 
-    const result = await submitPaymentRef({
-      registrationId: "reg-not-exist",
-      token: "valid-token",
-      paymentRef: "12345",
-    });
-
-    expect(result).toEqual({
-      ok: false,
-      error: "Registration not found",
-      status: 404,
-    });
+    await expect(
+      submitPaymentRef({
+        registrationId: "reg-not-exist",
+        token: "valid-token",
+        paymentRef: "12345",
+      })
+    ).rejects.toThrow(RegistrationNotFoundError);
   });
 
-  it("registration.status='paid' 時回 fail(409)", async () => {
+  it("registration.status='paid' 時 throw RegistrationPaidError", async () => {
     setupPaymentToken(true);
 
     const futureDate = new Date(Date.now() + 7 * 86400_000).toISOString();
@@ -191,20 +192,16 @@ describe("submitPaymentRef", () => {
       }),
     ]);
 
-    const result = await submitPaymentRef({
-      registrationId: "reg-1",
-      token: "valid-token",
-      paymentRef: "12345",
-    });
-
-    expect(result).toEqual({
-      ok: false,
-      error: "Registration already paid",
-      status: 409,
-    });
+    await expect(
+      submitPaymentRef({
+        registrationId: "reg-1",
+        token: "valid-token",
+        paymentRef: "12345",
+      })
+    ).rejects.toThrow(RegistrationPaidError);
   });
 
-  it("registration.expires_at 已過期時回 fail(410)", async () => {
+  it("registration.expires_at 已過期時 throw RegistrationExpiredError", async () => {
     setupPaymentToken(true);
 
     const pastDate = new Date(Date.now() - 86400_000).toISOString();
@@ -216,20 +213,16 @@ describe("submitPaymentRef", () => {
       }),
     ]);
 
-    const result = await submitPaymentRef({
-      registrationId: "reg-1",
-      token: "valid-token",
-      paymentRef: "12345",
-    });
-
-    expect(result).toEqual({
-      ok: false,
-      error: "Registration expired",
-      status: 410,
-    });
+    await expect(
+      submitPaymentRef({
+        registrationId: "reg-1",
+        token: "valid-token",
+        paymentRef: "12345",
+      })
+    ).rejects.toThrow(RegistrationExpiredError);
   });
 
-  it("event 不存在時回 fail(404)", async () => {
+  it("event 不存在時 throw EventNotFoundError", async () => {
     setupPaymentToken(true);
 
     const futureDate = new Date(Date.now() + 7 * 86400_000).toISOString();
@@ -242,20 +235,16 @@ describe("submitPaymentRef", () => {
       makeSingleChain({ data: null, error: { message: "event not found" } }),
     ]);
 
-    const result = await submitPaymentRef({
-      registrationId: "reg-1",
-      token: "valid-token",
-      paymentRef: "12345",
-    });
-
-    expect(result).toEqual({
-      ok: false,
-      error: "Event not found",
-      status: 404,
-    });
+    await expect(
+      submitPaymentRef({
+        registrationId: "reg-1",
+        token: "valid-token",
+        paymentRef: "12345",
+      })
+    ).rejects.toThrow(EventNotFoundError);
   });
 
-  it("event.status !== 'open' 時回 fail(400)", async () => {
+  it("event.status !== 'open' 時 throw EventClosedError", async () => {
     setupPaymentToken(true);
 
     const futureDate = new Date(Date.now() + 7 * 86400_000).toISOString();
@@ -268,20 +257,16 @@ describe("submitPaymentRef", () => {
       makeSingleChain({ data: { status: "closed" }, error: null }),
     ]);
 
-    const result = await submitPaymentRef({
-      registrationId: "reg-1",
-      token: "valid-token",
-      paymentRef: "12345",
-    });
-
-    expect(result).toEqual({
-      ok: false,
-      error: "Event registration is closed",
-      status: 400,
-    });
+    await expect(
+      submitPaymentRef({
+        registrationId: "reg-1",
+        token: "valid-token",
+        paymentRef: "12345",
+      })
+    ).rejects.toThrow(EventClosedError);
   });
 
-  it("DB update 失敗時回 fail(500)", async () => {
+  it("DB update 失敗時 throw InternalError", async () => {
     setupPaymentToken(true);
 
     const futureDate = new Date(Date.now() + 7 * 86400_000).toISOString();
@@ -295,16 +280,12 @@ describe("submitPaymentRef", () => {
       makeUpdateChain({ error: { message: "update failed" } }),
     ]);
 
-    const result = await submitPaymentRef({
-      registrationId: "reg-1",
-      token: "valid-token",
-      paymentRef: "12345",
-    });
-
-    expect(result).toEqual({
-      ok: false,
-      error: "update failed",
-      status: 500,
-    });
+    await expect(
+      submitPaymentRef({
+        registrationId: "reg-1",
+        token: "valid-token",
+        paymentRef: "12345",
+      })
+    ).rejects.toThrow(InternalError);
   });
 });

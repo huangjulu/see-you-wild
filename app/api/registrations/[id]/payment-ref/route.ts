@@ -1,30 +1,29 @@
 import { paymentRefSchema } from "@/lib/validations/registrations";
 import { submitPaymentRef } from "@/lib/services/registrations";
-import { apiOk, apiError } from "@/lib/api-response";
+import { apiOk } from "@/lib/api-response";
+import { handleError } from "@/lib/api/handle-error";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
 export async function PATCH(request: Request, { params }: RouteParams) {
-  const { id } = await params;
-  const body = await request.json();
-  const parsed = paymentRefSchema.safeParse(body);
+  try {
+    const { id } = await params;
+    const body = await request.json();
+    const parsed = paymentRefSchema.parse(body);
 
-  if (!parsed.success) {
-    return apiError("Validation failed", 400, parsed.error.flatten());
+    const result = await submitPaymentRef({
+      registrationId: id,
+      token: parsed.token,
+      paymentRef: parsed.payment_ref,
+    });
+
+    return apiOk({
+      id: result.registrationId,
+      payment_ref: result.paymentRef,
+    });
+  } catch (err) {
+    return handleError(err);
   }
-
-  const result = await submitPaymentRef({
-    registrationId: id,
-    token: parsed.data.token,
-    paymentRef: parsed.data.payment_ref,
-  });
-
-  return result.ok
-    ? apiOk({
-        id: result.value.registrationId,
-        payment_ref: result.value.paymentRef,
-      })
-    : apiError(result.error, result.status);
 }

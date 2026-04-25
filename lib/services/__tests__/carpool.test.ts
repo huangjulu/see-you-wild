@@ -7,6 +7,7 @@ vi.mock("@/lib/supabase/client", () => ({
 
 import { getSupabase } from "@/lib/supabase/client";
 import { assignCarpool, buildAssignments } from "@/lib/services/carpool";
+import { EventNotFoundError, InternalError } from "@/lib/errors/domain";
 import type { EventRow, RegistrationRow } from "@/lib/types/database";
 
 const baseEvent: EventRow = {
@@ -347,36 +348,26 @@ describe("assignCarpool", () => {
     vi.clearAllMocks();
   });
 
-  it("event 不存在時回傳 fail(404)", async () => {
+  it("event 不存在時 throw EventNotFoundError", async () => {
     setupSupabaseMock([
       makeEventChain({ data: null, error: { message: "not found" } }),
     ]);
 
-    const result = await assignCarpool("evt-not-exist");
-
-    expect(result).toEqual({
-      ok: false,
-      error: "Event not found",
-      status: 404,
-    });
+    await expect(assignCarpool("evt-not-exist")).rejects.toThrow(
+      EventNotFoundError
+    );
   });
 
-  it("registrations 讀取失敗時回傳 fail(500)", async () => {
+  it("registrations 讀取失敗時 throw InternalError", async () => {
     setupSupabaseMock([
       makeEventChain({ data: baseEvent, error: null }),
       makeRegsChain({ data: null, error: { message: "DB connection lost" } }),
     ]);
 
-    const result = await assignCarpool("evt-1");
-
-    expect(result).toEqual({
-      ok: false,
-      error: "DB connection lost",
-      status: 500,
-    });
+    await expect(assignCarpool("evt-1")).rejects.toThrow(InternalError);
   });
 
-  it("delete 舊指派失敗時回傳 fail(500)", async () => {
+  it("delete 舊指派失敗時 throw InternalError", async () => {
     const driver = makeReg({
       id: "drv-1",
       carpool_role: "driver",
@@ -389,16 +380,10 @@ describe("assignCarpool", () => {
       makeDeleteChain({ error: { message: "delete failed" } }),
     ]);
 
-    const result = await assignCarpool("evt-1");
-
-    expect(result).toEqual({
-      ok: false,
-      error: "delete failed",
-      status: 500,
-    });
+    await expect(assignCarpool("evt-1")).rejects.toThrow(InternalError);
   });
 
-  it("insert 新指派失敗時回傳 fail(500)", async () => {
+  it("insert 新指派失敗時 throw InternalError", async () => {
     const driver = makeReg({
       id: "drv-1",
       carpool_role: "driver",
@@ -412,12 +397,6 @@ describe("assignCarpool", () => {
       makeInsertChain({ data: null, error: { message: "insert failed" } }),
     ]);
 
-    const result = await assignCarpool("evt-1");
-
-    expect(result).toEqual({
-      ok: false,
-      error: "insert failed",
-      status: 500,
-    });
+    await expect(assignCarpool("evt-1")).rejects.toThrow(InternalError);
   });
 });
