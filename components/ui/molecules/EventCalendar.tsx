@@ -22,32 +22,32 @@ interface EventCalendarProps {
 /* ─── Main Component ─── */
 
 const EventCalendar: React.FC<EventCalendarProps> = (props) => {
-  const { availableDates, minAdvanceDays } = props;
-
   const minDate = useMemo(() => {
-    if (minAdvanceDays == null) return startOfDay(new Date());
-    return addDays(new Date(), minAdvanceDays);
-  }, [minAdvanceDays]);
+    if (props.minAdvanceDays == null) return startOfDay(new Date());
+    return addDays(new Date(), props.minAdvanceDays);
+  }, [props.minAdvanceDays]);
 
   const disabled = useMemo(() => {
     return (date: Date) => date < minDate;
   }, [minDate]);
 
   const fullMatcher = useMemo(() => {
-    if (availableDates == null) return undefined;
+    if (props.availableDates == null) return undefined;
+    const dates = props.availableDates;
     return (date: Date) => {
       if (date < minDate) return false;
-      return !availableDates.some((d) => isSameDay(d, date));
+      return !dates.some((d) => isSameDay(d, date));
     };
-  }, [availableDates, minDate]);
+  }, [props.availableDates, minDate]);
 
   const availableMatcher = useMemo(() => {
-    if (availableDates == null) return undefined;
+    if (props.availableDates == null) return undefined;
+    const dates = props.availableDates;
     return (date: Date) => {
       if (date < minDate) return false;
-      return availableDates.some((d) => isSameDay(d, date));
+      return dates.some((d) => isSameDay(d, date));
     };
-  }, [availableDates, minDate]);
+  }, [props.availableDates, minDate]);
 
   // Build markers with match + label + style
   const markers = useMemo(() => {
@@ -76,8 +76,8 @@ const EventCalendar: React.FC<EventCalendarProps> = (props) => {
   function handleChange(date: Date | undefined) {
     if (
       date != null &&
-      availableDates != null &&
-      !availableDates.some((d) => isSameDay(d, date))
+      props.availableDates != null &&
+      !props.availableDates.some((d) => isSameDay(d, date))
     ) {
       return;
     }

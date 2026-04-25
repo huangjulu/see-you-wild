@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { resolveSlots } from "@/lib/slot";
-import Slot, { type SlottableComponent } from "@/components/ui/atoms/Slot";
+import Slot from "@/components/ui/atoms/Slot";
+import type { SlottableComponent } from "@/components/ui/atoms/slot.types";
 import type { Override } from "@/lib/types";
 import Button from "@/components/ui/atoms/Button";
 import { X as IconX } from "lucide-react";
@@ -102,7 +103,6 @@ interface DialogProps {
 }
 
 const _Dialog: React.FC<DialogProps> = (props) => {
-  const { title, message } = props;
   const slots = resolveSlots<DialogSlot>(props.children);
 
   return (
@@ -116,14 +116,14 @@ const _Dialog: React.FC<DialogProps> = (props) => {
       <div className="flex flex-col gap-4 p-6">
         <div className="flex items-start gap-4">
           <div className="flex-1">
-            {title != null && (
+            {props.title != null && (
               <div className="typo-sub-heading text-xl text-foreground">
-                {title}
+                {props.title}
               </div>
             )}
-            {message != null && (
+            {props.message != null && (
               <div className="typo-body text-sm leading-relaxed text-muted">
-                {message}
+                {props.message}
               </div>
             )}
             {slots["children"]}

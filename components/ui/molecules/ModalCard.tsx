@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { resolveSlots } from "@/lib/slot";
-import Slot, { type SlottableComponent } from "@/components/ui/atoms/Slot";
+import Slot from "@/components/ui/atoms/Slot";
+import type { SlottableComponent } from "@/components/ui/atoms/slot.types";
 import type { Override } from "@/lib/types";
 import Button from "@/components/ui/atoms/Button";
 import { X as IconX, ArrowLeft as IconArrowLeft } from "lucide-react";
@@ -89,7 +90,6 @@ interface ModalCardHeaderProps {
 
 const ModalCardHeader: SlottableComponent<ModalCardHeaderProps> = Object.assign(
   (props: ModalCardHeaderProps) => {
-    const { title, description, alignment = "start" } = props;
     const slots = resolveSlots<ModalCardSlot>(props.children);
     return (
       <Slot slot="header">
@@ -104,15 +104,18 @@ const ModalCardHeader: SlottableComponent<ModalCardHeaderProps> = Object.assign(
             <div
               className={cn(
                 "flex min-w-0 flex-1 flex-col justify-center self-stretch break-words [&>:nth-child(n+2)]:mt-auto",
-                alignment === "start" ? "text-start" : "",
-                alignment === "center" ? "text-center" : ""
+                props.alignment === "center" ? "text-center" : "text-start"
               )}
             >
-              {title != null && (
-                <div className="typo-subtitle-1 text-primary-600">{title}</div>
+              {props.title != null && (
+                <div className="typo-subtitle-1 text-primary-600">
+                  {props.title}
+                </div>
               )}
-              {description != null && (
-                <div className="typo-body-2 text-black-60">{description}</div>
+              {props.description != null && (
+                <div className="typo-body-2 text-black-60">
+                  {props.description}
+                </div>
               )}
             </div>
           )}

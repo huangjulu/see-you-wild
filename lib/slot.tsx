@@ -1,10 +1,42 @@
 import { Children, cloneElement, isValidElement } from "react";
-import { isSlot, getSlot } from "@/components/ui/atoms/Slot";
+import Slot from "@/components/ui/atoms/Slot";
+
+/**
+ * 從 React element 的 type 讀 slotName static property。
+ * 參數型別用 unknown 是為了相容 React.ReactElement["type"]（string | JSXElementConstructor），
+ * 用 Reflect.get + typeof 橋接，避免 type assertion。
+ */
+function readSlotName(type: unknown): string | undefined {
+  if (typeof type !== "function") return undefined;
+  const value: unknown = Reflect.get(type, "slotName");
+  return typeof value === "string" ? value : undefined;
+}
+
+export function isSlot(node: unknown): node is React.ReactElement {
+  if (!isValidElement(node)) return false;
+  if (node.type === Slot) return true;
+  if (readSlotName(node.type) != null) return true;
+  const props = node.props;
+  if (typeof props !== "object" || props == null) return false;
+  return "slot" in props || "data-slot" in props;
+}
+
+export function getSlot(node: React.ReactElement): string | undefined {
+  const fromType = readSlotName(node.type);
+  if (fromType != null) return fromType;
+  const props = node.props;
+  if (typeof props !== "object" || props == null) return undefined;
+  if ("slot" in props && typeof props.slot === "string") return props.slot;
+  if ("data-slot" in props && typeof props["data-slot"] === "string") {
+    return props["data-slot"];
+  }
+  return undefined;
+}
 
 /**
  * 掃描 React children，依據子元件的 slot 歸屬分類到各 slot。
  *
- * Slot 歸屬的識別委派給 Slot.tsx 的 isSlot/getSlot：
+ * Slot 歸屬的識別委派給 isSlot/getSlot：
  * - element 的 type 是 Slot
  * - 或 element 的 type 上掛了 slotName static
  * - 或 element 的 props 上有 slot / data-slot

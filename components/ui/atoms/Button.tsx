@@ -1,13 +1,5 @@
 import { cn } from "@/lib/utils";
-
-type ButtonTheme =
-  | "base"
-  | "solid"
-  | "ghost"
-  | "link"
-  | "text"
-  | "outline"
-  | "danger";
+import type { ButtonTheme } from "./button.types";
 
 interface ButtonProps {
   children?: React.ReactNode;
@@ -83,7 +75,6 @@ const Button: React.FC<ButtonProps> = (props) => {
 
 Button.displayName = "Button";
 export default Button;
-export type { ButtonTheme };
 
 function renderElement(props: ButtonProps, className: string) {
   if (props.href != null) {
