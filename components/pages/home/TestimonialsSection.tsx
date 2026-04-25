@@ -130,15 +130,7 @@ const TestimonialsSection: React.FC = () => {
       ref={sectionRef}
       className="bg-linear-180 from-background to-primary-100"
     >
-      <div
-        className="relative py-24 md:py-32 px-6 md:px-12 "
-        style={{
-          maskImage:
-            "linear-gradient(to bottom, transparent 0%, black 12%, black 95%, transparent 100%)",
-          WebkitMaskImage:
-            "linear-gradient(to bottom, transparent 0%, black 12%, black 95%, transparent 100%)",
-        }}
-      >
+      <div className="relative py-24 md:py-32 px-6 md:px-12 [mask-image:linear-gradient(to_bottom,transparent_0%,black_12%,black_95%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,black_12%,black_95%,transparent_100%)]">
         <div
           ref={ghostRef}
           className="absolute inset-0 will-change-transform pointer-events-none"
@@ -149,11 +141,7 @@ const TestimonialsSection: React.FC = () => {
 
         {/* Radial gradient mask — fade out edge ghost cards */}
         <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(ellipse 70% 60% at 50% 50%, transparent 40%, var(--color-primary-100) 90%)",
-          }}
+          className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,transparent_40%,var(--color-primary-100)_90%)]"
           aria-hidden="true"
         />
 
