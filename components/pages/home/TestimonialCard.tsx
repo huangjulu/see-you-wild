@@ -26,8 +26,8 @@ const TestimonialCard: React.FC<TestimonialCardProps> = (props) => {
             "border border-primary-200/40",
             PAPER_SHADOW,
             props.rotate,
-            "transition-all duration-500 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)]",
-            "hover:translate-y-[-8px] hover:rotate-0",
+            "transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]",
+            "hover:-translate-y-2 hover:rotate-0",
             "hover:shadow-[0_1px_0_0_rgba(200,180,160,0.4),0_14px_40px_-8px_rgba(45,58,64,0.13),1px_0_0_0_rgba(200,180,160,0.2),-1px_0_0_0_rgba(200,180,160,0.2)]"
           )}
         >

@@ -5,6 +5,8 @@ import {
   DayPicker,
   type DayButton as DayButtonType,
   type Matcher,
+  type MonthCaptionProps,
+  type ClassNames,
 } from "react-day-picker";
 import { zhTW } from "react-day-picker/locale";
 import { cn } from "@/lib/utils";
@@ -42,19 +44,19 @@ const CELL_SIZE: Record<CalendarSize, string> = {
   sm: "[--cell-size:--spacing(6)]",
   md: "[--cell-size:--spacing(7)]",
   lg: "[--cell-size:--spacing(12)]",
-};
+} as const;
 
 const FONT_SIZE: Record<CalendarSize, string> = {
   sm: "text-xs",
   md: "",
   lg: "text-base",
-};
+} as const;
 
 const LABEL_SIZE: Record<CalendarSize, string> = {
-  sm: "text-[8px]",
-  md: "text-[10px]",
+  sm: "text-[.75rem]",
+  md: "text-[1rem]",
   lg: "text-xs",
-};
+} as const;
 
 /* ─── CalendarDayButton ─── */
 
@@ -95,13 +97,11 @@ function CalendarDayButton(props: CalendarDayButtonProps) {
       // Hydration fix: manual ISO string instead of toLocaleDateString
       data-day={`${day.date.getFullYear()}-${String(day.date.getMonth() + 1).padStart(2, "0")}-${String(day.date.getDate()).padStart(2, "0")}`}
       data-selected-single={modifiers.selected}
-      data-today={modifiers.today}
       className={cn(
-        "relative isolate z-10 flex aspect-square size-auto w-full min-w-(--cell-size) flex-col items-center justify-center gap-1 rounded-(--cell-radius) border-0 leading-none font-normal transition-colors select-none",
-        "hover:bg-primary-100",
-        "data-[selected-single=true]:bg-primary-200 data-[selected-single=true]:text-primary-800",
-        "data-[today=true]:font-semibold",
-        "data-[today=true]:before:absolute data-[today=true]:before:bottom-1.5 data-[today=true]:before:left-1/2 data-[today=true]:before:-translate-x-1/2 data-[today=true]:before:size-2 data-[today=true]:before:rounded-full data-[today=true]:before:bg-accent data-[today=true]:before:content-['']",
+        "relative isolate z-10 flex aspect-square size-auto w-full min-w-(--cell-size) flex-col items-center justify-center gap-1 rounded-(--cell-radius) border-0 leading-none font-normal transition-colors duration-150",
+        "hover:bg-primary-50 hover:border-primary-200 active:bg-primary-200",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-1",
+        "data-[selected-single=true]:bg-primary-100  data-[selected-single=true]:border-primary-400 data-[selected-single=true]:ring-2 data-[selected-single=true]:ring-primary-100",
         size === "lg" && "justify-start pt-2",
         ...markerStyles,
         className
@@ -122,17 +122,16 @@ CalendarDayButton.displayName = "CalendarDayButton";
 
 /* ─── Internal Components ─── */
 
-function CalendarChevron(
-  props: {
-    className?: string;
-    orientation?: string;
-  } & React.SVGProps<SVGSVGElement>
-) {
-  const { className, orientation, ...rest } = props;
-  if (orientation === "left") {
-    return <IconChevronLeft className={cn("size-4", className)} {...rest} />;
+type CalendarChevronProps = {
+  className?: string;
+  orientation?: string;
+};
+
+function CalendarChevron(props: CalendarChevronProps) {
+  if (props.orientation === "left") {
+    return <IconChevronLeft className={cn("size-4", props.className)} />;
   }
-  return <IconChevronRight className={cn("size-4", className)} {...rest} />;
+  return <IconChevronRight className={cn("size-4", props.className)} />;
 }
 
 /* ─── Main Component ─── */
@@ -144,14 +143,13 @@ const Calendar: React.FC<CalendarProps> = (props) => {
   const [expanded, setExpanded] = useState(!hasCompactView);
 
   // Extract DayPicker modifiers from markers
-  const dpModifiers =
-    props.markers != null
-      ? Object.fromEntries(
-          Object.entries(props.markers).map(([name, def]) => [name, def.match])
-        )
-      : undefined;
+  const dpModifiers = props.markers
+    ? Object.fromEntries(
+        Object.entries(props.markers).map(([name, def]) => [name, def.match])
+      )
+    : undefined;
 
-  function handleMonthChange() {
+  function monthChange() {
     if (hasCompactView && !expanded) {
       setExpanded(true);
     }
@@ -187,30 +185,28 @@ const Calendar: React.FC<CalendarProps> = (props) => {
     return <tr {...trProps} />;
   }
 
-  function CaptionWithToggle(
-    captionProps: React.HTMLAttributes<HTMLDivElement> & {
-      calendarMonth: unknown;
-      displayIndex: number;
-    }
-  ) {
-    const { calendarMonth, displayIndex, ...divProps } = captionProps;
+  const CaptionWithToggle = (
+    captionProps: MonthCaptionProps
+  ): React.ReactElement => {
+    const { calendarMonth: _c, displayIndex: _d, ...divProps } = captionProps;
     return (
       <>
         <div {...divProps} />
         {hasCompactView && !expanded && props.expandLabel != null && (
           <button
             type="button"
-            onClick={function handleExpand() {
-              setExpanded(true);
-            }}
-            className="w-full rounded-lg bg-primary-50 py-2 text-center typo-ui text-sm text-accent hover:bg-primary-100 transition-colors"
+            onClick={() => setExpanded(true)}
+            className={cn(
+              "w-full rounded-lg bg-primary-50 py-2 text-center typo-ui text-sm text-accent transition-all flex gap-2 items-center justify-center border border-primary-200",
+              "hover:bg-primary-100"
+            )}
           >
             {props.expandLabel}
           </button>
         )}
       </>
     );
-  }
+  };
 
   const classNames = {
     root: "w-fit",
@@ -218,29 +214,27 @@ const Calendar: React.FC<CalendarProps> = (props) => {
     month: "flex w-full flex-col gap-4",
     nav: "absolute inset-x-0 top-0 flex w-full items-center justify-between gap-1",
     button_previous: cn(
-      "flex items-center justify-center size-(--cell-size) rounded-(--cell-radius) p-0 select-none",
+      "flex items-center justify-center size-(--cell-size) rounded-(--cell-radius) p-0",
       "border border-transparent text-foreground hover:bg-primary-100 transition-colors",
       "aria-disabled:opacity-50"
     ),
     button_next: cn(
-      "flex items-center justify-center size-(--cell-size) rounded-(--cell-radius) p-0 select-none",
+      "flex items-center justify-center size-(--cell-size) rounded-(--cell-radius) p-0",
       "border border-transparent text-foreground hover:bg-primary-100 transition-colors",
       "aria-disabled:opacity-50"
     ),
     month_caption:
       "flex h-(--cell-size) w-full items-center justify-center px-(--cell-size)",
     caption_label: "typo-ui text-sm font-medium select-none",
-    table: "w-full border-collapse",
     weekdays: "flex",
     weekday:
       "flex-1 rounded-(--cell-radius) text-[0.8rem] font-normal text-muted-foreground select-none",
     week: "mt-2 flex w-full",
     day: "group/day relative aspect-square h-full w-full rounded-(--cell-radius) p-0 text-center select-none",
-    today: "rounded-(--cell-radius) bg-transparent text-foreground",
     outside: "text-muted-foreground",
     disabled: "text-muted-foreground opacity-50",
     hidden: "invisible",
-  };
+  } as const satisfies Partial<ClassNames>;
 
   return (
     <DayPicker
@@ -252,37 +246,26 @@ const Calendar: React.FC<CalendarProps> = (props) => {
       defaultMonth={props.defaultMonth}
       disabled={props.disabled}
       modifiers={dpModifiers}
-      onMonthChange={handleMonthChange}
+      onMonthChange={monthChange}
       className={cn(
-        "bg-background p-2 [--cell-radius:var(--radius-md)]",
+        "bg-white p-4 [--cell-radius:var(--radius-md)]",
         CELL_SIZE[size],
         FONT_SIZE[size],
-        "rounded-xl overflow-hidden border border-border",
+        "rounded-xl overflow-hidden border border-neutral-200",
         props.className
       )}
       classNames={classNames}
       components={{
-        Root: ({
-          className: rootClassName,
-          rootRef,
-          ...rootProps
-        }: {
-          className?: string;
-          rootRef?: React.Ref<HTMLDivElement>;
-        } & React.HTMLAttributes<HTMLDivElement>) => (
-          <div
-            data-slot="calendar"
-            ref={rootRef}
-            className={cn(rootClassName)}
-            {...rootProps}
-          />
-        ),
+        Root: (props: DayPickerProps) => {
+          const { rootRef, ...rootProps } = props;
+          return <div data-slot="calendar" ref={rootRef} {...rootProps} />;
+        },
         Chevron: CalendarChevron,
         DayButton: (dayProps: React.ComponentProps<typeof DayButtonType>) => (
           <CalendarDayButton
-            {...dayProps}
             markerDefs={props.markers}
             size={size}
+            {...dayProps}
           />
         ),
         Week: CompactWeek,
@@ -337,3 +320,8 @@ function getAnchorWeekStart(
 
   return getMonday(monthStart);
 }
+
+type DayPickerProps = {
+  className?: string;
+  rootRef?: React.Ref<HTMLDivElement>;
+} & React.HTMLAttributes<HTMLDivElement>;

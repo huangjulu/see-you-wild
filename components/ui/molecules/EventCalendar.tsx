@@ -2,8 +2,7 @@
 
 import React, { useMemo } from "react";
 import Calendar from "@/components/ui/atoms/Calendar";
-
-/* ─── Types ─── */
+import { cn } from "@/lib/utils";
 
 type CalendarSize = "sm" | "md" | "lg";
 
@@ -18,8 +17,6 @@ interface EventCalendarProps {
   defaultMonth?: Date;
   className?: string;
 }
-
-/* ─── Main Component ─── */
 
 const EventCalendar: React.FC<EventCalendarProps> = (props) => {
   const minDate = useMemo(() => {
@@ -56,24 +53,19 @@ const EventCalendar: React.FC<EventCalendarProps> = (props) => {
       full: {
         match: fullMatcher,
         label: "客滿",
-        style: "pointer-events-none cursor-default text-muted-foreground",
+        style: "pointer-events-none cursor-default text-gray-400",
       },
       available: {
         match: availableMatcher,
-        label: "可供選擇",
-        style: "text-primary-500",
-      },
-      selected: {
-        match: (date: Date) =>
-          props.value != null && isSameDay(props.value, date),
-        label: "已選擇",
-        style: "text-primary-800 bg-primary-200",
+        label: "可選擇",
+        style:
+          "text-primary-500 border border-primary-200 bg-primary-50 hover:bg-primary-100",
       },
     };
   }, [fullMatcher, availableMatcher, props.value]);
 
   // Block non-available dates from being selected
-  function handleChange(date: Date | undefined) {
+  const changeDate = (date: Date | undefined) => {
     if (
       date != null &&
       props.availableDates != null &&
@@ -82,14 +74,14 @@ const EventCalendar: React.FC<EventCalendarProps> = (props) => {
       return;
     }
     props.onChange?.(date);
-  }
+  };
 
   return (
     <Calendar
       mode="single"
       size={props.size}
       value={props.value}
-      onChange={handleChange}
+      onChange={changeDate}
       disabled={disabled}
       defaultMonth={props.defaultMonth}
       className={props.className}
@@ -102,8 +94,6 @@ const EventCalendar: React.FC<EventCalendarProps> = (props) => {
 
 EventCalendar.displayName = "EventCalendar";
 export default EventCalendar;
-
-/* ─── Helpers ─── */
 
 function isSameDay(a: Date, b: Date): boolean {
   return (

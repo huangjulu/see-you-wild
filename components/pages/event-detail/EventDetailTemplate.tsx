@@ -21,7 +21,7 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
   const [selection, setSelection] = useState<PackageSelection>({
     selectedDate: null,
     selectedPickup: null,
-    isSelfArrival: false,
+    isSelfArrival: true,
   });
 
   const allOptionsSelected =
@@ -29,14 +29,14 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
     (selection.isSelfArrival || selection.selectedPickup !== null);
 
   function handleBook() {
-    // Placeholder for future registration flow
+    // TODO: Placeholder for future registration flow
   }
 
   return (
-    <main className="bg-background pb-24 md:pb-16">
+    <main className="bg-linear-180 md:bg-radial-[at_top_left] from-primary-100 from-20% via-40% via-cyan-50 to-surface to-80% pb-24 md:pb-16">
       {/* Title + description — pt-24 clears fixed Header */}
-      <div className="mx-auto max-w-7xl px-6 md:px-12 pt-24">
-        <h1 className="typo-heading text-3xl md:text-4xl text-foreground mb-2">
+      <div className="mx-auto max-w-7xl px-6 md:px-12 pt-24 md:pt-28">
+        <h1 className="typo-heading text-3xl md:text-4xl text-accent-fg mb-2">
           {event.title}
         </h1>
         <p className="typo-body text-sm text-muted">
@@ -51,9 +51,9 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
       </div>
 
       {/* Content + Sidebar */}
-      <div className="mx-auto max-w-7xl px-6 md:px-12 mt-8 md:grid md:grid-cols-[1fr_320px] md:gap-8">
+      <div className="mx-auto max-w-7xl px-6 md:px-12 mt-8 md:grid md:grid-cols-[1fr_320px] md:gap-6">
         {/* Left column */}
-        <div className="space-y-10">
+        <div className="space-y-6">
           <EventDetailSection
             title={t("eventDetails")}
             content={event.description}

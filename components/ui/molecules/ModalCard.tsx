@@ -83,7 +83,6 @@ const FooterConfirmButton: SlottableComponent<ButtonProps> = Object.assign(
 interface ModalCardHeaderProps {
   title?: React.ReactNode;
   description?: React.ReactNode;
-  alignment?: "start" | "center";
   className?: string;
   children?: React.ReactNode;
 }
@@ -96,15 +95,14 @@ const ModalCardHeader: SlottableComponent<ModalCardHeaderProps> = Object.assign(
         <header
           style={{ "--min-h": "4rem" } as React.CSSProperties}
           className={cn(
-            "flex min-h-[--min-h] items-center gap-4 p-4",
+            "flex min-h-[--min-h] items-center gap-4 p-4 border-b border-solid border-neutral-100",
             props.className
           )}
         >
           {slots["children"] ?? (
             <div
               className={cn(
-                "flex min-w-0 flex-1 flex-col justify-center self-stretch break-words [&>:nth-child(n+2)]:mt-auto",
-                props.alignment === "center" ? "text-center" : "text-start"
+                "flex min-w-0 flex-1 flex-col justify-center self-stretch wrap-break-word [&>:nth-child(n+2)]:mt-auto"
               )}
             >
               {props.title != null && (
@@ -134,13 +132,7 @@ interface ModalCardMainProps {
 
 const ModalCardMain: SlottableComponent<ModalCardMainProps> = Object.assign(
   (props: ModalCardMainProps) => (
-    <Slot
-      slot="main"
-      className={cn(
-        "[&>*]:border-y [&>*]:border-gray-400",
-        "[&:first-child>*]:border-t-0 [&:last-child>*]:border-b-0"
-      )}
-    >
+    <Slot slot="main">
       <main className={cn("p-4", props.className)}>{props.children}</main>
     </Slot>
   ),
@@ -188,7 +180,10 @@ const _ModalCard: React.FC<ModalCardProps> = (props) => {
   return (
     <div
       ref={props.ref}
-      className={cn("grid overflow-clip rounded-lg bg-white", props.className)}
+      className={cn(
+        "grid overflow-clip rounded-xl bg-surface border border-neutral-200",
+        props.className
+      )}
     >
       {slots["header"]}
       {slots["main"]}
