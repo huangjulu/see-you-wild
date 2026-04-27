@@ -4,6 +4,7 @@ import {
   AlreadyRegisteredError,
   EventClosedError,
   EventNotFoundError,
+  HasCarpoolAssignmentError,
   InternalError,
   InvalidTokenError,
   RegistrationExpiredError,
@@ -67,17 +68,18 @@ export function createRegistrationService(event: EventRow) {
 export async function createRegistration(
   input: CreateRegistrationInput
 ): Promise<RegistrationRow> {
-  const { data: event, error: eventError } = await getSupabase()
+  const { data: eventData, error: eventError } = await getSupabase()
     .from("events")
     .select("*")
     .eq("id", input.event_id)
     .single();
 
-  if (eventError || !event) {
+  if (eventError || !eventData) {
     throw new EventNotFoundError();
   }
 
-  const service = createRegistrationService(event as EventRow);
+  const event: EventRow = eventData;
+  const service = createRegistrationService(event);
   if (!service.isOpen()) {
     throw new EventClosedError();
   }
@@ -105,7 +107,35 @@ export async function createRegistration(
     throw new InternalError(insertError.message, insertError);
   }
 
-  return registration as RegistrationRow;
+  const row: RegistrationRow = registration;
+  return row;
+}
+
+/**
+ * Admin-side command: delete a registration row.
+ * Guards against deleting a registration that still has an active carpool assignment —
+ * ON DELETE CASCADE would silently remove the assignment and leave passengers stranded.
+ * Admin must re-run carpool assignment to remove the person from their car group first.
+ */
+export async function deleteRegistration(id: string): Promise<void> {
+  const { data: assignments } = await getSupabase()
+    .from("carpool_assignments")
+    .select("id")
+    .eq("registration_id", id)
+    .limit(1);
+
+  if (assignments && assignments.length > 0) {
+    throw new HasCarpoolAssignmentError();
+  }
+
+  const { error } = await getSupabase()
+    .from("registrations")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    throw new InternalError(error.message, error);
+  }
 }
 
 interface SubmitPaymentRefInput {

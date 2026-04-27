@@ -23,9 +23,10 @@ export async function POST(request: Request) {
     if (event) {
       const baseUrl =
         process.env.NEXT_PUBLIC_BASE_URL || "https://seeyouwild.com";
+      const typedEvent: EventRow = event;
       const notifier = createRegistrationNotifier({
         registration,
-        event: event as EventRow,
+        event: typedEvent,
         baseUrl,
       });
       notifier

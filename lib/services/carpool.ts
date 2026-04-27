@@ -35,7 +35,7 @@ export async function assignCarpool(
   if (eventError || !event) {
     throw new EventNotFoundError();
   }
-  const typedEvent = event as EventRow;
+  const typedEvent: EventRow = event;
 
   // ─── Load carpool registrations ─────────────────────────────
   const { data: registrations, error: regError } = await getSupabase()
@@ -49,7 +49,7 @@ export async function assignCarpool(
     throw new InternalError(regError.message, regError);
   }
 
-  const carpoolRegs = (registrations ?? []) as RegistrationRow[];
+  const carpoolRegs: RegistrationRow[] = registrations ?? [];
   if (carpoolRegs.length === 0) {
     return [];
   }
