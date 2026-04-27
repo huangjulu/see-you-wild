@@ -99,9 +99,10 @@ function CalendarDayButton(props: CalendarDayButtonProps) {
       data-selected-single={modifiers.selected}
       className={cn(
         "relative isolate z-10 flex aspect-square size-auto w-full min-w-(--cell-size) flex-col items-center justify-center gap-1 rounded-(--cell-radius) border-0 leading-none font-normal transition-colors duration-150",
-        "hover:bg-primary-50 hover:border-primary-200 active:bg-primary-200",
+        "hover:bg-primary-50 hover:border-primary-100 ",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-1",
-        "data-[selected-single=true]:bg-primary-100  data-[selected-single=true]:border-primary-400 data-[selected-single=true]:ring-2 data-[selected-single=true]:ring-primary-100",
+        "data-[selected-single=true]:bg-primary-50 data-[selected-single=true]:border-primary-300 data-[selected-single=true]:ring data-[selected-single=true]:ring-primary-200",
+        "hover:data-[selected-single=true]:bg-primary-100 hover:data-[selected-single=true]:text-accent-hover",
         size === "lg" && "justify-start pt-2",
         ...markerStyles,
         className
@@ -198,7 +199,7 @@ const Calendar: React.FC<CalendarProps> = (props) => {
             onClick={() => setExpanded(true)}
             className={cn(
               "w-full rounded-lg bg-primary-50 py-2 text-center typo-ui text-sm text-accent transition-all flex gap-2 items-center justify-center border border-primary-200",
-              "hover:bg-primary-100"
+              "hover:bg-primary-100 hover:text-accent-hover"
             )}
           >
             {props.expandLabel}

@@ -41,21 +41,17 @@ const EventPriceSidebar: React.FC<EventPriceSidebarProps> = (props) => {
               {props.carpoolSurcharge.toLocaleString("zh-TW")}
             </p>
           )}
-          <div className="space-y-2">
+          <Button
+            theme="solid"
+            className="w-full"
+            disabled={disabled}
+            onClick={props.onBook}
+          >
+            <span>{t("bookNow")}</span>
             {dateLabel != null && (
-              <p className="typo-body text-sm text-muted text-center">
-                {dateLabel}
-              </p>
+              <span className="pl-2 typo-body opacity-80">· {dateLabel}</span>
             )}
-            <Button
-              theme="solid"
-              className="w-full"
-              disabled={disabled}
-              onClick={props.onBook}
-            >
-              {t("bookNow")}
-            </Button>
-          </div>
+          </Button>
           {disabled && (
             <p className="typo-body text-xs text-center text-muted">
               {t("selectOptionsHint")}
@@ -95,5 +91,5 @@ const WEEKDAYS_ZH = ["日", "一", "二", "三", "四", "五", "六"];
 function formatSelectedDate(iso: string | null): string | null {
   if (iso == null) return null;
   const d = new Date(iso + "T00:00:00");
-  return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} (${WEEKDAYS_ZH[d.getDay()]})`;
+  return `${d.getMonth() + 1}/${d.getDate()} (${WEEKDAYS_ZH[d.getDay()]})`;
 }
