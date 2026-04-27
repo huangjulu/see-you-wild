@@ -25,25 +25,53 @@ const baseRegistrationSchema = z.object({
   seat_count: z.number().int().min(3).max(5).nullable().default(null),
 });
 
-export const createRegistrationSchema = baseRegistrationSchema
-  .refine(
-    (data) => {
-      if (data.transport === "self") {
-        return !data.pickup_location && !data.carpool_role && !data.seat_count;
-      }
-      return data.pickup_location && data.carpool_role;
-    },
-    { message: "Carpool fields required when transport is 'carpool'" }
-  )
-  .refine(
-    (data) => {
-      if (data.carpool_role === "driver") {
-        return data.seat_count !== null;
-      }
-      return true;
-    },
-    { message: "seat_count required for drivers" }
-  );
+function addCarpoolIssues(
+  data: Pick<
+    z.infer<typeof baseRegistrationSchema>,
+    "transport" | "pickup_location" | "carpool_role" | "seat_count"
+  >,
+  ctx: z.RefinementCtx
+) {
+  if (data.transport === "carpool") {
+    if (!data.pickup_location) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Carpool fields required when transport is 'carpool'",
+        path: ["pickup_location"],
+      });
+    }
+    if (!data.carpool_role) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Carpool fields required when transport is 'carpool'",
+        path: ["carpool_role"],
+      });
+    }
+  }
+  if (data.transport === "self") {
+    if (data.pickup_location || data.carpool_role || data.seat_count) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Carpool fields must be empty when transport is 'self'",
+        path: ["transport"],
+      });
+    }
+  }
+  if (data.carpool_role === "driver" && data.seat_count === null) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "seat_count required for drivers",
+      path: ["seat_count"],
+    });
+  }
+}
+
+export const registrationFormSchema = baseRegistrationSchema
+  .omit({ event_id: true })
+  .superRefine(addCarpoolIssues);
+
+export const createRegistrationSchema =
+  baseRegistrationSchema.superRefine(addCarpoolIssues);
 
 export const updateRegistrationSchema = baseRegistrationSchema
   .partial()
@@ -60,5 +88,6 @@ export const paymentRefSchema = z.object({
 });
 
 export type CreateRegistrationInput = z.infer<typeof baseRegistrationSchema>;
+export type RegistrationFormInput = z.infer<typeof registrationFormSchema>;
 export type UpdateRegistrationInput = z.infer<typeof updateRegistrationSchema>;
 export type PaymentRefInput = z.infer<typeof paymentRefSchema>;
