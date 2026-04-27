@@ -68,6 +68,15 @@ export class UnauthorizedError extends DomainError {
   }
 }
 
+export class HasCarpoolAssignmentError extends DomainError {
+  readonly status = 409;
+  constructor() {
+    super(
+      "Cannot delete registration with active carpool assignment. Re-run carpool assignment first."
+    );
+  }
+}
+
 /**
  * Catch-all for unexpected failures (DB connection drops, unknown PG errors, etc.).
  * `cause` carries the original error for server-side logging — never serialised to the client.

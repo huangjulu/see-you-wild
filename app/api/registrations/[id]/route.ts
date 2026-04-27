@@ -7,6 +7,7 @@ import {
   InternalError,
   RegistrationNotFoundError,
 } from "@/lib/errors/domain";
+import { deleteRegistration } from "@/lib/services/registrations";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -72,14 +73,7 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
   try {
     const { id } = await params;
 
-    const { error } = await getSupabase()
-      .from("registrations")
-      .delete()
-      .eq("id", id);
-
-    if (error) {
-      throw new InternalError(error.message, error);
-    }
+    await deleteRegistration(id);
 
     return apiOk({ deleted: true });
   } catch (err) {

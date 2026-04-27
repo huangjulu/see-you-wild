@@ -14,12 +14,14 @@ import { paymentToken } from "@/lib/token";
 import {
   createRegistration,
   createRegistrationService,
+  deleteRegistration,
   submitPaymentRef,
 } from "@/lib/services/registrations";
 import {
   AlreadyRegisteredError,
   EventClosedError,
   EventNotFoundError,
+  HasCarpoolAssignmentError,
   InternalError,
   InvalidTokenError,
   RegistrationExpiredError,
@@ -460,5 +462,50 @@ describe("submitPaymentRef", () => {
         paymentRef: "12345",
       })
     ).rejects.toThrow(InternalError);
+  });
+});
+
+describe("deleteRegistration", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("有 carpool assignment 時 throw HasCarpoolAssignmentError", async () => {
+    const fromMock = vi.fn();
+    fromMock.mockReturnValueOnce({
+      select: () => ({
+        eq: () => ({
+          limit: vi.fn().mockResolvedValue({ data: [{ id: "asgn-1" }] }),
+        }),
+      }),
+    });
+    vi.mocked(getSupabase).mockReturnValue({
+      from: fromMock,
+    } as unknown as SupabaseClient);
+
+    await expect(deleteRegistration("reg-1")).rejects.toThrow(
+      HasCarpoolAssignmentError
+    );
+  });
+
+  it("沒有 carpool assignment 時正常刪除並 resolve", async () => {
+    const fromMock = vi.fn();
+    fromMock.mockReturnValueOnce({
+      select: () => ({
+        eq: () => ({
+          limit: vi.fn().mockResolvedValue({ data: [] }),
+        }),
+      }),
+    });
+    fromMock.mockReturnValueOnce({
+      delete: () => ({
+        eq: vi.fn().mockResolvedValue({ error: null }),
+      }),
+    });
+    vi.mocked(getSupabase).mockReturnValue({
+      from: fromMock,
+    } as unknown as SupabaseClient);
+
+    await expect(deleteRegistration("reg-1")).resolves.toBeUndefined();
   });
 });
