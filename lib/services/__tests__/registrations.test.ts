@@ -259,7 +259,7 @@ describe("createRegistration", () => {
     const carpoolInput: CreateRegistrationInput = {
       ...baseRegistrationInput,
       transport: "carpool",
-      pickup_location: "台北",
+      pickup_location: "taipei",
       carpool_role: "passenger",
     };
 

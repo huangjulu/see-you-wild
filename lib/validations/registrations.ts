@@ -17,7 +17,10 @@ const baseRegistrationSchema = z.object({
   wants_rental: z.boolean().default(false),
   notes: z.string().trim().nullable().default(null),
   transport: z.enum(["self", "carpool"]),
-  pickup_location: z.string().trim().nullable().default(null),
+  pickup_location: z
+    .enum(["taipei", "nangang", "dapinglin", "sanchong", "banqiao"])
+    .nullable()
+    .default(null),
   carpool_role: z.enum(["passenger", "driver"]).nullable().default(null),
   seat_count: z.number().int().min(3).max(5).nullable().default(null),
 });
