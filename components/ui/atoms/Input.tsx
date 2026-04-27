@@ -1,10 +1,80 @@
-import { useRef } from "react";
+"use client";
+
+import { useState, useRef } from "react";
+import { Eye as IconEye, EyeOff as IconEyeOff } from "lucide-react";
 import { updateRef } from "@/lib/react-ref";
 import { cn } from "@/lib/utils";
 
-type TextInputProps = React.ComponentProps<"input">;
+interface InputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "size"
+> {
+  ref?: React.Ref<HTMLInputElement>;
+  /** @default "md" */
+  size?: "sm" | "md" | "lg";
+  /** 顯示於 input 下方的錯誤訊息，同時觸發 error 樣式 */
+  error?: string;
+  /** 左側裝飾 icon */
+  icon?: React.ReactNode;
+  /** 右側裝飾 icon（與 Input.Password 的 toggle 互斥） */
+  endIcon?: React.ReactNode;
+  /** 上方 label 文字 */
+  label?: string;
+}
 
-const TextInput: React.FC<TextInputProps> = (props) => {
+const Input: React.FC<InputProps> = (props) => {
+  return <BaseInput {...props} />;
+};
+
+Input.displayName = "Input";
+
+const PasswordInput: React.FC<Omit<InputProps, "type" | "endIcon">> = (
+  props
+) => {
+  const [showPassword, setShowPassword] = useState(false);
+  const resolvedSize = props.size ?? "md";
+
+  const toggle = (
+    <button
+      type="button"
+      tabIndex={-1}
+      onClick={() => setShowPassword((prev) => !prev)}
+      className={cn(
+        "absolute right-3 top-1/2 -translate-y-1/2 text-muted transition-colors hover:text-foreground",
+        "disabled:pointer-events-none"
+      )}
+      disabled={props.disabled}
+      aria-label={showPassword ? "隱藏密碼" : "顯示密碼"}
+    >
+      {showPassword ? (
+        <IconEyeOff className={ICON_SIZE_CLASSES[resolvedSize]} />
+      ) : (
+        <IconEye className={ICON_SIZE_CLASSES[resolvedSize]} />
+      )}
+    </button>
+  );
+
+  return (
+    <BaseInput
+      {...props}
+      type={showPassword ? "text" : "password"}
+      endIcon={toggle}
+      endIconIsInteractive
+    />
+  );
+};
+
+PasswordInput.displayName = "PasswordInput";
+
+interface BaseInputProps extends InputProps {
+  endIconIsInteractive?: boolean;
+}
+
+const BaseInput: React.FC<BaseInputProps> = (props) => {
+  const resolvedSize = props.size ?? "md";
+  const hasLeftIcon = props.icon != null;
+  const hasRightIcon = props.endIcon != null;
+
   const onRef = useRef((instance: HTMLInputElement | null) => {
     updateRef(props.ref, instance);
     if (instance == null) {
@@ -25,25 +95,109 @@ const TextInput: React.FC<TextInputProps> = (props) => {
     }
   }).current;
 
+  const leftPadding = hasLeftIcon
+    ? LEFT_PADDING_CLASSES[resolvedSize]
+    : undefined;
+
+  const rightPadding = hasRightIcon
+    ? RIGHT_PADDING_CLASSES[resolvedSize]
+    : undefined;
+
+  const {
+    size: _size,
+    error: _error,
+    icon: _icon,
+    endIcon: _endIcon,
+    label: _label,
+    className: _className,
+    ref: _ref,
+    endIconIsInteractive: _endIconIsInteractive,
+    ...nativeProps
+  } = props;
+
   return (
-    <input
-      ref={onRef}
-      type="text"
-      {...props}
-      className={cn(
-        "min-h-8 min-w-0 rounded-md border px-3 transition-colors typo-body-2",
-        "border-neutral-400 bg-white text-black-87 ring-primary-400/25",
-        "placeholder:text-black-25 read-only:placeholder:text-black-25 disabled:placeholder:text-black-25",
-        "hover:border-primary-400 hover:disabled:border-neutral-400",
-        "focus:border-primary-400 focus:ring-2 focus-visible:outline-none",
-        "data-[touched]:invalid:border-error data-[touched]:invalid:ring-error/25 data-[touched]:invalid:focus:border-error",
-        "read-only:bg-neutral-100 read-only:text-black-38",
-        "disabled:bg-neutral-100 disabled:text-black-38",
-        props.className
+    <div className="flex flex-col gap-1">
+      {props.label != null && (
+        <label className="typo-ui text-sm text-foreground">{props.label}</label>
       )}
-    />
+      <div className="relative">
+        {hasLeftIcon && (
+          <span
+            className={cn(
+              "pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted",
+              ICON_SIZE_CLASSES[resolvedSize]
+            )}
+          >
+            {props.icon}
+          </span>
+        )}
+        <input
+          ref={onRef}
+          {...nativeProps}
+          className={cn(
+            "min-w-0 w-full rounded-md border transition-colors typo-body",
+            SIZE_CLASSES[resolvedSize],
+            "border-border bg-background text-foreground ring-ring",
+            "placeholder:text-neutral-200",
+            "hover:border-border-strong hover:disabled:border-border",
+            "focus:border-accent focus:ring-2 focus:ring-primary-200/70 focus-visible:outline-none",
+            "data-[touched]:invalid:border-error data-[touched]:invalid:ring-error/20 data-[touched]:invalid:focus:border-error",
+            "read-only:bg-neutral-100 read-only:text-muted",
+            "disabled:opacity-50 disabled:cursor-not-allowed",
+            props.error != null &&
+              "border-error ring-error/20 focus:border-error",
+            leftPadding,
+            rightPadding,
+            props.className
+          )}
+        />
+        {props.endIconIsInteractive && props.endIcon}
+        {!props.endIconIsInteractive && hasRightIcon && (
+          <span
+            className={cn(
+              "pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted",
+              ICON_SIZE_CLASSES[resolvedSize]
+            )}
+          >
+            {props.endIcon}
+          </span>
+        )}
+      </div>
+      {props.error != null && (
+        <p className="typo-ui text-xs text-error">{props.error}</p>
+      )}
+    </div>
   );
 };
 
-TextInput.displayName = "TextInput";
-export default TextInput;
+BaseInput.displayName = "BaseInput";
+
+const SIZE_CLASSES = {
+  sm: "h-8 text-sm px-3",
+  md: "h-10 text-base px-4",
+  lg: "h-12 text-lg px-5",
+} as const;
+
+const ICON_SIZE_CLASSES = {
+  sm: "size-4",
+  md: "size-5",
+  lg: "size-5",
+} as const;
+
+const LEFT_PADDING_CLASSES = {
+  sm: "pl-8",
+  md: "pl-10",
+  lg: "pl-12",
+} as const;
+
+const RIGHT_PADDING_CLASSES = {
+  sm: "pr-8",
+  md: "pr-10",
+  lg: "pr-12",
+} as const;
+
+const _Input = Object.assign(Input, {
+  Password: PasswordInput,
+});
+
+export default _Input;

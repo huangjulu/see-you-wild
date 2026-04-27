@@ -1,7 +1,8 @@
 "use client";
 
+import React from "react";
 import { Search as IconSearch } from "lucide-react";
-import { cn } from "@/lib/utils";
+import Input from "@/components/ui/atoms/Input";
 
 interface EventSearchBarProps {
   typeOptions: string[];
@@ -17,20 +18,13 @@ interface EventSearchBarProps {
 const EventSearchBar: React.FC<EventSearchBarProps> = (props) => {
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-center">
-      <div className="relative flex-1">
-        <IconSearch
-          size={18}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
-        />
-        <input
+      <div className="flex-1">
+        <Input
           type="text"
           placeholder="搜尋活動..."
           value={props.searchQuery}
           onChange={(e) => props.onSearchChange(e.target.value)}
-          className={cn(
-            "typo-body w-full rounded-lg border border-border bg-surface py-2.5 pl-10 pr-4",
-            "placeholder:text-muted focus:border-accent focus:outline-none"
-          )}
+          icon={<IconSearch size={18} />}
         />
       </div>
       <div className="flex gap-3">

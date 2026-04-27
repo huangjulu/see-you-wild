@@ -8,6 +8,7 @@ import EventCalendar from "@/components/ui/molecules/EventCalendar";
 import RadioOption from "@/components/ui/atoms/RadioOption";
 import Dialog from "@/components/ui/molecules/Dialog";
 import ModalCard from "@/components/ui/molecules/ModalCard";
+import Input from "@/components/ui/atoms/Input";
 import {
   CheckCircle as IconCheckCircle,
   AlertCircle as IconAlertCircle,
@@ -15,6 +16,8 @@ import {
   Info as IconInfo,
   X as IconX,
   ArrowRight as IconArrowRight,
+  Search as IconSearch,
+  Mail as IconMail,
 } from "lucide-react";
 
 const primary = {
@@ -297,6 +300,7 @@ const sections = [
   { id: "typography", label: "Typography" },
   { id: "buttons", label: "Buttons" },
   { id: "slot-components", label: "Dialog / ModalCard" },
+  { id: "input", label: "Input" },
   { id: "shadcn-components", label: "shadcn/ui Components" },
   { id: "section-rhythm", label: "Section Rhythm" },
   { id: "testimonial-card", label: "Testimonial Card" },
@@ -509,6 +513,71 @@ const PalettePreviewPage: React.FC = () => {
           <div className="flex flex-col items-center gap-2">
             <Button theme="danger">取消報名</Button>
             <span className="typo-ui text-xs text-muted">danger</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ INPUT ═══ */}
+      <section id="input" className="mb-16">
+        <SectionLabel>Input</SectionLabel>
+
+        <div className="mb-10">
+          <h3 className="typo-ui mb-4 text-sm text-foreground">Sizes</h3>
+          <div className="flex max-w-md flex-col gap-4">
+            <Input size="sm" label="Small" placeholder="Small input" />
+            <Input
+              size="md"
+              label="Medium（預設）"
+              placeholder="Medium input"
+            />
+            <Input size="lg" label="Large" placeholder="Large input" />
+          </div>
+        </div>
+
+        <div className="mb-10">
+          <h3 className="typo-ui mb-4 text-sm text-foreground">With Icon</h3>
+          <div className="flex max-w-md flex-col gap-4">
+            <Input
+              label="搜尋"
+              placeholder="搜尋活動..."
+              icon={<IconSearch className="size-full" />}
+            />
+            <Input
+              label="電子信箱"
+              placeholder="example@email.com"
+              icon={<IconMail className="size-full" />}
+            />
+          </div>
+        </div>
+
+        <div className="mb-10">
+          <h3 className="typo-ui mb-4 text-sm text-foreground">Error</h3>
+          <div className="flex max-w-md flex-col gap-4">
+            <Input
+              label="電子信箱"
+              placeholder="example@email.com"
+              defaultValue="not-an-email"
+              error="請輸入有效的電子信箱"
+            />
+          </div>
+        </div>
+
+        <div className="mb-10">
+          <h3 className="typo-ui mb-4 text-sm text-foreground">Disabled</h3>
+          <div className="flex max-w-md flex-col gap-4">
+            <Input
+              label="姓名"
+              placeholder="請輸入姓名"
+              defaultValue="王小明"
+              disabled
+            />
+          </div>
+        </div>
+
+        <div className="mb-10">
+          <h3 className="typo-ui mb-4 text-sm text-foreground">Password</h3>
+          <div className="flex max-w-md flex-col gap-4">
+            <Input label="密碼" type="password" placeholder="輸入密碼" />
           </div>
         </div>
       </section>
