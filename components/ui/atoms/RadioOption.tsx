@@ -12,13 +12,14 @@ const RadioOption: React.FC<RadioOptionProps> = (props) => {
         "hover:border-accent/50",
         "has-checked:border-accent has-checked:bg-primary-50 has-checked:text-foreground",
         "has-disabled:cursor-not-allowed has-disabled:opacity-50",
+        "has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring",
         props.className
       )}
     >
       <input
         ref={props.ref}
         type="radio"
-        hidden
+        className="sr-only"
         name={props.name}
         value={props.value}
         checked={props.checked}

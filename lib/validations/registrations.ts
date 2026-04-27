@@ -32,35 +32,26 @@ function addCarpoolIssues(
   >,
   ctx: z.RefinementCtx
 ) {
-  if (data.transport === "carpool") {
-    if (!data.pickup_location) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Carpool fields required when transport is 'carpool'",
-        path: ["pickup_location"],
-      });
-    }
-    if (!data.carpool_role) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Carpool fields required when transport is 'carpool'",
-        path: ["carpool_role"],
-      });
-    }
+  if (data.transport !== "carpool") return;
+
+  if (!data.pickup_location) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "carpoolFieldRequired",
+      path: ["pickup_location"],
+    });
   }
-  if (data.transport === "self") {
-    if (data.pickup_location || data.carpool_role || data.seat_count) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Carpool fields must be empty when transport is 'self'",
-        path: ["transport"],
-      });
-    }
+  if (!data.carpool_role) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "carpoolFieldRequired",
+      path: ["carpool_role"],
+    });
   }
   if (data.carpool_role === "driver" && data.seat_count === null) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "seat_count required for drivers",
+      message: "seatCountRequired",
       path: ["seat_count"],
     });
   }

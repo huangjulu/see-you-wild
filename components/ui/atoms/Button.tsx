@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import type { ButtonTheme } from "./button.types";
 
 interface ButtonProps {
+  ref?: React.Ref<HTMLButtonElement>;
   children?: React.ReactNode;
   theme?: ButtonTheme;
   href?: string;
@@ -97,6 +98,7 @@ function renderElement(props: ButtonProps, className: string) {
 
   return (
     <button
+      ref={props.ref}
       className={className}
       aria-label={props.ariaLabel}
       onClick={props.onClick}

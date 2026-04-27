@@ -7,6 +7,7 @@ import EventGallery from "@/components/pages/event-detail/EventGallery";
 import EventDetailSection from "@/components/pages/event-detail/EventDetailSection";
 import EventPriceSidebar from "@/components/pages/event-detail/EventPriceSidebar";
 import PackageOptions from "@/components/pages/event-detail/PackageOptions";
+import RegistrationModal from "@/components/ui/organisms/RegistrationModal";
 import type { PackageSelection } from "@/components/pages/event-detail/packageOptions.types";
 import type { MockEventDetail } from "@/server/mockdata/mock-events";
 
@@ -24,12 +25,14 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
     isSelfArrival: true,
   });
 
+  const [modalOpen, setModalOpen] = useState(false);
+
   const allOptionsSelected =
     selection.selectedDate !== null &&
     (selection.isSelfArrival || selection.selectedPickup !== null);
 
   function handleBook() {
-    // TODO: Placeholder for future registration flow
+    setModalOpen(true);
   }
 
   return (
@@ -88,6 +91,18 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
           />
         </div>
       </div>
+
+      <RegistrationModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        eventId={event.id}
+        basePrice={event.base_price}
+        carpoolSurcharge={event.carpoolSurcharge}
+        selectedDate={selection.selectedDate}
+        selectedPickup={selection.selectedPickup}
+        isSelfArrival={selection.isSelfArrival}
+        pickupLocations={event.pickupLocations}
+      />
     </main>
   );
 };

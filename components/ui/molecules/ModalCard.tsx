@@ -29,16 +29,32 @@ type ModalCardSlot = SlotProps["slot"];
 
 interface ButtonProps extends React.ComponentPropsWithRef<typeof Button> {}
 
+function escToClose(node: HTMLButtonElement | null) {
+  if (node == null) return;
+  const el = node;
+  function onKeyDown(e: KeyboardEvent) {
+    if (e.key === "Escape") {
+      el.click();
+      el.blur();
+    }
+  }
+  document.addEventListener("keydown", onKeyDown);
+  return () => document.removeEventListener("keydown", onKeyDown);
+}
+
 const HeaderCloseButton: SlottableComponent<ButtonProps> = Object.assign(
-  (props: ButtonProps) => (
-    <Slot slot="header-close-button">
-      <Button
-        theme="text"
-        icon={<IconX className="size-4 text-primary-400" />}
-        {...props}
-      />
-    </Slot>
-  ),
+  (props: ButtonProps) => {
+    return (
+      <Slot slot="header-close-button">
+        <Button
+          ref={escToClose}
+          theme="text"
+          icon={<IconX className="size-4 text-primary-400" />}
+          {...props}
+        />
+      </Slot>
+    );
+  },
   { slotName: "header-close-button", displayName: "HeaderCloseButton" }
 );
 
@@ -133,7 +149,9 @@ interface ModalCardMainProps {
 const ModalCardMain: SlottableComponent<ModalCardMainProps> = Object.assign(
   (props: ModalCardMainProps) => (
     <Slot slot="main">
-      <main className={cn("p-4", props.className)}>{props.children}</main>
+      <main className={cn("p-4 overflow-y-auto", props.className)}>
+        {props.children}
+      </main>
     </Slot>
   ),
   { slotName: "main", displayName: "ModalCardMain" }
@@ -168,7 +186,7 @@ const ModalCardFooter: SlottableComponent<ModalCardFooterProps> = Object.assign(
 
 /* ─── ModalCard ─── */
 
-interface ModalCardProps {
+interface ModalCardProps extends React.HTMLAttributes<HTMLDivElement> {
   ref?: React.Ref<HTMLDivElement>;
   className?: string;
   children?: React.ReactNode;
@@ -180,8 +198,10 @@ const _ModalCard: React.FC<ModalCardProps> = (props) => {
   return (
     <div
       ref={props.ref}
+      tabIndex={props.tabIndex}
+      onClick={props.onClick}
       className={cn(
-        "grid overflow-clip rounded-xl bg-surface border border-neutral-200",
+        "grid grid-rows-[auto_1fr_auto] overflow-clip rounded-xl bg-surface border border-neutral-200 max-h-[90vh]",
         props.className
       )}
     >

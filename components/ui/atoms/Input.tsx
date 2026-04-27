@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useId } from "react";
 import { Eye as IconEye, EyeOff as IconEyeOff } from "lucide-react";
 import { updateRef } from "@/lib/react-ref";
 import { cn } from "@/lib/utils";
@@ -71,6 +71,8 @@ interface BaseInputProps extends InputProps {
 }
 
 const BaseInput: React.FC<BaseInputProps> = (props) => {
+  const generatedId = useId();
+  const inputId = props.id ?? generatedId;
   const resolvedSize = props.size ?? "md";
   const hasLeftIcon = props.icon != null;
   const hasRightIcon = props.endIcon != null;
@@ -118,7 +120,9 @@ const BaseInput: React.FC<BaseInputProps> = (props) => {
   return (
     <div className="flex flex-col gap-1">
       {props.label != null && (
-        <label className="typo-ui text-sm text-foreground">{props.label}</label>
+        <label htmlFor={inputId} className="typo-ui text-sm text-foreground">
+          {props.label}
+        </label>
       )}
       <div className="relative">
         {hasLeftIcon && (
@@ -134,6 +138,7 @@ const BaseInput: React.FC<BaseInputProps> = (props) => {
         <input
           ref={onRef}
           {...nativeProps}
+          id={inputId}
           className={cn(
             "min-w-0 w-full rounded-md border transition-colors typo-body",
             SIZE_CLASSES[resolvedSize],
