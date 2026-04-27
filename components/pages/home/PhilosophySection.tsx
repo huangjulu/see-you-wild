@@ -78,6 +78,8 @@ const PhilosophySection: React.FC = () => {
             <img
               src="https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=1200&q=80"
               alt={t("imageAlt")}
+              loading="lazy"
+              decoding="async"
               className="philosophy-image absolute inset-0 w-full h-full object-cover will-change-transform"
             />
           </div>

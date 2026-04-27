@@ -107,6 +107,7 @@ const EventLightbox: React.FC<EventLightboxProps> = (props) => {
       <img
         src={current.src}
         alt={current.alt}
+        decoding="async"
         className="max-h-[85vh] max-w-[90vw] rounded-lg object-contain"
         onClick={function stopPropagation(e) {
           e.stopPropagation();

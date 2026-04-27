@@ -69,6 +69,8 @@ const CTACard: React.FC<CTACardProps> = (props) => {
           <img
             src={props.imageSrc}
             alt={props.imageAlt}
+            loading="lazy"
+            decoding="async"
             className="absolute inset-0 w-full h-full object-cover"
           />
         </div>
