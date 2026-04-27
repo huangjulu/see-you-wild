@@ -32,10 +32,10 @@ const EventGallery: React.FC<EventGalleryProps> = (props) => {
   return (
     <>
       {/* Desktop: 1 big + 2 small */}
-      <div className="hidden md:grid md:grid-cols-3 md:grid-rows-2 gap-2 rounded-2xl overflow-hidden aspect-[3/1.2]">
+      <div className="hidden md:grid md:grid-cols-3 md:grid-rows-2 gap-1 rounded-2xl overflow-hidden aspect-3/1">
         <button
           type="button"
-          className="col-span-2 row-span-2 relative overflow-hidden cursor-pointer"
+          className="col-span-2 row-span-2 relative overflow-hidden"
           onClick={function onMainClick() {
             openLightbox(0);
           }}
@@ -43,13 +43,15 @@ const EventGallery: React.FC<EventGalleryProps> = (props) => {
           <img
             src={main.src}
             alt={main.alt}
+            fetchPriority="high"
+            decoding="async"
             className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
           />
         </button>
         {side1 != null && (
           <button
             type="button"
-            className="relative overflow-hidden cursor-pointer"
+            className="relative overflow-hidden"
             onClick={function onSide1Click() {
               openLightbox(1);
             }}
@@ -57,6 +59,8 @@ const EventGallery: React.FC<EventGalleryProps> = (props) => {
             <img
               src={side1.src}
               alt={side1.alt}
+              loading="lazy"
+              decoding="async"
               className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
             />
           </button>
@@ -64,7 +68,7 @@ const EventGallery: React.FC<EventGalleryProps> = (props) => {
         {side2 != null && (
           <button
             type="button"
-            className="relative overflow-hidden cursor-pointer"
+            className="relative overflow-hidden"
             onClick={function onSide2Click() {
               openLightbox(2);
             }}
@@ -72,6 +76,8 @@ const EventGallery: React.FC<EventGalleryProps> = (props) => {
             <img
               src={side2.src}
               alt={side2.alt}
+              loading="lazy"
+              decoding="async"
               className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
             />
           </button>
@@ -83,6 +89,8 @@ const EventGallery: React.FC<EventGalleryProps> = (props) => {
         <img
           src={images[mobileIndex].src}
           alt={images[mobileIndex].alt}
+          fetchPriority="high"
+          decoding="async"
           className="h-full w-full object-cover"
         />
         {images.length > 1 && (

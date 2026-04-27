@@ -11,6 +11,8 @@ const JourneyCard: React.FC<JourneyCardProps> = (props) => {
       <img
         src={props.image}
         alt={props.title}
+        loading="lazy"
+        decoding="async"
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
       />
       <div className="absolute inset-0 bg-linear-sto-t from-black/70 via-black/20 to-transparent" />
@@ -27,7 +29,7 @@ const JourneyCard: React.FC<JourneyCardProps> = (props) => {
     return (
       <a
         href={props.href}
-        className="journey-card shrink-0 w-60 md:w-105 group cursor-pointer"
+        className="journey-card shrink-0 w-60 md:w-105 group"
       >
         {content}
       </a>
@@ -35,9 +37,7 @@ const JourneyCard: React.FC<JourneyCardProps> = (props) => {
   }
 
   return (
-    <div className="journey-card shrink-0 w-60 md:w-105 group cursor-pointer">
-      {content}
-    </div>
+    <div className="journey-card shrink-0 w-60 md:w-105 group">{content}</div>
   );
 };
 
