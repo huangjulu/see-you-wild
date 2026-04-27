@@ -1,28 +1,35 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
+import { createPaymentToken } from "@/lib/token";
 
-vi.stubEnv("TOKEN_SECRET", "test-secret-key-for-unit-tests");
+const tokenizer = createPaymentToken("test-secret-key-for-unit-tests");
 
-import { generateToken, verifyToken } from "@/lib/token";
-
-describe("token", () => {
+describe("PaymentToken", () => {
   it("generates a string token", () => {
-    const token = generateToken("registration-id-123");
+    const token = tokenizer.generate("registration-id-123");
     expect(typeof token).toBe("string");
     expect(token.length).toBeGreaterThan(0);
   });
 
   it("verifies a valid token", () => {
     const registrationId = "registration-id-123";
-    const token = generateToken(registrationId);
-    expect(verifyToken(registrationId, token)).toBe(true);
+    const token = tokenizer.generate(registrationId);
+    expect(tokenizer.verify(registrationId, token)).toBe(true);
   });
 
   it("rejects a token for wrong registration id", () => {
-    const token = generateToken("registration-id-123");
-    expect(verifyToken("different-id", token)).toBe(false);
+    const token = tokenizer.generate("registration-id-123");
+    expect(tokenizer.verify("different-id", token)).toBe(false);
   });
 
   it("rejects a tampered token", () => {
-    expect(verifyToken("registration-id-123", "fake-token")).toBe(false);
+    expect(tokenizer.verify("registration-id-123", "fake-token")).toBe(false);
+  });
+
+  it("rejects a token of mismatched length without throwing", () => {
+    expect(tokenizer.verify("registration-id-123", "short")).toBe(false);
+  });
+
+  it("throws when secret is empty", () => {
+    expect(() => createPaymentToken("")).toThrow("TOKEN_SECRET must be set");
   });
 });

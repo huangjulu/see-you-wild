@@ -1,6 +1,8 @@
-import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase/client";
 import { createEventSchema } from "@/lib/validations/events";
+import { apiOk } from "@/lib/api-response";
+import { handleError } from "@/lib/api/handle-error";
+import { InternalError } from "@/lib/errors/domain";
 import type {
   EventRow,
   EventListDto,
@@ -8,56 +10,71 @@ import type {
 } from "@/lib/types/database";
 
 export async function GET() {
-  const { data: events, error: eventsError } = await getSupabase()
-    .from("events")
-    .select("*")
-    .order("start_date", { ascending: true });
+  try {
+    const { data: events, error: eventsError } = await getSupabase()
+      .from("events")
+      .select("*")
+      .order("start_date", { ascending: true });
 
-  if (eventsError) {
-    return NextResponse.json({ error: eventsError.message }, { status: 500 });
-  }
-
-  const result: EventListDto[] = [];
-
-  for (const event of events as EventRow[]) {
-    const { data: registrations, error: regError } = await getSupabase()
-      .from("registrations")
-      .select("id, name, status, transport, payment_ref, created_at")
-      .eq("event_id", event.id);
-
-    if (regError) {
-      return NextResponse.json({ error: regError.message }, { status: 500 });
+    if (eventsError) {
+      throw new InternalError(eventsError.message, eventsError);
     }
 
-    result.push({
-      ...event,
-      registrations: (registrations ?? []) as RegistrationSummaryDto[],
-    });
-  }
+    const typedEvents = (events ?? []) as EventRow[];
+    const eventIds = typedEvents.map((e) => e.id);
 
-  return NextResponse.json(result);
+    // Single batched read instead of N+1 per-event queries (SYW-036 I7).
+    const { data: allRegistrations, error: regError } = await getSupabase()
+      .from("registrations")
+      .select("id, name, status, transport, payment_ref, created_at, event_id")
+      .in("event_id", eventIds);
+
+    if (regError) {
+      throw new InternalError(regError.message, regError);
+    }
+
+    const byEvent = groupRegistrationsByEvent(allRegistrations ?? []);
+
+    const result: EventListDto[] = typedEvents.map((event) => ({
+      ...event,
+      registrations: byEvent.get(event.id) ?? [],
+    }));
+
+    return apiOk(result);
+  } catch (err) {
+    return handleError(err);
+  }
 }
 
 export async function POST(request: Request) {
-  const body = await request.json();
-  const parsed = createEventSchema.safeParse(body);
+  try {
+    const body = await request.json();
+    const parsed = createEventSchema.parse(body);
 
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: "Validation failed", details: parsed.error.flatten() },
-      { status: 400 }
-    );
+    const { data, error } = await getSupabase()
+      .from("events")
+      .insert(parsed)
+      .select()
+      .single();
+
+    if (error) {
+      throw new InternalError(error.message, error);
+    }
+
+    return apiOk(data, 201);
+  } catch (err) {
+    return handleError(err);
   }
+}
 
-  const { data, error } = await getSupabase()
-    .from("events")
-    .insert(parsed.data)
-    .select()
-    .single();
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+function groupRegistrationsByEvent(
+  registrations: unknown[]
+): Map<string, RegistrationSummaryDto[]> {
+  type Joined = RegistrationSummaryDto & { event_id: string };
+  const map = new Map<string, RegistrationSummaryDto[]>();
+  for (const reg of registrations as Joined[]) {
+    if (!map.has(reg.event_id)) map.set(reg.event_id, []);
+    map.get(reg.event_id)!.push(reg);
   }
-
-  return NextResponse.json(data, { status: 201 });
+  return map;
 }

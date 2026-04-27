@@ -1,21 +1,23 @@
 import { z } from "zod";
 
+// Trim/lowercase/uppercase happen *before* min(1) so whitespace-only inputs fail validation,
+// and DB rows are stored in canonical form (matches the functional unique index on lower(email)).
 const baseRegistrationSchema = z.object({
   event_id: z.string().min(1),
-  name: z.string().min(1),
-  email: z.string().email(),
-  phone: z.string().min(1),
-  line_id: z.string().nullable().default(null),
+  name: z.string().trim().min(1),
+  email: z.string().trim().toLowerCase().email(),
+  phone: z.string().trim().min(1),
+  line_id: z.string().trim().nullable().default(null),
   gender: z.enum(["male", "female", "other"]),
-  id_number: z.string().min(1),
+  id_number: z.string().trim().toUpperCase().min(1),
   birthday: z.string().date(),
-  emergency_contact_name: z.string().min(1),
-  emergency_contact_phone: z.string().min(1),
+  emergency_contact_name: z.string().trim().min(1),
+  emergency_contact_phone: z.string().trim().min(1),
   dietary: z.enum(["omnivore", "no_beef", "vegetarian", "vegan"]),
   wants_rental: z.boolean().default(false),
-  notes: z.string().nullable().default(null),
+  notes: z.string().trim().nullable().default(null),
   transport: z.enum(["self", "carpool"]),
-  pickup_location: z.string().nullable().default(null),
+  pickup_location: z.string().trim().nullable().default(null),
   carpool_role: z.enum(["passenger", "driver"]).nullable().default(null),
   seat_count: z.number().int().min(3).max(5).nullable().default(null),
 });

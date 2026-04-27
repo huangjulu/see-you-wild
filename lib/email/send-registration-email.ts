@@ -1,6 +1,7 @@
 import { getResend } from "./client";
 import { getEnv } from "@/lib/env";
-import { generateToken } from "@/lib/token";
+import { paymentToken } from "@/lib/token";
+import { paymentAccount } from "@/lib/payment";
 
 interface SendRegistrationEmailParams {
   registrationId: string;
@@ -15,7 +16,7 @@ interface SendRegistrationEmailParams {
 export async function sendRegistrationEmail(
   params: SendRegistrationEmailParams
 ) {
-  const token = generateToken(params.registrationId);
+  const token = paymentToken().generate(params.registrationId);
   const paymentRefUrl = `${params.baseUrl}/payment-ref?id=${params.registrationId}&token=${token}`;
   const formattedAmount = params.amountDue.toLocaleString("zh-TW");
   const formattedExpiry = new Date(params.expiresAt).toLocaleDateString(
@@ -170,19 +171,19 @@ export async function sendRegistrationEmail(
                         <td style="color: #9eb3c2; font-size: 13px; line-height: 1.6; padding-bottom: 2px;">銀行</td>
                       </tr>
                       <tr>
-                        <td style="color: #2d3a40; font-size: 15px; font-weight: 600; line-height: 1.5; padding-bottom: 12px;">{{bankName}}</td>
+                        <td style="color: #2d3a40; font-size: 15px; font-weight: 600; line-height: 1.5; padding-bottom: 12px;">${paymentAccount.bankName}</td>
                       </tr>
                       <tr>
                         <td style="color: #9eb3c2; font-size: 13px; line-height: 1.6; padding-bottom: 2px;">帳號</td>
                       </tr>
                       <tr>
-                        <td style="color: #2d3a40; font-size: 17px; font-weight: 600; line-height: 1.5; letter-spacing: 1px; padding-bottom: 12px; font-family: 'Courier New', Courier, monospace;">{{bankAccount}}</td>
+                        <td style="color: #2d3a40; font-size: 17px; font-weight: 600; line-height: 1.5; letter-spacing: 1px; padding-bottom: 12px; font-family: 'Courier New', Courier, monospace;">${paymentAccount.bankAccount}</td>
                       </tr>
                       <tr>
                         <td style="color: #9eb3c2; font-size: 13px; line-height: 1.6; padding-bottom: 2px;">戶名</td>
                       </tr>
                       <tr>
-                        <td style="color: #2d3a40; font-size: 15px; font-weight: 600; line-height: 1.5;">{{accountHolder}}</td>
+                        <td style="color: #2d3a40; font-size: 15px; font-weight: 600; line-height: 1.5;">${paymentAccount.accountHolder}</td>
                       </tr>
                     </table>
                   </td>

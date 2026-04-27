@@ -1,18 +1,24 @@
-import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase/client";
+import { apiOk } from "@/lib/api-response";
+import { handleError } from "@/lib/api/handle-error";
+import { InternalError } from "@/lib/errors/domain";
 
 export async function GET() {
-  const { count, error } = await getSupabase()
-    .from("events")
-    .select("id", { count: "exact", head: true });
+  try {
+    const { count, error } = await getSupabase()
+      .from("events")
+      .select("id", { count: "exact", head: true });
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) {
+      throw new InternalError(error.message, error);
+    }
+
+    return apiOk({
+      ok: true,
+      events: count,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    return handleError(err);
   }
-
-  return NextResponse.json({
-    ok: true,
-    events: count,
-    timestamp: new Date().toISOString(),
-  });
 }

@@ -4,8 +4,8 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import * as fonts from "@/lib/font.config";
 import { getTranslations } from "@/lib/i18n/server";
-import Header from "@/components/organisms/Header";
-import Footer from "@/components/organisms/Footer";
+import Footer from "@/components/ui/organisms/Footer";
+import HeaderSlot from "@/app/[locale]/_components/HeaderSlot";
 import GsapProvider from "@/components/providers/GsapProvider";
 import { isValidLocale } from "@/lib/i18n";
 import type { PageProps } from "@/lib/i18n";
@@ -33,7 +33,7 @@ const LocaleLayout: React.FC<LocaleLayoutProps> = async (props) => {
       <body className="antialiased">
         <NextIntlClientProvider messages={messages}>
           <GsapProvider>
-            <Header />
+            <HeaderSlot />
             {props.children}
             <Footer />
           </GsapProvider>
