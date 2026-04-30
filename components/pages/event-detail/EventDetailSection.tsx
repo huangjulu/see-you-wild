@@ -22,7 +22,7 @@ const EventDetailSection: React.FC<EventDetailSectionProps> = (props) => {
       <ModalCard.Main>
         <div
           className={cn(
-            "typo-body text-sm leading-relaxed text-muted whitespace-pre-line",
+            "typo-body text-sm leading-relaxed text-secondary whitespace-pre-line",
             !expanded && "line-clamp-3"
           )}
         >

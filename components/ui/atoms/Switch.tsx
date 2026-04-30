@@ -26,7 +26,7 @@ const Switch: React.FC<SwitchProps> = (props) => {
         "bg-neutral-500 ring-neutral-500/20",
         "focus:ring-2 focus-visible:outline-none",
         "has-disabled:cursor-not-allowed",
-        "has-[:checked:disabled]:bg-primary-50 has-checked:bg-primary-300 has-checked:ring-primary-100/50",
+        "has-[:checked:disabled]:bg-brand-50 has-checked:bg-brand-300 has-checked:ring-brand-100/50",
         "has-disabled:bg-neutral-300 has-disabled:focus:ring-0",
         props.className
       )}

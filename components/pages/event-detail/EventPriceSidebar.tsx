@@ -24,18 +24,18 @@ const EventPriceSidebar: React.FC<EventPriceSidebarProps> = (props) => {
     <>
       {/* Desktop: sticky sidebar */}
       <aside className="hidden md:block self-start sticky top-24">
-        <div className="rounded-2xl border border-border bg-white p-6 space-y-4 shadow-sm">
+        <div className="rounded-2xl border border-stroke-default bg-white p-6 space-y-4 shadow-sm">
           <div>
-            <p className="typo-ui text-sm text-muted">{t("price")}</p>
-            <p className="typo-heading text-3xl text-foreground">
+            <p className="typo-ui text-sm text-secondary">{t("price")}</p>
+            <p className="typo-heading text-3xl text-primary">
               NT$ {formattedPrice}
-              <span className="typo-body text-sm text-muted ml-1">
+              <span className="typo-body text-sm text-secondary ml-1">
                 {t("perPerson")}
               </span>
             </p>
           </div>
           {!props.isSelfArrival && props.carpoolSurcharge > 0 && (
-            <p className="typo-body text-xs text-muted">
+            <p className="typo-body text-xs text-secondary">
               {t("carpoolIncluded")}{" "}
               {props.carpoolSurcharge.toLocaleString("zh-TW")}
             </p>
@@ -52,7 +52,7 @@ const EventPriceSidebar: React.FC<EventPriceSidebarProps> = (props) => {
             )}
           </Button>
           {disabled && (
-            <p className="typo-body text-xs text-center text-muted">
+            <p className="typo-body text-xs text-center text-secondary">
               {t("selectOptionsHint")}
             </p>
           )}
@@ -60,16 +60,16 @@ const EventPriceSidebar: React.FC<EventPriceSidebarProps> = (props) => {
       </aside>
 
       {/* Mobile: fixed bottom bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden border-t border-border bg-background px-4 py-3 flex items-center justify-between">
+      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden border-t border-stroke-default bg-background px-4 py-3 flex items-center justify-between">
         <div>
-          <p className="typo-heading text-lg text-foreground">
+          <p className="typo-heading text-lg text-primary">
             NT$ {formattedPrice}
           </p>
-          <p className="typo-body text-xs text-muted">{t("perPerson")}</p>
+          <p className="typo-body text-xs text-secondary">{t("perPerson")}</p>
         </div>
         <div className="flex flex-col items-end gap-1">
           {dateLabel != null && (
-            <p className="typo-body text-sm text-muted">{dateLabel}</p>
+            <p className="typo-body text-sm text-secondary">{dateLabel}</p>
           )}
           <Button theme="solid" disabled={disabled} onClick={props.onBook}>
             {t("bookNow")}

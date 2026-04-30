@@ -12,7 +12,7 @@ describe("Button", () => {
   it("套用 solid theme class", () => {
     render(<Button theme="solid">Solid</Button>);
     const el = screen.getByRole("button");
-    expect(el.className).toContain("bg-accent");
+    expect(el.className).toContain("bg-fill-brand");
   });
 
   it("套用 ghost theme class", () => {

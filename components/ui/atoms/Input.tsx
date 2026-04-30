@@ -41,7 +41,7 @@ const PasswordInput: React.FC<Omit<InputProps, "type" | "endIcon">> = (
       tabIndex={-1}
       onClick={() => setShowPassword((prev) => !prev)}
       className={cn(
-        "absolute right-3 top-1/2 -translate-y-1/2 text-muted transition-colors hover:text-foreground",
+        "absolute right-3 top-1/2 -translate-y-1/2 text-secondary transition-colors hover:text-primary",
         "disabled:pointer-events-none"
       )}
       disabled={props.disabled}
@@ -121,7 +121,7 @@ const BaseInput: React.FC<BaseInputProps> = (props) => {
   return (
     <div className="flex flex-col gap-1">
       {props.label != null && (
-        <label htmlFor={inputId} className="typo-ui text-sm text-foreground">
+        <label htmlFor={inputId} className="typo-ui text-sm text-primary">
           {props.label}
         </label>
       )}
@@ -129,7 +129,7 @@ const BaseInput: React.FC<BaseInputProps> = (props) => {
         {hasLeftIcon && (
           <span
             className={cn(
-              "pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted",
+              "pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-secondary",
               ICON_SIZE_CLASSES[resolvedSize]
             )}
           >
@@ -143,12 +143,12 @@ const BaseInput: React.FC<BaseInputProps> = (props) => {
           className={cn(
             "min-w-0 w-full rounded-md border transition-colors typo-body",
             SIZE_CLASSES[resolvedSize],
-            "border-border bg-background text-foreground ring-ring",
+            "border-stroke-default bg-white text-primary ring-stroke-focus",
             "placeholder:text-neutral-200",
-            "hover:border-border-strong hover:disabled:border-border",
-            "focus:border-accent focus:ring-2 focus:ring-primary-200/70 focus-visible:outline-none",
-            "data-[touched]:invalid:border-error data-[touched]:invalid:ring-error/20 data-[touched]:invalid:focus:border-error",
-            "read-only:bg-neutral-100 read-only:text-muted",
+            "hover:border-stroke-strong hover:disabled:border-stroke-default",
+            "focus:border-accent focus:ring-2 focus:ring-brand-200/70 focus-visible:outline-none",
+            "data-touched:invalid:border-error data-touched:invalid:ring-error/20 data-touched:invalid:focus:border-error",
+            "read-only:bg-neutral-100 read-only:text-secondary",
             "disabled:opacity-50 disabled:cursor-not-allowed",
             props.error != null &&
               "border-error ring-error/20 focus:border-error",
@@ -161,7 +161,7 @@ const BaseInput: React.FC<BaseInputProps> = (props) => {
         {!props.endIconIsInteractive && hasRightIcon && (
           <span
             className={cn(
-              "pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted",
+              "pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-secondary",
               ICON_SIZE_CLASSES[resolvedSize]
             )}
           >
@@ -170,7 +170,7 @@ const BaseInput: React.FC<BaseInputProps> = (props) => {
         )}
       </div>
       {props.error != null && (
-        <p className="typo-ui text-xs text-error">{props.error}</p>
+        <p className="typo-ui text-xs text-critical">{props.error}</p>
       )}
     </div>
   );

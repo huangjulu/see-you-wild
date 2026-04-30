@@ -21,7 +21,7 @@ import EventCalendar from "@/components/ui/molecules/EventCalendar";
 import ModalCard from "@/components/ui/molecules/ModalCard";
 import { cn } from "@/lib/utils";
 
-const primary = {
+const brand = {
   50: "#fef6ee",
   100: "#fdeaD8",
   200: "#fad1ae",
@@ -95,17 +95,28 @@ const red = {
 
 const semantic = {
   background: neutral[50],
-  foreground: neutral[800],
-  muted: neutral[500],
-  accent: primary[400],
   surface: tertiary[50],
-  "surface-brand": neutral[900],
-  border: neutral[200],
-  "border-strong": neutral[300],
-  ring: primary[200],
+  "surface-brand": brand[400],
+  "surface-warm": brand[50],
+  "surface-deep": neutral[950],
+  "fill-neutral": neutral[800],
+  "fill-brand": brand[400],
+  "fill-critical": red[500],
+  primary: neutral[800],
+  secondary: neutral[500],
+  disabled: neutral[400],
+  accent: brand[400],
+  critical: red[500],
   success: green[500],
-  error: red[500],
   info: tertiary[400],
+  "on-fill-neutral": "#ffffff",
+  "on-fill-brand": neutral[800],
+  "on-surface-brand": "#ffffff",
+  "on-surface-deep": neutral[200],
+  "on-surface-warm": neutral[700],
+  "stroke-default": neutral[200],
+  "stroke-strong": neutral[300],
+  "stroke-focus": brand[200],
 } as const;
 
 /* ─── Toast Variants ─── */
@@ -125,8 +136,8 @@ const toastVariants = {
   },
   warning: {
     bg: neutral[50],
-    border: primary[500],
-    icon: primary[500],
+    border: brand[500],
+    icon: brand[500],
     text: neutral[800],
   },
   info: {
@@ -268,7 +279,7 @@ const ScaleRow: React.FC<{
   base: string;
 }> = (props) => (
   <div className="mb-8">
-    <h3 className="typo-ui mb-3 text-sm text-foreground">{props.name}</h3>
+    <h3 className="typo-ui mb-3 text-sm text-primary">{props.name}</h3>
     <div className="flex flex-wrap gap-3">
       {Object.entries(props.scale).map(([step, color]) => (
         <Swatch
@@ -331,9 +342,9 @@ const PalettePreviewPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background p-8 pt-24 font-serif text-foreground">
+    <div className="min-h-screen bg-background p-8 pt-24 font-serif text-primary">
       {/* ─── Scroll Spy ─── */}
-      <nav className="fixed top-24 right-8 z-50 hidden bg-background/80 backdrop-blur-sm rounded-lg p-3 shadow-sm border border-border xl:block">
+      <nav className="fixed top-24 right-8 z-50 hidden bg-background/80 backdrop-blur-sm rounded-lg p-3 shadow-sm border border-stroke-default xl:block">
         <ul className="space-y-1">
           {sections.map((s) => (
             <li key={s.id}>
@@ -349,7 +360,7 @@ const PalettePreviewPage: React.FC = () => {
                   "block text-xs transition-colors",
                   activeSection === s.id
                     ? "text-accent font-medium"
-                    : "text-muted hover:text-foreground"
+                    : "text-secondary hover:text-primary"
                 )}
               >
                 {s.label}
@@ -360,7 +371,7 @@ const PalettePreviewPage: React.FC = () => {
       </nav>
 
       <h1 className="typo-heading mb-1 text-3xl">Design System Preview</h1>
-      <p className="typo-ui mb-10 text-sm text-muted">
+      <p className="typo-ui mb-10 text-sm text-secondary">
         #f4f6f5 / #2d3a40 / #DE954E / #6B9DC2 / #1FAD87 / #C74E1E
         ・確認後刪除此頁
       </p>
@@ -369,9 +380,9 @@ const PalettePreviewPage: React.FC = () => {
       <section id="color-scales" className="mb-16">
         <SectionLabel>Color Scales</SectionLabel>
         <ScaleRow
-          name="Primary（暖砂橘 #DE954E）"
-          scale={primary}
-          base={primary[400]}
+          name="Brand（暖砂橘 #DE954E）"
+          scale={brand}
+          base={brand[400]}
         />
         <ScaleRow
           name="Neutral（深炭藍 #2d3a40）"
@@ -404,12 +415,12 @@ const PalettePreviewPage: React.FC = () => {
       {/* ═══ TYPOGRAPHY ═══ */}
       <section id="typography" className="mb-16">
         <SectionLabel>Typography Scale</SectionLabel>
-        <div className="space-y-0 overflow-hidden rounded-xl border border-border">
+        <div className="space-y-0 overflow-hidden rounded-xl border border-stroke-default">
           {typoScale.map((t, i) => (
             <div
               key={t.token}
               className={cn(
-                "flex gap-6 border-b border-border p-6 last:border-b-0",
+                "flex gap-6 border-b border-stroke-default p-6 last:border-b-0",
                 i % 2 === 0 ? "bg-background" : "bg-surface"
               )}
             >
@@ -452,7 +463,7 @@ const PalettePreviewPage: React.FC = () => {
 
         {/* RWD breakpoint reference */}
         <div className="mt-6 rounded-lg bg-surface p-4">
-          <p className="mb-2 text-xs font-medium text-muted">
+          <p className="mb-2 text-xs font-medium text-secondary">
             RWD Breakpoints（Tailwind 預設）
           </p>
           <div className="flex flex-wrap gap-4 font-mono text-xs text-neutral-600">
@@ -462,7 +473,7 @@ const PalettePreviewPage: React.FC = () => {
             <span>xl: 1280px</span>
             <span>2xl: 1536px</span>
           </div>
-          <p className="mt-3 mb-2 text-xs font-medium text-muted">
+          <p className="mt-3 mb-2 text-xs font-medium text-secondary">
             現有 RWD typography 用法
           </p>
           <div className="space-y-1 font-mono text-xs text-neutral-600">
@@ -482,31 +493,31 @@ const PalettePreviewPage: React.FC = () => {
         <div className="flex flex-wrap items-center gap-6">
           <div className="flex flex-col items-center gap-2">
             <Button theme="base">報名活動</Button>
-            <span className="typo-ui text-xs text-muted">base</span>
+            <span className="typo-ui text-xs text-secondary">base</span>
           </div>
           <div className="flex flex-col items-center gap-2">
             <Button theme="solid">立即預訂</Button>
-            <span className="typo-ui text-xs text-muted">solid</span>
+            <span className="typo-ui text-xs text-secondary">solid</span>
           </div>
           <div className="flex flex-col items-center gap-2">
             <Button theme="ghost">了解更多</Button>
-            <span className="typo-ui text-xs text-muted">ghost</span>
+            <span className="typo-ui text-xs text-secondary">ghost</span>
           </div>
           <div className="flex flex-col items-center gap-2">
             <Button theme="outline">查看活動</Button>
-            <span className="typo-ui text-xs text-muted">outline</span>
+            <span className="typo-ui text-xs text-secondary">outline</span>
           </div>
           <div className="flex flex-col items-center gap-2">
             <Button theme="text">聯繫我們</Button>
-            <span className="typo-ui text-xs text-muted">text</span>
+            <span className="typo-ui text-xs text-secondary">text</span>
           </div>
           <div className="flex flex-col items-center gap-2">
             <Button theme="link">查看所有活動</Button>
-            <span className="typo-ui text-xs text-muted">link</span>
+            <span className="typo-ui text-xs text-secondary">link</span>
           </div>
           <div className="flex flex-col items-center gap-2">
             <Button theme="danger">取消報名</Button>
-            <span className="typo-ui text-xs text-muted">danger</span>
+            <span className="typo-ui text-xs text-secondary">danger</span>
           </div>
         </div>
       </section>
@@ -516,7 +527,7 @@ const PalettePreviewPage: React.FC = () => {
         <SectionLabel>Input</SectionLabel>
 
         <div className="mb-10">
-          <h3 className="typo-ui mb-4 text-sm text-foreground">Sizes</h3>
+          <h3 className="typo-ui mb-4 text-sm text-primary">Sizes</h3>
           <div className="flex max-w-md flex-col gap-4">
             <Input size="sm" label="Small" placeholder="Small input" />
             <Input
@@ -529,7 +540,7 @@ const PalettePreviewPage: React.FC = () => {
         </div>
 
         <div className="mb-10">
-          <h3 className="typo-ui mb-4 text-sm text-foreground">With Icon</h3>
+          <h3 className="typo-ui mb-4 text-sm text-primary">With Icon</h3>
           <div className="flex max-w-md flex-col gap-4">
             <Input
               label="搜尋"
@@ -545,7 +556,7 @@ const PalettePreviewPage: React.FC = () => {
         </div>
 
         <div className="mb-10">
-          <h3 className="typo-ui mb-4 text-sm text-foreground">Error</h3>
+          <h3 className="typo-ui mb-4 text-sm text-primary">Error</h3>
           <div className="flex max-w-md flex-col gap-4">
             <Input
               label="電子信箱"
@@ -557,7 +568,7 @@ const PalettePreviewPage: React.FC = () => {
         </div>
 
         <div className="mb-10">
-          <h3 className="typo-ui mb-4 text-sm text-foreground">Disabled</h3>
+          <h3 className="typo-ui mb-4 text-sm text-primary">Disabled</h3>
           <div className="flex max-w-md flex-col gap-4">
             <Input
               label="姓名"
@@ -569,7 +580,7 @@ const PalettePreviewPage: React.FC = () => {
         </div>
 
         <div className="mb-10">
-          <h3 className="typo-ui mb-4 text-sm text-foreground">Password</h3>
+          <h3 className="typo-ui mb-4 text-sm text-primary">Password</h3>
           <div className="flex max-w-md flex-col gap-4">
             <Input label="密碼" type="password" placeholder="輸入密碼" />
           </div>
@@ -587,10 +598,10 @@ const PalettePreviewPage: React.FC = () => {
 
         {/* ─── Dialog ─── */}
         <div className="mb-10">
-          <h3 className="typo-ui mb-4 text-sm text-foreground">Dialog</h3>
+          <h3 className="typo-ui mb-4 text-sm text-primary">Dialog</h3>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-2">
-              <p className="typo-ui text-xs text-muted">
+              <p className="typo-ui text-xs text-secondary">
                 破壞性確認 + CloseButton
               </p>
               <Dialog title="刪除活動" message="此操作無法復原，確定要刪除嗎？">
@@ -601,23 +612,23 @@ const PalettePreviewPage: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <p className="typo-ui text-xs text-muted">一般確認</p>
+              <p className="typo-ui text-xs text-secondary">一般確認</p>
               <Dialog title="儲存成功" message="你的變更已儲存。">
                 <Dialog.PrimaryButton>確定</Dialog.PrimaryButton>
               </Dialog>
             </div>
 
             <div className="space-y-2">
-              <p className="typo-ui text-xs text-muted">Loading</p>
+              <p className="typo-ui text-xs text-secondary">Loading</p>
               <Dialog title="處理中" message="請稍候...">
                 <Dialog.Loader />
               </Dialog>
             </div>
 
             <div className="space-y-2">
-              <p className="typo-ui text-xs text-muted">自訂 children</p>
+              <p className="typo-ui text-xs text-secondary">自訂 children</p>
               <Dialog title="自訂內容">
-                <p className="typo-body text-foreground">
+                <p className="typo-body text-primary">
                   這是一段自訂的段落，不是預設的 message prop。
                 </p>
                 <Dialog.PrimaryButton>了解</Dialog.PrimaryButton>
@@ -628,10 +639,10 @@ const PalettePreviewPage: React.FC = () => {
 
         {/* ─── ModalCard ─── */}
         <div>
-          <h3 className="typo-ui mb-4 text-sm text-foreground">ModalCard</h3>
+          <h3 className="typo-ui mb-4 text-sm text-primary">ModalCard</h3>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-2">
-              <p className="typo-ui text-xs text-muted">完整組合</p>
+              <p className="typo-ui text-xs text-secondary">完整組合</p>
               <ModalCard>
                 <ModalCard.Header title="報名確認" description="請確認以下資訊">
                   <ModalCard.Header.CloseButton />
@@ -655,7 +666,7 @@ const PalettePreviewPage: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <p className="typo-ui text-xs text-muted">Header + Main</p>
+              <p className="typo-ui text-xs text-secondary">Header + Main</p>
               <ModalCard>
                 <ModalCard.Header title="活動詳情" />
                 <ModalCard.Main>
@@ -665,7 +676,7 @@ const PalettePreviewPage: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <p className="typo-ui text-xs text-muted">Main + Footer</p>
+              <p className="typo-ui text-xs text-secondary">Main + Footer</p>
               <ModalCard>
                 <ModalCard.Main>
                   <p className="typo-body">
@@ -681,7 +692,9 @@ const PalettePreviewPage: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <p className="typo-ui text-xs text-muted">自訂 Header children</p>
+              <p className="typo-ui text-xs text-secondary">
+                自訂 Header children
+              </p>
               <ModalCard>
                 <ModalCard.Header>
                   <div className="flex items-center gap-3">
@@ -716,14 +729,16 @@ const PalettePreviewPage: React.FC = () => {
 
         {/* ─── Calendar ─── */}
         <div className="mb-10">
-          <h3 className="typo-ui mb-4 text-sm text-foreground">Calendar</h3>
+          <h3 className="typo-ui mb-4 text-sm text-primary">Calendar</h3>
           <div className="flex flex-wrap gap-8">
             <div className="flex flex-col gap-2">
-              <p className="typo-ui text-xs text-muted">Single date</p>
+              <p className="typo-ui text-xs text-secondary">Single date</p>
               <Calendar mode="single" defaultMonth={new Date(2026, 3, 1)} />
             </div>
             <div className="flex flex-col gap-2">
-              <p className="typo-ui text-xs text-muted">Compact (2 weeks)</p>
+              <p className="typo-ui text-xs text-secondary">
+                Compact (2 weeks)
+              </p>
               <Calendar
                 mode="single"
                 defaultMonth={new Date(2026, 3, 1)}
@@ -736,12 +751,12 @@ const PalettePreviewPage: React.FC = () => {
 
         {/* ─── EventCalendar ─── */}
         <div className="mb-10">
-          <h3 className="typo-ui mb-4 text-sm text-foreground">
-            EventCalendar
-          </h3>
+          <h3 className="typo-ui mb-4 text-sm text-primary">EventCalendar</h3>
           <div className="flex flex-wrap gap-8">
             <div className="flex flex-col gap-2">
-              <p className="typo-ui text-xs text-muted">Available dates only</p>
+              <p className="typo-ui text-xs text-secondary">
+                Available dates only
+              </p>
               <EventCalendar
                 availableDates={[
                   new Date(2026, 3, 22),
@@ -757,10 +772,10 @@ const PalettePreviewPage: React.FC = () => {
 
         {/* ─── RadioOption ─── */}
         <div className="mb-10">
-          <h3 className="typo-ui mb-4 text-sm text-foreground">RadioOption</h3>
+          <h3 className="typo-ui mb-4 text-sm text-primary">RadioOption</h3>
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
-              <p className="typo-ui text-xs text-muted">集合站選項</p>
+              <p className="typo-ui text-xs text-secondary">集合站選項</p>
               <div className="flex flex-wrap gap-2">
                 <RadioOption
                   name="demo-pickup"
@@ -781,7 +796,7 @@ const PalettePreviewPage: React.FC = () => {
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <p className="typo-ui text-xs text-muted">Disabled</p>
+              <p className="typo-ui text-xs text-secondary">Disabled</p>
               <div className="flex flex-wrap gap-2">
                 <RadioOption
                   name="demo-disabled"
@@ -808,7 +823,7 @@ const PalettePreviewPage: React.FC = () => {
       {/* ═══ SECTION RHYTHM ═══ */}
       <section id="section-rhythm" className="mb-16">
         <SectionLabel>Section Rhythm（頁面區塊交錯）</SectionLabel>
-        <div className="overflow-hidden rounded-xl border border-border">
+        <div className="overflow-hidden rounded-xl border border-stroke-default">
           <div className="bg-background p-8">
             <p className="typo-overline mb-1 text-xs text-neutral-400">
               base-bg (#f4f6f5)
@@ -816,7 +831,7 @@ const PalettePreviewPage: React.FC = () => {
             <h3 className="typo-sub-heading mb-2 text-xl">
               山海之間・野放靈魂
             </h3>
-            <p className="typo-ui text-sm text-muted">
+            <p className="typo-ui text-sm text-secondary">
               See You Wild 帶你走進台灣最美的戶外秘境。
             </p>
           </div>
@@ -829,7 +844,7 @@ const PalettePreviewPage: React.FC = () => {
               {["野營私廚", "野溪溫泉", "SUP 立槳"].map((name) => (
                 <div
                   key={name}
-                  className="flex-1 rounded-lg border border-border bg-background p-4"
+                  className="flex-1 rounded-lg border border-stroke-default bg-background p-4"
                 >
                   <div className="mb-2 h-24 rounded bg-neutral-200" />
                   <p className="typo-ui text-sm">{name}</p>
@@ -843,10 +858,10 @@ const PalettePreviewPage: React.FC = () => {
               base-bg
             </p>
             <h3 className="typo-sub-heading mb-2 text-xl">專屬包團服務</h3>
-            <p className="typo-ui text-sm text-muted">
+            <p className="typo-ui text-sm text-secondary">
               為你的團隊量身打造戶外探險行程。
             </p>
-            <Button theme="text" className="mt-4 text-primary-500">
+            <Button theme="text" className="mt-4 text-brand-500">
               聯繫我們 <IconArrowRight className="size-4" />
             </Button>
           </div>
@@ -873,20 +888,20 @@ const PalettePreviewPage: React.FC = () => {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           {/* Default state */}
           <div className="space-y-2">
-            <p className="typo-ui text-xs text-muted">Default — 散落</p>
-            <div className="flex justify-center rounded-lg border border-border bg-neutral-50 p-10">
+            <p className="typo-ui text-xs text-secondary">Default — 散落</p>
+            <div className="flex justify-center rounded-lg border border-stroke-default bg-neutral-50 p-10">
               <div
                 className={cn(
                   "w-72 bg-surface-warm px-8 py-10",
-                  "border border-primary-200/40",
+                  "border border-brand-200/40",
                   "shadow-[0_1px_0_0_rgba(200,180,160,0.3),0_2px_4px_-1px_rgba(45,58,64,0.06),1px_0_0_0_rgba(200,180,160,0.15),-1px_0_0_0_rgba(200,180,160,0.15)]",
                   "rotate-[-2.5deg]"
                 )}
               >
-                <p className="typo-body text-base font-light leading-relaxed text-foreground mb-8">
+                <p className="typo-body text-base font-light leading-relaxed text-primary mb-8">
                   在野溪溫泉裡仰望星空的那一刻，我覺得這才是人生該有的樣子。
                 </p>
-                <p className="typo-ui text-[11px] font-medium tracking-[0.2em] uppercase text-foreground">
+                <p className="typo-ui text-[11px] font-medium tracking-[0.2em] uppercase text-primary">
                   Ava L.
                 </p>
                 <p className="typo-ui text-[10px] tracking-[0.15em] text-accent mt-1">
@@ -897,20 +912,20 @@ const PalettePreviewPage: React.FC = () => {
           </div>
           {/* Hover state */}
           <div className="space-y-2">
-            <p className="typo-ui text-xs text-muted">Hover — 挑起</p>
-            <div className="flex justify-center rounded-lg border border-border bg-neutral-50 p-10">
+            <p className="typo-ui text-xs text-secondary">Hover — 挑起</p>
+            <div className="flex justify-center rounded-lg border border-stroke-default bg-neutral-50 p-10">
               <div
                 className={cn(
                   "w-72 bg-surface-warm px-8 py-10",
-                  "border border-primary-200/40",
+                  "border border-brand-200/40",
                   "shadow-[0_1px_0_0_rgba(200,180,160,0.4),0_14px_40px_-8px_rgba(45,58,64,0.13),1px_0_0_0_rgba(200,180,160,0.2),-1px_0_0_0_rgba(200,180,160,0.2)]",
                   "rotate-0 -translate-y-2"
                 )}
               >
-                <p className="typo-body text-base font-light leading-relaxed text-foreground mb-8">
+                <p className="typo-body text-base font-light leading-relaxed text-primary mb-8">
                   在野溪溫泉裡仰望星空的那一刻，我覺得這才是人生該有的樣子。
                 </p>
-                <p className="typo-ui text-[11px] font-medium tracking-[0.2em] uppercase text-foreground">
+                <p className="typo-ui text-[11px] font-medium tracking-[0.2em] uppercase text-primary">
                   Ava L.
                 </p>
                 <p className="typo-ui text-[10px] tracking-[0.15em] text-accent mt-1">
@@ -922,7 +937,7 @@ const PalettePreviewPage: React.FC = () => {
         </div>
         {/* Spec notes */}
         <div className="mt-6 rounded-lg bg-surface p-4">
-          <p className="mb-2 text-xs font-medium text-muted">Motion Spec</p>
+          <p className="mb-2 text-xs font-medium text-secondary">Motion Spec</p>
           <div className="space-y-1 font-mono text-xs text-neutral-600">
             <p>
               Scroll reveal: opacity 0→1, duration 1s, power3.out（整組一次，不
@@ -994,12 +1009,12 @@ const PalettePreviewPage: React.FC = () => {
       <section id="contrast-check" className="mb-16">
         <SectionLabel>Typography Contrast Check</SectionLabel>
         <div className="grid grid-cols-2 gap-4">
-          <div className="rounded-lg border border-border bg-background p-6">
+          <div className="rounded-lg border border-stroke-default bg-background p-6">
             <p className="mb-1 text-xs text-neutral-400">
               On base-bg (#f4f6f5)
             </p>
-            <p className="text-lg text-foreground">標題文字 Heading</p>
-            <p className="text-sm text-muted">次要文字 Secondary text</p>
+            <p className="text-lg text-primary">標題文字 Heading</p>
+            <p className="text-sm text-secondary">次要文字 Secondary text</p>
             <p className="text-sm text-accent">強調色文字 Primary accent</p>
             <p className="text-sm text-success">成功色文字 Success</p>
             <p className="text-sm text-error">錯誤色文字 Error</p>
@@ -1008,8 +1023,8 @@ const PalettePreviewPage: React.FC = () => {
             <p className="mb-1 text-xs text-neutral-400">
               On tertiary-50 (#f0f5f9)
             </p>
-            <p className="text-lg text-foreground">標題文字 Heading</p>
-            <p className="text-sm text-muted">次要文字 Secondary text</p>
+            <p className="text-lg text-primary">標題文字 Heading</p>
+            <p className="text-sm text-secondary">次要文字 Secondary text</p>
             <p className="text-sm text-accent">強調色文字 Primary accent</p>
           </div>
           <div className="rounded-lg bg-surface-brand p-6">
@@ -1021,11 +1036,11 @@ const PalettePreviewPage: React.FC = () => {
             <p className="text-sm text-accent">強調色文字 Primary accent</p>
             <p className="text-sm text-info">Tertiary accent</p>
           </div>
-          <div className="rounded-lg bg-primary-400 p-6">
-            <p className="mb-1 text-xs text-primary-900">
-              On primary-400 (#DE954E)
+          <div className="rounded-lg bg-brand-400 p-6">
+            <p className="mb-1 text-xs text-brand-900">
+              On brand-400 (#DE954E)
             </p>
-            <p className="text-lg text-foreground">標題文字 Heading</p>
+            <p className="text-lg text-primary">標題文字 Heading</p>
             <p className="text-sm text-neutral-700">次要文字 Secondary text</p>
             <p className="text-sm text-white">白色文字 White text</p>
           </div>
@@ -1041,12 +1056,12 @@ const PalettePreviewPage: React.FC = () => {
           typo-heading / typo-sub-heading / typo-body / typo-ui / typo-overline
           ・數字走 Chiron Sung HK
         </p>
-        <div className="overflow-hidden rounded-xl border border-border">
+        <div className="overflow-hidden rounded-xl border border-stroke-default">
           <div className="bg-background p-8">
             <p className="typo-overline mb-1 text-xs text-accent">
               Outdoor Adventure
             </p>
-            <h2 className="typo-heading mb-3 text-4xl leading-tight text-foreground">
+            <h2 className="typo-heading mb-3 text-4xl leading-tight text-primary">
               山海之間・野放靈魂
             </h2>
             <p className="typo-body mb-4 text-lg leading-relaxed text-neutral-600">
@@ -1059,14 +1074,14 @@ const PalettePreviewPage: React.FC = () => {
             </button>
           </div>
           <div className="bg-surface p-8">
-            <h3 className="typo-sub-heading mb-2 text-2xl text-foreground">
+            <h3 className="typo-sub-heading mb-2 text-2xl text-primary">
               即將到來的活動
             </h3>
             <div className="flex gap-4">
               {["野營私廚", "野溪溫泉", "SUP 立槳"].map((name) => (
                 <div
                   key={name}
-                  className="flex-1 rounded-lg border border-border bg-background p-4"
+                  className="flex-1 rounded-lg border border-stroke-default bg-background p-4"
                 >
                   <div className="mb-2 h-24 rounded bg-neutral-200" />
                   <p className="typo-body text-base">{name}</p>
@@ -1089,7 +1104,7 @@ const PalettePreviewPage: React.FC = () => {
       {/* ═══ FULL PAGE SIMULATION ═══ */}
       <section id="full-page-sim" className="mb-16">
         <SectionLabel>全站模擬 — Rufina + Chiron Sung HK</SectionLabel>
-        <div className="overflow-hidden rounded-xl border border-border">
+        <div className="overflow-hidden rounded-xl border border-stroke-default">
           {/* Hero */}
           <div className="relative bg-surface-brand p-12 pb-16">
             <p className="typo-overline mb-2 text-xs text-accent">
@@ -1104,7 +1119,7 @@ const PalettePreviewPage: React.FC = () => {
             <p className="typo-body max-w-xl text-base leading-relaxed text-neutral-400">
               走進台灣最美的戶外秘境，在星空下享受私廚料理、在野溪中感受溫泉的溫度、在海面上划出屬於自己的軌跡。
             </p>
-            <button className="typo-ui mt-6 rounded-full bg-accent px-8 py-3 text-sm tracking-widest text-foreground">
+            <button className="typo-ui mt-6 rounded-full bg-fill-brand px-8 py-3 text-sm tracking-widest text-primary">
               探索活動
             </button>
           </div>
@@ -1114,7 +1129,7 @@ const PalettePreviewPage: React.FC = () => {
             <p className="typo-overline mb-1 text-xs text-neutral-400">
               Upcoming Events
             </p>
-            <h2 className="typo-heading mb-6 text-3xl text-foreground">
+            <h2 className="typo-heading mb-6 text-3xl text-primary">
               即將到來的活動
             </h2>
             <div className="grid grid-cols-3 gap-4">
@@ -1140,12 +1155,12 @@ const PalettePreviewPage: React.FC = () => {
               ].map((event) => (
                 <div
                   key={event.name}
-                  className="rounded-lg border border-border bg-background"
+                  className="rounded-lg border border-stroke-default bg-background"
                 >
                   <div className="h-36 rounded-t-lg bg-neutral-200" />
                   <div className="p-4">
                     <p className="typo-ui text-xs text-accent">{event.date}</p>
-                    <h3 className="typo-sub-heading mt-1 text-lg leading-snug text-foreground">
+                    <h3 className="typo-sub-heading mt-1 text-lg leading-snug text-primary">
                       {event.name}
                     </h3>
                     <p className="typo-ui mt-2 text-sm leading-relaxed text-neutral-500">
@@ -1165,10 +1180,10 @@ const PalettePreviewPage: React.FC = () => {
             <p className="typo-overline mb-1 text-xs text-neutral-400">
               Our Philosophy
             </p>
-            <h2 className="typo-display mb-4 text-3xl text-foreground">
+            <h2 className="typo-display mb-4 text-3xl text-primary">
               Between Mountains & Sea
             </h2>
-            <p className="typo-sub-heading mb-4 text-2xl text-foreground">
+            <p className="typo-sub-heading mb-4 text-2xl text-primary">
               不只是旅行，是與土地的對話
             </p>
             <div className="max-w-2xl space-y-4">
@@ -1188,7 +1203,7 @@ const PalettePreviewPage: React.FC = () => {
 
           {/* Contact */}
           <div className="bg-surface p-8">
-            <h2 className="typo-sub-heading mb-2 text-2xl text-foreground">
+            <h2 className="typo-sub-heading mb-2 text-2xl text-primary">
               專屬包團服務
             </h2>
             <p className="typo-body mb-4 text-base leading-relaxed text-neutral-600">
@@ -1204,7 +1219,7 @@ const PalettePreviewPage: React.FC = () => {
 
           {/* Form stress test */}
           <div className="bg-background p-8">
-            <h2 className="typo-sub-heading mb-4 text-2xl text-foreground">
+            <h2 className="typo-sub-heading mb-4 text-2xl text-primary">
               報名表單（小字號壓力測試）
             </h2>
             <div className="max-w-md space-y-3">
@@ -1214,13 +1229,13 @@ const PalettePreviewPage: React.FC = () => {
                 { label: "聯絡電話", placeholder: "0912-345-678" },
               ].map((field) => (
                 <div key={field.label}>
-                  <label className="typo-ui mb-1 block text-sm text-foreground">
+                  <label className="typo-ui mb-1 block text-sm text-primary">
                     {field.label}
                   </label>
                   <input
                     type="text"
                     placeholder={field.placeholder}
-                    className="typo-ui w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground"
+                    className="typo-ui w-full rounded-md border border-stroke-default bg-background px-3 py-2 text-sm text-primary"
                   />
                 </div>
               ))}
@@ -1251,18 +1266,18 @@ const PalettePreviewPage: React.FC = () => {
         <SectionLabel>Proposed globals.css Token Map</SectionLabel>
         <pre className="overflow-x-auto rounded-lg bg-surface-brand p-6 font-mono text-xs leading-relaxed text-neutral-300">
           {`@theme {
-  /* ─── Primary（暖砂橘 #DE954E）─── */
-  --color-primary-50:  ${primary[50]};
-  --color-primary-100: ${primary[100]};
-  --color-primary-200: ${primary[200]};
-  --color-primary-300: ${primary[300]};
-  --color-primary-400: ${primary[400]};   /* base */
-  --color-primary-500: ${primary[500]};
-  --color-primary-600: ${primary[600]};
-  --color-primary-700: ${primary[700]};
-  --color-primary-800: ${primary[800]};
-  --color-primary-900: ${primary[900]};
-  --color-primary-950: ${primary[950]};
+  /* ─── Brand（暖砂橘 #DE954E）─── */
+  --color-brand-50:  ${brand[50]};
+  --color-brand-100: ${brand[100]};
+  --color-brand-200: ${brand[200]};
+  --color-brand-300: ${brand[300]};
+  --color-brand-400: ${brand[400]};   /* base */
+  --color-brand-500: ${brand[500]};
+  --color-brand-600: ${brand[600]};
+  --color-brand-700: ${brand[700]};
+  --color-brand-800: ${brand[800]};
+  --color-brand-900: ${brand[900]};
+  --color-brand-950: ${brand[950]};
 
   /* ─── Neutral（深炭藍 #2d3a40）─── */
   --color-neutral-50:  ${neutral[50]};    /* = base-bg */
@@ -1303,7 +1318,7 @@ const PalettePreviewPage: React.FC = () => {
   --color-green-900: ${green[900]};
   --color-green-950: ${green[950]};
 
-  /* ─── Red（磚紅 #C45E35）─── */
+  /* ─── Red（磚紅 #C74E1E）─── */
   --color-red-50:  ${red[50]};
   --color-red-100: ${red[100]};
   --color-red-200: ${red[200]};
@@ -1316,18 +1331,38 @@ const PalettePreviewPage: React.FC = () => {
   --color-red-900: ${red[900]};
   --color-red-950: ${red[950]};
 
-  /* ─── Semantic ─── */
-  --color-background: ${neutral[50]};
-  --color-foreground: ${neutral[800]};
-  --color-muted: ${neutral[500]};
-  --color-accent: ${primary[400]};
-  --color-surface: ${tertiary[50]};
-  --color-surface-brand: ${neutral[900]};
-  --color-border: ${neutral[200]};
-  --color-success: ${green[500]};
-  --color-error: ${red[500]};
-  --color-warning: ${primary[500]};
-  --color-info: ${tertiary[400]};
+  /* ─── Semantic / Surface ─── */
+  --color-background:    ${neutral[50]};
+  --color-surface:       ${tertiary[50]};
+  --color-surface-brand: ${brand[400]};
+  --color-surface-warm:  ${brand[50]};
+  --color-surface-deep:  ${neutral[950]};
+
+  /* ─── Semantic / Fill ─── */
+  --color-fill-neutral:  ${neutral[800]};
+  --color-fill-brand:    ${brand[400]};
+  --color-fill-critical: ${red[500]};
+
+  /* ─── Semantic / Text ─── */
+  --color-primary:   ${neutral[800]};
+  --color-secondary: ${neutral[500]};
+  --color-disabled:  ${neutral[400]};
+  --color-accent:    ${brand[400]};
+  --color-critical:  ${red[500]};
+  --color-success:   ${green[500]};
+  --color-info:      ${tertiary[400]};
+
+  /* ─── Semantic / On-* ─── */
+  --color-on-fill-neutral:   #ffffff;
+  --color-on-fill-brand:     ${neutral[800]};
+  --color-on-surface-brand:  #ffffff;
+  --color-on-surface-deep:   ${neutral[200]};
+  --color-on-surface-warm:   ${neutral[700]};
+
+  /* ─── Semantic / Stroke ─── */
+  --color-stroke-default: ${neutral[200]};
+  --color-stroke-strong:  ${neutral[300]};
+  --color-stroke-focus:   ${brand[200]};
 
   /* ─── Fonts ─── */
   --font-serif: var(--font-rufina), "Rufina", var(--font-chiron-sung-hk), "Chiron Sung HK", var(--font-noto-serif-tc), "Noto Serif TC", serif;

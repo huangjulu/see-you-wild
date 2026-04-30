@@ -38,7 +38,7 @@ const EventSearchBar: React.FC<EventSearchBarProps> = (props) => {
             aria-label="活動類型"
             value={props.selectedType}
             onChange={(e) => props.onTypeChange(e.target.value)}
-            className="typo-body rounded-lg border border-border bg-surface px-3 py-2.5 focus:border-accent focus:outline-none"
+            className="typo-body rounded-lg border border-stroke-default bg-surface px-3 py-2.5 focus:border-accent focus:outline-none"
           >
             <option value="">所有類型</option>
             {props.typeOptions.map((opt) => (
@@ -57,7 +57,7 @@ const EventSearchBar: React.FC<EventSearchBarProps> = (props) => {
             aria-label="地點"
             value={props.selectedLocation}
             onChange={(e) => props.onLocationChange(e.target.value)}
-            className="typo-body rounded-lg border border-border bg-surface px-3 py-2.5 focus:border-accent focus:outline-none"
+            className="typo-body rounded-lg border border-stroke-default bg-surface px-3 py-2.5 focus:border-accent focus:outline-none"
           >
             <option value="">所有地點</option>
             {props.locationOptions.map((opt) => (

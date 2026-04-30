@@ -1,6 +1,7 @@
 import { X as IconX } from "lucide-react";
 
 import Button from "@/components/ui/atoms/Button";
+import Overlay from "@/components/ui/atoms/Overlay";
 import Slot from "@/components/ui/atoms/Slot";
 import type { SlottableComponent } from "@/components/ui/atoms/slot.types";
 import { resolveSlots } from "@/lib/slot";
@@ -27,7 +28,7 @@ const CloseButton: SlottableComponent<ButtonProps> = Object.assign(
     <Slot slot="close">
       <Button
         theme="text"
-        icon={<IconX className="size-4 text-primary-400" />}
+        icon={<IconX className="size-4 text-brand-400" />}
         {...props}
       />
     </Slot>
@@ -81,7 +82,7 @@ const Loader: SlottableComponent<LoaderProps> = Object.assign(
         viewBox="-18 0 36 36"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="animate-spin text-primary-300"
+        className="animate-spin text-brand-300"
       >
         <path
           fill="currentColor"
@@ -118,12 +119,12 @@ const _Dialog: React.FC<DialogProps> = (props) => {
         <div className="flex items-start gap-4">
           <div className="flex-1">
             {props.title != null && (
-              <div className="typo-sub-heading text-xl text-foreground">
+              <div className="typo-sub-heading text-xl text-primary">
                 {props.title}
               </div>
             )}
             {props.message != null && (
-              <div className="typo-body text-sm leading-relaxed text-muted">
+              <div className="typo-body text-sm leading-relaxed text-secondary">
                 {props.message}
               </div>
             )}
@@ -145,6 +146,7 @@ const Dialog = Object.assign(_Dialog, {
   DangerButton,
   Loader,
   OutlineButton,
+  Overlay,
   PrimaryButton,
 });
 

@@ -96,7 +96,7 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
       <ModalCard.Main className="space-y-6">
         {/* Event Date */}
         <div className="space-y-2">
-          <h3 className="typo-ui text-sm text-foreground">{t("eventDate")}</h3>
+          <h3 className="typo-ui text-sm text-primary">{t("eventDate")}</h3>
           <EventCalendar
             size="lg"
             className="w-full"
@@ -112,7 +112,7 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
 
         {/* Transport */}
         <div className="space-y-2">
-          <h3 className="typo-ui text-sm text-foreground">{t("transport")}</h3>
+          <h3 className="typo-ui text-sm text-primary">{t("transport")}</h3>
           <div className="flex flex-wrap gap-2">
             <RadioOption
               name="transport"
@@ -134,9 +134,7 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
         {/* Pickup Place (only when carpool selected) */}
         {transport === "carpool" && (
           <div className="space-y-2">
-            <h3 className="typo-ui text-sm text-foreground">
-              {t("pickupPlace")}
-            </h3>
+            <h3 className="typo-ui text-sm text-primary">{t("pickupPlace")}</h3>
             <div className="flex flex-wrap gap-2">
               {props.pickupLocations.map((loc) => (
                 <RadioOption

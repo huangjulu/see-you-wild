@@ -54,10 +54,10 @@ const PhilosophySection: React.FC = () => {
         className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center"
       >
         <div className="space-y-8">
-          <p className="reveal-up gsap-reveal typo-overline text-sm text-primary-500">
+          <p className="reveal-up gsap-reveal typo-overline text-sm text-brand-500">
             {t("overline")}
           </p>
-          <h2 className="reveal-up gsap-reveal typo-display text-4xl md:text-5xl lg:text-6xl leading-tight text-foreground">
+          <h2 className="reveal-up gsap-reveal typo-display text-4xl md:text-5xl lg:text-6xl leading-tight text-primary">
             {t("title")
               .split("\n")
               .map((line, i) => (
@@ -67,10 +67,10 @@ const PhilosophySection: React.FC = () => {
                 </React.Fragment>
               ))}
           </h2>
-          <p className="reveal-up gsap-reveal typo-body text-lg leading-relaxed text-foreground/70">
+          <p className="reveal-up gsap-reveal typo-body text-lg leading-relaxed text-primary/70">
             {t("body1")}
           </p>
-          <p className="reveal-up gsap-reveal typo-body text-lg leading-relaxed text-foreground/70">
+          <p className="reveal-up gsap-reveal typo-body text-lg leading-relaxed text-primary/70">
             {t("body2")}
           </p>
         </div>

@@ -129,7 +129,7 @@ const TestimonialsSection: React.FC = () => {
   return (
     <section
       ref={sectionRef}
-      className="bg-linear-180 from-background to-primary-100"
+      className="bg-linear-180 from-background to-brand-100"
     >
       <div className="relative py-24 md:py-32 px-6 md:px-12 [mask-image:linear-gradient(to_bottom,transparent_0%,black_12%,black_95%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,black_12%,black_95%,transparent_100%)]">
         <div
@@ -142,17 +142,17 @@ const TestimonialsSection: React.FC = () => {
 
         {/* Radial gradient mask — fade out edge ghost cards */}
         <div
-          className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,transparent_40%,var(--color-primary-100)_90%)]"
+          className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,transparent_40%,var(--color-brand-100)_90%)]"
           aria-hidden="true"
         />
 
         {/* Content */}
         <div className="relative z-10 max-w-6xl mx-auto">
           <div className="text-center mb-20">
-            <p className="typo-overline text-sm mb-4 text-primary-500">
+            <p className="typo-overline text-sm mb-4 text-brand-500">
               {t("overline")}
             </p>
-            <h2 className="typo-display text-4xl md:text-5xl text-foreground">
+            <h2 className="typo-display text-4xl md:text-5xl text-primary">
               {t("title")}
             </h2>
           </div>
@@ -273,7 +273,7 @@ const GhostCardsSvg: React.FC = () => (
         <rect
           width={card.w}
           height={card.h}
-          fill="var(--color-primary-200)"
+          fill="var(--color-brand-200)"
           opacity="0.5"
         />
         <rect
@@ -282,7 +282,7 @@ const GhostCardsSvg: React.FC = () => (
           width={card.w * 0.76}
           height={4}
           rx={2}
-          fill="var(--color-primary-300)"
+          fill="var(--color-brand-300)"
           opacity="0.7"
         />
         <rect
@@ -291,7 +291,7 @@ const GhostCardsSvg: React.FC = () => (
           width={card.w * 0.6}
           height={4}
           rx={2}
-          fill="var(--color-primary-300)"
+          fill="var(--color-brand-300)"
           opacity="0.7"
         />
         <rect
@@ -300,7 +300,7 @@ const GhostCardsSvg: React.FC = () => (
           width={card.w * 0.68}
           height={4}
           rx={2}
-          fill="var(--color-primary-300)"
+          fill="var(--color-brand-300)"
           opacity="0.7"
         />
         <rect
@@ -309,7 +309,7 @@ const GhostCardsSvg: React.FC = () => (
           width={card.w * 0.45}
           height={4}
           rx={2}
-          fill="var(--color-primary-300)"
+          fill="var(--color-brand-300)"
           opacity="0.7"
         />
         <rect
@@ -318,7 +318,7 @@ const GhostCardsSvg: React.FC = () => (
           width={card.w * 0.3}
           height={3}
           rx={1.5}
-          fill="var(--color-primary-300)"
+          fill="var(--color-brand-300)"
           opacity="0.5"
         />
         <rect
@@ -327,7 +327,7 @@ const GhostCardsSvg: React.FC = () => (
           width={card.w * 0.4}
           height={3}
           rx={1.5}
-          fill="var(--color-primary-300)"
+          fill="var(--color-brand-300)"
           opacity="0.4"
         />
       </g>

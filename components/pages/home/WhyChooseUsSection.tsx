@@ -42,10 +42,10 @@ const WhyChooseUsSection: React.FC = () => {
     >
       <div ref={revealTriggerRef} className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <p className="why-item typo-overline text-sm mb-4 text-primary-500">
+          <p className="why-item typo-overline text-sm mb-4 text-brand-500">
             {t("overline")}
           </p>
-          <h2 className="why-item typo-display text-4xl md:text-5xl text-foreground">
+          <h2 className="why-item typo-display text-4xl md:text-5xl text-primary">
             {t("title")}
           </h2>
         </div>
@@ -57,13 +57,13 @@ const WhyChooseUsSection: React.FC = () => {
                 key={key}
                 className="why-item flex flex-col items-center text-center space-y-4"
               >
-                <div className="flex size-14 items-center justify-center rounded-full bg-primary-100">
+                <div className="flex size-14 items-center justify-center rounded-full bg-brand-100">
                   <Icon className="size-6 text-accent" />
                 </div>
-                <h3 className="typo-sub-heading text-xl text-foreground">
+                <h3 className="typo-sub-heading text-xl text-primary">
                   {t(`items.${key}.title`)}
                 </h3>
-                <p className="typo-body text-base leading-relaxed text-foreground/70">
+                <p className="typo-body text-base leading-relaxed text-primary/70">
                   {t(`items.${key}.desc`)}
                 </p>
               </div>

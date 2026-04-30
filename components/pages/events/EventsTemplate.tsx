@@ -18,7 +18,7 @@ const EventsTemplate: React.FC = () => {
     <main className="bg-background py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-6 md:px-12">
         <div className="mb-10">
-          <p className="typo-overline mb-4 text-sm text-muted">
+          <p className="typo-overline mb-4 text-sm text-secondary">
             {t("overline")}
           </p>
           <Heading level="h1" className="text-4xl md:text-5xl">

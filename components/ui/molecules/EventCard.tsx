@@ -42,7 +42,7 @@ const EventCard: React.FC<EventCardProps> = (props) => {
         <div className="space-y-2 p-4">
           <Tag>{props.type}</Tag>
           <h3 className="typo-heading text-lg">{props.title}</h3>
-          <p className="typo-body text-sm text-muted">
+          <p className="typo-body text-sm text-secondary">
             {props.location} · {props.startDate}
           </p>
           <p className="typo-ui text-base font-semibold">

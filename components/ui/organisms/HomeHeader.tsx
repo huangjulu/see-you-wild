@@ -11,7 +11,7 @@ import { useLocale, useTranslations } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 
 const NAV_LINK_CLASS =
-  "text-sm hover:[text-shadow:0_0.5px_16px_color-mix(in_srgb,var(--color-primary-800)_80%,transparent)] hover:text-white focus-visible:opacity-100 focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-current rounded-sm";
+  "text-sm hover:[text-shadow:0_0.5px_16px_color-mix(in_srgb,var(--color-brand-800)_80%,transparent)] hover:text-white focus-visible:opacity-100 focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-current rounded-sm";
 
 const HomeHeader: React.FC = () => {
   const t = useTranslations("common");
@@ -46,7 +46,7 @@ const HomeHeader: React.FC = () => {
           aria-label={t("siteName")}
         >
           <Logo size="sm" />
-          <span className="font-serif text-lg font-semibold hidden sm:inline [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-foreground)_50%,transparent)]">
+          <span className="font-serif text-lg font-semibold hidden sm:inline [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-primary)_50%,transparent)]">
             {t("siteName")}
           </span>
         </a>
@@ -73,7 +73,7 @@ const HomeHeader: React.FC = () => {
             className={cn(
               "ml-2 rounded-full px-5 py-1.5 text-sm tracking-widest",
               scrolled
-                ? " border-accent bg-primary-500 hover:bg-primary-400 text-white hover:shadow-none"
+                ? " border-accent bg-brand-500 hover:bg-brand-400 text-white hover:shadow-none"
                 : "text-surface-deep-fg ring-1 ring-surface-deep-fg"
             )}
           >
@@ -93,7 +93,7 @@ const HomeHeader: React.FC = () => {
 
       <nav
         className={cn(
-          "md:hidden  backdrop-blur-md border-t border-border/30 px-4 flex flex-col gap-4 text-foreground overflow-hidden transition-all duration-300",
+          "md:hidden  backdrop-blur-md border-t border-stroke-default/30 px-4 flex flex-col gap-4 text-primary overflow-hidden transition-all duration-300",
           menuOpen ? "max-h-60 py-4 opacity-100" : "max-h-0 py-0 opacity-0"
         )}
         aria-label="Mobile navigation"
@@ -113,7 +113,7 @@ const HomeHeader: React.FC = () => {
         ))}
         <a
           href="/events"
-          className="typo-ui rounded-full bg-accent px-5 py-2 text-center text-xs tracking-widest text-white transition-all duration-300 hover:bg-primary-500"
+          className="typo-ui rounded-full bg-fill-brand px-5 py-2 text-center text-xs tracking-widest text-on-fill-brand transition-all duration-300 hover:bg-brand-500"
           onClick={() => setMenuOpen(false)}
         >
           {t("nav.exploreCta")}

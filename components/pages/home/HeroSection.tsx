@@ -107,7 +107,7 @@ const HeroSection: React.FC = () => {
       <div className="relative z-10 flex flex-col items-center max-w-4xl">
         <h1
           ref={h1Ref}
-          className="typo-display text-6xl md:text-6xl lg:text-7xl text-white leading-tight [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-foreground)_50%,transparent)]"
+          className="typo-display text-6xl md:text-6xl lg:text-7xl text-white leading-tight [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-primary)_50%,transparent)]"
         >
           See You Wild
         </h1>

@@ -1,6 +1,7 @@
 import { ArrowLeft as IconArrowLeft, X as IconX } from "lucide-react";
 
 import Button from "@/components/ui/atoms/Button";
+import Overlay from "@/components/ui/atoms/Overlay";
 import Slot from "@/components/ui/atoms/Slot";
 import type { SlottableComponent } from "@/components/ui/atoms/slot.types";
 import { resolveSlots } from "@/lib/slot";
@@ -46,7 +47,7 @@ const HeaderCloseButton: SlottableComponent<ButtonProps> = Object.assign(
         <Button
           ref={escToClose}
           theme="text"
-          icon={<IconX className="size-4 text-primary-400" />}
+          icon={<IconX className="size-4 text-brand-400" />}
           {...props}
         />
       </Slot>
@@ -119,7 +120,7 @@ const ModalCardHeader: SlottableComponent<ModalCardHeaderProps> = Object.assign(
               )}
             >
               {props.title && (
-                <div className="typo-sub-heading text-primary-600">
+                <div className="typo-sub-heading text-brand-600">
                   {props.title}
                 </div>
               )}
@@ -146,7 +147,9 @@ interface ModalCardMainProps {
 const ModalCardMain: SlottableComponent<ModalCardMainProps> = Object.assign(
   (props: ModalCardMainProps) => (
     <Slot slot="main">
-      <main className={cn("p-4 overflow-y-auto", props.className)}>
+      <main
+        className={cn("p-4 overflow-y-auto bg-background", props.className)}
+      >
         {props.children}
       </main>
     </Slot>
@@ -196,7 +199,7 @@ const _ModalCard: React.FC<ModalCardProps> = (props) => {
       tabIndex={props.tabIndex}
       onClick={props.onClick}
       className={cn(
-        "grid grid-rows-[auto_1fr_auto] overflow-clip rounded-xl bg-white border border-border shadow-sm",
+        "grid grid-rows-[auto_1fr_auto] overflow-clip rounded-xl bg-white border border-stroke-default shadow-sm",
         props.className
       )}
     >
@@ -217,6 +220,7 @@ const ModalCard = Object.assign(_ModalCard, {
     CancelButton: FooterCancelButton,
     ConfirmButton: FooterConfirmButton,
   }),
+  Overlay,
 });
 
 _ModalCard.displayName = "ModalCard";

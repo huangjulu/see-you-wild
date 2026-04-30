@@ -11,7 +11,7 @@ const Text: React.FC<TextProps> = (props) => {
     <p
       className={cn(
         "typo-body",
-        props.muted ? "text-muted" : "text-foreground",
+        props.muted ? "text-secondary" : "text-primary",
         props.className
       )}
     >

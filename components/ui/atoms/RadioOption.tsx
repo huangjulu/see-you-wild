@@ -8,11 +8,11 @@ const RadioOption: React.FC<RadioOptionProps> = (props) => {
   return (
     <label
       className={cn(
-        "inline-flex items-center rounded-lg border border-border px-6 py-4 text-md typo-ui transition-all",
+        "inline-flex items-center rounded-lg border border-stroke-default px-6 py-4 text-md typo-ui transition-all",
         "hover:border-accent/50",
-        "has-checked:border-accent has-checked:bg-primary-50 has-checked:text-foreground",
+        "has-checked:border-accent has-checked:bg-brand-50 has-checked:text-primary",
         "has-disabled:cursor-not-allowed has-disabled:opacity-50",
-        "has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring",
+        "has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-stroke-focus",
         props.className
       )}
     >
