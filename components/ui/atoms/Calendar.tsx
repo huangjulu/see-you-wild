@@ -7,6 +7,7 @@ import {
 import React, { useState } from "react";
 import {
   type ClassNames,
+  type CustomComponents,
   type DayButton as DayButtonType,
   DayPicker,
   type Matcher,
@@ -37,6 +38,10 @@ interface CalendarProps {
   markers?: Record<string, MarkerDef>;
   visibleWeeks?: 1 | 2 | 3 | 4;
   expandLabel?: string;
+  captionLayout?: "label" | "dropdown" | "dropdown-months" | "dropdown-years";
+  startMonth?: Date;
+  endMonth?: Date;
+  components?: Partial<CustomComponents>;
 }
 
 /* ─── Size Constants ─── */
@@ -247,6 +252,9 @@ const Calendar: React.FC<CalendarProps> = (props) => {
       locale={zhTW}
       defaultMonth={props.defaultMonth}
       disabled={props.disabled}
+      captionLayout={props.captionLayout}
+      startMonth={props.startMonth}
+      endMonth={props.endMonth}
       modifiers={dpModifiers}
       onMonthChange={monthChange}
       className={cn(
@@ -258,9 +266,9 @@ const Calendar: React.FC<CalendarProps> = (props) => {
       )}
       classNames={classNames}
       components={{
-        Root: (props: DayPickerProps) => {
-          const { rootRef, ...rootProps } = props;
-          return <div data-slot="calendar" ref={rootRef} {...rootProps} />;
+        Root: (rootProps: DayPickerProps) => {
+          const { rootRef, ...rest } = rootProps;
+          return <div data-slot="calendar" ref={rootRef} {...rest} />;
         },
         Chevron: CalendarChevron,
         DayButton: (dayProps: React.ComponentProps<typeof DayButtonType>) => (
@@ -272,6 +280,7 @@ const Calendar: React.FC<CalendarProps> = (props) => {
         ),
         Week: CompactWeek,
         MonthCaption: CaptionWithToggle,
+        ...props.components,
       }}
     />
   );

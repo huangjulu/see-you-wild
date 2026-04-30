@@ -82,3 +82,27 @@ export type CreateRegistrationInput = z.infer<typeof baseRegistrationSchema>;
 export type RegistrationFormInput = z.infer<typeof registrationFormSchema>;
 export type UpdateRegistrationInput = z.infer<typeof updateRegistrationSchema>;
 export type PaymentRefInput = z.infer<typeof paymentRefSchema>;
+
+export function createRegistrationErrorMap(
+  t: (key: string) => string
+): z.ZodErrorMap {
+  return (issue) => {
+    if (issue.code === "custom") {
+      return { message: t(issue.message ?? "required") };
+    }
+    switch (issue.code) {
+      case "too_small":
+        return { message: t("required") };
+      case "invalid_format":
+        if (issue.format === "email") return { message: t("invalidEmail") };
+        return { message: t("invalidFormat") };
+      case "invalid_type":
+        if (issue.expected === "string") return { message: t("required") };
+        return undefined;
+      case "invalid_value":
+        return { message: t("invalidSelection") };
+      default:
+        return undefined;
+    }
+  };
+}

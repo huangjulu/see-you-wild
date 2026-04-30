@@ -194,6 +194,7 @@
     "idNumber": "身分證字號",
     "idNumberPlaceholder": "用於保險投保",
     "birthday": "生日",
+    "birthdayPlaceholder": "選擇日期",
     "emergencyName": "緊急聯絡人姓名",
     "emergencyNamePlaceholder": "請輸入姓名",
     "emergencyPhone": "緊急聯絡人電話",
@@ -214,7 +215,12 @@
     "carpoolPassenger": "乘客",
     "carpoolDriver": "司機",
     "seatCount": "可載人數",
-    "totalPrice": "費用合計"
+    "totalPrice": "費用合計",
+    "successTitle": "報名已送出",
+    "successTransferTo": "請於期限內匯款至",
+    "successAccountHolder": "戶名",
+    "successReportDigits": "匯款後請至信箱收取確認信，點擊連結回報帳號末五碼，即完成報名。",
+    "successConfirm": "收到，我去匯款"
   },
   "validation": {
     "carpoolFieldRequired": "選擇共乘時必須填寫此欄位",

@@ -203,6 +203,7 @@
     "idNumber": "ID Number",
     "idNumberPlaceholder": "For insurance purposes",
     "birthday": "Birthday",
+    "birthdayPlaceholder": "Select date",
     "emergencyName": "Emergency Contact Name",
     "emergencyNamePlaceholder": "Enter name",
     "emergencyPhone": "Emergency Contact Phone",
@@ -223,7 +224,12 @@
     "carpoolPassenger": "Passenger",
     "carpoolDriver": "Driver",
     "seatCount": "Available Seats",
-    "totalPrice": "Total Price"
+    "totalPrice": "Total Price",
+    "successTitle": "Registration submitted",
+    "successTransferTo": "Transfer the amount to",
+    "successAccountHolder": "Account holder",
+    "successReportDigits": "Check your inbox for the confirmation email, then click the link to report the last 5 digits of your bank account to complete registration.",
+    "successConfirm": "Got it, I'll transfer now"
   },
   "validation": {
     "carpoolFieldRequired": "This field is required when choosing carpool",
