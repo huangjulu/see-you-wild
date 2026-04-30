@@ -1,19 +1,22 @@
 "use client";
 
-import { useRef } from "react";
-import { z } from "zod";
-import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTranslations } from "@/lib/i18n/client";
-import {
-  registrationFormSchema,
-  type RegistrationFormInput,
-} from "@/lib/validations/registrations";
-import ModalCard from "@/components/ui/molecules/ModalCard";
+import { useRef, useState } from "react";
+import { FormProvider, useForm, useFormContext } from "react-hook-form";
+import { z } from "zod";
+
+import Button from "@/components/ui/atoms/Button";
 import Input from "@/components/ui/atoms/Input";
 import RadioOption from "@/components/ui/atoms/RadioOption";
+import StepIndicator from "@/components/ui/atoms/StepIndicator";
 import Switch from "@/components/ui/atoms/Switch";
+import ModalCard from "@/components/ui/molecules/ModalCard";
+import { useTranslations } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
+import {
+  type RegistrationFormInput,
+  registrationFormSchema,
+} from "@/lib/validations/registrations";
 
 interface RegistrationModalProps {
   open: boolean;
@@ -45,10 +48,21 @@ const PICKUP_SLUGS = [
   "banqiao",
 ] as const;
 
+const TOTAL_STEPS = 5;
+
+const STEP_FIELDS: Record<number, (keyof RegistrationFormInput)[]> = {
+  0: ["name", "email", "phone", "line_id"],
+  1: ["gender", "id_number", "birthday"],
+  2: ["emergency_contact_name", "emergency_contact_phone"],
+  3: ["dietary", "wants_rental", "notes"],
+  4: ["transport", "pickup_location", "carpool_role", "seat_count"],
+};
+
 const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
   const t = useTranslations("registration");
   const tValidation = useTranslations("validation");
   const formRef = useRef<HTMLFormElement>(null);
+  const [currentStep, setCurrentStep] = useState(0);
 
   const zodErrorMap: z.ZodErrorMap = (issue) => {
     if (issue.code === "custom") {
@@ -121,7 +135,17 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
     methods.setError("root", { message });
   }
 
-  function handleConfirmClick() {
+  async function handleNext() {
+    const fieldsToValidate = STEP_FIELDS[currentStep];
+    const valid = await methods.trigger(fieldsToValidate);
+    if (valid) setCurrentStep((prev) => prev + 1);
+  }
+
+  function handleBack() {
+    setCurrentStep((prev) => prev - 1);
+  }
+
+  function handleSubmit() {
     formRef.current?.requestSubmit();
   }
 
@@ -160,6 +184,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
               onSubmit={methods.handleSubmit(onSubmit)}
             >
               <FormRegistration
+                step={currentStep}
                 basePrice={props.basePrice}
                 carpoolSurcharge={props.carpoolSurcharge}
                 pickupLocations={props.pickupLocations}
@@ -172,12 +197,32 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
             )}
           </ModalCard.Main>
           <ModalCard.Footer>
-            <ModalCard.Footer.CancelButton onClick={props.onClose}>
-              {t("cancel")}
-            </ModalCard.Footer.CancelButton>
-            <ModalCard.Footer.ConfirmButton onClick={handleConfirmClick}>
-              {t("submit")}
-            </ModalCard.Footer.ConfirmButton>
+            <div className="flex w-full flex-col gap-4">
+              <StepIndicator
+                totalSteps={TOTAL_STEPS}
+                currentStep={currentStep}
+              />
+              <div className="flex justify-between">
+                {currentStep === 0 ? (
+                  <Button theme="outline" onClick={props.onClose}>
+                    {t("cancel")}
+                  </Button>
+                ) : (
+                  <Button theme="text" onClick={handleBack}>
+                    Back
+                  </Button>
+                )}
+                {currentStep < TOTAL_STEPS - 1 ? (
+                  <Button theme="solid" onClick={handleNext}>
+                    Next
+                  </Button>
+                ) : (
+                  <Button theme="solid" onClick={handleSubmit}>
+                    {t("submit")}
+                  </Button>
+                )}
+              </div>
+            </div>
           </ModalCard.Footer>
         </ModalCard>
       </FormProvider>
@@ -191,6 +236,7 @@ export default RegistrationModal;
 /* ─── FormRegistration (same-file sub-component) ─── */
 
 interface FormRegistrationProps {
+  step: number;
   basePrice: number;
   carpoolSurcharge: number;
   pickupLocations: string[];
@@ -212,235 +258,191 @@ const FormRegistration: React.FC<FormRegistrationProps> = (props) => {
 
   return (
     <div className="space-y-6">
-      {/* Basic Info */}
-      <fieldset className="space-y-3">
-        <legend className="typo-subtitle-2 text-foreground mb-2">
-          {t("sectionBasic")}
-        </legend>
-        <Input
-          label={t("name")}
-          placeholder={t("namePlaceholder")}
-          {...register("name")}
-          error={errors.name?.message}
-        />
-        <Input
-          label={t("email")}
-          type="email"
-          placeholder={t("emailPlaceholder")}
-          {...register("email")}
-          error={errors.email?.message}
-        />
-        <Input
-          label={t("phone")}
-          type="tel"
-          placeholder={t("phonePlaceholder")}
-          {...register("phone")}
-          error={errors.phone?.message}
-        />
-        <Input
-          label={t("lineId")}
-          placeholder={t("lineIdPlaceholder")}
-          {...register("line_id")}
-          error={errors.line_id?.message}
-        />
-      </fieldset>
+      {props.step === 0 && (
+        <fieldset className="space-y-3">
+          <legend className="typo-subtitle-2 text-foreground mb-2">
+            {t("sectionBasic")}
+          </legend>
+          <Input
+            label={t("name")}
+            placeholder={t("namePlaceholder")}
+            {...register("name")}
+            error={errors.name?.message}
+          />
+          <Input
+            label={t("email")}
+            type="email"
+            placeholder={t("emailPlaceholder")}
+            {...register("email")}
+            error={errors.email?.message}
+          />
+          <Input
+            label={t("phone")}
+            type="tel"
+            placeholder={t("phonePlaceholder")}
+            {...register("phone")}
+            error={errors.phone?.message}
+          />
+          <Input
+            label={t("lineId")}
+            placeholder={t("lineIdPlaceholder")}
+            {...register("line_id")}
+            error={errors.line_id?.message}
+          />
+        </fieldset>
+      )}
 
-      {/* Identity Info */}
-      <fieldset className="space-y-3">
-        <legend className="typo-subtitle-2 text-foreground mb-2">
-          {t("sectionIdentity")}
-        </legend>
+      {props.step === 1 && (
+        <fieldset className="space-y-3">
+          <legend className="typo-subtitle-2 text-foreground mb-2">
+            {t("sectionIdentity")}
+          </legend>
 
-        <div className="space-y-1">
-          <span className="typo-ui text-sm text-foreground">{t("gender")}</span>
-          <div className="flex flex-wrap gap-2">
-            <RadioOption
-              label={t("genderMale")}
-              value="male"
-              {...register("gender")}
-            />
-            <RadioOption
-              label={t("genderFemale")}
-              value="female"
-              {...register("gender")}
-            />
-            <RadioOption
-              label={t("genderOther")}
-              value="other"
-              {...register("gender")}
-            />
-          </div>
-          {errors.gender != null && (
-            <p className="typo-ui text-xs text-error">
-              {errors.gender.message}
-            </p>
-          )}
-        </div>
-
-        <Input
-          label={t("idNumber")}
-          placeholder={t("idNumberPlaceholder")}
-          {...register("id_number")}
-          error={errors.id_number?.message}
-        />
-        <Input
-          label={t("birthday")}
-          type="date"
-          {...register("birthday")}
-          error={errors.birthday?.message}
-        />
-      </fieldset>
-
-      {/* Emergency Contact */}
-      <fieldset className="space-y-3">
-        <legend className="typo-subtitle-2 text-foreground mb-2">
-          {t("sectionEmergency")}
-        </legend>
-        <Input
-          label={t("emergencyName")}
-          placeholder={t("emergencyNamePlaceholder")}
-          {...register("emergency_contact_name")}
-          error={errors.emergency_contact_name?.message}
-        />
-        <Input
-          label={t("emergencyPhone")}
-          type="tel"
-          placeholder={t("emergencyPhonePlaceholder")}
-          {...register("emergency_contact_phone")}
-          error={errors.emergency_contact_phone?.message}
-        />
-      </fieldset>
-
-      {/* Activity */}
-      <fieldset className="space-y-3">
-        <legend className="typo-subtitle-2 text-foreground mb-2">
-          {t("sectionActivity")}
-        </legend>
-
-        <div className="space-y-1">
-          <span className="typo-ui text-sm text-foreground">
-            {t("dietary")}
-          </span>
-          <div className="flex flex-wrap gap-2">
-            <RadioOption
-              label={t("dietaryOmnivore")}
-              value="omnivore"
-              {...register("dietary")}
-            />
-            <RadioOption
-              label={t("dietaryNoBeef")}
-              value="no_beef"
-              {...register("dietary")}
-            />
-            <RadioOption
-              label={t("dietaryVegetarian")}
-              value="vegetarian"
-              {...register("dietary")}
-            />
-            <RadioOption
-              label={t("dietaryVegan")}
-              value="vegan"
-              {...register("dietary")}
-            />
-          </div>
-          {errors.dietary != null && (
-            <p className="typo-ui text-xs text-error">
-              {errors.dietary.message}
-            </p>
-          )}
-        </div>
-
-        <div className="flex items-center justify-between">
-          <span className="typo-ui text-sm text-foreground">
-            {t("wantsRental")}
-          </span>
-          <Switch {...register("wants_rental")} />
-        </div>
-
-        <Input
-          label={t("notes")}
-          placeholder={t("notesPlaceholder")}
-          {...register("notes")}
-          error={errors.notes?.message}
-        />
-      </fieldset>
-
-      {/* Transport */}
-      <fieldset className="space-y-3">
-        <legend className="typo-subtitle-2 text-foreground mb-2">
-          {t("sectionTransport")}
-        </legend>
-
-        <div className="space-y-1">
-          <span className="typo-ui text-sm text-foreground">
-            {t("transport")}
-          </span>
-          <div className="flex flex-wrap gap-2">
-            <RadioOption
-              label={t("transportSelf")}
-              value="self"
-              {...register("transport")}
-            />
-            <RadioOption
-              label={`${t("transportCarpool")}  +NT$ ${props.carpoolSurcharge.toLocaleString("zh-TW")}`}
-              value="carpool"
-              {...register("transport")}
-            />
-          </div>
-          {errors.transport != null && (
-            <p className="typo-ui text-xs text-error">
-              {errors.transport.message}
-            </p>
-          )}
-        </div>
-
-        <div
-          className={cn(
-            "grid transition-[grid-template-rows] duration-300",
-            transport === "carpool" ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-          )}
-        >
-          <div className="overflow-hidden space-y-3">
-            <div className="space-y-1">
-              <span className="typo-ui text-sm text-foreground">
-                {t("pickupLocation")}
-              </span>
-              <div className="flex flex-wrap gap-2">
-                {PICKUP_SLUGS.map((slug) => (
-                  <RadioOption
-                    key={slug}
-                    label={PICKUP_SLUG_TO_DISPLAY[slug] ?? slug}
-                    value={slug}
-                    {...register("pickup_location")}
-                  />
-                ))}
-              </div>
-              {errors.pickup_location != null && (
-                <p className="typo-ui text-xs text-error">
-                  {errors.pickup_location.message}
-                </p>
-              )}
+          <div className="space-y-1">
+            <span className="typo-ui text-sm text-foreground">
+              {t("gender")}
+            </span>
+            <div className="flex flex-wrap gap-2">
+              <RadioOption
+                label={t("genderMale")}
+                value="male"
+                {...register("gender")}
+              />
+              <RadioOption
+                label={t("genderFemale")}
+                value="female"
+                {...register("gender")}
+              />
+              <RadioOption
+                label={t("genderOther")}
+                value="other"
+                {...register("gender")}
+              />
             </div>
+            {errors.gender != null && (
+              <p className="typo-ui text-xs text-error">
+                {errors.gender.message}
+              </p>
+            )}
+          </div>
+
+          <Input
+            label={t("idNumber")}
+            placeholder={t("idNumberPlaceholder")}
+            {...register("id_number")}
+            error={errors.id_number?.message}
+          />
+          <Input
+            label={t("birthday")}
+            type="date"
+            {...register("birthday")}
+            error={errors.birthday?.message}
+          />
+        </fieldset>
+      )}
+
+      {props.step === 2 && (
+        <fieldset className="space-y-3">
+          <legend className="typo-subtitle-2 text-foreground mb-2">
+            {t("sectionEmergency")}
+          </legend>
+          <Input
+            label={t("emergencyName")}
+            placeholder={t("emergencyNamePlaceholder")}
+            {...register("emergency_contact_name")}
+            error={errors.emergency_contact_name?.message}
+          />
+          <Input
+            label={t("emergencyPhone")}
+            type="tel"
+            placeholder={t("emergencyPhonePlaceholder")}
+            {...register("emergency_contact_phone")}
+            error={errors.emergency_contact_phone?.message}
+          />
+        </fieldset>
+      )}
+
+      {props.step === 3 && (
+        <fieldset className="space-y-3">
+          <legend className="typo-subtitle-2 text-foreground mb-2">
+            {t("sectionActivity")}
+          </legend>
+
+          <div className="space-y-1">
+            <span className="typo-ui text-sm text-foreground">
+              {t("dietary")}
+            </span>
+            <div className="flex flex-wrap gap-2">
+              <RadioOption
+                label={t("dietaryOmnivore")}
+                value="omnivore"
+                {...register("dietary")}
+              />
+              <RadioOption
+                label={t("dietaryNoBeef")}
+                value="no_beef"
+                {...register("dietary")}
+              />
+              <RadioOption
+                label={t("dietaryVegetarian")}
+                value="vegetarian"
+                {...register("dietary")}
+              />
+              <RadioOption
+                label={t("dietaryVegan")}
+                value="vegan"
+                {...register("dietary")}
+              />
+            </div>
+            {errors.dietary != null && (
+              <p className="typo-ui text-xs text-error">
+                {errors.dietary.message}
+              </p>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between">
+            <span className="typo-ui text-sm text-foreground">
+              {t("wantsRental")}
+            </span>
+            <Switch {...register("wants_rental")} />
+          </div>
+
+          <Input
+            label={t("notes")}
+            placeholder={t("notesPlaceholder")}
+            {...register("notes")}
+            error={errors.notes?.message}
+          />
+        </fieldset>
+      )}
+
+      {props.step === 4 && (
+        <>
+          <fieldset className="space-y-3">
+            <legend className="typo-subtitle-2 text-foreground mb-2">
+              {t("sectionTransport")}
+            </legend>
 
             <div className="space-y-1">
               <span className="typo-ui text-sm text-foreground">
-                {t("carpoolRole")}
+                {t("transport")}
               </span>
               <div className="flex flex-wrap gap-2">
                 <RadioOption
-                  label={t("carpoolPassenger")}
-                  value="passenger"
-                  {...register("carpool_role")}
+                  label={t("transportSelf")}
+                  value="self"
+                  {...register("transport")}
                 />
                 <RadioOption
-                  label={t("carpoolDriver")}
-                  value="driver"
-                  {...register("carpool_role")}
+                  label={`${t("transportCarpool")}  +NT$ ${props.carpoolSurcharge.toLocaleString("zh-TW")}`}
+                  value="carpool"
+                  {...register("transport")}
                 />
               </div>
-              {errors.carpool_role != null && (
+              {errors.transport != null && (
                 <p className="typo-ui text-xs text-error">
-                  {errors.carpool_role.message}
+                  {errors.transport.message}
                 </p>
               )}
             </div>
@@ -448,35 +450,90 @@ const FormRegistration: React.FC<FormRegistrationProps> = (props) => {
             <div
               className={cn(
                 "grid transition-[grid-template-rows] duration-300",
-                carpoolRole === "driver" ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                transport === "carpool" ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
               )}
             >
-              <div className="overflow-hidden">
-                <Input
-                  label={t("seatCount")}
-                  type="number"
-                  min={3}
-                  max={5}
-                  {...register("seat_count", { valueAsNumber: true })}
-                  error={errors.seat_count?.message}
-                />
+              <div className="overflow-hidden space-y-3">
+                <div className="space-y-1">
+                  <span className="typo-ui text-sm text-foreground">
+                    {t("pickupLocation")}
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {PICKUP_SLUGS.map((slug) => (
+                      <RadioOption
+                        key={slug}
+                        label={PICKUP_SLUG_TO_DISPLAY[slug] ?? slug}
+                        value={slug}
+                        {...register("pickup_location")}
+                      />
+                    ))}
+                  </div>
+                  {errors.pickup_location != null && (
+                    <p className="typo-ui text-xs text-error">
+                      {errors.pickup_location.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-1">
+                  <span className="typo-ui text-sm text-foreground">
+                    {t("carpoolRole")}
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    <RadioOption
+                      label={t("carpoolPassenger")}
+                      value="passenger"
+                      {...register("carpool_role")}
+                    />
+                    <RadioOption
+                      label={t("carpoolDriver")}
+                      value="driver"
+                      {...register("carpool_role")}
+                    />
+                  </div>
+                  {errors.carpool_role != null && (
+                    <p className="typo-ui text-xs text-error">
+                      {errors.carpool_role.message}
+                    </p>
+                  )}
+                </div>
+
+                <div
+                  className={cn(
+                    "grid transition-[grid-template-rows] duration-300",
+                    carpoolRole === "driver"
+                      ? "grid-rows-[1fr]"
+                      : "grid-rows-[0fr]"
+                  )}
+                >
+                  <div className="overflow-hidden">
+                    <Input
+                      label={t("seatCount")}
+                      type="number"
+                      min={3}
+                      max={5}
+                      {...register("seat_count", { valueAsNumber: true })}
+                      error={errors.seat_count?.message}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </fieldset>
+          </fieldset>
 
-      {/* Price Preview */}
-      <div
-        className={cn(
-          "flex items-center justify-between rounded-lg border border-border p-4"
-        )}
-      >
-        <span className="typo-ui text-foreground">{t("totalPrice")}</span>
-        <span className="typo-subtitle-1 text-accent-fg">
-          NT$ {totalPrice.toLocaleString("zh-TW")}
-        </span>
-      </div>
+          {/* Price Preview */}
+          <div
+            className={cn(
+              "flex items-center justify-between rounded-lg border border-border p-4"
+            )}
+          >
+            <span className="typo-ui text-foreground">{t("totalPrice")}</span>
+            <span className="typo-subtitle-1 text-foreground">
+              NT$ {totalPrice.toLocaleString("zh-TW")}
+            </span>
+          </div>
+        </>
+      )}
     </div>
   );
 };

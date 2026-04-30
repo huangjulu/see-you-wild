@@ -1,13 +1,13 @@
-import { getSupabase } from "@/lib/supabase/client";
-import { updateRegistrationSchema } from "@/lib/validations/registrations";
-import { apiOk } from "@/lib/api-response";
 import { handleError } from "@/lib/api/handle-error";
+import { apiOk } from "@/lib/api-response";
 import {
   AlreadyRegisteredError,
   InternalError,
   RegistrationNotFoundError,
 } from "@/lib/errors/domain";
 import { deleteRegistration } from "@/lib/services/registrations";
+import { getSupabase } from "@/lib/supabase/client";
+import { updateRegistrationSchema } from "@/lib/validations/registrations";
 
 interface RouteParams {
   params: Promise<{ id: string }>;

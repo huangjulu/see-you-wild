@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+
 import Tag from "@/components/ui/atoms/Tag";
 import { useLocale } from "@/lib/i18n/client";
+import { cn } from "@/lib/utils";
 
 interface EventCardProps {
   id: string;

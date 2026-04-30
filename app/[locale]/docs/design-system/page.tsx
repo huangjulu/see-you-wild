@@ -1,24 +1,25 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
-import Button from "@/components/ui/atoms/Button";
-import Calendar from "@/components/ui/atoms/Calendar";
-import EventCalendar from "@/components/ui/molecules/EventCalendar";
-import RadioOption from "@/components/ui/atoms/RadioOption";
-import Dialog from "@/components/ui/molecules/Dialog";
-import ModalCard from "@/components/ui/molecules/ModalCard";
-import Input from "@/components/ui/atoms/Input";
 import {
-  CheckCircle as IconCheckCircle,
   AlertCircle as IconAlertCircle,
   AlertTriangle as IconAlertTriangle,
-  Info as IconInfo,
-  X as IconX,
   ArrowRight as IconArrowRight,
-  Search as IconSearch,
+  CheckCircle as IconCheckCircle,
+  Info as IconInfo,
   Mail as IconMail,
+  Search as IconSearch,
+  X as IconX,
 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+
+import Button from "@/components/ui/atoms/Button";
+import Calendar from "@/components/ui/atoms/Calendar";
+import Input from "@/components/ui/atoms/Input";
+import RadioOption from "@/components/ui/atoms/RadioOption";
+import Dialog from "@/components/ui/molecules/Dialog";
+import EventCalendar from "@/components/ui/molecules/EventCalendar";
+import ModalCard from "@/components/ui/molecules/ModalCard";
+import { cn } from "@/lib/utils";
 
 const primary = {
   50: "#fef6ee",
@@ -77,17 +78,17 @@ const green = {
 } as const;
 
 const red = {
-  50: "#fdf3ef",
-  100: "#fbe4da",
-  200: "#f5c5b4",
-  300: "#ee9f84",
-  400: "#C46743", // base
-  500: "#d4764f",
-  600: "#b55636",
-  700: "#96432c",
-  800: "#7a3928",
-  900: "#653224",
-  950: "#371712",
+  50: "#fbeee9",
+  100: "#fadcd0",
+  200: "#f7b7a1",
+  300: "#ed8e67",
+  400: "#dc6737",
+  500: "#C74E1E", // base
+  600: "#a63b16",
+  700: "#892e14",
+  800: "#6c2514",
+  900: "#582014",
+  950: "#361009",
 } as const;
 
 /* ─── Semantic Tokens ─── */
@@ -97,20 +98,13 @@ const semantic = {
   foreground: neutral[800],
   muted: neutral[500],
   accent: primary[400],
-  "accent-hover": primary[500],
-  "accent-fg": neutral[800],
-  "button-bg": neutral[800],
-  "button-fg": "#ffffff",
-  "button-hover": neutral[700],
   surface: tertiary[50],
   "surface-brand": neutral[900],
-  "surface-brand-fg": neutral[100],
   border: neutral[200],
   "border-strong": neutral[300],
   ring: primary[200],
   success: green[500],
-  error: red[400],
-  warning: primary[500],
+  error: red[500],
   info: tertiary[400],
 } as const;
 
@@ -125,8 +119,8 @@ const toastVariants = {
   },
   error: {
     bg: neutral[50],
-    border: red[400],
-    icon: red[400],
+    border: red[500],
+    icon: red[500],
     text: neutral[800],
   },
   warning: {
@@ -367,7 +361,7 @@ const PalettePreviewPage: React.FC = () => {
 
       <h1 className="typo-heading mb-1 text-3xl">Design System Preview</h1>
       <p className="typo-ui mb-10 text-sm text-muted">
-        #f4f6f5 / #2d3a40 / #DE954E / #6B9DC2 / #1FAD87 / #C46743
+        #f4f6f5 / #2d3a40 / #DE954E / #6B9DC2 / #1FAD87 / #C74E1E
         ・確認後刪除此頁
       </p>
 
@@ -394,7 +388,7 @@ const PalettePreviewPage: React.FC = () => {
           scale={green}
           base={green[500]}
         />
-        <ScaleRow name="Red（磚紅 #C46743）" scale={red} base={red[400]} />
+        <ScaleRow name="Red（磚紅 #C74E1E）" scale={red} base={red[500]} />
       </section>
 
       {/* ═══ SEMANTIC TOKENS ═══ */}
@@ -1309,13 +1303,13 @@ const PalettePreviewPage: React.FC = () => {
   --color-green-900: ${green[900]};
   --color-green-950: ${green[950]};
 
-  /* ─── Red（磚紅 #C46743）─── */
+  /* ─── Red（磚紅 #C45E35）─── */
   --color-red-50:  ${red[50]};
   --color-red-100: ${red[100]};
   --color-red-200: ${red[200]};
   --color-red-300: ${red[300]};
-  --color-red-400: ${red[400]};   /* base */
-  --color-red-500: ${red[500]};
+  --color-red-400: ${red[400]};
+  --color-red-500: ${red[500]};   /* base */
   --color-red-600: ${red[600]};
   --color-red-700: ${red[700]};
   --color-red-800: ${red[800]};
@@ -1331,7 +1325,7 @@ const PalettePreviewPage: React.FC = () => {
   --color-surface-brand: ${neutral[900]};
   --color-border: ${neutral[200]};
   --color-success: ${green[500]};
-  --color-error: ${red[400]};
+  --color-error: ${red[500]};
   --color-warning: ${primary[500]};
   --color-info: ${tertiary[400]};
 

@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
-import { useTranslations } from "@/lib/i18n/client";
-import ModalCard from "@/components/ui/molecules/ModalCard";
-import EventCalendar from "@/components/ui/molecules/EventCalendar";
+import React, { useEffect, useMemo, useState } from "react";
+
 import RadioOption from "@/components/ui/atoms/RadioOption";
+import EventCalendar from "@/components/ui/molecules/EventCalendar";
+import ModalCard from "@/components/ui/molecules/ModalCard";
+import { useTranslations } from "@/lib/i18n/client";
+
 import type { PackageSelection } from "./packageOptions.types";
 
 interface PackageOptionsProps {
@@ -49,7 +51,7 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
       selectedPickup: null,
       isSelfArrival: true,
     });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   function notify(date: string | null, pickup: string | null, isSelf: boolean) {
     props.onSelectionChange({

@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+
 import HomeHeader from "@/components/ui/organisms/HomeHeader";
 import PageHeader from "@/components/ui/organisms/PageHeader";
 

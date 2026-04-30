@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useRef } from "react";
 import { SplitText } from "gsap/SplitText";
-import { useTimeline, ScrollTrigger } from "@/lib/gsap";
+import React, { useRef } from "react";
+
+import { ScrollTrigger, useTimeline } from "@/lib/gsap";
 
 const OpeningAnimation: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -94,7 +95,7 @@ const OpeningAnimation: React.FC = () => {
     >
       <div ref={brandRef} className="absolute z-10 text-center opacity-0">
         <h1
-          className="typo-display text-6xl md:text-6xl lg:text-7xl text-white leading-tight [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-accent-fg)_50%,transparent)]"
+          className="typo-display text-6xl md:text-6xl lg:text-7xl text-white leading-tight [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-foreground)_50%,transparent)]"
           aria-hidden="true"
         >
           See You Wild

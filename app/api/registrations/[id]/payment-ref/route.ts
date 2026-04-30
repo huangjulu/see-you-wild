@@ -1,7 +1,7 @@
-import { paymentRefSchema } from "@/lib/validations/registrations";
-import { submitPaymentRef } from "@/lib/services/registrations";
-import { apiOk } from "@/lib/api-response";
 import { handleError } from "@/lib/api/handle-error";
+import { apiOk } from "@/lib/api-response";
+import { submitPaymentRef } from "@/lib/services/registrations";
+import { paymentRefSchema } from "@/lib/validations/registrations";
 
 interface RouteParams {
   params: Promise<{ id: string }>;

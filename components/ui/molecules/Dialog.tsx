@@ -1,10 +1,11 @@
-import { cn } from "@/lib/utils";
-import { resolveSlots } from "@/lib/slot";
+import { X as IconX } from "lucide-react";
+
+import Button from "@/components/ui/atoms/Button";
 import Slot from "@/components/ui/atoms/Slot";
 import type { SlottableComponent } from "@/components/ui/atoms/slot.types";
+import { resolveSlots } from "@/lib/slot";
 import type { Override } from "@/lib/types";
-import Button from "@/components/ui/atoms/Button";
-import { X as IconX } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 /* ─── Slot Types ─── */
 

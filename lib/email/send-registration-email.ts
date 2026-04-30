@@ -1,7 +1,8 @@
-import { getResend } from "./client";
 import { getEnv } from "@/lib/env";
-import { paymentToken } from "@/lib/token";
 import { paymentAccount } from "@/lib/payment";
+import { paymentToken } from "@/lib/token";
+
+import { getResend } from "./client";
 
 interface SendRegistrationEmailParams {
   registrationId: string;

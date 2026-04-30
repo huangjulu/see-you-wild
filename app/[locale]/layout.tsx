@@ -2,15 +2,16 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
-import * as fonts from "@/lib/font.config";
-import { getTranslations } from "@/lib/i18n/server";
-import Footer from "@/components/ui/organisms/Footer";
+
 import HeaderSlot from "@/app/[locale]/_components/HeaderSlot";
 import GsapProvider from "@/components/providers/GsapProvider";
-import { isValidLocale } from "@/lib/i18n";
-import type { PageProps } from "@/lib/i18n";
-import { cn } from "@/lib/utils";
+import Footer from "@/components/ui/organisms/Footer";
 import { SITE_URL } from "@/lib/constants";
+import * as fonts from "@/lib/font.config";
+import type { PageProps } from "@/lib/i18n";
+import { isValidLocale } from "@/lib/i18n";
+import { getTranslations } from "@/lib/i18n/server";
+import { cn } from "@/lib/utils";
 
 /* ─── Layout ─── */
 

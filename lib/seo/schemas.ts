@@ -1,5 +1,5 @@
+import { INSTAGRAM_URL, SITE_URL } from "@/lib/constants";
 import type { Locale } from "@/lib/i18n";
-import { SITE_URL, INSTAGRAM_URL } from "@/lib/constants";
 
 async function getSeoData(locale: Locale) {
   switch (locale) {

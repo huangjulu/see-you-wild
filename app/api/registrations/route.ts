@@ -1,10 +1,10 @@
-import { getSupabase } from "@/lib/supabase/client";
-import { createRegistrationSchema } from "@/lib/validations/registrations";
-import { createRegistration } from "@/lib/services/registrations";
-import { createRegistrationNotifier } from "@/lib/services/notifier";
-import { apiOk } from "@/lib/api-response";
 import { handleError } from "@/lib/api/handle-error";
+import { apiOk } from "@/lib/api-response";
+import { createRegistrationNotifier } from "@/lib/services/notifier";
+import { createRegistration } from "@/lib/services/registrations";
+import { getSupabase } from "@/lib/supabase/client";
 import type { EventRow } from "@/lib/types/database";
+import { createRegistrationSchema } from "@/lib/validations/registrations";
 
 export async function POST(request: Request) {
   try {

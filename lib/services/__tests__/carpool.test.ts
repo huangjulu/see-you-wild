@@ -1,13 +1,13 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/lib/supabase/client", () => ({
   getSupabase: vi.fn(),
 }));
 
-import { getSupabase } from "@/lib/supabase/client";
-import { assignCarpool, buildAssignments } from "@/lib/services/carpool";
 import { EventNotFoundError, InternalError } from "@/lib/errors/domain";
+import { assignCarpool, buildAssignments } from "@/lib/services/carpool";
+import { getSupabase } from "@/lib/supabase/client";
 import type { EventRow, RegistrationRow } from "@/lib/types/database";
 
 const baseEvent: EventRow = {

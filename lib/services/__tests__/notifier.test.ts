@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/lib/email/send-registration-email", () => ({
   sendRegistrationEmail: vi.fn(),
@@ -8,8 +8,8 @@ vi.mock("@/lib/email/send-admin-notification", () => ({
   sendAdminNotification: vi.fn(),
 }));
 
-import { sendRegistrationEmail } from "@/lib/email/send-registration-email";
 import { sendAdminNotification } from "@/lib/email/send-admin-notification";
+import { sendRegistrationEmail } from "@/lib/email/send-registration-email";
 import { createRegistrationNotifier } from "@/lib/services/notifier";
 import type { EventRow, RegistrationRow } from "@/lib/types/database";
 

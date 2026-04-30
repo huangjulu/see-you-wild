@@ -1,7 +1,8 @@
 import Image from "next/image";
+
+import Button from "@/components/ui/atoms/Button";
 import Heading from "@/components/ui/atoms/Heading";
 import Text from "@/components/ui/atoms/Text";
-import Button from "@/components/ui/atoms/Button";
 import { getTranslations } from "@/lib/i18n/server";
 
 async function NotFound() {

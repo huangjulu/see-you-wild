@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { X as IconX } from "lucide-react";
+import { useEffect, useState } from "react";
+
 import { useTranslations } from "@/lib/i18n/client";
 
 const CookiePopup: React.FC = () => {

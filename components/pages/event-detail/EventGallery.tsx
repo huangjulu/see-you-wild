@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
-import { cn } from "@/lib/utils";
-import EventLightbox from "@/components/ui/molecules/EventLightbox";
 import {
   ChevronLeft as IconChevronLeft,
   ChevronRight as IconChevronRight,
 } from "lucide-react";
+import React, { useCallback, useState } from "react";
+
+import EventLightbox from "@/components/ui/molecules/EventLightbox";
+import { cn } from "@/lib/utils";
 
 interface EventGalleryProps {
   images: { src: string; alt: string }[];

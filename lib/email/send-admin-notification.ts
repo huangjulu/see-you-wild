@@ -1,5 +1,6 @@
-import { getResend } from "./client";
 import { getEnv } from "@/lib/env";
+
+import { getResend } from "./client";
 
 interface SendAdminNotificationParams {
   customerName: string;

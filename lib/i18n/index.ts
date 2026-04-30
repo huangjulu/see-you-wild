@@ -11,8 +11,8 @@ export type PageProps<T = {}> = {
 };
 
 export type {
-  Messages,
-  MessageNamespace,
   MessageKey,
+  MessageNamespace,
+  Messages,
   TranslationFunction,
 } from "./types";

@@ -1,12 +1,11 @@
-import { cn } from "@/lib/utils";
-import { resolveSlots } from "@/lib/slot";
+import { ArrowLeft as IconArrowLeft, X as IconX } from "lucide-react";
+
+import Button from "@/components/ui/atoms/Button";
 import Slot from "@/components/ui/atoms/Slot";
 import type { SlottableComponent } from "@/components/ui/atoms/slot.types";
+import { resolveSlots } from "@/lib/slot";
 import type { Override } from "@/lib/types";
-import Button from "@/components/ui/atoms/Button";
-import { X as IconX, ArrowLeft as IconArrowLeft } from "lucide-react";
-
-/* ─── Slot Types ─── */
+import { cn } from "@/lib/utils";
 
 type SlotProps = Override<
   React.ComponentProps<typeof Slot>,
@@ -25,25 +24,23 @@ type SlotProps = Override<
 
 type ModalCardSlot = SlotProps["slot"];
 
-/* ─── Sub-components ─── */
-
 interface ButtonProps extends React.ComponentPropsWithRef<typeof Button> {}
-
-function escToClose(node: HTMLButtonElement | null) {
-  if (node == null) return;
-  const el = node;
-  function onKeyDown(e: KeyboardEvent) {
-    if (e.key === "Escape") {
-      el.click();
-      el.blur();
-    }
-  }
-  document.addEventListener("keydown", onKeyDown);
-  return () => document.removeEventListener("keydown", onKeyDown);
-}
 
 const HeaderCloseButton: SlottableComponent<ButtonProps> = Object.assign(
   (props: ButtonProps) => {
+    function escToClose(node: HTMLButtonElement | null) {
+      if (node == null) return;
+      const el = node;
+      function onKeyDown(e: KeyboardEvent) {
+        if (e.key === "Escape") {
+          el.click();
+          el.blur();
+        }
+      }
+      document.addEventListener("keydown", onKeyDown);
+      return () => document.removeEventListener("keydown", onKeyDown);
+    }
+
     return (
       <Slot slot="header-close-button">
         <Button
@@ -121,12 +118,12 @@ const ModalCardHeader: SlottableComponent<ModalCardHeaderProps> = Object.assign(
                 "flex min-w-0 flex-1 flex-col justify-center self-stretch wrap-break-word [&>:nth-child(n+2)]:mt-auto"
               )}
             >
-              {props.title != null && (
-                <div className="typo-subtitle-1 text-primary-600">
+              {props.title && (
+                <div className="typo-sub-heading text-primary-600">
                   {props.title}
                 </div>
               )}
-              {props.description != null && (
+              {props.description && (
                 <div className="typo-body-2 text-black-60">
                   {props.description}
                 </div>
@@ -184,8 +181,6 @@ const ModalCardFooter: SlottableComponent<ModalCardFooterProps> = Object.assign(
   { slotName: "footer", displayName: "ModalCardFooter" }
 );
 
-/* ─── ModalCard ─── */
-
 interface ModalCardProps extends React.HTMLAttributes<HTMLDivElement> {
   ref?: React.Ref<HTMLDivElement>;
   className?: string;
@@ -201,7 +196,7 @@ const _ModalCard: React.FC<ModalCardProps> = (props) => {
       tabIndex={props.tabIndex}
       onClick={props.onClick}
       className={cn(
-        "grid grid-rows-[auto_1fr_auto] overflow-clip rounded-xl bg-surface border border-neutral-200 max-h-[90vh]",
+        "grid grid-rows-[auto_1fr_auto] overflow-clip rounded-xl bg-white border border-border shadow-sm",
         props.className
       )}
     >

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef, useId } from "react";
 import { Eye as IconEye, EyeOff as IconEyeOff } from "lucide-react";
+import { useId, useRef, useState } from "react";
+
 import { updateRef } from "@/lib/react-ref";
 import { cn } from "@/lib/utils";
 

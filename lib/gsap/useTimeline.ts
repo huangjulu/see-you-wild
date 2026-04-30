@@ -1,8 +1,9 @@
 "use client";
 
-import { type RefObject, useContext } from "react";
-import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { type RefObject, useContext } from "react";
+
 import { ReducedMotionContext } from "@/stores/motion";
 
 interface UseTimelineControl extends gsap.TimelineVars {

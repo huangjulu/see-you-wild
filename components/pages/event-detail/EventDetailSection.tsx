@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { cn } from "@/lib/utils";
+
 import ModalCard from "@/components/ui/molecules/ModalCard";
+import { cn } from "@/lib/utils";
 
 interface EventDetailSectionProps {
   title: string;

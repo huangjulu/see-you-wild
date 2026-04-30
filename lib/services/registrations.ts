@@ -1,5 +1,3 @@
-import { getSupabase } from "@/lib/supabase/client";
-import { paymentToken } from "@/lib/token";
 import {
   AlreadyRegisteredError,
   EventClosedError,
@@ -11,12 +9,14 @@ import {
   RegistrationNotFoundError,
   RegistrationPaidError,
 } from "@/lib/errors/domain";
-import type { CreateRegistrationInput } from "@/lib/validations/registrations";
+import { getSupabase } from "@/lib/supabase/client";
+import { paymentToken } from "@/lib/token";
 import type {
   EventRow,
   RegistrationRow,
   Transport,
 } from "@/lib/types/database";
+import type { CreateRegistrationInput } from "@/lib/validations/registrations";
 
 /**
  * Amount calculation strategies keyed by transport mode.

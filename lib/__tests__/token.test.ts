@@ -1,4 +1,5 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+
 import { createPaymentToken } from "@/lib/token";
 
 const tokenizer = createPaymentToken("test-secret-key-for-unit-tests");

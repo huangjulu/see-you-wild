@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
-import { useTranslations } from "@/lib/i18n/client";
+
 import Button from "@/components/ui/atoms/Button";
 import Heading from "@/components/ui/atoms/Heading";
 import Text from "@/components/ui/atoms/Text";
+import { useTranslations } from "@/lib/i18n/client";
 
 type LocaleErrorProps = {
   error: Error & { digest?: string };

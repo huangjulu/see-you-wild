@@ -1,9 +1,10 @@
 "use client";
 
+import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useGSAP } from "@gsap/react";
 import { useSyncExternalStore } from "react";
+
 import { ReducedMotionContext } from "@/stores/motion";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);

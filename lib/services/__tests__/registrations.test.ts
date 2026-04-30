@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/lib/supabase/client", () => ({
   getSupabase: vi.fn(),
@@ -9,14 +9,6 @@ vi.mock("@/lib/token", () => ({
   paymentToken: vi.fn(),
 }));
 
-import { getSupabase } from "@/lib/supabase/client";
-import { paymentToken } from "@/lib/token";
-import {
-  createRegistration,
-  createRegistrationService,
-  deleteRegistration,
-  submitPaymentRef,
-} from "@/lib/services/registrations";
 import {
   AlreadyRegisteredError,
   EventClosedError,
@@ -28,8 +20,16 @@ import {
   RegistrationNotFoundError,
   RegistrationPaidError,
 } from "@/lib/errors/domain";
-import type { CreateRegistrationInput } from "@/lib/validations/registrations";
+import {
+  createRegistration,
+  createRegistrationService,
+  deleteRegistration,
+  submitPaymentRef,
+} from "@/lib/services/registrations";
+import { getSupabase } from "@/lib/supabase/client";
+import { paymentToken } from "@/lib/token";
 import type { EventRow } from "@/lib/types/database";
+import type { CreateRegistrationInput } from "@/lib/validations/registrations";
 
 const baseEvent: EventRow = {
   id: "evt-1",

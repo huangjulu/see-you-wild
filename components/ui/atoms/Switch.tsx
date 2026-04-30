@@ -1,7 +1,5 @@
 import { cn } from "@/lib/utils";
 
-/* eslint-disable jsx-a11y/no-noninteractive-element-to-interactive-role */
-
 type SwitchProps = React.ComponentProps<"input">;
 
 const Switch: React.FC<SwitchProps> = (props) => {

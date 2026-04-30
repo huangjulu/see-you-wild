@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useRef } from "react";
-import { useTranslations } from "@/lib/i18n/client";
-import { ScrollTrigger, useTimeline, useTween } from "@/lib/gsap";
+
 import JourneyCard from "@/components/pages/home/JourneyCard";
 import Button from "@/components/ui/atoms/Button";
+import { ScrollTrigger, useTimeline, useTween } from "@/lib/gsap";
+import { useTranslations } from "@/lib/i18n/client";
 
 const JourneysSection: React.FC = () => {
   const t = useTranslations("home.journeys");
@@ -59,17 +60,17 @@ const JourneysSection: React.FC = () => {
         <div className="max-w-7xl mx-auto w-full px-6 md:px-12 mb-10">
           <div className="flex items-end justify-between">
             <div>
-              <p className="typo-overline text-sm mb-4 text-surface-brand-fg/70">
+              <p className="typo-overline text-sm mb-4 text-white/70">
                 {t("overline")}
               </p>
-              <h2 className="typo-display text-4xl md:text-5xl text-surface-brand-fg">
+              <h2 className="typo-display text-4xl md:text-5xl text-white">
                 {t("title")}
               </h2>
             </div>
             <Button
               theme="link"
               href="/events"
-              className="text-surface-brand-fg/70 hover:text-surface-brand-fg"
+              className="text-white/70 hover:text-white"
             >
               {t("exploreMore")}
             </Button>

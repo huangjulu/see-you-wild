@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { useTranslations } from "@/lib/i18n/client";
 
-import EventGallery from "@/components/pages/event-detail/EventGallery";
 import EventDetailSection from "@/components/pages/event-detail/EventDetailSection";
+import EventGallery from "@/components/pages/event-detail/EventGallery";
 import EventPriceSidebar from "@/components/pages/event-detail/EventPriceSidebar";
 import PackageOptions from "@/components/pages/event-detail/PackageOptions";
-import RegistrationModal from "@/components/ui/organisms/RegistrationModal";
 import type { PackageSelection } from "@/components/pages/event-detail/packageOptions.types";
+import RegistrationModal from "@/components/ui/organisms/RegistrationModal";
+import { useTranslations } from "@/lib/i18n/client";
 import type { MockEventDetail } from "@/server/mockdata/mock-events";
 
 interface EventDetailTemplateProps {
@@ -39,7 +39,7 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
     <main className="bg-linear-180 md:bg-radial-[at_top_left] from-primary-100 from-20% via-40% via-cyan-50 to-surface to-80% pb-24 md:pb-16">
       {/* Title + description — pt-24 clears fixed Header */}
       <div className="mx-auto max-w-7xl px-6 md:px-12 pt-24 md:pt-28">
-        <h1 className="typo-heading text-3xl md:text-4xl text-accent-fg mb-2">
+        <h1 className="typo-heading text-3xl md:text-4xl text-foreground mb-2">
           {event.title}
         </h1>
         <p className="typo-body text-sm text-muted">

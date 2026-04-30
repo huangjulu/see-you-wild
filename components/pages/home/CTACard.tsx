@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { useReducedMotion } from "@/stores/motion";
+import { useEffect, useRef } from "react";
+
 import Button from "@/components/ui/atoms/Button";
+import { useReducedMotion } from "@/stores/motion";
 
 interface CTACardProps {
   imageSrc: string;

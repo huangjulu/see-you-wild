@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { ScrollTrigger, useTimeline } from "@/lib/gsap";
-import { useReducedMotion } from "@/stores/motion";
-import { useTranslations } from "@/lib/i18n/client";
+import React, { useEffect, useRef } from "react";
+
 import TestimonialCard from "@/components/pages/home/TestimonialCard";
+import { ScrollTrigger, useTimeline } from "@/lib/gsap";
+import { useTranslations } from "@/lib/i18n/client";
+import { useReducedMotion } from "@/stores/motion";
 
 const GHOST_PARALLAX_FACTOR = -25; // 背景反向
 const REPEL_RANGE = 320; // 卡片感應鼠標的半徑（px），超出不反應
@@ -148,7 +149,7 @@ const TestimonialsSection: React.FC = () => {
         {/* Content */}
         <div className="relative z-10 max-w-6xl mx-auto">
           <div className="text-center mb-20">
-            <p className="typo-overline text-sm mb-4 text-muted-warm">
+            <p className="typo-overline text-sm mb-4 text-primary-500">
               {t("overline")}
             </p>
             <h2 className="typo-display text-4xl md:text-5xl text-foreground">

@@ -1,8 +1,9 @@
 "use client";
 
-import { type RefObject, useContext } from "react";
-import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { type RefObject, useContext } from "react";
+
 import { ReducedMotionContext } from "@/stores/motion";
 
 /** scrollTrigger.trigger 擴充為也接受 RefObject，useTween 內部會解析成 .current */

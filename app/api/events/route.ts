@@ -1,13 +1,13 @@
-import { getSupabase } from "@/lib/supabase/client";
-import { createEventSchema } from "@/lib/validations/events";
-import { apiOk } from "@/lib/api-response";
 import { handleError } from "@/lib/api/handle-error";
+import { apiOk } from "@/lib/api-response";
 import { InternalError } from "@/lib/errors/domain";
+import { getSupabase } from "@/lib/supabase/client";
 import type {
-  EventRow,
   EventListDto,
+  EventRow,
   RegistrationSummaryDto,
 } from "@/lib/types/database";
+import { createEventSchema } from "@/lib/validations/events";
 
 export async function GET() {
   try {

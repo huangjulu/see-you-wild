@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
 import { Search as IconSearch } from "lucide-react";
+import React from "react";
+
 import Input from "@/components/ui/atoms/Input";
 
 interface EventSearchBarProps {

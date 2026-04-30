@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useMemo, useState } from "react";
+
 import EventCard from "@/components/ui/molecules/EventCard";
 import EventSearchBar from "@/components/ui/molecules/EventSearchBar";
 import type { MockEvent } from "@/server/mockdata/mock-events";

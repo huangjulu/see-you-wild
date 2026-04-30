@@ -1,5 +1,5 @@
-import { getSupabase } from "@/lib/supabase/client";
 import { EventNotFoundError, InternalError } from "@/lib/errors/domain";
+import { getSupabase } from "@/lib/supabase/client";
 import type { EventRow, RegistrationRow } from "@/lib/types/database";
 
 interface CarpoolAssignment {

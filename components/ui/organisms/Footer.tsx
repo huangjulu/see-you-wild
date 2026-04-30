@@ -1,7 +1,8 @@
-import { getTranslations } from "@/lib/i18n/server";
-import LargeBrandText from "../molecules/LargeBrandText";
 import SocialIcon from "@/components/ui/atoms/SocialIcon";
 import { INSTAGRAM_URL } from "@/lib/constants";
+import { getTranslations } from "@/lib/i18n/server";
+
+import LargeBrandText from "../molecules/LargeBrandText";
 
 const Footer: React.FC = async () => {
   const t = await getTranslations("common");

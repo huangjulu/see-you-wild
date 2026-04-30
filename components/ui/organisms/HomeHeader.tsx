@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Menu as IconMenu, X as IconX } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useTranslations, useLocale } from "@/lib/i18n/client";
+import { useEffect, useState } from "react";
+
 import Button from "@/components/ui/atoms/Button";
 import Logo from "@/components/ui/atoms/Logo";
 import { NAV_ANCHORS } from "@/lib/constants";
 import { useScrolled } from "@/lib/hooks/useScrolled";
+import { useLocale, useTranslations } from "@/lib/i18n/client";
+import { cn } from "@/lib/utils";
 
 const NAV_LINK_CLASS =
   "text-sm hover:[text-shadow:0_0.5px_16px_color-mix(in_srgb,var(--color-primary-800)_80%,transparent)] hover:text-white focus-visible:opacity-100 focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-current rounded-sm";
@@ -45,7 +46,7 @@ const HomeHeader: React.FC = () => {
           aria-label={t("siteName")}
         >
           <Logo size="sm" />
-          <span className="font-serif text-lg font-semibold hidden sm:inline [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-accent-fg)_50%,transparent)]">
+          <span className="font-serif text-lg font-semibold hidden sm:inline [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-foreground)_50%,transparent)]">
             {t("siteName")}
           </span>
         </a>
@@ -112,7 +113,7 @@ const HomeHeader: React.FC = () => {
         ))}
         <a
           href="/events"
-          className="typo-ui rounded-full bg-accent px-5 py-2 text-center text-xs tracking-widest text-white transition-all duration-300 hover:bg-accent-hover"
+          className="typo-ui rounded-full bg-accent px-5 py-2 text-center text-xs tracking-widest text-white transition-all duration-300 hover:bg-primary-500"
           onClick={() => setMenuOpen(false)}
         >
           {t("nav.exploreCta")}

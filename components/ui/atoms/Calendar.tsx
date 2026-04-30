@@ -1,19 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
-import {
-  DayPicker,
-  type DayButton as DayButtonType,
-  type Matcher,
-  type MonthCaptionProps,
-  type ClassNames,
-} from "react-day-picker";
-import { zhTW } from "react-day-picker/locale";
-import { cn } from "@/lib/utils";
 import {
   ChevronLeft as IconChevronLeft,
   ChevronRight as IconChevronRight,
 } from "lucide-react";
+import React, { useState } from "react";
+import {
+  type ClassNames,
+  type DayButton as DayButtonType,
+  DayPicker,
+  type Matcher,
+  type MonthCaptionProps,
+} from "react-day-picker";
+import { zhTW } from "react-day-picker/locale";
+
+import { cn } from "@/lib/utils";
 
 /* ─── Types ─── */
 
@@ -102,7 +103,7 @@ function CalendarDayButton(props: CalendarDayButtonProps) {
         "hover:bg-primary-50 hover:border-primary-100 ",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-1",
         "data-[selected-single=true]:bg-primary-50 data-[selected-single=true]:border-primary-300 data-[selected-single=true]:ring data-[selected-single=true]:ring-primary-200",
-        "hover:data-[selected-single=true]:bg-primary-100 hover:data-[selected-single=true]:text-accent-hover",
+        "hover:data-[selected-single=true]:bg-primary-100 hover:data-[selected-single=true]:text-primary-500",
         size === "lg" && "justify-start pt-2",
         ...markerStyles,
         className
@@ -199,7 +200,7 @@ const Calendar: React.FC<CalendarProps> = (props) => {
             onClick={() => setExpanded(true)}
             className={cn(
               "w-full rounded-lg bg-primary-50 py-2 text-center typo-ui text-sm text-accent transition-all flex gap-2 items-center justify-center border border-primary-200",
-              "hover:bg-primary-100 hover:text-accent-hover"
+              "hover:bg-primary-100 hover:text-primary-500"
             )}
           >
             {props.expandLabel}

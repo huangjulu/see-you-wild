@@ -17,7 +17,7 @@ const JourneyCard: React.FC<JourneyCardProps> = (props) => {
       />
       <div className="absolute inset-0 bg-linear-sto-t from-black/70 via-black/20 to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 p-6">
-        <p className="typo-overline text-sm mb-2 text-muted-warm">
+        <p className="typo-overline text-sm mb-2 text-primary-500">
           {props.subtitle}
         </p>
         <h3 className="typo-heading text-2xl text-white">{props.title}</h3>

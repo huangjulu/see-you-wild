@@ -1,8 +1,7 @@
 "use client";
 
-import React from "react";
-import { useTranslations } from "@/lib/i18n/client";
 import Button from "@/components/ui/atoms/Button";
+import { useTranslations } from "@/lib/i18n/client";
 
 interface EventPriceSidebarProps {
   basePrice: number;
@@ -25,7 +24,7 @@ const EventPriceSidebar: React.FC<EventPriceSidebarProps> = (props) => {
     <>
       {/* Desktop: sticky sidebar */}
       <aside className="hidden md:block self-start sticky top-24">
-        <div className="rounded-2xl border border-border bg-surface p-6 space-y-4 shadow-sm">
+        <div className="rounded-2xl border border-border bg-white p-6 space-y-4 shadow-sm">
           <div>
             <p className="typo-ui text-sm text-muted">{t("price")}</p>
             <p className="typo-heading text-3xl text-foreground">
@@ -49,7 +48,7 @@ const EventPriceSidebar: React.FC<EventPriceSidebarProps> = (props) => {
           >
             <span>{t("bookNow")}</span>
             {dateLabel != null && (
-              <span className="pl-2 typo-body opacity-80">· {dateLabel}</span>
+              <span className="pl-2 typo-body opacity-80">{dateLabel}</span>
             )}
           </Button>
           {disabled && (
@@ -83,8 +82,6 @@ const EventPriceSidebar: React.FC<EventPriceSidebarProps> = (props) => {
 
 EventPriceSidebar.displayName = "EventPriceSidebar";
 export default EventPriceSidebar;
-
-/* ─── Helpers ─── */
 
 const WEEKDAYS_ZH = ["日", "一", "二", "三", "四", "五", "六"];
 
