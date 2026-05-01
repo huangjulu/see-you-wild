@@ -26,7 +26,7 @@ const Button: React.FC<ButtonProps> = (props) => {
     case "solid":
       themeClass = cn(
         BOX_LAYOUT,
-        "bg-fill-brand text-on-fill-brand border-transparent hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/30"
+        "bg-fill-brand text-on-surface-brand border-transparent hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/30"
       );
       break;
     case "danger":

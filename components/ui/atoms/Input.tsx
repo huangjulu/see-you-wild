@@ -147,11 +147,11 @@ const BaseInput: React.FC<BaseInputProps> = (props) => {
             "placeholder:text-neutral-200",
             "hover:border-stroke-strong hover:disabled:border-stroke-default",
             "focus:border-accent focus:ring-2 focus:ring-brand-200/70 focus-visible:outline-none",
-            "data-touched:invalid:border-error data-touched:invalid:ring-error/20 data-touched:invalid:focus:border-error",
+            "data-touched:invalid:border-critical data-touched:invalid:ring-critical/20 data-touched:invalid:focus:border-critical",
             "read-only:bg-neutral-100 read-only:text-secondary",
             "disabled:opacity-50 disabled:cursor-not-allowed",
             props.error != null &&
-              "border-error ring-error/20 focus:border-error",
+              "border-critical ring-critical/20 focus:border-critical",
             leftPadding,
             rightPadding,
             props.className
