@@ -304,7 +304,7 @@ const sections = [
   { id: "semantic-tokens", label: "Semantic Tokens" },
   { id: "typography", label: "Typography" },
   { id: "buttons", label: "Buttons" },
-  { id: "slot-components", label: "Dialog / ModalCard" },
+  { id: "slot-components", label: "Dialog / ModalCard / Calendar" },
   { id: "input", label: "Input" },
   { id: "shadcn-components", label: "shadcn/ui Components" },
   { id: "section-rhythm", label: "Section Rhythm" },
@@ -721,54 +721,155 @@ const PalettePreviewPage: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* ─── Calendar ─── */}
+        <div className="mt-10">
+          <h3 className="typo-ui mb-4 text-sm text-primary">Calendar</h3>
+
+          {/* Slot 組合 */}
+          <p className="typo-ui mb-3 text-xs text-neutral-400">
+            Slot 組合（Navi + Grid）
+          </p>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 mb-8">
+            <div className="space-y-2">
+              <p className="typo-ui text-xs text-secondary">
+                完整組合（Chevrons + Caption label）
+              </p>
+              <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)}>
+                <Calendar.Navi>
+                  <Calendar.Chevrons />
+                  <Calendar.Caption layout="label" />
+                </Calendar.Navi>
+                <Calendar.Grid type="month" />
+              </Calendar>
+            </div>
+            <div className="space-y-2">
+              <p className="typo-ui text-xs text-secondary">
+                Caption dropdown（無 Chevrons）
+              </p>
+              <Calendar
+                mode="single"
+                size="sm"
+                defaultMonth={new Date(2026, 4, 1)}
+                startMonth={new Date(2024, 0)}
+                endMonth={new Date(2028, 11)}
+              >
+                <Calendar.Navi>
+                  <Calendar.Caption layout="dropdown" />
+                </Calendar.Navi>
+                <Calendar.Grid type="month" />
+              </Calendar>
+            </div>
+            <div className="space-y-2">
+              <p className="typo-ui text-xs text-secondary">
+                無 children（default）
+              </p>
+              <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)} />
+            </div>
+          </div>
+
+          {/* 尺寸展開 */}
+          <p className="typo-ui mb-3 text-xs text-neutral-400">
+            尺寸（sm / md / lg）
+          </p>
+          <div className="flex flex-wrap items-start gap-6 mb-8">
+            <div className="space-y-2">
+              <p className="typo-ui text-xs text-secondary">sm</p>
+              <Calendar
+                mode="single"
+                size="sm"
+                defaultMonth={new Date(2026, 4, 1)}
+              >
+                <Calendar.Grid type="month" />
+              </Calendar>
+            </div>
+            <div className="space-y-2">
+              <p className="typo-ui text-xs text-secondary">md</p>
+              <Calendar
+                mode="single"
+                size="md"
+                defaultMonth={new Date(2026, 4, 1)}
+              >
+                <Calendar.Grid type="month" />
+              </Calendar>
+            </div>
+            <div className="space-y-2">
+              <p className="typo-ui text-xs text-secondary">lg</p>
+              <Calendar
+                mode="single"
+                size="lg"
+                defaultMonth={new Date(2026, 4, 1)}
+              >
+                <Calendar.Grid type="month" />
+              </Calendar>
+            </div>
+          </div>
+
+          {/* Grid type */}
+          <p className="typo-ui mb-3 text-xs text-neutral-400">
+            Grid type（month / week / biweek）
+          </p>
+          <div className="flex flex-wrap items-start gap-6 mb-8">
+            <div className="space-y-2">
+              <p className="typo-ui text-xs text-secondary">
+                month（fixedWeeks）
+              </p>
+              <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)}>
+                <Calendar.Grid type="month" />
+              </Calendar>
+            </div>
+            <div className="space-y-2">
+              <p className="typo-ui text-xs text-secondary">
+                biweek + expandLabel
+              </p>
+              <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)}>
+                <Calendar.Grid type="biweek" expandLabel="展開完整月份" />
+              </Calendar>
+            </div>
+            <div className="space-y-2">
+              <p className="typo-ui text-xs text-secondary">week</p>
+              <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)}>
+                <Calendar.Grid type="week" expandLabel="展開完整月份" />
+              </Calendar>
+            </div>
+          </div>
+
+          {/* Markers (EventCalendar) */}
+          <p className="typo-ui mb-3 text-xs text-neutral-400">
+            EventCalendar（markers: available / full）
+          </p>
+          <div className="flex flex-wrap gap-6">
+            <div className="space-y-2">
+              <p className="typo-ui text-xs text-secondary">Available dates</p>
+              <EventCalendar
+                availableDates={[
+                  new Date(2026, 4, 18),
+                  new Date(2026, 4, 25),
+                  new Date(2026, 5, 8),
+                ]}
+                defaultMonth={new Date(2026, 4, 1)}
+              />
+            </div>
+            <div className="space-y-2">
+              <p className="typo-ui text-xs text-secondary">biweek + markers</p>
+              <EventCalendar
+                availableDates={[
+                  new Date(2026, 4, 18),
+                  new Date(2026, 4, 25),
+                  new Date(2026, 5, 8),
+                ]}
+                gridType="biweek"
+                expandLabel="查看更多日期"
+                defaultMonth={new Date(2026, 4, 1)}
+              />
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* ═══ SHADCN/UI COMPONENTS ═══ */}
       <section id="shadcn-components" className="mb-16">
         <SectionLabel>shadcn/ui Components</SectionLabel>
-
-        {/* ─── Calendar ─── */}
-        <div className="mb-10">
-          <h3 className="typo-ui mb-4 text-sm text-primary">Calendar</h3>
-          <div className="flex flex-wrap gap-8">
-            <div className="flex flex-col gap-2">
-              <p className="typo-ui text-xs text-secondary">Single date</p>
-              <Calendar mode="single" defaultMonth={new Date(2026, 3, 1)} />
-            </div>
-            <div className="flex flex-col gap-2">
-              <p className="typo-ui text-xs text-secondary">
-                Compact (2 weeks)
-              </p>
-              <Calendar
-                mode="single"
-                defaultMonth={new Date(2026, 3, 1)}
-                visibleWeeks={2}
-                expandLabel="展開完整月份"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* ─── EventCalendar ─── */}
-        <div className="mb-10">
-          <h3 className="typo-ui mb-4 text-sm text-primary">EventCalendar</h3>
-          <div className="flex flex-wrap gap-8">
-            <div className="flex flex-col gap-2">
-              <p className="typo-ui text-xs text-secondary">
-                Available dates only
-              </p>
-              <EventCalendar
-                availableDates={[
-                  new Date(2026, 3, 22),
-                  new Date(2026, 3, 25),
-                  new Date(2026, 3, 28),
-                  new Date(2026, 4, 3),
-                ]}
-                defaultMonth={new Date(2026, 3, 1)}
-              />
-            </div>
-          </div>
-        </div>
 
         {/* ─── RadioOption ─── */}
         <div className="mb-10">
