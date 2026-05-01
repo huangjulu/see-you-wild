@@ -116,7 +116,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
     >
       <FormProvider {...methods}>
         <ModalCard
-          ref={useCallback((node) => {
+          ref={useCallback((node: HTMLDivElement | null) => {
             node?.focus();
             return () => {};
           }, [])}

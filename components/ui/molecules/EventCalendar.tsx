@@ -4,18 +4,16 @@ import React, { useMemo } from "react";
 
 import Calendar from "@/components/ui/atoms/Calendar";
 
-type CalendarSize = "sm" | "md" | "lg";
+type BaseCalendarProps = React.ComponentProps<typeof Calendar>;
 
-interface EventCalendarProps {
-  size?: CalendarSize;
-  value?: Date;
-  onChange?: (date: Date | undefined) => void;
+interface EventCalendarProps extends Pick<
+  BaseCalendarProps,
+  "size" | "value" | "onChange" | "defaultMonth" | "className"
+> {
   availableDates?: Date[];
   minAdvanceDays?: number;
-  gridType?: "month" | "week" | "biweek";
+  gridType?: React.ComponentProps<typeof Calendar.Grid>["type"];
   expandLabel?: string;
-  defaultMonth?: Date;
-  className?: string;
 }
 
 const EventCalendar: React.FC<EventCalendarProps> = (props) => {
