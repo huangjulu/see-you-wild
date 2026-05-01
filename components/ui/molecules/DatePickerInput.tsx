@@ -2,11 +2,10 @@
 
 import { Calendar as IconCalendar } from "lucide-react";
 import { ChevronDownIcon } from "lucide-react";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import type { DropdownProps } from "react-day-picker";
-import { zhTW } from "react-day-picker/locale";
 
-import { Calendar } from "@/components/ui/calendar";
+import Calendar from "@/components/ui/atoms/Calendar";
 import {
   Popover,
   PopoverContent,
@@ -77,16 +76,21 @@ const DatePickerInput: React.FC<DatePickerInputProps> = (props) => {
           <span>{displayValue || props.placeholder}</span>
           <IconCalendar className="size-4 text-secondary" />
         </PopoverTrigger>
-        <PopoverContent align="start" className="w-auto p-0">
+        <PopoverContent
+          align="start"
+          sideOffset={8}
+          className="w-auto rounded-xl p-0 ring-0"
+        >
           <Calendar
             mode="single"
-            selected={selectedDate}
-            onSelect={handleSelect}
+            size="sm"
+            value={selectedDate}
+            onChange={handleSelect}
             captionLayout="dropdown"
             defaultMonth={selectedDate ?? new Date(2000, 0)}
             startMonth={new Date(startYear, 0)}
             endMonth={new Date(endYear, 11)}
-            locale={zhTW}
+            className="border-0 rounded-none"
             components={{
               Dropdown: CalendarSelectDropdown,
             }}
@@ -108,7 +112,7 @@ export default DatePickerInput;
 function CalendarSelectDropdown(props: DropdownProps): React.JSX.Element {
   const { options, value, onChange, "aria-label": ariaLabel } = props;
   const [listOpen, setListOpen] = useState(false);
-  const containerRef = React.useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const selectedLabel = options?.find(
     (o) => o.value.toString() === value?.toString()
@@ -141,7 +145,7 @@ function CalendarSelectDropdown(props: DropdownProps): React.JSX.Element {
         <ChevronDownIcon className="size-3 text-secondary" />
       </button>
       {listOpen && (
-        <div className="absolute top-full left-0 z-[200] mt-1 max-h-52 min-w-20 overflow-y-auto rounded-lg bg-white p-1 shadow-lg ring-1 ring-primary/10">
+        <div className="absolute top-full left-0 z-200 mt-1 max-h-52 min-w-20 overflow-y-auto rounded-lg bg-white p-1 shadow-lg ring-1 ring-primary/10">
           {options?.map((option) => (
             <button
               key={option.value}
