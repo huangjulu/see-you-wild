@@ -3,7 +3,6 @@
 import React, { useMemo } from "react";
 
 import Calendar from "@/components/ui/atoms/Calendar";
-import { cn } from "@/lib/utils";
 
 type CalendarSize = "sm" | "md" | "lg";
 
@@ -13,7 +12,7 @@ interface EventCalendarProps {
   onChange?: (date: Date | undefined) => void;
   availableDates?: Date[];
   minAdvanceDays?: number;
-  visibleWeeks?: 1 | 2 | 3 | 4;
+  gridType?: "month" | "week" | "biweek";
   expandLabel?: string;
   defaultMonth?: Date;
   className?: string;
@@ -76,6 +75,8 @@ const EventCalendar: React.FC<EventCalendarProps> = (props) => {
     props.onChange?.(date);
   };
 
+  const gridType = props.gridType ?? "month";
+
   return (
     <Calendar
       mode="single"
@@ -86,9 +87,13 @@ const EventCalendar: React.FC<EventCalendarProps> = (props) => {
       defaultMonth={props.defaultMonth}
       className={props.className}
       markers={markers}
-      visibleWeeks={props.visibleWeeks}
-      expandLabel={props.expandLabel}
-    />
+    >
+      <Calendar.Navi>
+        <Calendar.Chevrons />
+        <Calendar.Caption layout="label" />
+      </Calendar.Navi>
+      <Calendar.Grid type={gridType} expandLabel={props.expandLabel} />
+    </Calendar>
   );
 };
 

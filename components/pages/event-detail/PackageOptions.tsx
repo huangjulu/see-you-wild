@@ -104,7 +104,7 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
             onChange={handleDateSelect}
             availableDates={availableDateObjects}
             minAdvanceDays={3}
-            visibleWeeks={2}
+            gridType="biweek"
             expandLabel="展開完整月份"
             defaultMonth={defaultMonth}
           />
