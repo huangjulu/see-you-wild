@@ -74,11 +74,7 @@ const DatePickerInput: React.FC<DatePickerInputProps> = (props) => {
           <span>{displayValue || props.placeholder}</span>
           <IconCalendar className="size-4 text-secondary" />
         </PopoverTrigger>
-        <PopoverContent
-          align="start"
-          sideOffset={8}
-          className="w-auto rounded-xl p-0 ring-0"
-        >
+        <PopoverContent className="w-auto rounded-xl p-0 ring-0">
           <Calendar
             mode="single"
             size="sm"
