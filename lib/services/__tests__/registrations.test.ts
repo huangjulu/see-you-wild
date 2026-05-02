@@ -9,6 +9,16 @@ vi.mock("@/lib/token", () => ({
   paymentToken: vi.fn(),
 }));
 
+vi.mock("@/lib/email/send-registration-success-email", () => ({
+  sendRegistrationSuccessEmail: vi.fn(),
+}));
+
+vi.mock("@/lib/email/send-registration-failed-email", () => ({
+  sendRegistrationFailedEmail: vi.fn(),
+}));
+
+import { sendRegistrationFailedEmail } from "@/lib/email/send-registration-failed-email";
+import { sendRegistrationSuccessEmail } from "@/lib/email/send-registration-success-email";
 import {
   AlreadyRegisteredError,
   EventClosedError,
@@ -16,6 +26,7 @@ import {
   HasCarpoolAssignmentError,
   InternalError,
   InvalidTokenError,
+  RegistrationAlreadyReviewedError,
   RegistrationExpiredError,
   RegistrationNotFoundError,
   RegistrationPaidError,
@@ -24,6 +35,7 @@ import {
   createRegistration,
   createRegistrationService,
   deleteRegistration,
+  reviewPayment,
   submitPaymentRef,
 } from "@/lib/services/registrations";
 import { getSupabase } from "@/lib/supabase/client";
@@ -60,6 +72,20 @@ function makeUpdateChain(result: { error: unknown }) {
   return {
     update: () => ({
       eq: vi.fn().mockResolvedValue(result),
+    }),
+  };
+}
+
+function makeOptimisticUpdateChain(result: { data: unknown; error: unknown }) {
+  return {
+    update: () => ({
+      eq: () => ({
+        eq: () => ({
+          select: () => ({
+            single: vi.fn().mockResolvedValue(result),
+          }),
+        }),
+      }),
     }),
   };
 }
@@ -507,5 +533,215 @@ describe("deleteRegistration", () => {
     } as unknown as SupabaseClient);
 
     await expect(deleteRegistration("reg-1")).resolves.toBeUndefined();
+  });
+});
+
+describe("reviewPayment", () => {
+  const baseRegistration = {
+    id: "reg-1",
+    name: "Test User",
+    email: "test@example.com",
+    event_id: "evt-1",
+    status: "pending",
+  };
+
+  const baseEvent = { title: "Test event" };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(sendRegistrationSuccessEmail).mockResolvedValue(undefined);
+    vi.mocked(sendRegistrationFailedEmail).mockResolvedValue(undefined);
+    // PaymentToken returned by paymentToken() exposes more methods than tests use;
+    // we only need .generate() for the failed path, narrowing via unknown is acceptable.
+    vi.mocked(paymentToken).mockReturnValue({
+      generate: vi.fn().mockReturnValue("mock-token"),
+      verify: vi.fn().mockReturnValue(true),
+    } as unknown as ReturnType<typeof paymentToken>);
+  });
+
+  it("registration 不存在時 throw RegistrationNotFoundError", async () => {
+    setupSupabaseMock([
+      makeSingleChain({ data: null, error: { message: "not found" } }),
+    ]);
+
+    await expect(
+      reviewPayment({
+        registrationId: "reg-not-exist",
+        status: "paid",
+        baseUrl: "https://seeyouwild.com",
+      })
+    ).rejects.toThrow(RegistrationNotFoundError);
+  });
+
+  it("registration.status='paid' 時 throw RegistrationAlreadyReviewedError", async () => {
+    setupSupabaseMock([
+      makeSingleChain({
+        data: { ...baseRegistration, status: "paid" },
+        error: null,
+      }),
+    ]);
+
+    await expect(
+      reviewPayment({
+        registrationId: "reg-1",
+        status: "paid",
+        baseUrl: "https://seeyouwild.com",
+      })
+    ).rejects.toThrow(RegistrationAlreadyReviewedError);
+  });
+
+  it("registration.status='failed' 時 throw RegistrationAlreadyReviewedError", async () => {
+    setupSupabaseMock([
+      makeSingleChain({
+        data: { ...baseRegistration, status: "failed" },
+        error: null,
+      }),
+    ]);
+
+    await expect(
+      reviewPayment({
+        registrationId: "reg-1",
+        status: "paid",
+        baseUrl: "https://seeyouwild.com",
+      })
+    ).rejects.toThrow(RegistrationAlreadyReviewedError);
+  });
+
+  it("event 不存在時 throw EventNotFoundError", async () => {
+    setupSupabaseMock([
+      makeSingleChain({ data: baseRegistration, error: null }),
+      makeSingleChain({ data: null, error: { message: "event not found" } }),
+    ]);
+
+    await expect(
+      reviewPayment({
+        registrationId: "reg-1",
+        status: "paid",
+        baseUrl: "https://seeyouwild.com",
+      })
+    ).rejects.toThrow(EventNotFoundError);
+  });
+
+  it("status='paid' 成功 → 回傳 { registrationId, status: 'paid' }，sendRegistrationSuccessEmail 被呼叫", async () => {
+    setupSupabaseMock([
+      makeSingleChain({ data: baseRegistration, error: null }),
+      makeSingleChain({ data: baseEvent, error: null }),
+      makeOptimisticUpdateChain({ data: { id: "reg-1" }, error: null }),
+    ]);
+
+    const result = await reviewPayment({
+      registrationId: "reg-1",
+      status: "paid",
+      baseUrl: "https://seeyouwild.com",
+    });
+
+    expect(result).toEqual({ registrationId: "reg-1", status: "paid" });
+    expect(vi.mocked(sendRegistrationSuccessEmail)).toHaveBeenCalledWith({
+      to: baseRegistration.email,
+      customerName: baseRegistration.name,
+      eventTitle: baseEvent.title,
+    });
+  });
+
+  it("status='paid' 但 email 發送失敗 → 不 throw（fire-and-forget）", async () => {
+    setupSupabaseMock([
+      makeSingleChain({ data: baseRegistration, error: null }),
+      makeSingleChain({ data: baseEvent, error: null }),
+      makeOptimisticUpdateChain({ data: { id: "reg-1" }, error: null }),
+    ]);
+    vi.mocked(sendRegistrationSuccessEmail).mockRejectedValue(
+      new Error("SMTP failure")
+    );
+
+    await expect(
+      reviewPayment({
+        registrationId: "reg-1",
+        status: "paid",
+        baseUrl: "https://seeyouwild.com",
+      })
+    ).resolves.toEqual({ registrationId: "reg-1", status: "paid" });
+  });
+
+  it("status='failed' 成功 → 回傳 { registrationId, status: 'failed' }，sendRegistrationFailedEmail 被呼叫", async () => {
+    setupSupabaseMock([
+      makeSingleChain({ data: baseRegistration, error: null }),
+      makeSingleChain({ data: baseEvent, error: null }),
+      makeOptimisticUpdateChain({ data: { id: "reg-1" }, error: null }),
+    ]);
+
+    const result = await reviewPayment({
+      registrationId: "reg-1",
+      status: "failed",
+      baseUrl: "https://seeyouwild.com",
+    });
+
+    expect(result).toEqual({ registrationId: "reg-1", status: "failed" });
+    expect(vi.mocked(sendRegistrationFailedEmail)).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: baseRegistration.email,
+        customerName: baseRegistration.name,
+        eventTitle: baseEvent.title,
+      })
+    );
+  });
+
+  it("status='failed' 時 update payload 包含 payment_ref: null（reset payment_ref）", async () => {
+    let capturedUpdate: Record<string, unknown> = {};
+    const fromMock = vi.fn();
+    fromMock.mockReturnValueOnce(
+      makeSingleChain({ data: baseRegistration, error: null })
+    );
+    fromMock.mockReturnValueOnce(
+      makeSingleChain({ data: baseEvent, error: null })
+    );
+    fromMock.mockReturnValueOnce({
+      update: (payload: Record<string, unknown>) => {
+        capturedUpdate = payload;
+        return {
+          eq: () => ({
+            eq: () => ({
+              select: () => ({
+                single: vi
+                  .fn()
+                  .mockResolvedValue({ data: { id: "reg-1" }, error: null }),
+              }),
+            }),
+          }),
+        };
+      },
+    });
+    vi.mocked(getSupabase).mockReturnValue({
+      from: fromMock,
+    } as unknown as SupabaseClient);
+
+    await reviewPayment({
+      registrationId: "reg-1",
+      status: "failed",
+      baseUrl: "https://seeyouwild.com",
+    });
+
+    expect(capturedUpdate).toMatchObject({
+      status: "failed",
+      payment_ref: null,
+    });
+  });
+
+  it("DB update 失敗時 throw InternalError", async () => {
+    setupSupabaseMock([
+      makeSingleChain({ data: baseRegistration, error: null }),
+      makeSingleChain({ data: baseEvent, error: null }),
+      makeOptimisticUpdateChain({
+        data: null,
+        error: { message: "update failed" },
+      }),
+    ]);
+
+    await expect(
+      reviewPayment({
+        registrationId: "reg-1",
+        status: "paid",
+        baseUrl: "https://seeyouwild.com",
+      })
+    ).rejects.toThrow(InternalError);
   });
 });

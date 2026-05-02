@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   createRegistrationSchema,
   paymentRefSchema,
+  updateRegistrationSchema,
 } from "@/lib/validations/registrations";
 
 const validSelfRegistration = {
@@ -96,5 +97,12 @@ describe("paymentRefSchema", () => {
       token: "abc123",
     });
     expect(result.success).toBe(false);
+  });
+});
+
+describe("updateRegistrationSchema", () => {
+  it("status 接受 'failed'", () => {
+    const result = updateRegistrationSchema.safeParse({ status: "failed" });
+    expect(result.success).toBe(true);
   });
 });
