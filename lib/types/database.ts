@@ -7,7 +7,7 @@ export type Gender = "male" | "female" | "other";
 export type Dietary = "omnivore" | "no_beef" | "vegetarian" | "vegan";
 export type Transport = "self" | "carpool";
 export type CarpoolRole = "passenger" | "driver";
-export type RegistrationStatus = "pending" | "paid";
+export type RegistrationStatus = "pending" | "paid" | "failed";
 export type FinalRole = "driver" | "passenger";
 
 export interface EventRow {

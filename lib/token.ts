@@ -28,7 +28,30 @@ export function createPaymentToken(secret: string) {
   return { generate, verify };
 }
 
+export function createAdminToken(secret: string) {
+  if (!secret) {
+    throw new Error("TOKEN_SECRET must be set");
+  }
+
+  function generate(registrationId: string): string {
+    return createHmac("sha256", secret)
+      .update(`admin:${registrationId}`)
+      .digest("hex");
+  }
+
+  function verify(registrationId: string, token: string): boolean {
+    const expected = generate(registrationId);
+    const expectedBuf = Buffer.from(expected, "utf8");
+    const tokenBuf = Buffer.from(token, "utf8");
+    if (expectedBuf.length !== tokenBuf.length) return false;
+    return timingSafeEqual(expectedBuf, tokenBuf);
+  }
+
+  return { generate, verify };
+}
+
 let _runtime: ReturnType<typeof createPaymentToken> | undefined;
+let _adminRuntime: ReturnType<typeof createAdminToken> | undefined;
 
 /**
  * Lazy runtime singleton bound to process.env.TOKEN_SECRET.
@@ -39,4 +62,11 @@ export function paymentToken() {
     _runtime = createPaymentToken(process.env.TOKEN_SECRET ?? "");
   }
   return _runtime;
+}
+
+export function adminToken() {
+  if (_adminRuntime == null) {
+    _adminRuntime = createAdminToken(process.env.TOKEN_SECRET ?? "");
+  }
+  return _adminRuntime;
 }

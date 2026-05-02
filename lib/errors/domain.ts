@@ -47,6 +47,13 @@ export class RegistrationPaidError extends DomainError {
   }
 }
 
+export class RegistrationAlreadyReviewedError extends DomainError {
+  readonly status = 409;
+  constructor() {
+    super("Registration already reviewed");
+  }
+}
+
 export class RegistrationExpiredError extends DomainError {
   readonly status = 410;
   constructor() {

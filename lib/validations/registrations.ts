@@ -67,7 +67,7 @@ export const createRegistrationSchema =
 export const updateRegistrationSchema = baseRegistrationSchema
   .partial()
   .extend({
-    status: z.enum(["pending", "paid"]).optional(),
+    status: z.enum(["pending", "paid", "failed"]).optional(),
   });
 
 export const paymentRefSchema = z.object({

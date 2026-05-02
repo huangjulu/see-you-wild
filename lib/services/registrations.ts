@@ -6,14 +6,18 @@ import {
   InternalError,
   InvalidTokenError,
   RegistrationExpiredError,
+  RegistrationAlreadyReviewedError,
   RegistrationNotFoundError,
   RegistrationPaidError,
 } from "@/lib/errors/domain";
 import { getSupabase } from "@/lib/supabase/client";
 import { paymentToken } from "@/lib/token";
+import { sendRegistrationSuccessEmail } from "@/lib/email/send-registration-success-email";
+import { sendRegistrationFailedEmail } from "@/lib/email/send-registration-failed-email";
 import type {
   EventRow,
   RegistrationRow,
+  RegistrationStatus,
   Transport,
 } from "@/lib/types/database";
 import type { CreateRegistrationInput } from "@/lib/validations/registrations";
@@ -206,4 +210,89 @@ export async function submitPaymentRef(
     registrationId: input.registrationId,
     paymentRef: input.paymentRef,
   };
+}
+
+interface ReviewPaymentInput {
+  registrationId: string;
+  status: "paid" | "failed";
+  baseUrl: string;
+}
+
+interface ReviewPaymentOutput {
+  registrationId: string;
+  status: RegistrationStatus;
+}
+
+export async function reviewPayment(
+  input: ReviewPaymentInput
+): Promise<ReviewPaymentOutput> {
+  const { data: registration, error: regError } = await getSupabase()
+    .from("registrations")
+    .select("id, name, email, event_id, status")
+    .eq("id", input.registrationId)
+    .single();
+
+  if (regError || !registration) {
+    throw new RegistrationNotFoundError();
+  }
+
+  if (registration.status === "paid" || registration.status === "failed") {
+    throw new RegistrationAlreadyReviewedError();
+  }
+
+  const { data: event, error: eventError } = await getSupabase()
+    .from("events")
+    .select("title")
+    .eq("id", registration.event_id)
+    .single();
+
+  if (eventError || !event) {
+    throw new EventNotFoundError();
+  }
+
+  if (input.status === "paid") {
+    const { error: updateError } = await getSupabase()
+      .from("registrations")
+      .update({ status: "paid", confirmed_at: new Date().toISOString() })
+      .eq("id", input.registrationId)
+      .eq("status", "pending")
+      .select("id")
+      .single();
+
+    if (updateError) {
+      throw new InternalError(updateError.message, updateError);
+    }
+
+    await sendRegistrationSuccessEmail({
+      to: registration.email,
+      customerName: registration.name,
+      eventTitle: event.title,
+    }).catch((err) => console.error("[notifier] registration success email failed", err));
+
+    return { registrationId: input.registrationId, status: "paid" };
+  }
+
+  const { error: updateError } = await getSupabase()
+    .from("registrations")
+    .update({ status: "failed", payment_ref: null })
+    .eq("id", input.registrationId)
+    .eq("status", "pending")
+    .select("id")
+    .single();
+
+  if (updateError) {
+    throw new InternalError(updateError.message, updateError);
+  }
+
+  const newToken = paymentToken().generate(input.registrationId);
+  const paymentRefUrl = `${input.baseUrl}/payment-ref?id=${input.registrationId}&token=${newToken}`;
+
+  await sendRegistrationFailedEmail({
+    to: registration.email,
+    customerName: registration.name,
+    eventTitle: event.title,
+    paymentRefUrl,
+  }).catch((err) => console.error("[notifier] registration failed email failed", err));
+
+  return { registrationId: input.registrationId, status: "failed" };
 }
