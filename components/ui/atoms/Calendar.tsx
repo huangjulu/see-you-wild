@@ -468,18 +468,18 @@ const _Calendar: React.FC<CalendarProps> = (props) => {
     months: "relative flex flex-col",
     month: cn("flex w-full flex-col gap-4", config.gridClassName),
     nav: cn(
-      "absolute inset-x-0 top-0 flex w-full items-center justify-between gap-1",
+      "absolute inset-x-0 top-0 flex w-full items-center justify-between gap-2",
       config.naviClassName
     ),
     button_previous: cn(
       "flex items-center justify-center size-(--cell-size) rounded-(--cell-radius) p-0",
-      "border border-transparent text-primary hover:bg-brand-100 transition-colors",
+      "border border-transparent text-primary hover:bg-brand-50 transition-colors",
       "aria-disabled:opacity-50",
       config.chevronsClassName
     ),
     button_next: cn(
       "flex items-center justify-center size-(--cell-size) rounded-(--cell-radius) p-0",
-      "border border-transparent text-primary hover:bg-brand-100 transition-colors",
+      "border border-transparent text-primary hover:bg-brand-50 transition-colors",
       "aria-disabled:opacity-50",
       config.chevronsClassName
     ),
@@ -487,6 +487,7 @@ const _Calendar: React.FC<CalendarProps> = (props) => {
       "flex h-(--cell-size) w-full items-center justify-center px-(--cell-size)",
       config.captionClassName
     ),
+    dropdowns: "flex flex-row gap-1",
     caption_label: "typo-ui text-sm font-medium select-none",
     weekdays: "flex",
     weekday:
