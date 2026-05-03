@@ -1,8 +1,10 @@
 import { z } from "zod";
-import { authenticateAdminAction } from "@/lib/auth/admin-action";
-import { reviewPayment } from "@/lib/services/registrations";
-import { apiOk } from "@/lib/api-response";
+
 import { handleError } from "@/lib/api/handle-error";
+import { apiOk } from "@/lib/api-response";
+import { authenticateAdminAction } from "@/lib/auth/admin-action";
+import { getEnv } from "@/lib/env";
+import { reviewPayment } from "@/lib/services/registrations";
 
 const reviewSchema = z.object({
   token: z.string().min(1),
@@ -24,11 +26,10 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       body: { token: parsed.token },
     });
 
-    const origin = new URL(request.url).origin;
     const result = await reviewPayment({
       registrationId: id,
       status: parsed.status,
-      baseUrl: origin,
+      baseUrl: getEnv().canonicalUrl,
     });
 
     return apiOk({ id: result.registrationId, status: result.status });

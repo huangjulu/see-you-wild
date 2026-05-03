@@ -1,5 +1,6 @@
 import { handleError } from "@/lib/api/handle-error";
 import { apiOk } from "@/lib/api-response";
+import { getEnv } from "@/lib/env";
 import { createRegistrationNotifier } from "@/lib/services/notifier";
 import { createRegistration } from "@/lib/services/registrations";
 import { getSupabase } from "@/lib/supabase/client";
@@ -21,13 +22,11 @@ export async function POST(request: Request) {
       .single();
 
     if (event) {
-      const baseUrl =
-        process.env.NEXT_PUBLIC_BASE_URL || "https://seeyouwild.com";
       const typedEvent: EventRow = event;
       const notifier = createRegistrationNotifier({
         registration,
         event: typedEvent,
-        baseUrl,
+        baseUrl: getEnv().canonicalUrl,
       });
       notifier
         .notifyAll()
