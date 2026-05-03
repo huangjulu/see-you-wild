@@ -1,3 +1,5 @@
+import { sendRegistrationFailedEmail } from "@/lib/email/send-registration-failed-email";
+import { sendRegistrationSuccessEmail } from "@/lib/email/send-registration-success-email";
 import {
   AlreadyRegisteredError,
   EventClosedError,
@@ -5,15 +7,13 @@ import {
   HasCarpoolAssignmentError,
   InternalError,
   InvalidTokenError,
-  RegistrationExpiredError,
   RegistrationAlreadyReviewedError,
+  RegistrationExpiredError,
   RegistrationNotFoundError,
   RegistrationPaidError,
 } from "@/lib/errors/domain";
 import { getSupabase } from "@/lib/supabase/client";
 import { paymentToken } from "@/lib/token";
-import { sendRegistrationSuccessEmail } from "@/lib/email/send-registration-success-email";
-import { sendRegistrationFailedEmail } from "@/lib/email/send-registration-failed-email";
 import type {
   EventRow,
   RegistrationRow,
@@ -228,7 +228,9 @@ export async function reviewPayment(
 ): Promise<ReviewPaymentOutput> {
   const { data: registration, error: regError } = await getSupabase()
     .from("registrations")
-    .select("id, name, email, event_id, status")
+    .select(
+      "id, name, email, event_id, status, amount_due, transport, dietary, wants_rental"
+    )
     .eq("id", input.registrationId)
     .single();
 
@@ -236,19 +238,36 @@ export async function reviewPayment(
     throw new RegistrationNotFoundError();
   }
 
-  if (registration.status === "paid" || registration.status === "failed") {
+  // Supabase client is untyped (SYW-049) — bridge cast to known fields
+  const reg = registration as Pick<
+    RegistrationRow,
+    | "id"
+    | "name"
+    | "email"
+    | "event_id"
+    | "status"
+    | "amount_due"
+    | "transport"
+    | "dietary"
+    | "wants_rental"
+  >;
+
+  if (reg.status === "paid" || reg.status === "failed") {
     throw new RegistrationAlreadyReviewedError();
   }
 
   const { data: event, error: eventError } = await getSupabase()
     .from("events")
-    .select("title")
-    .eq("id", registration.event_id)
+    .select("title, start_date, location")
+    .eq("id", reg.event_id)
     .single();
 
   if (eventError || !event) {
     throw new EventNotFoundError();
   }
+
+  // Supabase client is untyped (SYW-049) — bridge cast to known fields
+  const evt = event as Pick<EventRow, "title" | "start_date" | "location">;
 
   if (input.status === "paid") {
     const { error: updateError } = await getSupabase()
@@ -264,10 +283,18 @@ export async function reviewPayment(
     }
 
     await sendRegistrationSuccessEmail({
-      to: registration.email,
-      customerName: registration.name,
-      eventTitle: event.title,
-    }).catch((err) => console.error("[notifier] registration success email failed", err));
+      to: reg.email,
+      customerName: reg.name,
+      eventTitle: evt.title,
+      eventDate: evt.start_date,
+      eventLocation: evt.location,
+      amountDue: reg.amount_due,
+      transport: reg.transport,
+      dietary: reg.dietary,
+      wantsRental: reg.wants_rental,
+    }).catch((err) =>
+      console.error("[notifier] registration success email failed", err)
+    );
 
     return { registrationId: input.registrationId, status: "paid" };
   }
@@ -288,11 +315,13 @@ export async function reviewPayment(
   const paymentRefUrl = `${input.baseUrl}/payment-ref?id=${input.registrationId}&token=${newToken}`;
 
   await sendRegistrationFailedEmail({
-    to: registration.email,
-    customerName: registration.name,
-    eventTitle: event.title,
+    to: reg.email,
+    customerName: reg.name,
+    eventTitle: evt.title,
     paymentRefUrl,
-  }).catch((err) => console.error("[notifier] registration failed email failed", err));
+  }).catch((err) =>
+    console.error("[notifier] registration failed email failed", err)
+  );
 
   return { registrationId: input.registrationId, status: "failed" };
 }
