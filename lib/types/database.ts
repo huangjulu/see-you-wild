@@ -19,7 +19,9 @@ export interface EventRow {
   end_date: string;
   base_price: number;
   carpool_surcharge: number;
+  driver_refund_per_passenger: number;
   payment_days: number;
+  carpool_cutoff_days: number;
   min_participants: number;
   status: EventStatus;
   first_created_at: string;

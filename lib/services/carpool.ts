@@ -111,7 +111,14 @@ export function buildAssignments(
     const groupPassengers = queue.splice(0, seatCount);
 
     assignments.push(
-      makeDriver(eventId, carGroup, location, lead, seatCount, event)
+      makeDriver(
+        eventId,
+        carGroup,
+        location,
+        lead,
+        groupPassengers.length,
+        event
+      )
     );
     for (const p of groupPassengers) {
       assignments.push(makePassenger(eventId, carGroup, location, p));
@@ -148,7 +155,7 @@ function makeDriver(
   carGroup: number,
   location: string,
   driver: RegistrationRow,
-  seatCount: number,
+  actualPassengerCount: number,
   event: EventRow
 ): CarpoolAssignment {
   return {
@@ -157,7 +164,7 @@ function makeDriver(
     pickup_location: location,
     registration_id: driver.id,
     final_role: "driver",
-    refund_amount: (seatCount + 1) * event.carpool_surcharge,
+    refund_amount: actualPassengerCount * event.driver_refund_per_passenger,
   };
 }
 
