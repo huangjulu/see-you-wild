@@ -209,7 +209,11 @@
     "selectOptionsHint": "Please select date and transport first",
     "transport": "Transport",
     "carpoolPickup": "Carpool Pickup",
-    "carpoolSurchargeLabel": "+NT$ {0}"
+    "carpoolSurchargeLabel": "+NT$ {0}",
+    "needRide": "Need a ride",
+    "canDrive": "Can drive",
+    "canDriveNote": "Refund based on passenger count",
+    "seatCount": "Seat capacity"
   },
   "registration": {
     "title": "Registration Form",

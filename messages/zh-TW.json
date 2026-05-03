@@ -200,7 +200,11 @@
     "selectOptionsHint": "請先選擇日期與出發方式",
     "transport": "交通方式",
     "carpoolPickup": "共乘接送",
-    "carpoolSurchargeLabel": "+NT$ {0}"
+    "carpoolSurchargeLabel": "+NT$ {0}",
+    "needRide": "需要被載",
+    "canDrive": "可出車",
+    "canDriveNote": "依載客人數退還活動費用",
+    "seatCount": "可載人數"
   },
   "registration": {
     "title": "報名表單",

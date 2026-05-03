@@ -21,15 +21,17 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
 
   const [selection, setSelection] = useState<PackageSelection>({
     selectedDate: null,
+    transport: "self",
+    carpoolRole: null,
     selectedPickup: null,
-    isSelfArrival: true,
+    seatCount: null,
   });
 
   const [modalOpen, setModalOpen] = useState(false);
 
   const allOptionsSelected =
     selection.selectedDate !== null &&
-    (selection.isSelfArrival || selection.selectedPickup !== null);
+    (selection.transport === "self" || selection.selectedPickup !== null);
 
   function handleBook() {
     setModalOpen(true);
@@ -84,7 +86,7 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
           <EventPriceSidebar
             basePrice={event.base_price}
             carpoolSurcharge={event.carpoolSurcharge}
-            isSelfArrival={selection.isSelfArrival}
+            isSelfArrival={selection.transport === "self"}
             allOptionsSelected={allOptionsSelected}
             selectedDate={selection.selectedDate}
             onBook={handleBook}
@@ -100,7 +102,7 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
         carpoolSurcharge={event.carpoolSurcharge}
         selectedDate={selection.selectedDate}
         selectedPickup={selection.selectedPickup}
-        isSelfArrival={selection.isSelfArrival}
+        isSelfArrival={selection.transport === "self"}
         pickupLocations={event.pickupLocations}
       />
     </main>
