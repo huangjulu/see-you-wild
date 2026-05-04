@@ -43,7 +43,7 @@ const Selector: React.FC<SelectorProps> = (props) => {
   }
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="">
       {props.label != null && (
         <span className="typo-ui text-sm text-primary">{props.label}</span>
       )}
@@ -72,7 +72,7 @@ const Selector: React.FC<SelectorProps> = (props) => {
               key={option.value}
               type="button"
               className={cn(
-                "flex w-full items-center rounded-sm px-3 py-2 text-left typo-body text-sm transition-colors",
+                "flex items-center rounded-sm px-3 py-2 text-left typo-body text-sm transition-colors",
                 "hover:bg-neutral-100",
                 option.value === props.value && "text-accent"
               )}

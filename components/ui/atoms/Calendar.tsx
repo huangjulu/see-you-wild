@@ -18,6 +18,7 @@ import {
 import { zhTW } from "react-day-picker/locale";
 
 import type { SlottableComponent } from "@/components/ui/atoms/slot.types";
+import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
 import { cn } from "@/lib/utils";
 
 type CalendarSlot = "chevrons" | "caption" | "grid" | "navi";
@@ -178,13 +179,10 @@ function CalendarSelectDropdown(
     setListOpen(false);
   }
 
-  function onDropdownBlur(e: React.FocusEvent) {
-    if (containerRef.current?.contains(e.relatedTarget)) return;
-    setListOpen(false);
-  }
+  useOutsideClick(containerRef, () => setListOpen(false), listOpen);
 
   return (
-    <div ref={containerRef} className="relative" onBlur={onDropdownBlur}>
+    <div ref={containerRef} className="relative">
       <button
         type="button"
         aria-label={props["aria-label"]}

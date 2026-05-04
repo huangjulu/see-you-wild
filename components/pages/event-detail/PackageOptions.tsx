@@ -115,7 +115,6 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
   const selectedDateObj =
     selectedDate != null ? new Date(selectedDate + "T00:00:00") : undefined;
 
-  const surchargeLabel = `+NT$ ${props.carpoolSurcharge.toLocaleString("zh-TW")}`;
   const isCarpool =
     transportChoice === "passenger" || transportChoice === "driver";
 
@@ -142,7 +141,7 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
         {/* Transport */}
         <div className="space-y-2">
           <h3 className="typo-ui text-sm text-primary">{t("transport")}</h3>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5 md:gap-2">
             <RadioOption
               name="transport"
               value="self"
@@ -153,25 +152,32 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
             <RadioOption
               name="transport"
               value="passenger"
-              label={`${t("needRide")}  ${surchargeLabel}`}
+              label={t("needRide")}
               checked={transportChoice === "passenger"}
               onChange={handleTransportChange}
             />
             <RadioOption
               name="transport"
               value="driver"
-              label={`${t("canDrive")}  ${surchargeLabel}`}
+              label={t("canDrive")}
               checked={transportChoice === "driver"}
               onChange={handleTransportChange}
             />
           </div>
+          {transportChoice === "driver" && (
+            <p className="typo-body text-xs text-secondary">
+              依實際載客人數按比例退還 30%~50% 活動費用。
+              <br />
+              若出車者已足將自動轉為乘客，亦可來信改為自行前往。
+            </p>
+          )}
         </div>
 
         {/* Pickup Place (only when carpool selected) */}
         {isCarpool && (
           <div className="space-y-2">
             <h3 className="typo-ui text-sm text-primary">{t("pickupPlace")}</h3>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 md:gap-2">
               {props.pickupLocations.map((loc) => (
                 <RadioOption
                   key={loc}

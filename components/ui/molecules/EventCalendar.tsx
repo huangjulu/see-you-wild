@@ -55,7 +55,7 @@ const EventCalendar: React.FC<EventCalendarProps> = (props) => {
       available: {
         match: availableMatcher,
         label: "可選擇",
-        style: "text-accent",
+        style: "text-primary",
       },
     };
   }, [fullMatcher, availableMatcher, props.value]);
