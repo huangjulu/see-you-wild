@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import React, { Suspense, useEffect, useState } from "react";
+
+import Button from "@/components/ui/atoms/Button";
 import { useTranslations } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
-import Button from "@/components/ui/atoms/Button";
 
 type ReviewStatus = "loading" | "ready" | "submitting" | "done" | "error";
 
@@ -26,32 +27,37 @@ const AdminReviewContent: React.FC = () => {
   const [info, setInfo] = useState<ReviewInfo | null>(null);
   const [resultMessage, setResultMessage] = useState("");
 
-  useEffect(function fetchReviewInfo() {
-    if (!id || !token) {
-      const url = new URL(window.location.href);
-      if (url.searchParams.get("done") === "1") {
-        setReviewStatus("done");
-      } else {
-        setReviewStatus("error");
+  useEffect(
+    function fetchReviewInfo() {
+      if (!id || !token) {
+        const url = new URL(window.location.href);
+        if (url.searchParams.get("done") === "1") {
+          setReviewStatus("done");
+        } else {
+          setReviewStatus("error");
+        }
+        return;
       }
-      return;
-    }
 
-    fetch(`/api/admin/registrations/${id}/review-info?token=${encodeURIComponent(token)}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch");
-        return res.json();
-      })
-      .then((data: ReviewInfo) => {
-        setInfo(data);
-        setReviewStatus("ready");
-      })
-      .catch(() => {
-        setReviewStatus("error");
-      });
-  }, [id, token]);
+      fetch(
+        `/api/admin/registrations/${id}/review-info?token=${encodeURIComponent(token)}`
+      )
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to fetch");
+          return res.json();
+        })
+        .then((data: ReviewInfo) => {
+          setInfo(data);
+          setReviewStatus("ready");
+        })
+        .catch(() => {
+          setReviewStatus("error");
+        });
+    },
+    [id, token]
+  );
 
-  function handleReview(status: "paid" | "failed") {
+  function handlePaymentReview(status: "paid" | "failed") {
     setReviewStatus("submitting");
 
     fetch(`/api/admin/registrations/${id}/review`, {
@@ -80,11 +86,16 @@ const AdminReviewContent: React.FC = () => {
       });
   }
 
-  const alreadyReviewed = info != null && (info.status === "paid" || info.status === "failed");
+  const alreadyReviewed =
+    info != null && (info.status === "paid" || info.status === "failed");
 
   if (reviewStatus === "loading") {
     return (
-      <main className={cn("flex min-h-screen items-center justify-center bg-background")}>
+      <main
+        className={cn(
+          "flex min-h-screen items-center justify-center bg-background"
+        )}
+      >
         <p className="text-secondary">{t("loading")}</p>
       </main>
     );
@@ -92,7 +103,11 @@ const AdminReviewContent: React.FC = () => {
 
   if (reviewStatus === "error") {
     return (
-      <main className={cn("flex min-h-screen items-center justify-center bg-background")}>
+      <main
+        className={cn(
+          "flex min-h-screen items-center justify-center bg-background"
+        )}
+      >
         <p className="text-critical">{t("error")}</p>
       </main>
     );
@@ -100,7 +115,11 @@ const AdminReviewContent: React.FC = () => {
 
   if (reviewStatus === "done") {
     return (
-      <main className={cn("flex min-h-screen items-center justify-center bg-background")}>
+      <main
+        className={cn(
+          "flex min-h-screen items-center justify-center bg-background"
+        )}
+      >
         <div className="max-w-md rounded-xl bg-white p-8 text-center shadow-md">
           <p className="text-lg font-semibold text-primary">{resultMessage}</p>
         </div>
@@ -109,23 +128,35 @@ const AdminReviewContent: React.FC = () => {
   }
 
   return (
-    <main className={cn("flex min-h-screen items-center justify-center bg-background p-4")}>
+    <main
+      className={cn(
+        "flex min-h-screen items-center justify-center bg-background p-4"
+      )}
+    >
       <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-md">
         <h1 className="mb-6 text-xl font-bold text-primary">{t("title")}</h1>
 
         {info != null && (
           <dl className="mb-8 space-y-4">
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-secondary">{t("customerName")}</dt>
+              <dt className="text-xs font-semibold uppercase tracking-wide text-secondary">
+                {t("customerName")}
+              </dt>
               <dd className="mt-1 text-primary">{info.customerName}</dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-secondary">{t("eventTitle")}</dt>
+              <dt className="text-xs font-semibold uppercase tracking-wide text-secondary">
+                {t("eventTitle")}
+              </dt>
               <dd className="mt-1 text-primary">{info.eventTitle}</dd>
             </div>
             <div>
-              <dt className="text-xs font-semibold uppercase tracking-wide text-secondary">{t("paymentRef")}</dt>
-              <dd className="mt-1 font-mono text-lg font-bold text-primary">{info.paymentRef ?? "—"}</dd>
+              <dt className="text-xs font-semibold uppercase tracking-wide text-secondary">
+                {t("paymentRef")}
+              </dt>
+              <dd className="mt-1 font-mono text-lg font-bold text-primary">
+                {info.paymentRef ?? "—"}
+              </dd>
             </div>
           </dl>
         )}
@@ -139,7 +170,7 @@ const AdminReviewContent: React.FC = () => {
             <Button
               theme="solid"
               disabled={reviewStatus === "submitting"}
-              onClick={() => handleReview("paid")}
+              onClick={() => handlePaymentReview("paid")}
               className="flex-1 bg-fill-success text-on-fill-neutral hover:opacity-90"
             >
               {t("confirmPaid")}
@@ -147,7 +178,7 @@ const AdminReviewContent: React.FC = () => {
             <Button
               theme="danger"
               disabled={reviewStatus === "submitting"}
-              onClick={() => handleReview("failed")}
+              onClick={() => handlePaymentReview("failed")}
               className="flex-1"
             >
               {t("markFailed")}

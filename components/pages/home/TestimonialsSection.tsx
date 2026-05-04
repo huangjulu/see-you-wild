@@ -48,8 +48,7 @@ const TestimonialsSection: React.FC = () => {
     { paused: true }
   );
 
-  // TODO(抽成 useMouseParallax hook)：未來若其他 section 也要做滑鼠視差，
-  // 把這段提取到 lib/gsap/useMouseParallax.ts，參數接 scope ref / target ref / factor / duration。
+  // TODO(SYW-XXX): extract to useMouseParallax hook
   useEffect(
     function mouseParallax() {
       if (reduceMotion) return;
@@ -107,7 +106,7 @@ const TestimonialsSection: React.FC = () => {
             return;
           }
 
-          const intensity = 1 - distance / REPEL_RANGE; // 0 ~ 1，越近越強
+          const intensity = 1 - distance / REPEL_RANGE;
           const dirX = distance === 0 ? 0 : -dx / distance;
           const dirY = distance === 0 ? 0 : -dy / distance;
 

@@ -20,8 +20,6 @@ import { zhTW } from "react-day-picker/locale";
 import type { SlottableComponent } from "@/components/ui/atoms/slot.types";
 import { cn } from "@/lib/utils";
 
-/* ─── 1. Shared Types ─── */
-
 type CalendarSlot = "chevrons" | "caption" | "grid" | "navi";
 
 type CalendarSize = "sm" | "md" | "lg";
@@ -53,8 +51,6 @@ const LABEL_SIZE: Record<CalendarSize, string> = {
   md: "text-[1rem]",
   lg: "text-xs",
 } as const;
-
-/* ─── 2. Sub-components (small → large) ─── */
 
 interface CalendarChevronsProps {
   className?: string;
@@ -100,8 +96,6 @@ const CalendarNavi: SlottableComponent<CalendarNaviProps> = Object.assign(
   { slotName: "navi" as const, displayName: "CalendarNavi" }
 );
 
-/* ─── 3. Internal components (not exposed as slots) ─── */
-
 interface CalendarDayButtonProps extends React.ComponentProps<
   typeof DayButtonType
 > {
@@ -120,15 +114,12 @@ function CalendarDayButton(props: CalendarDayButtonProps) {
 
   const { day, modifiers, className, markerDefs, size, ...rest } = props;
 
-  // Resolve active markers: find which markers are true for this day
   const activeMarkers =
     markerDefs != null
       ? Object.entries(markerDefs).filter(([name]) => modifiers[name] === true)
       : [];
 
-  // First active marker with a label wins
   const activeLabel = activeMarkers.find(([, def]) => def.label != null)?.[1];
-  // Collect all active marker styles
   const markerStyles = activeMarkers
     .map(([, def]) => def.style)
     .filter(Boolean);
@@ -180,20 +171,20 @@ function CalendarSelectDropdown(
     (o) => o.value.toString() === props.value?.toString()
   )?.label;
 
-  function handlePick(optionValue: number) {
+  function onOptionPick(optionValue: number) {
     props.onChange?.({
       target: { value: optionValue.toString() },
     } as React.ChangeEvent<HTMLSelectElement>);
     setListOpen(false);
   }
 
-  function handleBlur(e: React.FocusEvent) {
+  function onDropdownBlur(e: React.FocusEvent) {
     if (containerRef.current?.contains(e.relatedTarget)) return;
     setListOpen(false);
   }
 
   return (
-    <div ref={containerRef} className="relative" onBlur={handleBlur}>
+    <div ref={containerRef} className="relative" onBlur={onDropdownBlur}>
       <button
         type="button"
         aria-label={props["aria-label"]}
@@ -213,7 +204,7 @@ function CalendarSelectDropdown(
               key={option.value}
               type="button"
               disabled={option.disabled}
-              onClick={() => handlePick(option.value)}
+              onClick={() => onOptionPick(option.value)}
               className={cn(
                 "flex w-full items-center rounded-md px-2 py-1 text-left text-sm select-none",
                 "hover:bg-brand-50 focus:bg-brand-50 focus:outline-none",
@@ -232,8 +223,6 @@ function CalendarSelectDropdown(
 }
 
 CalendarSelectDropdown.displayName = "CalendarSelectDropdown";
-
-/* ─── 4. Slot config resolution ─── */
 
 // React element props are opaque — bridge cast to read declarative slot config
 function slotProp(el: React.ReactElement, key: string): string | undefined {
@@ -335,8 +324,6 @@ function resolveCalendarConfig(
   };
 }
 
-/* ─── 5. Main Component ─── */
-
 interface CalendarProps {
   mode: "single";
   size?: CalendarSize;
@@ -366,7 +353,6 @@ const _Calendar: React.FC<CalendarProps> = (props) => {
         ? 2
         : undefined;
 
-  // Extract DayPicker modifiers from markers
   const dpModifiers = props.markers
     ? Object.fromEntries(
         Object.entries(props.markers).map(([name, def]) => [name, def.match])
@@ -379,11 +365,9 @@ const _Calendar: React.FC<CalendarProps> = (props) => {
     }
   }
 
-  // Map captionLayout to rdp captionLayout
   const rdpCaptionLayout: "label" | "dropdown" =
     config.captionLayout === "dropdown" ? "dropdown" : "label";
 
-  // Build rdp components
   function CalendarChevronInternal(chevronProps: {
     className?: string;
     orientation?: string;
@@ -398,7 +382,6 @@ const _Calendar: React.FC<CalendarProps> = (props) => {
     );
   }
 
-  // When no chevrons slot, render empty nav (no buttons)
   function EmptyNav(navProps: NavProps) {
     const {
       onPreviousClick: _op,
@@ -499,7 +482,6 @@ const _Calendar: React.FC<CalendarProps> = (props) => {
     hidden: "invisible",
   } as const satisfies Partial<ClassNames>;
 
-  // Build rdp components map
   const rdpComponents: Record<string, unknown> = {
     Root: (rootProps: DayPickerRootProps) => {
       const { rootRef, ...rest } = rootProps;
@@ -513,12 +495,10 @@ const _Calendar: React.FC<CalendarProps> = (props) => {
     MonthCaption: CaptionWithToggle,
   };
 
-  // Add Nav override when no chevrons
   if (!config.hasChevrons) {
     rdpComponents["Nav"] = EmptyNav;
   }
 
-  // Add Dropdown override when caption layout is dropdown
   if (config.captionLayout === "dropdown") {
     rdpComponents["Dropdown"] = CalendarSelectDropdown;
   }
@@ -551,8 +531,6 @@ const _Calendar: React.FC<CalendarProps> = (props) => {
   );
 };
 
-/* ─── 6. Object.assign assembly ─── */
-
 const Calendar = Object.assign(_Calendar, {
   Navi: CalendarNavi,
   Chevrons: CalendarChevrons,
@@ -560,12 +538,8 @@ const Calendar = Object.assign(_Calendar, {
   Grid: CalendarGrid,
 });
 
-/* ─── 7. displayName + export default ─── */
-
 _Calendar.displayName = "Calendar";
 export default Calendar;
-
-/* ─── 8. Helper functions ─── */
 
 function getMonday(date: Date): Date {
   const d = new Date(date);

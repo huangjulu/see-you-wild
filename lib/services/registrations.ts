@@ -13,7 +13,7 @@ import {
   RegistrationPaidError,
 } from "@/lib/errors/domain";
 import { getSupabase } from "@/lib/supabase/client";
-import { paymentToken } from "@/lib/token";
+import { getPaymentToken } from "@/lib/token";
 import type {
   EventRow,
   RegistrationRow,
@@ -163,7 +163,7 @@ interface SubmitPaymentRefOutput {
 export async function submitPaymentRef(
   input: SubmitPaymentRefInput
 ): Promise<SubmitPaymentRefOutput> {
-  if (!paymentToken().verify(input.registrationId, input.token)) {
+  if (!getPaymentToken().verify(input.registrationId, input.token)) {
     throw new InvalidTokenError();
   }
 
@@ -223,7 +223,7 @@ interface ReviewPaymentOutput {
   status: RegistrationStatus;
 }
 
-export async function reviewPayment(
+export async function approveOrRejectPayment(
   input: ReviewPaymentInput
 ): Promise<ReviewPaymentOutput> {
   const { data: registration, error: regError } = await getSupabase()
@@ -266,7 +266,6 @@ export async function reviewPayment(
     throw new EventNotFoundError();
   }
 
-  // Supabase client is untyped (SYW-049) — bridge cast to known fields
   const evt = event as Pick<EventRow, "title" | "start_date" | "location">;
 
   if (input.status === "paid") {
@@ -311,7 +310,7 @@ export async function reviewPayment(
     throw new InternalError(updateError.message, updateError);
   }
 
-  const newToken = paymentToken().generate(input.registrationId);
+  const newToken = getPaymentToken().generate(input.registrationId);
   const paymentRefUrl = `${input.baseUrl}/payment-ref?id=${input.registrationId}&token=${newToken}`;
 
   await sendRegistrationFailedEmail({

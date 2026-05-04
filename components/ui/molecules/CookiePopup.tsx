@@ -17,7 +17,7 @@ const CookiePopup: React.FC = () => {
     }
   }, []);
 
-  function handleAccept() {
+  function onAcceptClick() {
     localStorage.setItem("cookie-consent", "true");
     setIsVisible(false);
   }
@@ -31,12 +31,12 @@ const CookiePopup: React.FC = () => {
       </p>
       <div className="flex items-center gap-6">
         <button
-          onClick={handleAccept}
+          onClick={onAcceptClick}
           className="typo-overline text-surface-deep-fg/80 border-b border-surface-deep-fg/30 pb-0.5 hover:border-surface-deep-fg transition-colors"
         >
           {t("cookie.accept")}
         </button>
-        <button onClick={handleAccept} aria-label="Close cookie notice">
+        <button onClick={onAcceptClick} aria-label="Close cookie notice">
           <IconX className="w-4 h-4 text-surface-deep-fg/50 hover:text-surface-deep-fg/80 transition-opacity" />
         </button>
       </div>

@@ -38,7 +38,6 @@ function useTween(
   useGSAP(
     function tween() {
       if (!scope.current) return;
-      // reduced motion：跳過動畫，元素直接以最終狀態呈現
       if (reduceMotion) return;
 
       const elements = animate?.selector

@@ -29,7 +29,7 @@ const Overlay: React.FC<OverlayProps> = (props) => {
     return null;
   }
 
-  function handleClick(e: React.MouseEvent<HTMLDivElement>) {
+  function onBackdropClick(e: React.MouseEvent<HTMLDivElement>) {
     if (e.target === e.currentTarget) {
       props.onBackdropClick?.();
     }
@@ -41,7 +41,7 @@ const Overlay: React.FC<OverlayProps> = (props) => {
         "fixed inset-0 z-50 flex items-center justify-center bg-black/40 overflow-clip",
         props.className
       )}
-      onClick={handleClick}
+      onClick={onBackdropClick}
     >
       {props.children}
     </div>

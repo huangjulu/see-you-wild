@@ -44,7 +44,6 @@ const EventCalendar: React.FC<EventCalendarProps> = (props) => {
     };
   }, [props.availableDates, minDate]);
 
-  // Build markers with match + label + style
   const markers = useMemo(() => {
     if (fullMatcher == null || availableMatcher == null) return undefined;
     return {
@@ -61,7 +60,6 @@ const EventCalendar: React.FC<EventCalendarProps> = (props) => {
     };
   }, [fullMatcher, availableMatcher, props.value]);
 
-  // Block non-available dates from being selected
   const changeDate = (date: Date | undefined) => {
     if (
       date != null &&

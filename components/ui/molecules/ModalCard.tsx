@@ -29,7 +29,7 @@ interface ButtonProps extends React.ComponentPropsWithRef<typeof Button> {}
 
 const HeaderCloseButton: SlottableComponent<ButtonProps> = Object.assign(
   (props: ButtonProps) => {
-    function escToClose(node: HTMLButtonElement | null) {
+    function attachEscListener(node: HTMLButtonElement | null) {
       if (node == null) return;
       const el = node;
       function onKeyDown(e: KeyboardEvent) {
@@ -45,7 +45,7 @@ const HeaderCloseButton: SlottableComponent<ButtonProps> = Object.assign(
     return (
       <Slot slot="header-close-button">
         <Button
-          ref={escToClose}
+          ref={attachEscListener}
           theme="text"
           icon={<IconX className="size-4 text-brand-400" />}
           {...props}

@@ -4,7 +4,7 @@ import { handleError } from "@/lib/api/handle-error";
 import { apiOk } from "@/lib/api-response";
 import { authenticateAdminAction } from "@/lib/auth/admin-action";
 import { getEnv } from "@/lib/env";
-import { reviewPayment } from "@/lib/services/registrations";
+import { approveOrRejectPayment } from "@/lib/services/registrations";
 
 const reviewSchema = z.object({
   token: z.string().min(1),
@@ -26,7 +26,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       body: { token: parsed.token },
     });
 
-    const result = await reviewPayment({
+    const result = await approveOrRejectPayment({
       registrationId: id,
       status: parsed.status,
       baseUrl: getEnv().canonicalUrl,

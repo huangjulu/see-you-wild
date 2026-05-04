@@ -3,7 +3,9 @@ import { cn } from "@/lib/utils";
 type SwitchProps = React.ComponentProps<"input">;
 
 const Switch: React.FC<SwitchProps> = (props) => {
-  const onChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+  const onSwitchChange: React.ChangeEventHandler<HTMLInputElement> = (
+    event
+  ) => {
     props.onChange?.(event);
     if (event.defaultPrevented) {
       return;
@@ -36,7 +38,7 @@ const Switch: React.FC<SwitchProps> = (props) => {
         type="checkbox"
         hidden
         {...props}
-        onChange={onChange}
+        onChange={onSwitchChange}
         className="peer"
       />
       <div

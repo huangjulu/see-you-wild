@@ -57,14 +57,14 @@ let _adminRuntime: ReturnType<typeof createAdminToken> | undefined;
  * Lazy runtime singleton bound to process.env.TOKEN_SECRET.
  * Initialized on first call so the env variable is read at runtime, not build time.
  */
-export function paymentToken() {
+export function getPaymentToken() {
   if (_runtime == null) {
     _runtime = createPaymentToken(process.env.TOKEN_SECRET ?? "");
   }
   return _runtime;
 }
 
-export function adminToken() {
+export function getAdminToken() {
   if (_adminRuntime == null) {
     _adminRuntime = createAdminToken(process.env.TOKEN_SECRET ?? "");
   }

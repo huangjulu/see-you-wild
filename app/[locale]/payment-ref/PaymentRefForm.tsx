@@ -81,7 +81,7 @@ const PaymentRefForm: React.FC = () => {
     [id, token]
   );
 
-  async function handleSubmit() {
+  async function handlePaymentRefSubmit() {
     if (!id || !token || inputValue.length !== 5) return;
 
     setSubmitting(true);
@@ -200,7 +200,7 @@ const PaymentRefForm: React.FC = () => {
           <Button
             theme="solid"
             className="w-full"
-            onClick={handleSubmit}
+            onClick={handlePaymentRefSubmit}
             disabled={inputValue.length !== 5 || submitting}
           >
             {submitting ? t("submitting") : t("submit")}

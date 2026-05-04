@@ -16,7 +16,7 @@ const LocaleError: React.FC<LocaleErrorProps> = (props) => {
   const t = useTranslations("common.error");
 
   useEffect(
-    function handleChunkLoadError() {
+    function onChunkLoadError() {
       if (props.error.name === "ChunkLoadError") {
         const hasReloaded = sessionStorage.getItem("chunk_reload_attempted");
         if (hasReloaded) {

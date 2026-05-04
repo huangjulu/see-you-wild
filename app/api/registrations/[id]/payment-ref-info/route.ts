@@ -1,12 +1,12 @@
-import { getSupabase } from "@/lib/supabase/client";
-import { paymentToken } from "@/lib/token";
-import { apiOk } from "@/lib/api-response";
 import { handleError } from "@/lib/api/handle-error";
+import { apiOk } from "@/lib/api-response";
 import {
   InvalidTokenError,
   RegistrationNotFoundError,
 } from "@/lib/errors/domain";
-import type { RegistrationRow, EventRow } from "@/lib/types/database";
+import { getSupabase } from "@/lib/supabase/client";
+import { getPaymentToken } from "@/lib/token";
+import type { EventRow, RegistrationRow } from "@/lib/types/database";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -18,7 +18,7 @@ export async function GET(request: Request, { params }: RouteParams) {
     const { searchParams } = new URL(request.url);
     const token = searchParams.get("token");
 
-    if (!token || !paymentToken().verify(id, token)) {
+    if (!token || !getPaymentToken().verify(id, token)) {
       throw new InvalidTokenError();
     }
 
@@ -35,7 +35,12 @@ export async function GET(request: Request, { params }: RouteParams) {
     // Supabase client is untyped (SYW-049); bridge cast at query boundary
     const reg = registration as Pick<
       RegistrationRow,
-      "name" | "amount_due" | "expires_at" | "payment_ref" | "status" | "event_id"
+      | "name"
+      | "amount_due"
+      | "expires_at"
+      | "payment_ref"
+      | "status"
+      | "event_id"
     >;
 
     const { data: event, error: eventError } = await getSupabase()

@@ -1,11 +1,11 @@
-import { paymentRefSchema } from "@/lib/validations/registrations";
-import { submitPaymentRef } from "@/lib/services/registrations";
-import { apiOk } from "@/lib/api-response";
 import { handleError } from "@/lib/api/handle-error";
+import { apiOk } from "@/lib/api-response";
 import { sendAdminNotification } from "@/lib/email/send-admin-notification";
-import { adminToken } from "@/lib/token";
+import { submitPaymentRef } from "@/lib/services/registrations";
 import { getSupabase } from "@/lib/supabase/client";
-import type { RegistrationRow, EventRow } from "@/lib/types/database";
+import { getAdminToken } from "@/lib/token";
+import type { EventRow, RegistrationRow } from "@/lib/types/database";
+import { paymentRefSchema } from "@/lib/validations/registrations";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -55,8 +55,10 @@ async function sendAdminReviewNotification(
     if (!rawRegistration) return;
 
     // Supabase client is untyped (SYW-049); bridge cast at query boundary
-    // Supabase client is untyped (SYW-049); bridge cast narrowed to selected columns
-    const reg = rawRegistration as Pick<RegistrationRow, "name" | "email" | "amount_due" | "expires_at" | "event_id">;
+    const reg = rawRegistration as Pick<
+      RegistrationRow,
+      "name" | "email" | "amount_due" | "expires_at" | "event_id"
+    >;
 
     const { data: rawEvent } = await getSupabase()
       .from("events")
@@ -67,11 +69,10 @@ async function sendAdminReviewNotification(
     if (!rawEvent) return;
 
     // Supabase client is untyped (SYW-049); bridge cast at query boundary
-    // Supabase client is untyped (SYW-049); bridge cast narrowed to selected columns
     const evt = rawEvent as Pick<EventRow, "title">;
 
     const origin = new URL(request.url).origin;
-    const token = adminToken().generate(registrationId);
+    const token = getAdminToken().generate(registrationId);
     const reviewUrl = `${origin}/admin/review?id=${registrationId}&token=${token}`;
 
     await sendAdminNotification({

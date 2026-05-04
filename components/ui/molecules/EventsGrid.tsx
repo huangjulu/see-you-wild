@@ -73,7 +73,7 @@ const EventsGrid: React.FC<EventsGridProps> = (props) => {
           ))}
         </div>
       ) : (
-        // TODO: 未來會改成統一的Empty state
+        // TODO(SYW-XXX): unified empty state component
         <p className="typo-body py-12 text-center text-secondary">
           沒有找到符合條件的活動
         </p>

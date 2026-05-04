@@ -6,7 +6,7 @@ vi.mock("@/lib/supabase/client", () => ({
 }));
 
 vi.mock("@/lib/token", () => ({
-  paymentToken: vi.fn(),
+  getPaymentToken: vi.fn(),
 }));
 
 vi.mock("@/lib/email/send-registration-success-email", () => ({
@@ -32,14 +32,14 @@ import {
   RegistrationPaidError,
 } from "@/lib/errors/domain";
 import {
+  approveOrRejectPayment,
   createRegistration,
   createRegistrationService,
   deleteRegistration,
-  reviewPayment,
   submitPaymentRef,
 } from "@/lib/services/registrations";
 import { getSupabase } from "@/lib/supabase/client";
-import { paymentToken } from "@/lib/token";
+import { getPaymentToken } from "@/lib/token";
 import type { EventRow } from "@/lib/types/database";
 import type { CreateRegistrationInput } from "@/lib/validations/registrations";
 
@@ -135,11 +135,11 @@ function setupSupabaseMock(chains: unknown[]) {
 }
 
 function setupPaymentToken(verifyResult: boolean) {
-  // PaymentToken returned by paymentToken() exposes more methods than tests use;
+  // PaymentToken returned by getPaymentToken() exposes more methods than tests use;
   // we only need .verify(), narrowing via unknown is acceptable for mock setup.
-  vi.mocked(paymentToken).mockReturnValue({
+  vi.mocked(getPaymentToken).mockReturnValue({
     verify: vi.fn().mockReturnValue(verifyResult),
-  } as unknown as ReturnType<typeof paymentToken>);
+  } as unknown as ReturnType<typeof getPaymentToken>);
 }
 
 describe("createRegistrationService", () => {
@@ -538,7 +538,7 @@ describe("deleteRegistration", () => {
   });
 });
 
-describe("reviewPayment", () => {
+describe("approveOrRejectPayment", () => {
   const baseRegistration = {
     id: "reg-1",
     name: "Test User",
@@ -553,12 +553,12 @@ describe("reviewPayment", () => {
     vi.clearAllMocks();
     vi.mocked(sendRegistrationSuccessEmail).mockResolvedValue(undefined);
     vi.mocked(sendRegistrationFailedEmail).mockResolvedValue(undefined);
-    // PaymentToken returned by paymentToken() exposes more methods than tests use;
+    // PaymentToken returned by getPaymentToken() exposes more methods than tests use;
     // we only need .generate() for the failed path, narrowing via unknown is acceptable.
-    vi.mocked(paymentToken).mockReturnValue({
+    vi.mocked(getPaymentToken).mockReturnValue({
       generate: vi.fn().mockReturnValue("mock-token"),
       verify: vi.fn().mockReturnValue(true),
-    } as unknown as ReturnType<typeof paymentToken>);
+    } as unknown as ReturnType<typeof getPaymentToken>);
   });
 
   it("registration 不存在時 throw RegistrationNotFoundError", async () => {
@@ -567,7 +567,7 @@ describe("reviewPayment", () => {
     ]);
 
     await expect(
-      reviewPayment({
+      approveOrRejectPayment({
         registrationId: "reg-not-exist",
         status: "paid",
         baseUrl: "https://seeyouwild.com",
@@ -584,7 +584,7 @@ describe("reviewPayment", () => {
     ]);
 
     await expect(
-      reviewPayment({
+      approveOrRejectPayment({
         registrationId: "reg-1",
         status: "paid",
         baseUrl: "https://seeyouwild.com",
@@ -601,7 +601,7 @@ describe("reviewPayment", () => {
     ]);
 
     await expect(
-      reviewPayment({
+      approveOrRejectPayment({
         registrationId: "reg-1",
         status: "paid",
         baseUrl: "https://seeyouwild.com",
@@ -616,7 +616,7 @@ describe("reviewPayment", () => {
     ]);
 
     await expect(
-      reviewPayment({
+      approveOrRejectPayment({
         registrationId: "reg-1",
         status: "paid",
         baseUrl: "https://seeyouwild.com",
@@ -631,7 +631,7 @@ describe("reviewPayment", () => {
       makeOptimisticUpdateChain({ data: { id: "reg-1" }, error: null }),
     ]);
 
-    const result = await reviewPayment({
+    const result = await approveOrRejectPayment({
       registrationId: "reg-1",
       status: "paid",
       baseUrl: "https://seeyouwild.com",
@@ -656,7 +656,7 @@ describe("reviewPayment", () => {
     );
 
     await expect(
-      reviewPayment({
+      approveOrRejectPayment({
         registrationId: "reg-1",
         status: "paid",
         baseUrl: "https://seeyouwild.com",
@@ -671,7 +671,7 @@ describe("reviewPayment", () => {
       makeOptimisticUpdateChain({ data: { id: "reg-1" }, error: null }),
     ]);
 
-    const result = await reviewPayment({
+    const result = await approveOrRejectPayment({
       registrationId: "reg-1",
       status: "failed",
       baseUrl: "https://seeyouwild.com",
@@ -716,7 +716,7 @@ describe("reviewPayment", () => {
       from: fromMock,
     } as unknown as SupabaseClient);
 
-    await reviewPayment({
+    await approveOrRejectPayment({
       registrationId: "reg-1",
       status: "failed",
       baseUrl: "https://seeyouwild.com",
@@ -739,7 +739,7 @@ describe("reviewPayment", () => {
     ]);
 
     await expect(
-      reviewPayment({
+      approveOrRejectPayment({
         registrationId: "reg-1",
         status: "paid",
         baseUrl: "https://seeyouwild.com",

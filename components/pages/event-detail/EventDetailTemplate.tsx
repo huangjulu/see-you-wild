@@ -33,7 +33,7 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
     selection.selectedDate !== null &&
     (selection.transport === "self" || selection.selectedPickup !== null);
 
-  function handleBook() {
+  function onBookClick() {
     setModalOpen(true);
   }
 
@@ -89,7 +89,7 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
             isSelfArrival={selection.transport === "self"}
             allOptionsSelected={allOptionsSelected}
             selectedDate={selection.selectedDate}
-            onBook={handleBook}
+            onBook={onBookClick}
           />
         </div>
       </div>
