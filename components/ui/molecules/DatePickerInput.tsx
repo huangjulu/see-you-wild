@@ -34,7 +34,7 @@ const DatePickerInput: React.FC<DatePickerInputProps> = (props) => {
     ? new Date(props.value + "T00:00:00")
     : undefined;
 
-  function handleSelect(date: Date | undefined) {
+  function onDateSelect(date: Date | undefined) {
     if (date == null) return;
     const yyyy = date.getFullYear();
     const mm = String(date.getMonth() + 1).padStart(2, "0");
@@ -61,7 +61,7 @@ const DatePickerInput: React.FC<DatePickerInputProps> = (props) => {
         <PopoverTrigger
           disabled={props.disabled}
           className={cn(
-            "flex h-10 w-full items-center justify-between rounded-md border px-4 text-left typo-body transition-colors",
+            "flex h-10 items-center justify-between rounded-md border px-4 text-left typo-body transition-colors",
             "border-stroke-default bg-white text-primary ring-stroke-focus",
             "hover:border-stroke-strong hover:disabled:border-stroke-default",
             "focus:border-accent focus:ring-2 focus:ring-brand-200/70 focus-visible:outline-none",
@@ -79,7 +79,7 @@ const DatePickerInput: React.FC<DatePickerInputProps> = (props) => {
             mode="single"
             size="sm"
             value={selectedDate}
-            onChange={handleSelect}
+            onChange={onDateSelect}
             defaultMonth={selectedDate ?? new Date(2000, 0)}
             startMonth={new Date(startYear, 0)}
             endMonth={new Date(endYear, 11)}

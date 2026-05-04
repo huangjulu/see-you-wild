@@ -19,6 +19,7 @@ import RadioOption from "@/components/ui/atoms/RadioOption";
 import Dialog from "@/components/ui/molecules/Dialog";
 import EventCalendar from "@/components/ui/molecules/EventCalendar";
 import ModalCard from "@/components/ui/molecules/ModalCard";
+import Selector from "@/components/ui/molecules/Selector";
 import { cn } from "@/lib/utils";
 
 const brand = {
@@ -306,6 +307,7 @@ const sections = [
   { id: "buttons", label: "Buttons" },
   { id: "slot-components", label: "Dialog / ModalCard / Calendar" },
   { id: "input", label: "Input" },
+  { id: "selector", label: "Selector" },
   { id: "shadcn-components", label: "shadcn/ui Components" },
   { id: "section-rhythm", label: "Section Rhythm" },
   { id: "testimonial-card", label: "Testimonial Card" },
@@ -583,6 +585,58 @@ const PalettePreviewPage: React.FC = () => {
           <h3 className="typo-ui mb-4 text-sm text-primary">Password</h3>
           <div className="flex max-w-md flex-col gap-4">
             <Input label="密碼" type="password" placeholder="輸入密碼" />
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ SELECTOR ═══ */}
+      <section id="selector" className="mb-16">
+        <SectionLabel>Selector</SectionLabel>
+
+        <div className="mb-10">
+          <h3 className="typo-ui mb-4 text-sm text-primary">Basic</h3>
+          <div className="flex max-w-md flex-col gap-4">
+            <Selector
+              label="可載人數"
+              placeholder="選擇人數"
+              options={[
+                { value: "3", label: "3 人" },
+                { value: "4", label: "4 人" },
+                { value: "5", label: "5 人" },
+              ]}
+            />
+          </div>
+        </div>
+
+        <div className="mb-10">
+          <h3 className="typo-ui mb-4 text-sm text-primary">Error</h3>
+          <div className="flex max-w-md flex-col gap-4">
+            <Selector
+              label="可載人數"
+              placeholder="選擇人數"
+              options={[
+                { value: "3", label: "3 人" },
+                { value: "4", label: "4 人" },
+                { value: "5", label: "5 人" },
+              ]}
+              error="必填欄位"
+            />
+          </div>
+        </div>
+
+        <div className="mb-10">
+          <h3 className="typo-ui mb-4 text-sm text-primary">Disabled</h3>
+          <div className="flex max-w-md flex-col gap-4">
+            <Selector
+              label="可載人數"
+              placeholder="選擇人數"
+              options={[
+                { value: "3", label: "3 人" },
+                { value: "4", label: "4 人" },
+                { value: "5", label: "5 人" },
+              ]}
+              disabled
+            />
           </div>
         </div>
       </section>

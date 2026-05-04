@@ -18,6 +18,7 @@ import RadioOption from "@/components/ui/atoms/RadioOption";
 import Switch from "@/components/ui/atoms/Switch";
 import DatePickerInput from "@/components/ui/molecules/DatePickerInput";
 import ModalCard from "@/components/ui/molecules/ModalCard";
+import Selector from "@/components/ui/molecules/Selector";
 import { registrationApi } from "@/lib/api/registration.api";
 import { useTranslations } from "@/lib/i18n/client";
 import { paymentAccount } from "@/lib/payment";
@@ -72,7 +73,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
     },
   });
 
-  async function onSubmit(data: RegistrationFormInput) {
+  async function handleRegistrationSubmit(data: RegistrationFormInput) {
     if (methods.formState.isSubmitting) return;
 
     try {
@@ -93,15 +94,15 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
     if (valid) setCurrentStep((prev) => prev + 1);
   }
 
-  function handleBack() {
+  function onBackClick() {
     setCurrentStep((prev) => prev - 1);
   }
 
-  function handleSubmit() {
+  function onSubmitClick() {
     formRef.current?.requestSubmit();
   }
 
-  function handleBackdropClick() {
+  function onBackdropClick() {
     if (!methods.formState.isDirty) {
       props.onClose();
     }
@@ -112,7 +113,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
   return (
     <Overlay
       open={props.open}
-      onBackdropClick={isSubmitted ? props.onClose : handleBackdropClick}
+      onBackdropClick={isSubmitted ? props.onClose : onBackdropClick}
     >
       <FormProvider {...methods}>
         <ModalCard
@@ -141,7 +142,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
                 basePrice={props.basePrice}
                 carpoolSurcharge={props.carpoolSurcharge}
                 pickupLocations={props.pickupLocations}
-                onSubmit={methods.handleSubmit(onSubmit)}
+                onSubmit={methods.handleSubmit(handleRegistrationSubmit)}
               />
             )}
           </ModalCard.Main>
@@ -164,7 +165,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
                       {t("cancel")}
                     </Button>
                   ) : (
-                    <Button theme="text" onClick={handleBack}>
+                    <Button theme="text" onClick={onBackClick}>
                       Back
                     </Button>
                   )}
@@ -173,7 +174,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
                       Next
                     </Button>
                   ) : (
-                    <Button theme="solid" onClick={handleSubmit}>
+                    <Button theme="solid" onClick={onSubmitClick}>
                       {t("submit")}
                     </Button>
                   )}
@@ -257,8 +258,6 @@ const FormMainContent: React.FC<FormMainContentProps> = (props) => {
 
 FormMainContent.displayName = "FormMainContent";
 
-/* ─── FormRegistration (same-file sub-component) ─── */
-
 interface FormRegistrationProps {
   step: number;
   basePrice: number;
@@ -284,8 +283,6 @@ const FormRegistration: React.FC<FormRegistrationProps> = (props) => {
 };
 
 FormRegistration.displayName = "FormRegistration";
-
-/* ─── Step sub-components ─── */
 
 const FormStepBasic: React.FC = () => {
   const t = useTranslations("registration");
@@ -488,7 +485,7 @@ interface FormStepTransportProps {
 
 const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
   const t = useTranslations("registration");
-  const { register, watch, formState } =
+  const { register, watch, control, formState } =
     useFormContext<RegistrationFormInput>();
   const errors = formState.errors;
 
@@ -586,13 +583,22 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
               )}
             >
               <div className="overflow-hidden">
-                <Input
-                  label={t("seatCount")}
-                  type="number"
-                  min={3}
-                  max={5}
-                  {...register("seat_count", { valueAsNumber: true })}
-                  error={errors.seat_count?.message}
+                <Controller
+                  name="seat_count"
+                  control={control}
+                  render={({ field }) => (
+                    <Selector
+                      label={t("seatCount")}
+                      placeholder="選擇人數"
+                      options={SEAT_COUNT_OPTIONS}
+                      value={
+                        field.value != null ? String(field.value) : undefined
+                      }
+                      onChange={(v) => field.onChange(Number(v))}
+                      onBlur={field.onBlur}
+                      error={errors.seat_count?.message}
+                    />
+                  )}
                 />
               </div>
             </div>
@@ -629,6 +635,12 @@ const PICKUP_SLUGS = [
   "sanchong",
   "banqiao",
 ] as const;
+
+const SEAT_COUNT_OPTIONS = [
+  { value: "3", label: "3 人" },
+  { value: "4", label: "4 人" },
+  { value: "5", label: "5 人" },
+];
 
 const TOTAL_STEPS = 5;
 

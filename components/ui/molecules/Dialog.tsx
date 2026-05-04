@@ -8,8 +8,6 @@ import { resolveSlots } from "@/lib/slot";
 import type { Override } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-/* ─── Slot Types ─── */
-
 type SlotProps = Override<
   React.ComponentProps<typeof Slot>,
   {
@@ -18,8 +16,6 @@ type SlotProps = Override<
 >;
 
 type DialogSlot = SlotProps["slot"];
-
-/* ─── Sub-components ─── */
 
 interface ButtonProps extends React.ComponentPropsWithRef<typeof Button> {}
 
@@ -94,8 +90,6 @@ const Loader: SlottableComponent<LoaderProps> = Object.assign(
   { slotName: "loader", displayName: "DialogLoader" }
 );
 
-/* ─── Dialog ─── */
-
 interface DialogProps {
   ref?: React.Ref<HTMLDivElement>;
   title?: React.ReactNode;
@@ -111,7 +105,7 @@ const _Dialog: React.FC<DialogProps> = (props) => {
     <div
       ref={props.ref}
       className={cn(
-        "w-full max-w-[--max-w] rounded-lg bg-background shadow-lg",
+        "max-w-[--max-w] rounded-lg bg-background shadow-lg",
         props.className
       )}
     >

@@ -5,6 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import RadioOption from "@/components/ui/atoms/RadioOption";
 import EventCalendar from "@/components/ui/molecules/EventCalendar";
 import ModalCard from "@/components/ui/molecules/ModalCard";
+import Selector from "@/components/ui/molecules/Selector";
 import { useTranslations } from "@/lib/i18n/client";
 
 import type { PackageSelection } from "./packageOptions.types";
@@ -59,7 +60,7 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
     });
   }, []);
 
-  function notify(
+  function notifySelectionChange(
     date: string | null,
     choice: TransportChoice,
     pickup: string | null,
@@ -84,7 +85,7 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
     if (!(date instanceof Date)) return;
     const dateStr = toDateStr(date);
     setSelectedDate(dateStr);
-    notify(dateStr, transportChoice, selectedPickup, seatCount);
+    notifySelectionChange(dateStr, transportChoice, selectedPickup, seatCount);
   }
 
   function handleTransportChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -96,20 +97,19 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
 
     setTransportChoice(choice);
     setSelectedPickup(pickup);
-    notify(selectedDate, choice, pickup, seatCount);
+    notifySelectionChange(selectedDate, choice, pickup, seatCount);
   }
 
   function handlePickupChange(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value;
     setSelectedPickup(value);
-    notify(selectedDate, transportChoice, value, seatCount);
+    notifySelectionChange(selectedDate, transportChoice, value, seatCount);
   }
 
-  function handleSeatCountChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const value = e.target.valueAsNumber;
-    const clamped = Math.min(8, Math.max(1, Number.isNaN(value) ? 3 : value));
-    setSeatCount(clamped);
-    notify(selectedDate, transportChoice, selectedPickup, clamped);
+  function handleSeatCountChange(value: string) {
+    const num = Number(value);
+    setSeatCount(num);
+    notifySelectionChange(selectedDate, transportChoice, selectedPickup, num);
   }
 
   const selectedDateObj =
@@ -189,23 +189,13 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
         {/* Seat count (only when driver selected) */}
         {transportChoice === "driver" && (
           <div className="space-y-2">
-            <label
-              className="typo-ui text-sm text-primary block"
-              htmlFor="seat-count"
-            >
-              {t("seatCount")}
-            </label>
-            <div>
-              <input
-                id="seat-count"
-                type="number"
-                min={1}
-                max={8}
-                value={seatCount}
-                onChange={handleSeatCountChange}
-                className="w-24 rounded-lg border border-stroke-default bg-surface px-3 py-2 typo-ui text-sm text-primary"
-              />
-            </div>
+            <Selector
+              label={t("seatCount")}
+              placeholder="選擇人數"
+              options={SEAT_COUNT_OPTIONS}
+              value={String(seatCount)}
+              onChange={handleSeatCountChange}
+            />
             <p className="typo-body text-xs text-secondary">
               {t("canDriveNote")}
             </p>
@@ -218,3 +208,9 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
 
 PackageOptions.displayName = "PackageOptions";
 export default PackageOptions;
+
+const SEAT_COUNT_OPTIONS = [
+  { value: "3", label: "3 人" },
+  { value: "4", label: "4 人" },
+  { value: "5", label: "5 人" },
+];
