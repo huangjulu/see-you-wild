@@ -2,7 +2,7 @@ import React from "react";
 
 import { cn } from "@/lib/utils";
 
-interface SectionProps extends React.ComponentProps<"section"> {
+interface SectionProps extends React.HTMLAttributes<HTMLElement> {
   as?: "section" | "div" | "main";
 }
 

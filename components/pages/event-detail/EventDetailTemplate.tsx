@@ -7,6 +7,7 @@ import EventGallery from "@/components/pages/event-detail/EventGallery";
 import EventPriceSidebar from "@/components/pages/event-detail/EventPriceSidebar";
 import PackageOptions from "@/components/pages/event-detail/PackageOptions";
 import type { PackageSelection } from "@/components/pages/event-detail/packageOptions.types";
+import Section from "@/components/ui/atoms/Section";
 import RegistrationModal from "@/components/ui/organisms/RegistrationModal";
 import { useTranslations } from "@/lib/i18n/client";
 import type { MockEventDetail } from "@/server/mockdata/mock-events";
@@ -39,26 +40,26 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
 
   return (
     <main className="bg-linear-180 md:bg-radial-[at_top_left] from-brand-100 from-20% via-40% via-cyan-50 to-surface to-80% pb-24 md:pb-16">
-      {/* Title + description — pt-24 clears fixed Header */}
-      <div className="mx-auto max-w-7xl px-6 md:px-12 pt-24 md:pt-28">
-        <h1 className="typo-heading text-3xl md:text-4xl text-primary mb-2">
+      {/* Title + description */}
+      <Section as="div" className="pt-24 md:pt-28">
+        <h1 className="col-span-full typo-heading text-3xl md:text-4xl text-primary mb-2">
           {event.title}
         </h1>
-        <p className="typo-body text-sm text-secondary">
+        <p className="col-span-full typo-body text-sm text-secondary">
           {event.location} · {event.start_date}
           {event.end_date !== event.start_date && ` — ${event.end_date}`}
         </p>
-      </div>
+      </Section>
 
       {/* Gallery */}
-      <div className="mx-auto max-w-7xl px-6 md:px-12 mt-4">
-        <EventGallery images={event.images} />
-      </div>
+      <Section as="div" className="mt-4">
+        <EventGallery className="col-span-full" images={event.images} />
+      </Section>
 
       {/* Content + Sidebar */}
-      <div className="mx-auto max-w-7xl px-6 md:px-12 mt-8 md:grid md:grid-cols-[1fr_320px] md:gap-6">
+      <Section as="div" className="mt-8">
         {/* Left column */}
-        <div className="space-y-6">
+        <div className="col-span-4 md:col-span-5 lg:col-span-8 space-y-6">
           <EventDetailSection
             title={t("eventDetails")}
             content={event.description}
@@ -82,7 +83,7 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
         </div>
 
         {/* Right column: Price Sidebar */}
-        <div>
+        <div className="col-span-4 md:col-span-3 lg:col-span-4">
           <EventPriceSidebar
             basePrice={event.base_price}
             carpoolSurcharge={event.carpoolSurcharge}
@@ -92,7 +93,7 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
             onBook={onBookClick}
           />
         </div>
-      </div>
+      </Section>
 
       <RegistrationModal
         open={modalOpen}

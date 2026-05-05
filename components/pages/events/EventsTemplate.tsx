@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import React from "react";
 
 import Heading from "@/components/ui/atoms/Heading";
+import Section from "@/components/ui/atoms/Section";
 import EventsGrid from "@/components/ui/molecules/EventsGrid";
 import { useTranslations } from "@/lib/i18n/client";
 import { MOCK_EVENTS } from "@/server/mockdata/mock-events";
@@ -16,8 +17,8 @@ const EventsTemplate: React.FC = () => {
 
   return (
     <main className="bg-background py-16 md:py-24">
-      <div className="mx-auto max-w-7xl px-6 md:px-12">
-        <div className="mb-10">
+      <Section as="div">
+        <div className="col-span-full mb-10">
           <p className="typo-overline mb-4 text-sm text-secondary">
             {t("overline")}
           </p>
@@ -26,11 +27,12 @@ const EventsTemplate: React.FC = () => {
           </Heading>
         </div>
         <EventsGrid
+          className="col-span-full"
           events={MOCK_EVENTS}
           initialType={initialType}
           initialLocation={initialLocation}
         />
-      </div>
+      </Section>
     </main>
   );
 };

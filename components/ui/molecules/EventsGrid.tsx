@@ -4,12 +4,14 @@ import React, { useMemo, useState } from "react";
 
 import EventCard from "@/components/ui/molecules/EventCard";
 import EventSearchBar from "@/components/ui/molecules/EventSearchBar";
+import { cn } from "@/lib/utils";
 import type { MockEvent } from "@/server/mockdata/mock-events";
 
 interface EventsGridProps {
   events: MockEvent[];
   initialType?: string;
   initialLocation?: string;
+  className?: string;
 }
 
 const EventsGrid: React.FC<EventsGridProps> = (props) => {
@@ -43,7 +45,7 @@ const EventsGrid: React.FC<EventsGridProps> = (props) => {
   }, [props.events, searchQuery, selectedType, selectedLocation]);
 
   return (
-    <div className="space-y-8">
+    <div className={cn("space-y-8", props.className)}>
       <EventSearchBar
         typeOptions={typeOptions}
         locationOptions={locationOptions}
