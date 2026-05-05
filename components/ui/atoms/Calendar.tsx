@@ -117,7 +117,7 @@ function CalendarDayButton(props: CalendarDayButtonProps) {
 
   const activeMarkers =
     markerDefs != null
-      ? Object.entries(markerDefs).filter(([name]) => modifiers[name] === true)
+      ? Object.entries(markerDefs).filter(([name]) => modifiers[name])
       : [];
 
   const activeLabel = activeMarkers.find(([, def]) => def.label != null)?.[1];
@@ -132,11 +132,11 @@ function CalendarDayButton(props: CalendarDayButtonProps) {
       data-day={`${day.date.getFullYear()}-${String(day.date.getMonth() + 1).padStart(2, "0")}-${String(day.date.getDate()).padStart(2, "0")}`}
       data-selected-single={modifiers.selected}
       className={cn(
-        "relative isolate z-10 flex aspect-square size-auto w-full min-w-(--cell-size) flex-col items-center justify-center gap-1 rounded-(--cell-radius) border-0 leading-none font-normal transition-colors duration-150",
-        "hover:bg-brand-50 hover:border-brand-100 ",
+        "relative isolate z-10 border border-transparent flex flex-col items-center justify-center gap-1 aspect-square size-auto w-full min-w-(--cell-size) rounded-(--cell-radius) leading-none font-normal transition-colors duration-150",
+        "hover:bg-brand-50 hover:border-accent/50",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-1",
-        "data-[selected-single=true]:bg-brand-50 data-[selected-single=true]:border-brand-300 data-[selected-single=true]:ring data-[selected-single=true]:ring-brand-200",
-        "hover:data-[selected-single=true]:bg-brand-100 hover:data-[selected-single=true]:text-brand-500",
+        "data-[selected-single=true]:bg-brand-400 data-[selected-single=true]:border-brand-600 data-[selected-single=true]:text-white ",
+        "hover:data-[selected-single=true]:bg-brand-500",
         size === "lg" && "justify-start pt-2",
         ...markerStyles,
         className
@@ -413,9 +413,7 @@ const _Calendar: React.FC<CalendarProps> = (props) => {
       );
       const hidden = diffWeeks < 0 || diffWeeks >= visibleWeeks;
 
-      return (
-        <tr {...trProps} style={hidden ? { display: "none" } : undefined} />
-      );
+      return <tr {...trProps} className={hidden ? "hidden" : undefined} />;
     }
 
     return <tr {...trProps} />;
@@ -434,7 +432,7 @@ const _Calendar: React.FC<CalendarProps> = (props) => {
             onClick={() => setExpanded(true)}
             className={cn(
               "w-full rounded-lg bg-brand-50 py-2 text-center typo-ui text-sm text-accent transition-all flex gap-2 items-center justify-center border border-brand-200",
-              "hover:bg-brand-100 hover:text-brand-500"
+              "hover:bg-brand-100 "
             )}
           >
             {config.expandLabel}

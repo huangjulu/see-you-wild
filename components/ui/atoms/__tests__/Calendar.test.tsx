@@ -117,8 +117,8 @@ describe("Calendar Grid type", () => {
     );
     expect(screen.getByText("展開完整月份")).toBeInTheDocument();
     const rows = container.querySelectorAll("tr");
-    const hiddenRows = Array.from(rows).filter(
-      (r) => r.style.display === "none"
+    const hiddenRows = Array.from(rows).filter((r) =>
+      r.classList.contains("hidden")
     );
     expect(hiddenRows.length).toBeGreaterThan(0);
   });
@@ -135,8 +135,8 @@ describe("Calendar Grid type", () => {
 
     expect(screen.queryByText("展開完整月份")).not.toBeInTheDocument();
     const rows = container.querySelectorAll("tr");
-    const hiddenRows = Array.from(rows).filter(
-      (r) => r.style.display === "none"
+    const hiddenRows = Array.from(rows).filter((r) =>
+      r.classList.contains("hidden")
     );
     expect(hiddenRows.length).toBe(0);
   });

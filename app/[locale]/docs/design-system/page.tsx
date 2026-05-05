@@ -896,6 +896,7 @@ const PalettePreviewPage: React.FC = () => {
             <div className="space-y-2">
               <p className="typo-ui text-xs text-secondary">Available dates</p>
               <EventCalendar
+                size="lg"
                 availableDates={[
                   new Date(2026, 4, 18),
                   new Date(2026, 4, 25),
@@ -907,6 +908,7 @@ const PalettePreviewPage: React.FC = () => {
             <div className="space-y-2">
               <p className="typo-ui text-xs text-secondary">biweek + markers</p>
               <EventCalendar
+                size="lg"
                 availableDates={[
                   new Date(2026, 4, 18),
                   new Date(2026, 4, 25),

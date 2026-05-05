@@ -109,7 +109,7 @@ const ModalCardHeader: SlottableComponent<ModalCardHeaderProps> = Object.assign(
         <header
           style={{ "--min-h": "4rem" } as React.CSSProperties}
           className={cn(
-            "flex min-h-[--min-h] items-center gap-4 p-4 border-b border-solid border-neutral-100",
+            "flex min-h-[--min-h] items-center gap-4 pt-4 pl-4",
             props.className
           )}
         >
