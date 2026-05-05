@@ -38,8 +38,8 @@ export type MessageKey<NS extends MessageNamespace> = LeafKeys<
   GetNested<Messages, NS>
 >;
 
-/** 型別安全的翻譯函式簽章 — 支援靜態 key 自動補全 + 動態 key fallback */
+/** 型別安全的翻譯函式簽章 — 支援靜態 key 自動補全 + 動態 key fallback + ICU values */
 export interface TranslationFunction<NS extends MessageNamespace> {
-  (key: MessageKey<NS>): string;
-  (key: string & {}): string;
+  (key: MessageKey<NS>, values?: Record<string, string | number>): string;
+  (key: string & {}, values?: Record<string, string | number>): string;
 }

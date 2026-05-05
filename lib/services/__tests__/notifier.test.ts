@@ -33,6 +33,7 @@ const baseEvent: EventRow = {
 const baseRegistration: RegistrationRow = {
   id: "reg-1",
   event_id: "evt-1",
+  country: "TW",
   name: "張小明",
   email: "user@example.com",
   phone: "0900000000",
@@ -49,6 +50,7 @@ const baseRegistration: RegistrationRow = {
   pickup_location: "台北",
   carpool_role: "passenger",
   seat_count: null,
+  guardian_consent: null,
   amount_due: 1100,
   payment_ref: null,
   status: "paid",

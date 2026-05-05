@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useFormatter as _useFormatter,
   useLocale as _useLocale,
   useTranslations as _useTranslations,
 } from "next-intl";
@@ -19,4 +20,8 @@ export function useTranslations<NS extends MessageNamespace>(
 
 export function useLocale() {
   return _useLocale();
+}
+
+export function useFormatter() {
+  return _useFormatter();
 }

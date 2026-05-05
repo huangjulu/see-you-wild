@@ -104,6 +104,7 @@ function makeInsertSingleChain(result: { data: unknown; error: unknown }) {
 
 const baseRegistrationInput: CreateRegistrationInput = {
   event_id: "evt-1",
+  country: "TW",
   name: "Test User",
   email: "test@example.com",
   phone: "0900000000",
@@ -120,6 +121,7 @@ const baseRegistrationInput: CreateRegistrationInput = {
   pickup_location: null,
   carpool_role: null,
   seat_count: null,
+  guardian_consent: null,
 };
 
 function setupSupabaseMock(chains: unknown[]) {

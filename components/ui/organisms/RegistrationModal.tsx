@@ -2,12 +2,13 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CircleCheck as IconCircleCheck } from "lucide-react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Controller,
   FormProvider,
   useForm,
   useFormContext,
+  useWatch,
 } from "react-hook-form";
 
 import Button from "@/components/ui/atoms/Button";
@@ -16,11 +17,19 @@ import Overlay from "@/components/ui/atoms/Overlay";
 import ProgressBar from "@/components/ui/atoms/ProgressBar";
 import RadioOption from "@/components/ui/atoms/RadioOption";
 import Switch from "@/components/ui/atoms/Switch";
+import CountrySelector from "@/components/ui/molecules/CountrySelector";
 import DatePickerInput from "@/components/ui/molecules/DatePickerInput";
+import IdNumberInput from "@/components/ui/molecules/IdNumberInput";
 import ModalCard from "@/components/ui/molecules/ModalCard";
+import PhoneInput from "@/components/ui/molecules/PhoneInput";
 import Selector from "@/components/ui/molecules/Selector";
 import { registrationApi } from "@/lib/api/registration.api";
-import { useTranslations } from "@/lib/i18n/client";
+import {
+  calculateAge,
+  type CountryRule,
+  getCountryByIso,
+} from "@/lib/form-rules";
+import { useFormatter, useTranslations } from "@/lib/i18n/client";
 import { paymentAccount } from "@/lib/payment";
 import { cn } from "@/lib/utils";
 import {
@@ -56,13 +65,15 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
     defaultValues: {
       name: "",
       email: "",
-      phone: "",
+      phone: "+886",
       line_id: null,
-      gender: "other",
+      country: "TW",
+      gender: "male",
       id_number: "",
       birthday: "",
+      guardian_consent: null,
       emergency_contact_name: "",
-      emergency_contact_phone: "",
+      emergency_contact_phone: "+886",
       dietary: "omnivore",
       wants_rental: false,
       notes: null,
@@ -141,7 +152,6 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
                 currentStep={currentStep}
                 basePrice={props.basePrice}
                 carpoolSurcharge={props.carpoolSurcharge}
-                pickupLocations={props.pickupLocations}
                 onSubmit={methods.handleSubmit(handleRegistrationSubmit)}
               />
             )}
@@ -156,6 +166,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
             ) : (
               <div className="flex w-full flex-col gap-4">
                 <ProgressBar
+                  showPercentage
                   totalSteps={TOTAL_STEPS}
                   currentStep={currentStep}
                 />
@@ -166,12 +177,12 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
                     </Button>
                   ) : (
                     <Button theme="text" onClick={onBackClick}>
-                      Back
+                      {t("back")}
                     </Button>
                   )}
                   {currentStep < TOTAL_STEPS - 1 ? (
                     <Button theme="solid" onClick={handleNext}>
-                      Next
+                      {t("next")}
                     </Button>
                   ) : (
                     <Button theme="solid" onClick={onSubmitClick}>
@@ -193,6 +204,7 @@ export default RegistrationModal;
 
 const SuccessMainContent: React.FC<{ amount: number }> = (props) => {
   const t = useTranslations("registration");
+  const format = useFormatter();
 
   return (
     <div className="flex flex-col items-center gap-6 py-6">
@@ -202,7 +214,7 @@ const SuccessMainContent: React.FC<{ amount: number }> = (props) => {
         <div className="rounded-lg border border-stroke-default p-4 space-y-2">
           <p className="typo-body-2 text-secondary">{t("successTransferTo")}</p>
           <p className="typo-subtitle-1 text-accent-fg">
-            NT$ {props.amount.toLocaleString("zh-TW")}
+            NT$ {format.number(props.amount)}
           </p>
           <div className="typo-ui text-sm text-primary space-y-1">
             <p>
@@ -229,12 +241,10 @@ interface FormMainContentProps {
   currentStep: number;
   basePrice: number;
   carpoolSurcharge: number;
-  pickupLocations: string[];
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }
 
 const FormMainContent: React.FC<FormMainContentProps> = (props) => {
-  const t = useTranslations("registration");
   const { formState } = useFormContext<RegistrationFormInput>();
 
   return (
@@ -244,7 +254,6 @@ const FormMainContent: React.FC<FormMainContentProps> = (props) => {
           step={props.currentStep}
           basePrice={props.basePrice}
           carpoolSurcharge={props.carpoolSurcharge}
-          pickupLocations={props.pickupLocations}
         />
       </form>
       {formState.errors.root != null && (
@@ -262,7 +271,6 @@ interface FormRegistrationProps {
   step: number;
   basePrice: number;
   carpoolSurcharge: number;
-  pickupLocations: string[];
 }
 
 const FormRegistration: React.FC<FormRegistrationProps> = (props) => {
@@ -286,7 +294,8 @@ FormRegistration.displayName = "FormRegistration";
 
 const FormStepBasic: React.FC = () => {
   const t = useTranslations("registration");
-  const { register, formState } = useFormContext<RegistrationFormInput>();
+  const { register, control, formState } =
+    useFormContext<RegistrationFormInput>();
   const errors = formState.errors;
 
   return (
@@ -307,36 +316,6 @@ const FormStepBasic: React.FC = () => {
         {...register("email")}
         error={errors.email?.message}
       />
-      <Input
-        label={t("phone")}
-        type="tel"
-        placeholder={t("phonePlaceholder")}
-        {...register("phone")}
-        error={errors.phone?.message}
-      />
-      <Input
-        label={t("lineId")}
-        placeholder={t("lineIdPlaceholder")}
-        {...register("line_id")}
-        error={errors.line_id?.message}
-      />
-    </fieldset>
-  );
-};
-
-FormStepBasic.displayName = "FormStepBasic";
-
-const FormStepIdentity: React.FC = () => {
-  const t = useTranslations("registration");
-  const { register, control, formState } =
-    useFormContext<RegistrationFormInput>();
-  const errors = formState.errors;
-
-  return (
-    <fieldset className="space-y-3">
-      <legend className="typo-subtitle-2 text-primary mb-2">
-        {t("sectionIdentity")}
-      </legend>
 
       <div className="space-y-1">
         <span className="typo-ui text-sm text-primary">{t("gender")}</span>
@@ -364,12 +343,6 @@ const FormStepIdentity: React.FC = () => {
         )}
       </div>
 
-      <Input
-        label={t("idNumber")}
-        placeholder={t("idNumberPlaceholder")}
-        {...register("id_number")}
-        error={errors.id_number?.message}
-      />
       <Controller
         name="birthday"
         control={control}
@@ -384,6 +357,102 @@ const FormStepIdentity: React.FC = () => {
           />
         )}
       />
+
+      <Controller
+        name="country"
+        control={control}
+        render={({ field }) => (
+          <CountrySelector
+            label={t("country")}
+            placeholder={t("selectCountry")}
+            value={field.value}
+            onChange={field.onChange}
+            onBlur={field.onBlur}
+            error={errors.country?.message}
+          />
+        )}
+      />
+    </fieldset>
+  );
+};
+
+FormStepBasic.displayName = "FormStepBasic";
+
+const FormStepIdentity: React.FC = () => {
+  const t = useTranslations("registration");
+  const { control, setValue, getValues, formState } =
+    useFormContext<RegistrationFormInput>();
+  const errors = formState.errors;
+
+  const country = useWatch({ control, name: "country" });
+  const countryRule = getCountryByIso(country) ?? FALLBACK_COUNTRY;
+
+  useEffect(
+    function syncPhoneCountryDefault() {
+      const currentPhone = getValues("phone");
+      if (currentPhone === "" || isOnlyDialCode(currentPhone)) {
+        setValue("phone", countryRule.dialCode, { shouldDirty: false });
+      }
+    },
+    [country, countryRule.dialCode, getValues, setValue]
+  );
+
+  return (
+    <fieldset className="space-y-3">
+      <legend className="typo-subtitle-2 text-primary mb-2">
+        {t("sectionIdentity")}
+      </legend>
+
+      <Controller
+        name="phone"
+        control={control}
+        render={({ field }) => (
+          <PhoneInput
+            label={t("phone")}
+            hint={t("phoneHint")}
+            country={countryRule}
+            name={field.name}
+            value={field.value}
+            onChange={field.onChange}
+            onBlur={field.onBlur}
+            error={errors.phone?.message}
+            ref={field.ref}
+          />
+        )}
+      />
+
+      <Controller
+        name="id_number"
+        control={control}
+        render={({ field }) => (
+          <IdNumberInput
+            country={country}
+            name={field.name}
+            value={field.value}
+            onChange={field.onChange}
+            onBlur={field.onBlur}
+            error={errors.id_number?.message}
+            ref={field.ref}
+          />
+        )}
+      />
+
+      <Controller
+        name="line_id"
+        control={control}
+        render={({ field }) => (
+          <Input
+            label={t("lineId")}
+            placeholder={t("lineIdPlaceholder")}
+            name={field.name}
+            value={field.value ?? ""}
+            onChange={field.onChange}
+            onBlur={field.onBlur}
+            error={errors.line_id?.message}
+            ref={field.ref}
+          />
+        )}
+      />
     </fieldset>
   );
 };
@@ -392,26 +461,73 @@ FormStepIdentity.displayName = "FormStepIdentity";
 
 const FormStepEmergency: React.FC = () => {
   const t = useTranslations("registration");
-  const { register, formState } = useFormContext<RegistrationFormInput>();
+  const { register, control, formState } =
+    useFormContext<RegistrationFormInput>();
   const errors = formState.errors;
 
+  const birthday = useWatch({ control, name: "birthday" });
+  const showGuardianConsent =
+    birthday !== "" && birthday != null && calculateAge(birthday) < 18;
+
   return (
-    <fieldset className="space-y-3">
+    <fieldset className="space-y-4">
       <legend className="typo-subtitle-2 text-primary mb-2">
         {t("sectionEmergency")}
       </legend>
+
+      {showGuardianConsent && (
+        <div className="space-y-2 rounded-md border border-stroke-default bg-brand-50 p-3">
+          <p className="typo-ui text-sm text-secondary">{t("guardianHint")}</p>
+          <Controller
+            name="guardian_consent"
+            control={control}
+            render={({ field }) => (
+              <label className="flex items-start gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="mt-1 size-4 accent-brand-500"
+                  checked={field.value === true}
+                  onChange={(event) => field.onChange(event.target.checked)}
+                  onBlur={field.onBlur}
+                  name={field.name}
+                  ref={field.ref}
+                />
+                <span className="typo-ui text-sm text-primary">
+                  {t("guardianConsentLabel")}
+                </span>
+              </label>
+            )}
+          />
+          {errors.guardian_consent != null && (
+            <p className="typo-ui text-xs text-critical">
+              {errors.guardian_consent.message}
+            </p>
+          )}
+        </div>
+      )}
+
       <Input
         label={t("emergencyName")}
         placeholder={t("emergencyNamePlaceholder")}
         {...register("emergency_contact_name")}
         error={errors.emergency_contact_name?.message}
       />
-      <Input
-        label={t("emergencyPhone")}
-        type="tel"
-        placeholder={t("emergencyPhonePlaceholder")}
-        {...register("emergency_contact_phone")}
-        error={errors.emergency_contact_phone?.message}
+
+      <Controller
+        name="emergency_contact_phone"
+        control={control}
+        render={({ field }) => (
+          <PhoneInput
+            label={t("emergencyPhone")}
+            country={EMERGENCY_DEFAULT_COUNTRY}
+            name={field.name}
+            value={field.value}
+            onChange={field.onChange}
+            onBlur={field.onBlur}
+            error={errors.emergency_contact_phone?.message}
+            ref={field.ref}
+          />
+        )}
       />
     </fieldset>
   );
@@ -485,6 +601,7 @@ interface FormStepTransportProps {
 
 const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
   const t = useTranslations("registration");
+  const format = useFormatter();
   const { register, watch, control, formState } =
     useFormContext<RegistrationFormInput>();
   const errors = formState.errors;
@@ -496,6 +613,11 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
     transport === "carpool"
       ? props.basePrice + props.carpoolSurcharge
       : props.basePrice;
+
+  const seatCountOptions = SEAT_COUNT_VALUES.map((value) => ({
+    value: String(value),
+    label: t("seatCountOption", { count: value }),
+  }));
 
   return (
     <>
@@ -513,7 +635,7 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
               {...register("transport")}
             />
             <RadioOption
-              label={`${t("transportCarpool")}  +NT$ ${props.carpoolSurcharge.toLocaleString("zh-TW")}`}
+              label={`${t("transportCarpool")}  +NT$ ${format.number(props.carpoolSurcharge)}`}
               value="carpool"
               {...register("transport")}
             />
@@ -540,7 +662,7 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
                 {PICKUP_SLUGS.map((slug) => (
                   <RadioOption
                     key={slug}
-                    label={PICKUP_SLUG_TO_DISPLAY[slug] ?? slug}
+                    label={t(`pickupSlug.${slug}`)}
                     value={slug}
                     {...register("pickup_location")}
                   />
@@ -589,12 +711,12 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
                   render={({ field }) => (
                     <Selector
                       label={t("seatCount")}
-                      placeholder="選擇人數"
-                      options={SEAT_COUNT_OPTIONS}
+                      placeholder={t("selectSeatCount")}
+                      options={seatCountOptions}
                       value={
                         field.value != null ? String(field.value) : undefined
                       }
-                      onChange={(v) => field.onChange(Number(v))}
+                      onChange={(v) => field.onChange(parseInt(v, 10))}
                       onBlur={field.onBlur}
                       error={errors.seat_count?.message}
                     />
@@ -609,7 +731,7 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
       <div className="flex items-center justify-between rounded-lg border border-stroke-default p-4">
         <span className="typo-ui text-primary">{t("totalPrice")}</span>
         <span className="typo-subtitle-1 text-accent-fg">
-          NT$ {totalPrice.toLocaleString("zh-TW")}
+          NT$ {format.number(totalPrice)}
         </span>
       </div>
     </>
@@ -620,14 +742,6 @@ FormStepTransport.displayName = "FormStepTransport";
 
 const FORM_ID = "registration-form";
 
-const PICKUP_SLUG_TO_DISPLAY: Record<string, string> = {
-  taipei: "台北車站",
-  nangang: "南港車站",
-  dapinglin: "大坪林站",
-  sanchong: "三重站",
-  banqiao: "板橋車站",
-};
-
 const PICKUP_SLUGS = [
   "taipei",
   "nangang",
@@ -636,18 +750,29 @@ const PICKUP_SLUGS = [
   "banqiao",
 ] as const;
 
-const SEAT_COUNT_OPTIONS = [
-  { value: "3", label: "3 人" },
-  { value: "4", label: "4 人" },
-  { value: "5", label: "5 人" },
-];
+const SEAT_COUNT_VALUES = [3, 4, 5] as const;
+
+const FALLBACK_COUNTRY: CountryRule = {
+  iso: "TW",
+  nameZh: "台灣",
+  nameEn: "Taiwan",
+  dialCode: "+886",
+  phoneExample: "+886 912 345 678",
+  trunkPrefix: "0",
+};
+
+const EMERGENCY_DEFAULT_COUNTRY: CountryRule = FALLBACK_COUNTRY;
 
 const TOTAL_STEPS = 5;
 
 const STEP_FIELDS: Record<number, (keyof RegistrationFormInput)[]> = {
-  0: ["name", "email", "phone", "line_id"],
-  1: ["gender", "id_number", "birthday"],
-  2: ["emergency_contact_name", "emergency_contact_phone"],
+  0: ["name", "email", "gender", "birthday", "country"],
+  1: ["phone", "id_number", "line_id"],
+  2: ["guardian_consent", "emergency_contact_name", "emergency_contact_phone"],
   3: ["dietary", "wants_rental", "notes"],
   4: ["transport", "pickup_location", "carpool_role", "seat_count"],
 };
+
+function isOnlyDialCode(value: string): boolean {
+  return /^\+\d{1,3}$/.test(value);
+}

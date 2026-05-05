@@ -31,6 +31,7 @@ function makeReg(overrides: Partial<RegistrationRow>): RegistrationRow {
   return {
     id: "reg-default",
     event_id: "evt-1",
+    country: "TW",
     name: "Test User",
     email: "test@example.com",
     phone: "0900000000",
@@ -47,6 +48,7 @@ function makeReg(overrides: Partial<RegistrationRow>): RegistrationRow {
     pickup_location: "台北",
     carpool_role: "passenger",
     seat_count: null,
+    guardian_consent: null,
     amount_due: 1100,
     payment_ref: null,
     status: "paid",

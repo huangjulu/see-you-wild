@@ -30,6 +30,7 @@ export interface EventRow {
 export interface RegistrationRow {
   id: string;
   event_id: string;
+  country: string;
   name: string;
   email: string;
   phone: string;
@@ -46,6 +47,7 @@ export interface RegistrationRow {
   pickup_location: string | null;
   carpool_role: CarpoolRole | null;
   seat_count: number | null;
+  guardian_consent: boolean | null;
   amount_due: number;
   payment_ref: string | null;
   status: RegistrationStatus;
