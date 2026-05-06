@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/lib/email/send-registration-email", () => ({
   sendRegistrationEmail: vi.fn(),
@@ -8,8 +8,8 @@ vi.mock("@/lib/email/send-admin-notification", () => ({
   sendAdminNotification: vi.fn(),
 }));
 
-import { sendRegistrationEmail } from "@/lib/email/send-registration-email";
 import { sendAdminNotification } from "@/lib/email/send-admin-notification";
+import { sendRegistrationEmail } from "@/lib/email/send-registration-email";
 import { createRegistrationNotifier } from "@/lib/services/notifier";
 import type { EventRow, RegistrationRow } from "@/lib/types/database";
 
@@ -22,7 +22,9 @@ const baseEvent: EventRow = {
   end_date: "2026-05-02",
   base_price: 1000,
   carpool_surcharge: 100,
+  driver_refund_per_passenger: 200,
   payment_days: 7,
+  carpool_cutoff_days: 3,
   min_participants: 4,
   status: "open",
   first_created_at: "2026-04-01T00:00:00Z",
@@ -31,6 +33,7 @@ const baseEvent: EventRow = {
 const baseRegistration: RegistrationRow = {
   id: "reg-1",
   event_id: "evt-1",
+  country: "TW",
   name: "張小明",
   email: "user@example.com",
   phone: "0900000000",
@@ -47,6 +50,7 @@ const baseRegistration: RegistrationRow = {
   pickup_location: "台北",
   carpool_role: "passenger",
   seat_count: null,
+  guardian_consent: null,
   amount_due: 1100,
   payment_ref: null,
   status: "paid",

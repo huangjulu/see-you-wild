@@ -22,3 +22,6 @@ api-test.http
 
 supabase/.temp/
 .gitnexus
+
+# Generated reports
+report-*.pdf

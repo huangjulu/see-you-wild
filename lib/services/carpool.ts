@@ -1,5 +1,5 @@
-import { getSupabase } from "@/lib/supabase/client";
 import { EventNotFoundError, InternalError } from "@/lib/errors/domain";
+import { getSupabase } from "@/lib/supabase/client";
 import type { EventRow, RegistrationRow } from "@/lib/types/database";
 
 interface CarpoolAssignment {
@@ -25,7 +25,6 @@ interface CarpoolAssignment {
 export async function assignCarpool(
   eventId: string
 ): Promise<CarpoolAssignment[]> {
-  // ─── Load event ─────────────────────────────────────────────
   const { data: event, error: eventError } = await getSupabase()
     .from("events")
     .select("*")
@@ -35,9 +34,8 @@ export async function assignCarpool(
   if (eventError || !event) {
     throw new EventNotFoundError();
   }
-  const typedEvent = event as EventRow;
+  const typedEvent: EventRow = event;
 
-  // ─── Load carpool registrations ─────────────────────────────
   const { data: registrations, error: regError } = await getSupabase()
     .from("registrations")
     .select("*")
@@ -49,12 +47,11 @@ export async function assignCarpool(
     throw new InternalError(regError.message, regError);
   }
 
-  const carpoolRegs = (registrations ?? []) as RegistrationRow[];
+  const carpoolRegs: RegistrationRow[] = registrations ?? [];
   if (carpoolRegs.length === 0) {
     return [];
   }
 
-  // ─── Reset previous assignments ─────────────────────────────
   const { error: deleteError } = await getSupabase()
     .from("carpool_assignments")
     .delete()
@@ -64,10 +61,8 @@ export async function assignCarpool(
     throw new InternalError(deleteError.message, deleteError);
   }
 
-  // ─── Build assignments per location ────────────────────────
   const assignments = buildAssignments(eventId, typedEvent, carpoolRegs);
 
-  // ─── Persist ───────────────────────────────────────────────
   const { data: inserted, error: insertError } = await getSupabase()
     .from("carpool_assignments")
     .insert(assignments)
@@ -85,7 +80,7 @@ export function buildAssignments(
   event: EventRow,
   carpoolRegs: RegistrationRow[]
 ): CarpoolAssignment[] {
-  const byLocation = groupByLocation(carpoolRegs);
+  const byLocation = groupRegistrationsByPickupLocation(carpoolRegs);
   const assignments: CarpoolAssignment[] = [];
   let carGroup = 1;
 
@@ -98,7 +93,9 @@ export function buildAssignments(
     if (drivers.length === 0) {
       // No driver at this location — every passenger waits for manual arrangement.
       for (const p of passengers) {
-        assignments.push(makePassenger(eventId, carGroup, location, p));
+        assignments.push(
+          buildPassengerAssignment(eventId, carGroup, location, p)
+        );
       }
       carGroup += 1;
       continue;
@@ -111,17 +108,28 @@ export function buildAssignments(
     const groupPassengers = queue.splice(0, seatCount);
 
     assignments.push(
-      makeDriver(eventId, carGroup, location, lead, seatCount, event)
+      buildDriverAssignment(
+        eventId,
+        carGroup,
+        location,
+        lead,
+        groupPassengers.length,
+        event
+      )
     );
     for (const p of groupPassengers) {
-      assignments.push(makePassenger(eventId, carGroup, location, p));
+      assignments.push(
+        buildPassengerAssignment(eventId, carGroup, location, p)
+      );
     }
     carGroup += 1;
 
     // Anyone who didn't fit goes to a driverless overflow group.
     if (queue.length > 0) {
       for (const p of queue) {
-        assignments.push(makePassenger(eventId, carGroup, location, p));
+        assignments.push(
+          buildPassengerAssignment(eventId, carGroup, location, p)
+        );
       }
       carGroup += 1;
     }
@@ -130,7 +138,7 @@ export function buildAssignments(
   return assignments;
 }
 
-function groupByLocation(
+function groupRegistrationsByPickupLocation(
   regs: RegistrationRow[]
 ): Map<string, RegistrationRow[]> {
   const byLocation = new Map<string, RegistrationRow[]>();
@@ -143,12 +151,12 @@ function groupByLocation(
   return byLocation;
 }
 
-function makeDriver(
+function buildDriverAssignment(
   eventId: string,
   carGroup: number,
   location: string,
   driver: RegistrationRow,
-  seatCount: number,
+  actualPassengerCount: number,
   event: EventRow
 ): CarpoolAssignment {
   return {
@@ -157,11 +165,11 @@ function makeDriver(
     pickup_location: location,
     registration_id: driver.id,
     final_role: "driver",
-    refund_amount: (seatCount + 1) * event.carpool_surcharge,
+    refund_amount: actualPassengerCount * event.driver_refund_per_passenger,
   };
 }
 
-function makePassenger(
+function buildPassengerAssignment(
   eventId: string,
   carGroup: number,
   location: string,

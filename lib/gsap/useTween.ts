@@ -1,8 +1,9 @@
 "use client";
 
-import { type RefObject, useContext } from "react";
-import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { type RefObject, useContext } from "react";
+
 import { ReducedMotionContext } from "@/stores/motion";
 
 /** scrollTrigger.trigger 擴充為也接受 RefObject，useTween 內部會解析成 .current */
@@ -37,7 +38,6 @@ function useTween(
   useGSAP(
     function tween() {
       if (!scope.current) return;
-      // reduced motion：跳過動畫，元素直接以最終狀態呈現
       if (reduceMotion) return;
 
       const elements = animate?.selector

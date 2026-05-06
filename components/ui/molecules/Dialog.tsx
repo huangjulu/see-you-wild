@@ -1,12 +1,12 @@
-import { cn } from "@/lib/utils";
-import { resolveSlots } from "@/lib/slot";
-import Slot from "@/components/ui/atoms/Slot";
-import type { SlottableComponent } from "@/components/ui/atoms/slot.types";
-import type { Override } from "@/lib/types";
-import Button from "@/components/ui/atoms/Button";
 import { X as IconX } from "lucide-react";
 
-/* ─── Slot Types ─── */
+import Button from "@/components/ui/atoms/Button";
+import Overlay from "@/components/ui/atoms/Overlay";
+import Slot from "@/components/ui/atoms/Slot";
+import type { SlottableComponent } from "@/components/ui/atoms/slot.types";
+import { resolveSlots } from "@/lib/slot";
+import type { Override } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 type SlotProps = Override<
   React.ComponentProps<typeof Slot>,
@@ -17,8 +17,6 @@ type SlotProps = Override<
 
 type DialogSlot = SlotProps["slot"];
 
-/* ─── Sub-components ─── */
-
 interface ButtonProps extends React.ComponentPropsWithRef<typeof Button> {}
 
 const CloseButton: SlottableComponent<ButtonProps> = Object.assign(
@@ -26,7 +24,7 @@ const CloseButton: SlottableComponent<ButtonProps> = Object.assign(
     <Slot slot="close">
       <Button
         theme="text"
-        icon={<IconX className="size-4 text-primary-400" />}
+        icon={<IconX className="size-4 text-brand-400" />}
         {...props}
       />
     </Slot>
@@ -80,7 +78,7 @@ const Loader: SlottableComponent<LoaderProps> = Object.assign(
         viewBox="-18 0 36 36"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="animate-spin text-primary-300"
+        className="animate-spin text-brand-300"
       >
         <path
           fill="currentColor"
@@ -91,8 +89,6 @@ const Loader: SlottableComponent<LoaderProps> = Object.assign(
   ),
   { slotName: "loader", displayName: "DialogLoader" }
 );
-
-/* ─── Dialog ─── */
 
 interface DialogProps {
   ref?: React.Ref<HTMLDivElement>;
@@ -109,7 +105,7 @@ const _Dialog: React.FC<DialogProps> = (props) => {
     <div
       ref={props.ref}
       className={cn(
-        "w-full max-w-[--max-w] rounded-lg bg-background shadow-lg",
+        "max-w-[--max-w] rounded-lg bg-background shadow-lg",
         props.className
       )}
     >
@@ -117,12 +113,12 @@ const _Dialog: React.FC<DialogProps> = (props) => {
         <div className="flex items-start gap-4">
           <div className="flex-1">
             {props.title != null && (
-              <div className="typo-sub-heading text-xl text-foreground">
+              <div className="typo-sub-heading text-xl text-primary">
                 {props.title}
               </div>
             )}
             {props.message != null && (
-              <div className="typo-body text-sm leading-relaxed text-muted">
+              <div className="typo-body text-sm leading-relaxed text-secondary">
                 {props.message}
               </div>
             )}
@@ -144,6 +140,7 @@ const Dialog = Object.assign(_Dialog, {
   DangerButton,
   Loader,
   OutlineButton,
+  Overlay,
   PrimaryButton,
 });
 

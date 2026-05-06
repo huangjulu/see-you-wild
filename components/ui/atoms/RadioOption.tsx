@@ -5,31 +5,21 @@ interface RadioOptionProps extends React.ComponentProps<"input"> {
 }
 
 const RadioOption: React.FC<RadioOptionProps> = (props) => {
+  const { className, label, ...restProps } = props;
   return (
     <label
       className={cn(
-        "inline-flex items-center rounded-lg border border-border px-6 py-4 text-md typo-ui transition-all",
-        "hover:border-accent/50",
-        "has-checked:border-accent has-checked:bg-primary-50 has-checked:text-foreground",
+        "inline-flex items-center rounded-full bg-white border border-stroke-default px-4 py-2 typo-ui text-sm transition-all",
+        "md:rounded-lg md:px-6 md:py-4",
+        "hover:border-accent/50 hover:bg-brand-50 hover:border",
+        "has-checked:border-brand-500 has-checked:bg-brand-400 has-checked:text-white hover:has-checked:bg-brand-500",
         "has-disabled:cursor-not-allowed has-disabled:opacity-50",
+        "has-focus-visible:ring-2 has-focus-visible:ring-stroke-focus",
         props.className
       )}
     >
-      <input
-        ref={props.ref}
-        type="radio"
-        hidden
-        name={props.name}
-        value={props.value}
-        checked={props.checked}
-        defaultChecked={props.defaultChecked}
-        onChange={props.onChange}
-        onBlur={props.onBlur}
-        onFocus={props.onFocus}
-        disabled={props.disabled}
-        required={props.required}
-      />
-      {props.label}
+      <input type="radio" className="sr-only" {...restProps} />
+      {label}
     </label>
   );
 };

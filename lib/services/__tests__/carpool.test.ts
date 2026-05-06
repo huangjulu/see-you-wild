@@ -1,13 +1,13 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/lib/supabase/client", () => ({
   getSupabase: vi.fn(),
 }));
 
-import { getSupabase } from "@/lib/supabase/client";
-import { assignCarpool, buildAssignments } from "@/lib/services/carpool";
 import { EventNotFoundError, InternalError } from "@/lib/errors/domain";
+import { assignCarpool, buildAssignments } from "@/lib/services/carpool";
+import { getSupabase } from "@/lib/supabase/client";
 import type { EventRow, RegistrationRow } from "@/lib/types/database";
 
 const baseEvent: EventRow = {
@@ -19,7 +19,9 @@ const baseEvent: EventRow = {
   end_date: "2026-05-02",
   base_price: 1000,
   carpool_surcharge: 100,
+  driver_refund_per_passenger: 200,
   payment_days: 7,
+  carpool_cutoff_days: 3,
   min_participants: 4,
   status: "open",
   first_created_at: "2026-04-01T00:00:00Z",
@@ -29,6 +31,7 @@ function makeReg(overrides: Partial<RegistrationRow>): RegistrationRow {
   return {
     id: "reg-default",
     event_id: "evt-1",
+    country: "TW",
     name: "Test User",
     email: "test@example.com",
     phone: "0900000000",
@@ -45,6 +48,7 @@ function makeReg(overrides: Partial<RegistrationRow>): RegistrationRow {
     pickup_location: "台北",
     carpool_role: "passenger",
     seat_count: null,
+    guardian_consent: null,
     amount_due: 1100,
     payment_ref: null,
     status: "paid",
@@ -128,7 +132,7 @@ describe("buildAssignments", () => {
       registration_id: "drv-1",
       final_role: "driver",
       car_group: 1,
-      refund_amount: 400,
+      refund_amount: 600,
     });
     expect(result.slice(1)).toEqual(
       passengers.map((p) => ({
@@ -226,7 +230,7 @@ describe("buildAssignments", () => {
       registration_id: "drv-A",
       final_role: "driver",
       car_group: 1,
-      refund_amount: 500,
+      refund_amount: 200,
     });
     expect(result[1]).toMatchObject({
       registration_id: "drv-B",
@@ -302,7 +306,7 @@ describe("buildAssignments", () => {
     expect(result.slice(0, 4).every((r) => r.car_group === 1)).toBe(true);
     expect(result[0]).toMatchObject({
       final_role: "driver",
-      refund_amount: 400,
+      refund_amount: 600,
     });
     expect(result[4]).toMatchObject({
       car_group: 2,

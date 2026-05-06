@@ -1,33 +1,47 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/lib/supabase/client", () => ({
   getSupabase: vi.fn(),
 }));
 
 vi.mock("@/lib/token", () => ({
-  paymentToken: vi.fn(),
+  getPaymentToken: vi.fn(),
 }));
 
-import { getSupabase } from "@/lib/supabase/client";
-import { paymentToken } from "@/lib/token";
-import {
-  createRegistration,
-  createRegistrationService,
-  submitPaymentRef,
-} from "@/lib/services/registrations";
+vi.mock("@/lib/email/send-registration-success-email", () => ({
+  sendRegistrationSuccessEmail: vi.fn(),
+}));
+
+vi.mock("@/lib/email/send-registration-failed-email", () => ({
+  sendRegistrationFailedEmail: vi.fn(),
+}));
+
+import { sendRegistrationFailedEmail } from "@/lib/email/send-registration-failed-email";
+import { sendRegistrationSuccessEmail } from "@/lib/email/send-registration-success-email";
 import {
   AlreadyRegisteredError,
   EventClosedError,
   EventNotFoundError,
+  HasCarpoolAssignmentError,
   InternalError,
   InvalidTokenError,
+  RegistrationAlreadyReviewedError,
   RegistrationExpiredError,
   RegistrationNotFoundError,
   RegistrationPaidError,
 } from "@/lib/errors/domain";
-import type { CreateRegistrationInput } from "@/lib/validations/registrations";
+import {
+  approveOrRejectPayment,
+  createRegistration,
+  createRegistrationService,
+  deleteRegistration,
+  submitPaymentRef,
+} from "@/lib/services/registrations";
+import { getSupabase } from "@/lib/supabase/client";
+import { getPaymentToken } from "@/lib/token";
 import type { EventRow } from "@/lib/types/database";
+import type { CreateRegistrationInput } from "@/lib/validations/registrations";
 
 const baseEvent: EventRow = {
   id: "evt-1",
@@ -38,7 +52,9 @@ const baseEvent: EventRow = {
   end_date: "2026-05-02",
   base_price: 1000,
   carpool_surcharge: 100,
+  driver_refund_per_passenger: 200,
   payment_days: 7,
+  carpool_cutoff_days: 3,
   min_participants: 4,
   status: "open",
   first_created_at: "2026-04-01T00:00:00Z",
@@ -62,6 +78,20 @@ function makeUpdateChain(result: { error: unknown }) {
   };
 }
 
+function makeOptimisticUpdateChain(result: { data: unknown; error: unknown }) {
+  return {
+    update: () => ({
+      eq: () => ({
+        eq: () => ({
+          select: () => ({
+            single: vi.fn().mockResolvedValue(result),
+          }),
+        }),
+      }),
+    }),
+  };
+}
+
 function makeInsertSingleChain(result: { data: unknown; error: unknown }) {
   return {
     insert: () => ({
@@ -74,6 +104,7 @@ function makeInsertSingleChain(result: { data: unknown; error: unknown }) {
 
 const baseRegistrationInput: CreateRegistrationInput = {
   event_id: "evt-1",
+  country: "TW",
   name: "Test User",
   email: "test@example.com",
   phone: "0900000000",
@@ -90,6 +121,7 @@ const baseRegistrationInput: CreateRegistrationInput = {
   pickup_location: null,
   carpool_role: null,
   seat_count: null,
+  guardian_consent: null,
 };
 
 function setupSupabaseMock(chains: unknown[]) {
@@ -105,11 +137,11 @@ function setupSupabaseMock(chains: unknown[]) {
 }
 
 function setupPaymentToken(verifyResult: boolean) {
-  // PaymentToken returned by paymentToken() exposes more methods than tests use;
+  // PaymentToken returned by getPaymentToken() exposes more methods than tests use;
   // we only need .verify(), narrowing via unknown is acceptable for mock setup.
-  vi.mocked(paymentToken).mockReturnValue({
+  vi.mocked(getPaymentToken).mockReturnValue({
     verify: vi.fn().mockReturnValue(verifyResult),
-  } as unknown as ReturnType<typeof paymentToken>);
+  } as unknown as ReturnType<typeof getPaymentToken>);
 }
 
 describe("createRegistrationService", () => {
@@ -259,7 +291,7 @@ describe("createRegistration", () => {
     const carpoolInput: CreateRegistrationInput = {
       ...baseRegistrationInput,
       transport: "carpool",
-      pickup_location: "台北",
+      pickup_location: "taipei",
       carpool_role: "passenger",
     };
 
@@ -458,6 +490,261 @@ describe("submitPaymentRef", () => {
         registrationId: "reg-1",
         token: "valid-token",
         paymentRef: "12345",
+      })
+    ).rejects.toThrow(InternalError);
+  });
+});
+
+describe("deleteRegistration", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("有 carpool assignment 時 throw HasCarpoolAssignmentError", async () => {
+    const fromMock = vi.fn();
+    fromMock.mockReturnValueOnce({
+      select: () => ({
+        eq: () => ({
+          limit: vi.fn().mockResolvedValue({ data: [{ id: "asgn-1" }] }),
+        }),
+      }),
+    });
+    vi.mocked(getSupabase).mockReturnValue({
+      from: fromMock,
+    } as unknown as SupabaseClient);
+
+    await expect(deleteRegistration("reg-1")).rejects.toThrow(
+      HasCarpoolAssignmentError
+    );
+  });
+
+  it("沒有 carpool assignment 時正常刪除並 resolve", async () => {
+    const fromMock = vi.fn();
+    fromMock.mockReturnValueOnce({
+      select: () => ({
+        eq: () => ({
+          limit: vi.fn().mockResolvedValue({ data: [] }),
+        }),
+      }),
+    });
+    fromMock.mockReturnValueOnce({
+      delete: () => ({
+        eq: vi.fn().mockResolvedValue({ error: null }),
+      }),
+    });
+    vi.mocked(getSupabase).mockReturnValue({
+      from: fromMock,
+    } as unknown as SupabaseClient);
+
+    await expect(deleteRegistration("reg-1")).resolves.toBeUndefined();
+  });
+});
+
+describe("approveOrRejectPayment", () => {
+  const baseRegistration = {
+    id: "reg-1",
+    name: "Test User",
+    email: "test@example.com",
+    event_id: "evt-1",
+    status: "pending",
+  };
+
+  const baseEvent = { title: "Test event" };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(sendRegistrationSuccessEmail).mockResolvedValue(undefined);
+    vi.mocked(sendRegistrationFailedEmail).mockResolvedValue(undefined);
+    // PaymentToken returned by getPaymentToken() exposes more methods than tests use;
+    // we only need .generate() for the failed path, narrowing via unknown is acceptable.
+    vi.mocked(getPaymentToken).mockReturnValue({
+      generate: vi.fn().mockReturnValue("mock-token"),
+      verify: vi.fn().mockReturnValue(true),
+    } as unknown as ReturnType<typeof getPaymentToken>);
+  });
+
+  it("registration 不存在時 throw RegistrationNotFoundError", async () => {
+    setupSupabaseMock([
+      makeSingleChain({ data: null, error: { message: "not found" } }),
+    ]);
+
+    await expect(
+      approveOrRejectPayment({
+        registrationId: "reg-not-exist",
+        status: "paid",
+        baseUrl: "https://seeyouwild.com",
+      })
+    ).rejects.toThrow(RegistrationNotFoundError);
+  });
+
+  it("registration.status='paid' 時 throw RegistrationAlreadyReviewedError", async () => {
+    setupSupabaseMock([
+      makeSingleChain({
+        data: { ...baseRegistration, status: "paid" },
+        error: null,
+      }),
+    ]);
+
+    await expect(
+      approveOrRejectPayment({
+        registrationId: "reg-1",
+        status: "paid",
+        baseUrl: "https://seeyouwild.com",
+      })
+    ).rejects.toThrow(RegistrationAlreadyReviewedError);
+  });
+
+  it("registration.status='failed' 時 throw RegistrationAlreadyReviewedError", async () => {
+    setupSupabaseMock([
+      makeSingleChain({
+        data: { ...baseRegistration, status: "failed" },
+        error: null,
+      }),
+    ]);
+
+    await expect(
+      approveOrRejectPayment({
+        registrationId: "reg-1",
+        status: "paid",
+        baseUrl: "https://seeyouwild.com",
+      })
+    ).rejects.toThrow(RegistrationAlreadyReviewedError);
+  });
+
+  it("event 不存在時 throw EventNotFoundError", async () => {
+    setupSupabaseMock([
+      makeSingleChain({ data: baseRegistration, error: null }),
+      makeSingleChain({ data: null, error: { message: "event not found" } }),
+    ]);
+
+    await expect(
+      approveOrRejectPayment({
+        registrationId: "reg-1",
+        status: "paid",
+        baseUrl: "https://seeyouwild.com",
+      })
+    ).rejects.toThrow(EventNotFoundError);
+  });
+
+  it("status='paid' 成功 → 回傳 { registrationId, status: 'paid' }，sendRegistrationSuccessEmail 被呼叫", async () => {
+    setupSupabaseMock([
+      makeSingleChain({ data: baseRegistration, error: null }),
+      makeSingleChain({ data: baseEvent, error: null }),
+      makeOptimisticUpdateChain({ data: { id: "reg-1" }, error: null }),
+    ]);
+
+    const result = await approveOrRejectPayment({
+      registrationId: "reg-1",
+      status: "paid",
+      baseUrl: "https://seeyouwild.com",
+    });
+
+    expect(result).toEqual({ registrationId: "reg-1", status: "paid" });
+    expect(vi.mocked(sendRegistrationSuccessEmail)).toHaveBeenCalledWith({
+      to: baseRegistration.email,
+      customerName: baseRegistration.name,
+      eventTitle: baseEvent.title,
+    });
+  });
+
+  it("status='paid' 但 email 發送失敗 → 不 throw（fire-and-forget）", async () => {
+    setupSupabaseMock([
+      makeSingleChain({ data: baseRegistration, error: null }),
+      makeSingleChain({ data: baseEvent, error: null }),
+      makeOptimisticUpdateChain({ data: { id: "reg-1" }, error: null }),
+    ]);
+    vi.mocked(sendRegistrationSuccessEmail).mockRejectedValue(
+      new Error("SMTP failure")
+    );
+
+    await expect(
+      approveOrRejectPayment({
+        registrationId: "reg-1",
+        status: "paid",
+        baseUrl: "https://seeyouwild.com",
+      })
+    ).resolves.toEqual({ registrationId: "reg-1", status: "paid" });
+  });
+
+  it("status='failed' 成功 → 回傳 { registrationId, status: 'failed' }，sendRegistrationFailedEmail 被呼叫", async () => {
+    setupSupabaseMock([
+      makeSingleChain({ data: baseRegistration, error: null }),
+      makeSingleChain({ data: baseEvent, error: null }),
+      makeOptimisticUpdateChain({ data: { id: "reg-1" }, error: null }),
+    ]);
+
+    const result = await approveOrRejectPayment({
+      registrationId: "reg-1",
+      status: "failed",
+      baseUrl: "https://seeyouwild.com",
+    });
+
+    expect(result).toEqual({ registrationId: "reg-1", status: "failed" });
+    expect(vi.mocked(sendRegistrationFailedEmail)).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: baseRegistration.email,
+        customerName: baseRegistration.name,
+        eventTitle: baseEvent.title,
+      })
+    );
+  });
+
+  it("status='failed' 時 update payload 包含 payment_ref: null（reset payment_ref）", async () => {
+    let capturedUpdate: Record<string, unknown> = {};
+    const fromMock = vi.fn();
+    fromMock.mockReturnValueOnce(
+      makeSingleChain({ data: baseRegistration, error: null })
+    );
+    fromMock.mockReturnValueOnce(
+      makeSingleChain({ data: baseEvent, error: null })
+    );
+    fromMock.mockReturnValueOnce({
+      update: (payload: Record<string, unknown>) => {
+        capturedUpdate = payload;
+        return {
+          eq: () => ({
+            eq: () => ({
+              select: () => ({
+                single: vi
+                  .fn()
+                  .mockResolvedValue({ data: { id: "reg-1" }, error: null }),
+              }),
+            }),
+          }),
+        };
+      },
+    });
+    vi.mocked(getSupabase).mockReturnValue({
+      from: fromMock,
+    } as unknown as SupabaseClient);
+
+    await approveOrRejectPayment({
+      registrationId: "reg-1",
+      status: "failed",
+      baseUrl: "https://seeyouwild.com",
+    });
+
+    expect(capturedUpdate).toMatchObject({
+      status: "failed",
+      payment_ref: null,
+    });
+  });
+
+  it("DB update 失敗時 throw InternalError", async () => {
+    setupSupabaseMock([
+      makeSingleChain({ data: baseRegistration, error: null }),
+      makeSingleChain({ data: baseEvent, error: null }),
+      makeOptimisticUpdateChain({
+        data: null,
+        error: { message: "update failed" },
+      }),
+    ]);
+
+    await expect(
+      approveOrRejectPayment({
+        registrationId: "reg-1",
+        status: "paid",
+        baseUrl: "https://seeyouwild.com",
       })
     ).rejects.toThrow(InternalError);
   });

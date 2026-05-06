@@ -1,21 +1,26 @@
-import { getSupabase } from "@/lib/supabase/client";
-import { paymentToken } from "@/lib/token";
+import { sendRegistrationFailedEmail } from "@/lib/email/send-registration-failed-email";
+import { sendRegistrationSuccessEmail } from "@/lib/email/send-registration-success-email";
 import {
   AlreadyRegisteredError,
   EventClosedError,
   EventNotFoundError,
+  HasCarpoolAssignmentError,
   InternalError,
   InvalidTokenError,
+  RegistrationAlreadyReviewedError,
   RegistrationExpiredError,
   RegistrationNotFoundError,
   RegistrationPaidError,
 } from "@/lib/errors/domain";
-import type { CreateRegistrationInput } from "@/lib/validations/registrations";
+import { getSupabase } from "@/lib/supabase/client";
+import { getPaymentToken } from "@/lib/token";
 import type {
   EventRow,
   RegistrationRow,
+  RegistrationStatus,
   Transport,
 } from "@/lib/types/database";
+import type { CreateRegistrationInput } from "@/lib/validations/registrations";
 
 /**
  * Amount calculation strategies keyed by transport mode.
@@ -67,17 +72,18 @@ export function createRegistrationService(event: EventRow) {
 export async function createRegistration(
   input: CreateRegistrationInput
 ): Promise<RegistrationRow> {
-  const { data: event, error: eventError } = await getSupabase()
+  const { data: eventData, error: eventError } = await getSupabase()
     .from("events")
     .select("*")
     .eq("id", input.event_id)
     .single();
 
-  if (eventError || !event) {
+  if (eventError || !eventData) {
     throw new EventNotFoundError();
   }
 
-  const service = createRegistrationService(event as EventRow);
+  const event: EventRow = eventData;
+  const service = createRegistrationService(event);
   if (!service.isOpen()) {
     throw new EventClosedError();
   }
@@ -105,7 +111,35 @@ export async function createRegistration(
     throw new InternalError(insertError.message, insertError);
   }
 
-  return registration as RegistrationRow;
+  const row: RegistrationRow = registration;
+  return row;
+}
+
+/**
+ * Admin-side command: delete a registration row.
+ * Guards against deleting a registration that still has an active carpool assignment —
+ * ON DELETE CASCADE would silently remove the assignment and leave passengers stranded.
+ * Admin must re-run carpool assignment to remove the person from their car group first.
+ */
+export async function deleteRegistration(id: string): Promise<void> {
+  const { data: assignments } = await getSupabase()
+    .from("carpool_assignments")
+    .select("id")
+    .eq("registration_id", id)
+    .limit(1);
+
+  if (assignments && assignments.length > 0) {
+    throw new HasCarpoolAssignmentError();
+  }
+
+  const { error } = await getSupabase()
+    .from("registrations")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    throw new InternalError(error.message, error);
+  }
 }
 
 interface SubmitPaymentRefInput {
@@ -129,7 +163,7 @@ interface SubmitPaymentRefOutput {
 export async function submitPaymentRef(
   input: SubmitPaymentRefInput
 ): Promise<SubmitPaymentRefOutput> {
-  if (!paymentToken().verify(input.registrationId, input.token)) {
+  if (!getPaymentToken().verify(input.registrationId, input.token)) {
     throw new InvalidTokenError();
   }
 
@@ -176,4 +210,117 @@ export async function submitPaymentRef(
     registrationId: input.registrationId,
     paymentRef: input.paymentRef,
   };
+}
+
+interface ReviewPaymentInput {
+  registrationId: string;
+  status: "paid" | "failed";
+  baseUrl: string;
+}
+
+interface ReviewPaymentOutput {
+  registrationId: string;
+  status: RegistrationStatus;
+}
+
+export async function approveOrRejectPayment(
+  input: ReviewPaymentInput
+): Promise<ReviewPaymentOutput> {
+  const { data: registration, error: regError } = await getSupabase()
+    .from("registrations")
+    .select(
+      "id, name, email, event_id, status, amount_due, transport, dietary, wants_rental"
+    )
+    .eq("id", input.registrationId)
+    .single();
+
+  if (regError || !registration) {
+    throw new RegistrationNotFoundError();
+  }
+
+  // Supabase client is untyped (SYW-049) — bridge cast to known fields
+  const reg = registration as Pick<
+    RegistrationRow,
+    | "id"
+    | "name"
+    | "email"
+    | "event_id"
+    | "status"
+    | "amount_due"
+    | "transport"
+    | "dietary"
+    | "wants_rental"
+  >;
+
+  if (reg.status === "paid" || reg.status === "failed") {
+    throw new RegistrationAlreadyReviewedError();
+  }
+
+  const { data: event, error: eventError } = await getSupabase()
+    .from("events")
+    .select("title, start_date, location")
+    .eq("id", reg.event_id)
+    .single();
+
+  if (eventError || !event) {
+    throw new EventNotFoundError();
+  }
+
+  const evt = event as Pick<EventRow, "title" | "start_date" | "location">;
+
+  if (input.status === "paid") {
+    const { error: updateError } = await getSupabase()
+      .from("registrations")
+      .update({ status: "paid", confirmed_at: new Date().toISOString() })
+      .eq("id", input.registrationId)
+      .eq("status", "pending")
+      .select("id")
+      .single();
+
+    if (updateError) {
+      throw new InternalError(updateError.message, updateError);
+    }
+
+    await sendRegistrationSuccessEmail({
+      to: reg.email,
+      customerName: reg.name,
+      eventTitle: evt.title,
+      eventDate: evt.start_date,
+      eventLocation: evt.location,
+      amountDue: reg.amount_due,
+      transport: reg.transport,
+      dietary: reg.dietary,
+      wantsRental: reg.wants_rental,
+    }).catch((err) =>
+      console.error("[notifier] registration success email failed", err)
+    );
+
+    return { registrationId: input.registrationId, status: "paid" };
+  }
+
+  const { error: updateError } = await getSupabase()
+    .from("registrations")
+    .update({ status: "failed", payment_ref: null })
+    .eq("id", input.registrationId)
+    .eq("status", "pending")
+    .select("id")
+    .single();
+
+  if (updateError) {
+    throw new InternalError(updateError.message, updateError);
+  }
+
+  const newToken = getPaymentToken().generate(input.registrationId);
+  const paymentRefUrl = `${input.baseUrl}/payment-ref?id=${input.registrationId}&token=${newToken}`;
+
+  await sendRegistrationFailedEmail({
+    to: reg.email,
+    customerName: reg.name,
+    eventTitle: evt.title,
+    paymentRefUrl,
+  }).catch((err) =>
+    console.error("[notifier] registration failed email failed", err)
+  );
+
+  return { registrationId: input.registrationId, status: "failed" };
 }

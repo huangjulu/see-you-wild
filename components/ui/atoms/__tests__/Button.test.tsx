@@ -1,5 +1,6 @@
-import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+
 import Button from "../Button";
 
 describe("Button", () => {
@@ -11,7 +12,7 @@ describe("Button", () => {
   it("套用 solid theme class", () => {
     render(<Button theme="solid">Solid</Button>);
     const el = screen.getByRole("button");
-    expect(el.className).toContain("bg-accent");
+    expect(el.className).toContain("bg-fill-brand");
   });
 
   it("套用 ghost theme class", () => {

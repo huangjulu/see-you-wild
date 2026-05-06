@@ -1,8 +1,10 @@
 "use client";
 
+import { Minus as IconMinus, Plus as IconPlus } from "lucide-react";
 import React, { useState } from "react";
-import { cn } from "@/lib/utils";
+
 import ModalCard from "@/components/ui/molecules/ModalCard";
+import { cn } from "@/lib/utils";
 
 interface EventDetailSectionProps {
   title: string;
@@ -19,23 +21,36 @@ const EventDetailSection: React.FC<EventDetailSectionProps> = (props) => {
     <ModalCard>
       <ModalCard.Header title={props.title} />
       <ModalCard.Main>
-        <div
-          className={cn(
-            "typo-body text-sm leading-relaxed text-muted whitespace-pre-line",
-            !expanded && "line-clamp-3"
+        <div className="relative">
+          <div
+            className={cn(
+              "typo-body text-sm leading-relaxed text-secondary whitespace-pre-line overflow-hidden",
+              !expanded && "max-h-[4.5em]"
+            )}
+          >
+            {props.content}
+          </div>
+          <button
+            type="button"
+            onClick={function toggleExpand() {
+              setExpanded((prev) => !prev);
+            }}
+            className="relative z-10 mt-2 typo-ui text-sm hover:underline text-info"
+          >
+            {expanded ? (
+              <>
+                <IconMinus className="inline size-3.5" /> {props.collapseLabel}
+              </>
+            ) : (
+              <>
+                <IconPlus className="inline size-3.5" /> {props.expandLabel}
+              </>
+            )}
+          </button>
+          {!expanded && (
+            <div className="pointer-events-none absolute -inset-x-4 -bottom-4 h-20 bg-linear-to-b from-transparent from-10% via-white to-journeys-gradient-from/20" />
           )}
-        >
-          {props.content}
         </div>
-        <button
-          type="button"
-          onClick={function toggleExpand() {
-            setExpanded((prev) => !prev);
-          }}
-          className="mt-3 typo-ui text-sm text-info hover:underline"
-        >
-          {expanded ? props.collapseLabel : props.expandLabel}
-        </button>
       </ModalCard.Main>
     </ModalCard>
   );

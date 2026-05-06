@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { useReducedMotion } from "@/stores/motion";
+import { useEffect, useRef } from "react";
+
 import Button from "@/components/ui/atoms/Button";
+import { useReducedMotion } from "@/stores/motion";
 
 interface CTACardProps {
   imageSrc: string;
@@ -75,16 +76,16 @@ const CTACard: React.FC<CTACardProps> = (props) => {
           />
         </div>
         <div className="md:w-1/2 flex flex-col justify-center items-center md:items-start p-8 md:p-24 text-center md:text-left">
-          <h2 className="typo-display text-5xl md:text-7xl text-foreground mb-8 leading-tight lowercase">
+          <h2 className="typo-display text-5xl md:text-7xl text-primary mb-8 leading-tight lowercase">
             {props.title}
           </h2>
-          <p className="typo-body text-base md:text-lg text-muted mb-12 max-w-sm leading-relaxed font-light">
+          <p className="typo-body text-base md:text-lg text-secondary mb-12 max-w-sm leading-relaxed font-light">
             {props.description}
           </p>
           <Button
             theme="base"
             href={props.buttonHref}
-            className="tracking-[0.3em] uppercase border-foreground text-foreground hover:bg-foreground hover:text-surface-warm"
+            className="tracking-[0.3em] uppercase border-fill-neutral text-primary hover:bg-fill-neutral hover:text-surface-warm"
           >
             {props.buttonText}
           </Button>

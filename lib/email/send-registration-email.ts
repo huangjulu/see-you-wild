@@ -1,7 +1,8 @@
-import { getResend } from "./client";
 import { getEnv } from "@/lib/env";
-import { paymentToken } from "@/lib/token";
 import { paymentAccount } from "@/lib/payment";
+import { getPaymentToken } from "@/lib/token";
+
+import { getResend } from "./client";
 
 interface SendRegistrationEmailParams {
   registrationId: string;
@@ -16,7 +17,7 @@ interface SendRegistrationEmailParams {
 export async function sendRegistrationEmail(
   params: SendRegistrationEmailParams
 ) {
-  const token = paymentToken().generate(params.registrationId);
+  const token = getPaymentToken().generate(params.registrationId);
   const paymentRefUrl = `${params.baseUrl}/payment-ref?id=${params.registrationId}&token=${token}`;
   const formattedAmount = params.amountDue.toLocaleString("zh-TW");
   const formattedExpiry = new Date(params.expiresAt).toLocaleDateString(

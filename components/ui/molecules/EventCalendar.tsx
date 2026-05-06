@@ -1,21 +1,19 @@
 "use client";
 
 import React, { useMemo } from "react";
+
 import Calendar from "@/components/ui/atoms/Calendar";
-import { cn } from "@/lib/utils";
 
-type CalendarSize = "sm" | "md" | "lg";
+type BaseCalendarProps = React.ComponentProps<typeof Calendar>;
 
-interface EventCalendarProps {
-  size?: CalendarSize;
-  value?: Date;
-  onChange?: (date: Date | undefined) => void;
+interface EventCalendarProps extends Pick<
+  BaseCalendarProps,
+  "size" | "value" | "onChange" | "defaultMonth" | "className"
+> {
   availableDates?: Date[];
   minAdvanceDays?: number;
-  visibleWeeks?: 1 | 2 | 3 | 4;
+  gridType?: React.ComponentProps<typeof Calendar.Grid>["type"];
   expandLabel?: string;
-  defaultMonth?: Date;
-  className?: string;
 }
 
 const EventCalendar: React.FC<EventCalendarProps> = (props) => {
@@ -46,7 +44,6 @@ const EventCalendar: React.FC<EventCalendarProps> = (props) => {
     };
   }, [props.availableDates, minDate]);
 
-  // Build markers with match + label + style
   const markers = useMemo(() => {
     if (fullMatcher == null || availableMatcher == null) return undefined;
     return {
@@ -58,23 +55,23 @@ const EventCalendar: React.FC<EventCalendarProps> = (props) => {
       available: {
         match: availableMatcher,
         label: "可選擇",
-        style:
-          "text-primary-500 border border-primary-200 bg-primary-50 hover:bg-primary-100",
+        style: "text-primary",
       },
     };
   }, [fullMatcher, availableMatcher, props.value]);
 
-  // Block non-available dates from being selected
   const changeDate = (date: Date | undefined) => {
     if (
-      date != null &&
-      props.availableDates != null &&
+      date &&
+      props.availableDates &&
       !props.availableDates.some((d) => isSameDay(d, date))
     ) {
       return;
     }
     props.onChange?.(date);
   };
+
+  const gridType = props.gridType ?? "month";
 
   return (
     <Calendar
@@ -86,9 +83,13 @@ const EventCalendar: React.FC<EventCalendarProps> = (props) => {
       defaultMonth={props.defaultMonth}
       className={props.className}
       markers={markers}
-      visibleWeeks={props.visibleWeeks}
-      expandLabel={props.expandLabel}
-    />
+    >
+      <Calendar.Navi>
+        <Calendar.Chevrons />
+        <Calendar.Caption layout="label" />
+      </Calendar.Navi>
+      <Calendar.Grid type={gridType} expandLabel={props.expandLabel} />
+    </Calendar>
   );
 };
 

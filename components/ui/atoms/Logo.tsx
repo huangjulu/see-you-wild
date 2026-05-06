@@ -12,7 +12,7 @@ const Logo: React.FC<LogoProps> = (props) => {
     <img
       className={cn(
         size === "lg" ? "size-50" : "size-12",
-        "filter-[brightness(0)_invert(1)_drop-shadow(0_0_12px_color-mix(in_srgb,var(--color-accent-fg)_60%,transparent))]",
+        "filter-[brightness(0)_invert(1)_drop-shadow(0_0_12px_color-mix(in_srgb,var(--color-primary)_60%,transparent))]",
         props.className
       )}
       fetchPriority="high"

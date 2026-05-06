@@ -1,7 +1,7 @@
-import { getSupabase } from "@/lib/supabase/client";
-import { apiOk } from "@/lib/api-response";
 import { handleError } from "@/lib/api/handle-error";
+import { apiOk } from "@/lib/api-response";
 import { InternalError, UnauthorizedError } from "@/lib/errors/domain";
+import { getSupabase } from "@/lib/supabase/client";
 
 export async function POST(request: Request) {
   try {

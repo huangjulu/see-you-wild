@@ -1,4 +1,5 @@
 import { getResend } from "./client";
+import { escapeHtml } from "./escape";
 import { getEnv } from "@/lib/env";
 
 interface SendAdminNotificationParams {
@@ -8,6 +9,8 @@ interface SendAdminNotificationParams {
   expiresAt: string;
   adminUrl: string;
   adminEmail: string;
+  paymentRef?: string;
+  reviewUrl?: string;
 }
 
 export async function sendAdminNotification(
@@ -20,7 +23,13 @@ export async function sendAdminNotification(
     expiresAt,
     adminUrl,
     adminEmail,
+    paymentRef,
+    reviewUrl,
   } = params;
+
+  const safeName = escapeHtml(customerName);
+  const safeTitle = escapeHtml(eventTitle);
+  const safeRef = escapeHtml(paymentRef ?? "");
 
   const formattedAmount = amountDue.toLocaleString("zh-TW");
   const formattedExpiry = new Date(expiresAt).toLocaleDateString("zh-TW", {
@@ -36,7 +45,7 @@ export async function sendAdminNotification(
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="x-apple-disable-message-reformatting">
-  <title>新報名 — ${customerName}｜${eventTitle}</title>
+  <title>${paymentRef ? `付款審核 — ${safeName}｜末五碼 ${safeRef}` : `新報名 — ${safeName}｜${safeTitle}`}</title>
   <!--[if mso]>
   <noscript>
     <xml>
@@ -59,7 +68,9 @@ export async function sendAdminNotification(
 
   <!-- Preheader -->
   <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;">
-    ${customerName} 報名了 ${eventTitle}，待繳 NT$ ${formattedAmount}，期限 ${formattedExpiry}。
+    ${paymentRef
+      ? `${safeTitle} — ${safeName} — 末五碼 ${safeRef}，請前往審核。`
+      : `${safeName} 報名了 ${safeTitle}，待繳 NT$ ${formattedAmount}，期限 ${formattedExpiry}。`}
   </div>
 
   <!-- Outer wrapper -->
@@ -91,12 +102,14 @@ export async function sendAdminNotification(
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr>
                   <td style="color: #2d3a40; font-size: 22px; font-weight: 700; line-height: 1.4; padding-bottom: 8px;">
-                    新成員報名通知
+                    ${paymentRef ? "付款審核通知" : "新成員報名通知"}
                   </td>
                 </tr>
                 <tr>
                   <td style="color: #2d3a40; font-size: 15px; line-height: 1.7; padding-bottom: 28px;">
-                    <strong>${customerName}</strong> 已報名 <strong>${eventTitle}</strong>。
+                    ${paymentRef
+                      ? `<strong>${safeName}</strong> 已回報 <strong>${safeTitle}</strong> 的匯款末五碼：<strong>${safeRef}</strong>，請前往審核。`
+                      : `<strong>${safeName}</strong> 已報名 <strong>${safeTitle}</strong>。`}
                   </td>
                 </tr>
               </table>
@@ -156,19 +169,21 @@ export async function sendAdminNotification(
                     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                       <tr>
                         <td style="color: #2d3a40; font-size: 15px; line-height: 1.7; text-align: center; padding-bottom: 16px;">
-                          請點選下方按鈕前往後台查看這筆報名紀錄，以便我們團隊作業。
+                          ${reviewUrl
+                            ? "請點選下方按鈕前往審核這筆付款。"
+                            : "請點選下方按鈕前往後台查看這筆報名紀錄，以便我們團隊作業。"}
                         </td>
                       </tr>
                     </table>
                     <!--[if mso]>
-                    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${adminUrl}" style="height:48px;v-text-anchor:middle;width:280px;" arcsize="17%" stroke="f" fillcolor="#d4a373">
+                    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${reviewUrl ?? adminUrl}" style="height:48px;v-text-anchor:middle;width:280px;" arcsize="17%" stroke="f" fillcolor="#d4a373">
                       <w:anchorlock/>
-                      <center style="color:#2d3a40;font-family:sans-serif;font-size:15px;font-weight:bold;">前往後台查看</center>
+                      <center style="color:#2d3a40;font-family:sans-serif;font-size:15px;font-weight:bold;">${reviewUrl ? "前往審核" : "前往後台查看"}</center>
                     </v:roundrect>
                     <![endif]-->
                     <!--[if !mso]><!-->
-                    <a href="${adminUrl}" target="_blank" style="display: inline-block; background-color: #d4a373; color: #2d3a40; font-size: 15px; font-weight: 700; text-decoration: none; padding: 14px 40px; border-radius: 8px; line-height: 1.2;">
-                      前往後台查看
+                    <a href="${reviewUrl ?? adminUrl}" target="_blank" style="display: inline-block; background-color: #d4a373; color: #2d3a40; font-size: 15px; font-weight: 700; text-decoration: none; padding: 14px 40px; border-radius: 8px; line-height: 1.2;">
+                      ${reviewUrl ? "前往審核" : "前往後台查看"}
                     </a>
                     <!--<![endif]-->
                   </td>
@@ -205,7 +220,9 @@ export async function sendAdminNotification(
   await getResend().emails.send({
     from: getEnv().RESEND_FROM,
     to: adminEmail,
-    subject: `新報名 — ${customerName}｜${eventTitle}`,
+    subject: paymentRef
+      ? `付款審核 — ${safeTitle}｜${safeName}｜末五碼 ${safeRef}`
+      : `新報名 — ${safeName}｜${safeTitle}`,
     html,
   });
 }

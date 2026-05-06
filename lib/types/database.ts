@@ -7,7 +7,7 @@ export type Gender = "male" | "female" | "other";
 export type Dietary = "omnivore" | "no_beef" | "vegetarian" | "vegan";
 export type Transport = "self" | "carpool";
 export type CarpoolRole = "passenger" | "driver";
-export type RegistrationStatus = "pending" | "paid";
+export type RegistrationStatus = "pending" | "paid" | "failed";
 export type FinalRole = "driver" | "passenger";
 
 export interface EventRow {
@@ -19,7 +19,9 @@ export interface EventRow {
   end_date: string;
   base_price: number;
   carpool_surcharge: number;
+  driver_refund_per_passenger: number;
   payment_days: number;
+  carpool_cutoff_days: number;
   min_participants: number;
   status: EventStatus;
   first_created_at: string;
@@ -28,6 +30,7 @@ export interface EventRow {
 export interface RegistrationRow {
   id: string;
   event_id: string;
+  country: string;
   name: string;
   email: string;
   phone: string;
@@ -44,6 +47,7 @@ export interface RegistrationRow {
   pickup_location: string | null;
   carpool_role: CarpoolRole | null;
   seat_count: number | null;
+  guardian_consent: boolean | null;
   amount_due: number;
   payment_ref: string | null;
   status: RegistrationStatus;

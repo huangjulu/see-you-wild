@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
-import { useTranslations } from "@/lib/i18n/client";
+
 import Button from "@/components/ui/atoms/Button";
 import Heading from "@/components/ui/atoms/Heading";
 import Text from "@/components/ui/atoms/Text";
+import { useTranslations } from "@/lib/i18n/client";
 
 type LocaleErrorProps = {
   error: Error & { digest?: string };
@@ -15,7 +16,7 @@ const LocaleError: React.FC<LocaleErrorProps> = (props) => {
   const t = useTranslations("common.error");
 
   useEffect(
-    function handleChunkLoadError() {
+    function onChunkLoadError() {
       if (props.error.name === "ChunkLoadError") {
         const hasReloaded = sessionStorage.getItem("chunk_reload_attempted");
         if (hasReloaded) {

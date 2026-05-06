@@ -1,8 +1,8 @@
-import { getSupabase } from "@/lib/supabase/client";
-import { assignCarpool } from "@/lib/services/carpool";
-import { apiOk } from "@/lib/api-response";
 import { handleError } from "@/lib/api/handle-error";
+import { apiOk } from "@/lib/api-response";
 import { InternalError } from "@/lib/errors/domain";
+import { assignCarpool } from "@/lib/services/carpool";
+import { getSupabase } from "@/lib/supabase/client";
 
 interface RouteParams {
   params: Promise<{ eventId: string }>;

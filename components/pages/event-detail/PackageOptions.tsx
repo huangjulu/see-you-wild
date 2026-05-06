@@ -1,10 +1,13 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
-import { useTranslations } from "@/lib/i18n/client";
-import ModalCard from "@/components/ui/molecules/ModalCard";
-import EventCalendar from "@/components/ui/molecules/EventCalendar";
+import React, { useEffect, useMemo, useState } from "react";
+
 import RadioOption from "@/components/ui/atoms/RadioOption";
+import EventCalendar from "@/components/ui/molecules/EventCalendar";
+import ModalCard from "@/components/ui/molecules/ModalCard";
+import Selector from "@/components/ui/molecules/Selector";
+import { useTranslations } from "@/lib/i18n/client";
+
 import type { PackageSelection } from "./packageOptions.types";
 
 interface PackageOptionsProps {
@@ -17,6 +20,8 @@ interface PackageOptionsProps {
 function toDateStr(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
+
+type TransportChoice = "self" | "passenger" | "driver";
 
 const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
   const t = useTranslations("eventDetail");
@@ -34,28 +39,45 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
   }, [availableDateObjects]);
 
   const defaultMonth = nearestDate ?? new Date();
-  const defaultDateStr = nearestDate != null ? toDateStr(nearestDate) : null;
+  const defaultDateStr = nearestDate ? toDateStr(nearestDate) : null;
 
   const [selectedDate, setSelectedDate] = useState<string | null>(
     defaultDateStr
   );
-  const [transport, setTransport] = useState<"carpool" | "self">("self");
+  const [transportChoice, setTransportChoice] =
+    useState<TransportChoice>("self");
   const [selectedPickup, setSelectedPickup] = useState<string | null>(null);
+  const [seatCount, setSeatCount] = useState<number>(3);
 
   // Notify parent of default values on mount
   useEffect(function notifyDefaults() {
     props.onSelectionChange({
       selectedDate: defaultDateStr,
+      transport: "self",
+      carpoolRole: null,
       selectedPickup: null,
-      isSelfArrival: true,
+      seatCount: null,
     });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
-  function notify(date: string | null, pickup: string | null, isSelf: boolean) {
+  function notifySelectionChange(
+    date: string | null,
+    choice: TransportChoice,
+    pickup: string | null,
+    seats: number
+  ) {
+    const isCarpool = choice === "passenger" || choice === "driver";
     props.onSelectionChange({
       selectedDate: date,
-      selectedPickup: pickup,
-      isSelfArrival: isSelf,
+      transport: isCarpool ? "carpool" : "self",
+      carpoolRole:
+        choice === "driver"
+          ? "driver"
+          : choice === "passenger"
+            ? "passenger"
+            : null,
+      selectedPickup: isCarpool ? pickup : null,
+      seatCount: choice === "driver" ? seats : null,
     });
   }
 
@@ -63,30 +85,38 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
     if (!(date instanceof Date)) return;
     const dateStr = toDateStr(date);
     setSelectedDate(dateStr);
-    notify(dateStr, selectedPickup, transport === "self");
+    notifySelectionChange(dateStr, transportChoice, selectedPickup, seatCount);
   }
 
   function handleTransportChange(e: React.ChangeEvent<HTMLInputElement>) {
     const raw = e.target.value;
-    if (raw !== "carpool" && raw !== "self") return;
-    const isSelf = raw === "self";
-    const pickup = isSelf ? null : (props.pickupLocations[0] ?? null);
+    if (raw !== "self" && raw !== "passenger" && raw !== "driver") return;
+    const choice: TransportChoice = raw;
+    const isCarpool = choice === "passenger" || choice === "driver";
+    const pickup = isCarpool ? (props.pickupLocations[0] ?? null) : null;
 
-    setTransport(raw);
+    setTransportChoice(choice);
     setSelectedPickup(pickup);
-    notify(selectedDate, pickup, isSelf);
+    notifySelectionChange(selectedDate, choice, pickup, seatCount);
   }
 
   function handlePickupChange(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value;
     setSelectedPickup(value);
-    notify(selectedDate, value, false);
+    notifySelectionChange(selectedDate, transportChoice, value, seatCount);
+  }
+
+  function handleSeatCountChange(value: string) {
+    const num = Number(value);
+    setSeatCount(num);
+    notifySelectionChange(selectedDate, transportChoice, selectedPickup, num);
   }
 
   const selectedDateObj =
     selectedDate != null ? new Date(selectedDate + "T00:00:00") : undefined;
 
-  const surchargeLabel = `+NT$ ${props.carpoolSurcharge.toLocaleString("zh-TW")}`;
+  const isCarpool =
+    transportChoice === "passenger" || transportChoice === "driver";
 
   return (
     <ModalCard>
@@ -94,7 +124,7 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
       <ModalCard.Main className="space-y-6">
         {/* Event Date */}
         <div className="space-y-2">
-          <h3 className="typo-ui text-sm text-foreground">{t("eventDate")}</h3>
+          <h3 className="typo-ui text-sm text-primary">{t("eventDate")}</h3>
           <EventCalendar
             size="lg"
             className="w-full"
@@ -102,7 +132,7 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
             onChange={handleDateSelect}
             availableDates={availableDateObjects}
             minAdvanceDays={3}
-            visibleWeeks={2}
+            gridType="biweek"
             expandLabel="展開完整月份"
             defaultMonth={defaultMonth}
           />
@@ -110,32 +140,44 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
 
         {/* Transport */}
         <div className="space-y-2">
-          <h3 className="typo-ui text-sm text-foreground">{t("transport")}</h3>
-          <div className="flex flex-wrap gap-2">
+          <h3 className="typo-ui text-sm text-primary">{t("transport")}</h3>
+          <div className="flex flex-wrap gap-1.5 md:gap-2">
             <RadioOption
               name="transport"
               value="self"
               label={t("selfArrival")}
-              checked={transport === "self"}
+              checked={transportChoice === "self"}
               onChange={handleTransportChange}
             />
             <RadioOption
               name="transport"
-              value="carpool"
-              label={`${t("carpoolPickup")}  ${surchargeLabel}`}
-              checked={transport === "carpool"}
+              value="passenger"
+              label={t("needRide")}
+              checked={transportChoice === "passenger"}
+              onChange={handleTransportChange}
+            />
+            <RadioOption
+              name="transport"
+              value="driver"
+              label={t("canDrive")}
+              checked={transportChoice === "driver"}
               onChange={handleTransportChange}
             />
           </div>
+          {transportChoice === "driver" && (
+            <p className="typo-body text-xs text-secondary">
+              依實際載客人數按比例退還 30%~50% 活動費用。
+              <br />
+              若出車者已足將自動轉為乘客，亦可來信改為自行前往。
+            </p>
+          )}
         </div>
 
         {/* Pickup Place (only when carpool selected) */}
-        {transport === "carpool" && (
+        {isCarpool && (
           <div className="space-y-2">
-            <h3 className="typo-ui text-sm text-foreground">
-              {t("pickupPlace")}
-            </h3>
-            <div className="flex flex-wrap gap-2">
+            <h3 className="typo-ui text-sm text-primary">{t("pickupPlace")}</h3>
+            <div className="flex flex-wrap gap-1.5 md:gap-2">
               {props.pickupLocations.map((loc) => (
                 <RadioOption
                   key={loc}
@@ -149,6 +191,22 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
             </div>
           </div>
         )}
+
+        {/* Seat count (only when driver selected) */}
+        {transportChoice === "driver" && (
+          <div className="space-y-2">
+            <Selector
+              label={t("seatCount")}
+              placeholder="選擇人數"
+              options={SEAT_COUNT_OPTIONS}
+              value={String(seatCount)}
+              onChange={handleSeatCountChange}
+            />
+            <p className="typo-body text-xs text-secondary">
+              {t("canDriveNote")}
+            </p>
+          </div>
+        )}
       </ModalCard.Main>
     </ModalCard>
   );
@@ -156,3 +214,9 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
 
 PackageOptions.displayName = "PackageOptions";
 export default PackageOptions;
+
+const SEAT_COUNT_OPTIONS = [
+  { value: "3", label: "3 人" },
+  { value: "4", label: "4 人" },
+  { value: "5", label: "5 人" },
+];

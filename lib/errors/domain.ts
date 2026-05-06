@@ -47,6 +47,13 @@ export class RegistrationPaidError extends DomainError {
   }
 }
 
+export class RegistrationAlreadyReviewedError extends DomainError {
+  readonly status = 409;
+  constructor() {
+    super("Registration already reviewed");
+  }
+}
+
 export class RegistrationExpiredError extends DomainError {
   readonly status = 410;
   constructor() {
@@ -65,6 +72,15 @@ export class UnauthorizedError extends DomainError {
   readonly status = 401;
   constructor(message = "Unauthorized") {
     super(message);
+  }
+}
+
+export class HasCarpoolAssignmentError extends DomainError {
+  readonly status = 409;
+  constructor() {
+    super(
+      "Cannot delete registration with active carpool assignment. Re-run carpool assignment first."
+    );
   }
 }
 

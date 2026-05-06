@@ -1,7 +1,7 @@
-import { getSupabase } from "@/lib/supabase/client";
-import { apiOk } from "@/lib/api-response";
 import { handleError } from "@/lib/api/handle-error";
+import { apiOk } from "@/lib/api-response";
 import { InternalError } from "@/lib/errors/domain";
+import { getSupabase } from "@/lib/supabase/client";
 
 interface RouteParams {
   params: Promise<{ eventId: string }>;

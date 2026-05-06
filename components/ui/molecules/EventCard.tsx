@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+
 import Tag from "@/components/ui/atoms/Tag";
 import { useLocale } from "@/lib/i18n/client";
+import { cn } from "@/lib/utils";
 
 interface EventCardProps {
   id: string;
@@ -41,7 +42,7 @@ const EventCard: React.FC<EventCardProps> = (props) => {
         <div className="space-y-2 p-4">
           <Tag>{props.type}</Tag>
           <h3 className="typo-heading text-lg">{props.title}</h3>
-          <p className="typo-body text-sm text-muted">
+          <p className="typo-body text-sm text-secondary">
             {props.location} · {props.startDate}
           </p>
           <p className="typo-ui text-base font-semibold">

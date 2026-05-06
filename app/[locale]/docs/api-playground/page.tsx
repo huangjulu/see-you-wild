@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
 import { ChevronDown as IconChevronDown } from "lucide-react";
+import { useEffect, useState } from "react";
+
+import { cn } from "@/lib/utils";
 
 // ─── Variant Payloads ───────────────────────────────────────────────────────
 
@@ -879,7 +880,7 @@ const EndpointCard: React.FC<EndpointCardComponentProps> = (props) => {
           {/* Response */}
           {response && (
             <div className="mt-3">
-              <pre className="max-h-96 overflow-auto whitespace-pre-wrap break-words rounded-md bg-foreground p-4 font-mono text-xs leading-relaxed text-background">
+              <pre className="max-h-96 overflow-auto whitespace-pre-wrap wrap-break-word rounded-md bg-foreground p-4 font-mono text-xs leading-relaxed text-background">
                 {response}
               </pre>
             </div>

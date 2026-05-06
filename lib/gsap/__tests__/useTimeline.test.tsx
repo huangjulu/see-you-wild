@@ -1,7 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
-import { type RefObject, type ReactNode } from "react";
+import { type ReactNode, type RefObject } from "react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
 import { ReducedMotionContext } from "@/stores/motion";
+
 import { useTimeline } from "../useTimeline";
 
 let capturedTimelineVars: Record<string, unknown> | null = null;
@@ -66,10 +68,9 @@ describe("useTimeline", () => {
       const animate = vi.fn();
       const onComplete = vi.fn();
 
-      renderHook(
-        () => useTimeline(scope, animate, { onComplete }),
-        { wrapper: wrapper(true) }
-      );
+      renderHook(() => useTimeline(scope, animate, { onComplete }), {
+        wrapper: wrapper(true),
+      });
 
       expect(animate).not.toHaveBeenCalled();
       expect(onComplete).toHaveBeenCalledOnce();
@@ -78,10 +79,9 @@ describe("useTimeline", () => {
     it("reduced motion 時不鎖滾動", () => {
       const scope = createScopeRef();
 
-      renderHook(
-        () => useTimeline(scope, vi.fn(), { lockScroll: true }),
-        { wrapper: wrapper(true) }
-      );
+      renderHook(() => useTimeline(scope, vi.fn(), { lockScroll: true }), {
+        wrapper: wrapper(true),
+      });
 
       expect(document.body.style.overflow).not.toBe("hidden");
     });
@@ -106,11 +106,12 @@ describe("useTimeline", () => {
       const onUpdate = vi.fn();
 
       renderHook(
-        () => useTimeline(scope, vi.fn(), {
-          lockScroll: true,
-          defaults: { duration: 0.5 },
-          onUpdate,
-        }),
+        () =>
+          useTimeline(scope, vi.fn(), {
+            lockScroll: true,
+            defaults: { duration: 0.5 },
+            onUpdate,
+          }),
         { wrapper: wrapper(false) }
       );
 
@@ -123,10 +124,9 @@ describe("useTimeline", () => {
     it("啟用時鎖定 body overflow", () => {
       const scope = createScopeRef();
 
-      renderHook(
-        () => useTimeline(scope, vi.fn(), { lockScroll: true }),
-        { wrapper: wrapper(false) }
-      );
+      renderHook(() => useTimeline(scope, vi.fn(), { lockScroll: true }), {
+        wrapper: wrapper(false),
+      });
 
       expect(document.body.style.overflow).toBe("hidden");
     });
@@ -134,10 +134,9 @@ describe("useTimeline", () => {
     it("onComplete 時解鎖 body overflow", () => {
       const scope = createScopeRef();
 
-      renderHook(
-        () => useTimeline(scope, vi.fn(), { lockScroll: true }),
-        { wrapper: wrapper(false) }
-      );
+      renderHook(() => useTimeline(scope, vi.fn(), { lockScroll: true }), {
+        wrapper: wrapper(false),
+      });
 
       expect(document.body.style.overflow).toBe("hidden");
       const onComplete = capturedTimelineVars?.onComplete as () => void;
@@ -148,10 +147,9 @@ describe("useTimeline", () => {
     it("cleanup 時解鎖 body overflow", () => {
       const scope = createScopeRef();
 
-      renderHook(
-        () => useTimeline(scope, vi.fn(), { lockScroll: true }),
-        { wrapper: wrapper(false) }
-      );
+      renderHook(() => useTimeline(scope, vi.fn(), { lockScroll: true }), {
+        wrapper: wrapper(false),
+      });
 
       expect(document.body.style.overflow).toBe("hidden");
       capturedCleanup?.();
@@ -175,10 +173,11 @@ describe("useTimeline", () => {
       const userOnComplete = vi.fn();
 
       renderHook(
-        () => useTimeline(scope, vi.fn(), {
-          lockScroll: true,
-          onComplete: userOnComplete,
-        }),
+        () =>
+          useTimeline(scope, vi.fn(), {
+            lockScroll: true,
+            onComplete: userOnComplete,
+          }),
         { wrapper: wrapper(false) }
       );
 
@@ -195,10 +194,9 @@ describe("useTimeline", () => {
       const handler = vi.fn();
       window.addEventListener("test-cue", handler);
 
-      renderHook(
-        () => useTimeline(scope, vi.fn(), undefined, "test-cue"),
-        { wrapper: wrapper(false) }
-      );
+      renderHook(() => useTimeline(scope, vi.fn(), undefined, "test-cue"), {
+        wrapper: wrapper(false),
+      });
 
       const onComplete = capturedTimelineVars?.onComplete as () => void;
       onComplete();
@@ -239,10 +237,9 @@ describe("useTimeline", () => {
       const handler = vi.fn();
       window.addEventListener("rm-cue", handler);
 
-      renderHook(
-        () => useTimeline(scope, vi.fn(), undefined, "rm-cue"),
-        { wrapper: wrapper(true) }
-      );
+      renderHook(() => useTimeline(scope, vi.fn(), undefined, "rm-cue"), {
+        wrapper: wrapper(true),
+      });
 
       expect(handler).toHaveBeenCalledOnce();
       window.removeEventListener("rm-cue", handler);
@@ -255,10 +252,9 @@ describe("useTimeline", () => {
       const animate = vi.fn();
       const onComplete = vi.fn();
 
-      renderHook(
-        () => useTimeline(scope, animate, { onComplete }),
-        { wrapper: wrapper(false) }
-      );
+      renderHook(() => useTimeline(scope, animate, { onComplete }), {
+        wrapper: wrapper(false),
+      });
 
       expect(animate).not.toHaveBeenCalled();
       expect(onComplete).not.toHaveBeenCalled();

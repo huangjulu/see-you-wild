@@ -1,10 +1,11 @@
-import { getSupabase } from "@/lib/supabase/client";
-import { createRegistrationSchema } from "@/lib/validations/registrations";
-import { createRegistration } from "@/lib/services/registrations";
-import { createRegistrationNotifier } from "@/lib/services/notifier";
-import { apiOk } from "@/lib/api-response";
 import { handleError } from "@/lib/api/handle-error";
+import { apiOk } from "@/lib/api-response";
+import { getEnv } from "@/lib/env";
+import { createRegistrationNotifier } from "@/lib/services/notifier";
+import { createRegistration } from "@/lib/services/registrations";
+import { getSupabase } from "@/lib/supabase/client";
 import type { EventRow } from "@/lib/types/database";
+import { createRegistrationSchema } from "@/lib/validations/registrations";
 
 export async function POST(request: Request) {
   try {
@@ -21,12 +22,11 @@ export async function POST(request: Request) {
       .single();
 
     if (event) {
-      const baseUrl =
-        process.env.NEXT_PUBLIC_BASE_URL || "https://seeyouwild.com";
+      const typedEvent: EventRow = event;
       const notifier = createRegistrationNotifier({
         registration,
-        event: event as EventRow,
-        baseUrl,
+        event: typedEvent,
+        baseUrl: getEnv().canonicalUrl,
       });
       notifier
         .notifyAll()

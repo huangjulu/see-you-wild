@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
+
 import { DomainError, InternalError } from "@/lib/errors/domain";
 
 /**

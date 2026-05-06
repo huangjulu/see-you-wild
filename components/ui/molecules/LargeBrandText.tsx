@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+
 import { useTween } from "@/lib/gsap";
 
 const LargeBrandText: React.FC = () => {

@@ -1,7 +1,9 @@
 import { cn } from "@/lib/utils";
+
 import type { ButtonTheme } from "./button.types";
 
 interface ButtonProps {
+  ref?: React.Ref<HTMLButtonElement>;
   children?: React.ReactNode;
   theme?: ButtonTheme;
   href?: string;
@@ -24,7 +26,7 @@ const Button: React.FC<ButtonProps> = (props) => {
     case "solid":
       themeClass = cn(
         BOX_LAYOUT,
-        "bg-accent text-white border-transparent hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/30"
+        "bg-fill-brand text-on-surface-brand border-transparent hover:-translate-y-0.5 hover:shadow-lg hover:shadow-accent/30"
       );
       break;
     case "danger":
@@ -42,13 +44,13 @@ const Button: React.FC<ButtonProps> = (props) => {
     case "outline":
       themeClass = cn(
         BOX_LAYOUT,
-        "border-border-strong text-foreground hover:border-foreground"
+        "border-stroke-strong text-primary hover:border-stroke-strong"
       );
       break;
     case "text":
       themeClass = cn(
         BOX_LAYOUT,
-        "border-transparent text-foreground hover:opacity-80"
+        "border-transparent text-primary hover:opacity-80"
       );
       break;
     case "link":
@@ -97,6 +99,7 @@ function renderElement(props: ButtonProps, className: string) {
 
   return (
     <button
+      ref={props.ref}
       className={className}
       aria-label={props.ariaLabel}
       onClick={props.onClick}

@@ -1,6 +1,6 @@
-import { sendRegistrationEmail } from "@/lib/email/send-registration-email";
 import { sendAdminNotification } from "@/lib/email/send-admin-notification";
-import type { RegistrationRow, EventRow } from "@/lib/types/database";
+import { sendRegistrationEmail } from "@/lib/email/send-registration-email";
+import type { EventRow, RegistrationRow } from "@/lib/types/database";
 
 interface NotifierContext {
   registration: RegistrationRow;

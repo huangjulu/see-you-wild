@@ -1,9 +1,9 @@
 import {
-  Noto_Serif_TC,
+  Chiron_Sung_HK,
   Noto_Sans_TC,
+  Noto_Serif_TC,
   Playfair,
   Rufina,
-  Chiron_Sung_HK,
 } from "next/font/google";
 
 const notoSerifTC = Noto_Serif_TC({
@@ -42,4 +42,4 @@ const chironSungHK = Chiron_Sung_HK({
   adjustFontFallback: false,
 });
 
-export { notoSerifTC, notoSansTC, playfair, rufina, chironSungHK };
+export { chironSungHK, notoSansTC, notoSerifTC, playfair, rufina };

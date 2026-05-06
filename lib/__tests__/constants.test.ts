@@ -1,10 +1,11 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+
 import {
   EVENTS_CONFIG,
-  INSTAGRAM_URL,
   INSTAGRAM_HANDLE,
-  SITE_URL,
+  INSTAGRAM_URL,
   NAV_ANCHORS,
+  SITE_URL,
 } from "../constants";
 
 describe("EVENTS_CONFIG", () => {

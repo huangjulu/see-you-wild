@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+
 import { getEnv } from "@/lib/env";
 
 let _resend: Resend | null = null;

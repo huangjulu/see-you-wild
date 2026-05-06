@@ -1,7 +1,9 @@
-import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
 import { renderHook } from "@testing-library/react";
-import { type RefObject, type ReactNode } from "react";
+import { type ReactNode, type RefObject } from "react";
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
+
 import { ReducedMotionContext } from "@/stores/motion";
+
 import { useTween } from "../useTween";
 
 // ---------------------------------------------------------------------------
@@ -156,10 +158,9 @@ describe("useTween", () => {
       const from = { opacity: 0 };
       const to = { opacity: 1 };
 
-      renderHook(
-        () => useTween(scope, { from, to, selector: ".item" }),
-        { wrapper: wrapper(false) }
-      );
+      renderHook(() => useTween(scope, { from, to, selector: ".item" }), {
+        wrapper: wrapper(false),
+      });
 
       expect(mockToArray).toHaveBeenCalledWith(".item", scope.current);
       expect(mockFromTo).toHaveBeenCalledTimes(3);
@@ -192,10 +193,9 @@ describe("useTween", () => {
       const from = { opacity: 0, y: 40 };
       const to = { opacity: 1, y: 0, stagger: 0.1 };
 
-      renderHook(
-        () => useTween(scope, { from, to, selector: ".card" }),
-        { wrapper: wrapper(false) }
-      );
+      renderHook(() => useTween(scope, { from, to, selector: ".card" }), {
+        wrapper: wrapper(false),
+      });
 
       // 應該只呼叫一次，傳入 array
       expect(mockFromTo).toHaveBeenCalledOnce();
@@ -211,10 +211,9 @@ describe("useTween", () => {
       const from = { opacity: 0 };
       const to = { opacity: 1 };
 
-      renderHook(
-        () => useTween(scope, { from, to, selector: ".card" }),
-        { wrapper: wrapper(false) }
-      );
+      renderHook(() => useTween(scope, { from, to, selector: ".card" }), {
+        wrapper: wrapper(false),
+      });
 
       expect(mockFromTo).toHaveBeenCalledTimes(2);
     });

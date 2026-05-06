@@ -1,12 +1,13 @@
-import { getSupabase } from "@/lib/supabase/client";
-import { updateRegistrationSchema } from "@/lib/validations/registrations";
-import { apiOk } from "@/lib/api-response";
 import { handleError } from "@/lib/api/handle-error";
+import { apiOk } from "@/lib/api-response";
 import {
   AlreadyRegisteredError,
   InternalError,
   RegistrationNotFoundError,
 } from "@/lib/errors/domain";
+import { deleteRegistration } from "@/lib/services/registrations";
+import { getSupabase } from "@/lib/supabase/client";
+import { updateRegistrationSchema } from "@/lib/validations/registrations";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -72,14 +73,7 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
   try {
     const { id } = await params;
 
-    const { error } = await getSupabase()
-      .from("registrations")
-      .delete()
-      .eq("id", id);
-
-    if (error) {
-      throw new InternalError(error.message, error);
-    }
+    await deleteRegistration(id);
 
     return apiOk({ deleted: true });
   } catch (err) {

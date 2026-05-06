@@ -1,12 +1,12 @@
-import { cn } from "@/lib/utils";
-import { resolveSlots } from "@/lib/slot";
+import { ArrowLeft as IconArrowLeft, X as IconX } from "lucide-react";
+
+import Button from "@/components/ui/atoms/Button";
+import Overlay from "@/components/ui/atoms/Overlay";
 import Slot from "@/components/ui/atoms/Slot";
 import type { SlottableComponent } from "@/components/ui/atoms/slot.types";
+import { resolveSlots } from "@/lib/slot";
 import type { Override } from "@/lib/types";
-import Button from "@/components/ui/atoms/Button";
-import { X as IconX, ArrowLeft as IconArrowLeft } from "lucide-react";
-
-/* ─── Slot Types ─── */
+import { cn } from "@/lib/utils";
 
 type SlotProps = Override<
   React.ComponentProps<typeof Slot>,
@@ -25,20 +25,34 @@ type SlotProps = Override<
 
 type ModalCardSlot = SlotProps["slot"];
 
-/* ─── Sub-components ─── */
-
 interface ButtonProps extends React.ComponentPropsWithRef<typeof Button> {}
 
 const HeaderCloseButton: SlottableComponent<ButtonProps> = Object.assign(
-  (props: ButtonProps) => (
-    <Slot slot="header-close-button">
-      <Button
-        theme="text"
-        icon={<IconX className="size-4 text-primary-400" />}
-        {...props}
-      />
-    </Slot>
-  ),
+  (props: ButtonProps) => {
+    function attachEscListener(node: HTMLButtonElement | null) {
+      if (node == null) return;
+      const el = node;
+      function onKeyDown(e: KeyboardEvent) {
+        if (e.key === "Escape") {
+          el.click();
+          el.blur();
+        }
+      }
+      document.addEventListener("keydown", onKeyDown);
+      return () => document.removeEventListener("keydown", onKeyDown);
+    }
+
+    return (
+      <Slot slot="header-close-button">
+        <Button
+          ref={attachEscListener}
+          theme="text"
+          icon={<IconX className="size-4 text-brand-400" />}
+          {...props}
+        />
+      </Slot>
+    );
+  },
   { slotName: "header-close-button", displayName: "HeaderCloseButton" }
 );
 
@@ -95,7 +109,7 @@ const ModalCardHeader: SlottableComponent<ModalCardHeaderProps> = Object.assign(
         <header
           style={{ "--min-h": "4rem" } as React.CSSProperties}
           className={cn(
-            "flex min-h-[--min-h] items-center gap-4 p-4 border-b border-solid border-neutral-100",
+            "flex min-h-[--min-h] items-center gap-4 pt-4 pl-4",
             props.className
           )}
         >
@@ -105,12 +119,12 @@ const ModalCardHeader: SlottableComponent<ModalCardHeaderProps> = Object.assign(
                 "flex min-w-0 flex-1 flex-col justify-center self-stretch wrap-break-word [&>:nth-child(n+2)]:mt-auto"
               )}
             >
-              {props.title != null && (
-                <div className="typo-subtitle-1 text-primary-600">
+              {props.title && (
+                <div className="typo-sub-heading text-brand-600">
                   {props.title}
                 </div>
               )}
-              {props.description != null && (
+              {props.description && (
                 <div className="typo-body-2 text-black-60">
                   {props.description}
                 </div>
@@ -133,7 +147,9 @@ interface ModalCardMainProps {
 const ModalCardMain: SlottableComponent<ModalCardMainProps> = Object.assign(
   (props: ModalCardMainProps) => (
     <Slot slot="main">
-      <main className={cn("p-4", props.className)}>{props.children}</main>
+      <main className={cn("p-4 overflow-y-auto bg-linear-90", props.className)}>
+        {props.children}
+      </main>
     </Slot>
   ),
   { slotName: "main", displayName: "ModalCardMain" }
@@ -166,24 +182,23 @@ const ModalCardFooter: SlottableComponent<ModalCardFooterProps> = Object.assign(
   { slotName: "footer", displayName: "ModalCardFooter" }
 );
 
-/* ─── ModalCard ─── */
-
-interface ModalCardProps {
+interface ModalCardProps extends React.HTMLAttributes<HTMLDivElement> {
   ref?: React.Ref<HTMLDivElement>;
   className?: string;
   children?: React.ReactNode;
 }
 
 const _ModalCard: React.FC<ModalCardProps> = (props) => {
-  const slots = resolveSlots<ModalCardSlot>(props.children);
+  const { className, children, ...restProps } = props;
+  const slots = resolveSlots<ModalCardSlot>(children);
 
   return (
     <div
-      ref={props.ref}
       className={cn(
-        "grid overflow-clip rounded-xl bg-surface border border-neutral-200",
-        props.className
+        "grid grid-rows-[auto_1fr_auto] overflow-clip rounded-xl bg-white border border-stroke-default shadow-sm",
+        className
       )}
+      {...restProps}
     >
       {slots["header"]}
       {slots["main"]}
@@ -202,6 +217,7 @@ const ModalCard = Object.assign(_ModalCard, {
     CancelButton: FooterCancelButton,
     ConfirmButton: FooterConfirmButton,
   }),
+  Overlay,
 });
 
 _ModalCard.displayName = "ModalCard";

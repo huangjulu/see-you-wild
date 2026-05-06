@@ -1,13 +1,13 @@
-import { getSupabase } from "@/lib/supabase/client";
-import { createEventSchema } from "@/lib/validations/events";
-import { apiOk } from "@/lib/api-response";
 import { handleError } from "@/lib/api/handle-error";
+import { apiOk } from "@/lib/api-response";
 import { InternalError } from "@/lib/errors/domain";
+import { getSupabase } from "@/lib/supabase/client";
 import type {
-  EventRow,
   EventListDto,
+  EventRow,
   RegistrationSummaryDto,
 } from "@/lib/types/database";
+import { createEventSchema } from "@/lib/validations/events";
 
 export async function GET() {
   try {
@@ -20,7 +20,7 @@ export async function GET() {
       throw new InternalError(eventsError.message, eventsError);
     }
 
-    const typedEvents = (events ?? []) as EventRow[];
+    const typedEvents: EventRow[] = events ?? [];
     const eventIds = typedEvents.map((e) => e.id);
 
     // Single batched read instead of N+1 per-event queries (SYW-036 I7).
@@ -67,12 +67,13 @@ export async function POST(request: Request) {
   }
 }
 
+type JoinedRegistration = RegistrationSummaryDto & { event_id: string };
+
 function groupRegistrationsByEvent(
-  registrations: unknown[]
+  registrations: JoinedRegistration[]
 ): Map<string, RegistrationSummaryDto[]> {
-  type Joined = RegistrationSummaryDto & { event_id: string };
   const map = new Map<string, RegistrationSummaryDto[]>();
-  for (const reg of registrations as Joined[]) {
+  for (const reg of registrations) {
     if (!map.has(reg.event_id)) map.set(reg.event_id, []);
     map.get(reg.event_id)!.push(reg);
   }
