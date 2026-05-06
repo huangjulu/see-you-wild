@@ -5,6 +5,10 @@
     {
       "path": "/api/cron/keepalive",
       "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/assign-carpool",
+      "schedule": "0 0 * * *"
     }
   ]
 }
