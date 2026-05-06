@@ -4,6 +4,7 @@ import gsap from "gsap";
 import React, { useEffect, useRef } from "react";
 
 import TestimonialCard from "@/components/pages/home/TestimonialCard";
+import Heading from "@/components/ui/atoms/Heading";
 import { ScrollTrigger, useTimeline } from "@/lib/gsap";
 import { useTranslations } from "@/lib/i18n/client";
 import { useReducedMotion } from "@/stores/motion";
@@ -130,7 +131,7 @@ const TestimonialsSection: React.FC = () => {
       ref={sectionRef}
       className="bg-linear-180 from-background to-brand-100"
     >
-      <div className="relative py-24 md:py-32 px-6 md:px-12 [mask-image:linear-gradient(to_bottom,transparent_0%,black_12%,black_95%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,black_12%,black_95%,transparent_100%)]">
+      <div className="relative py-24 md:py-32 px-10 md:px-16 [mask-image:linear-gradient(to_bottom,transparent_0%,black_12%,black_95%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,black_12%,black_95%,transparent_100%)]">
         <div
           ref={ghostRef}
           className="absolute inset-0 will-change-transform pointer-events-none"
@@ -148,12 +149,13 @@ const TestimonialsSection: React.FC = () => {
         {/* Content */}
         <div className="relative z-10 max-w-6xl mx-auto">
           <div className="text-center mb-20">
-            <p className="typo-overline text-sm mb-4 text-brand-500">
-              {t("overline")}
-            </p>
-            <h2 className="typo-display text-4xl md:text-5xl text-primary">
+            <Heading.H2
+              variant="display"
+              overline={t("overline")}
+              overlineClassName="mb-4"
+            >
               {t("title")}
-            </h2>
+            </Heading.H2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10 md:gap-y-14 max-w-5xl mx-auto [perspective:1200px]">

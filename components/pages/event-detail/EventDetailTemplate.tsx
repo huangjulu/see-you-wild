@@ -7,6 +7,7 @@ import EventGallery from "@/components/pages/event-detail/EventGallery";
 import EventPriceSidebar from "@/components/pages/event-detail/EventPriceSidebar";
 import PackageOptions from "@/components/pages/event-detail/PackageOptions";
 import type { PackageSelection } from "@/components/pages/event-detail/packageOptions.types";
+import Heading from "@/components/ui/atoms/Heading";
 import Section from "@/components/ui/atoms/Section";
 import RegistrationModal from "@/components/ui/organisms/RegistrationModal";
 import { useTranslations } from "@/lib/i18n/client";
@@ -42,13 +43,13 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
     <main className="bg-linear-180 md:bg-radial-[at_top_left] from-brand-100 from-20% via-40% via-cyan-50 to-surface to-80% pb-24 md:pb-16">
       {/* Title + description */}
       <Section as="div" className="pt-24 md:pt-28">
-        <h1 className="col-span-full typo-heading text-3xl md:text-4xl text-primary mb-2">
+        <Heading.H1
+          className="col-span-full text-3xl md:text-4xl"
+          description={`${event.location} · ${event.start_date}${event.end_date !== event.start_date ? ` — ${event.end_date}` : ""}`}
+          descriptionClassName="text-sm"
+        >
           {event.title}
-        </h1>
-        <p className="col-span-full typo-body text-sm text-secondary">
-          {event.location} · {event.start_date}
-          {event.end_date !== event.start_date && ` — ${event.end_date}`}
-        </p>
+        </Heading.H1>
       </Section>
 
       {/* Gallery */}
@@ -99,6 +100,9 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         eventId={event.id}
+        eventTitle={event.title}
+        eventLocation={event.location}
+        eventDate={event.start_date}
         basePrice={event.base_price}
         carpoolSurcharge={event.carpoolSurcharge}
         selectedDate={selection.selectedDate}

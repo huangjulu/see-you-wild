@@ -75,6 +75,7 @@
   --color-surface: #f0f5f9; /* tertiary-50 — 卡片/區塊 */
   --color-surface-brand: #de954e; /* brand-400 — 品牌色區塊 */
   --color-surface-warm: #fef6ee; /* brand-50 — 暖色 CTA */
+  --color-surface-frost: #ecfeff; /* 頁面漸層 via — warm→cool 過渡 */
   --color-surface-deep: #1a2226; /* neutral-950 — footer/loader */
 
   /* ─── Fill: 互動元素填充 ─── */
@@ -150,6 +151,34 @@
   unicode-range: U+0030-0039, U+002C, U+002E, U+0025, U+002F, U+2013, U+2014;
 }
 
+/* ─── Page Background ─── */
+
+@utility bg-page-gradient {
+  background-image: linear-gradient(
+    180deg,
+    var(--color-brand-100) 20%,
+    var(--color-surface-frost) 40%,
+    var(--color-surface) 80%
+  );
+
+  @media (min-width: 768px) {
+    background-image:
+      radial-gradient(
+        at 25% 0%,
+        var(--color-brand-100) 20%,
+        var(--color-surface-frost) 40%,
+        transparent 70%
+      ),
+      radial-gradient(
+        at bottom right,
+        color-mix(in srgb, var(--color-brand-100) 75%, transparent) 20%,
+        color-mix(in srgb, var(--color-surface-frost) 75%, transparent) 40%,
+        transparent 70%
+      );
+    background-color: var(--color-surface);
+  }
+}
+
 /* ─── Typography Utilities ─── */
 
 @utility typo-display {
@@ -182,7 +211,7 @@
 @utility typo-overline {
   font-family: var(--font-serif);
   font-weight: var(--font-weight-ui);
-  letter-spacing: 0.3em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
 }
 
@@ -290,6 +319,172 @@ body {
 
 .animate-bounce-slow {
   animation: bounce 2s 4;
+}
+
+/* ─── Scroll-driven: events sticky header ───
+ *
+ * Structure:
+ *   #page-header (fixed nav)  ← hides on scroll (0–60px)
+ *   .sticky-shrink-header     ← container: top offset + box-shadow fade-in
+ *     .sticky-shrink-bg       ← blur + tint (all screens), fade-in animation (md+ only)
+ *     .sticky-shrink-gap      ← negative margin to tighten spacing
+ *       .sticky-shrink-overline
+ *       .sticky-shrink-title
+ *     .sticky-shrink-chip     ← search bar chips shrink
+ *
+ * Shared scroll timeline: scroll(), range 0–120px (bg/reveal use 0–60px subset)
+ */
+
+/* --- Keyframes --- */
+
+@keyframes sticky-hide-nav {
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes sticky-container {
+  from {
+    top: 0;
+  }
+  to {
+    top: -4.5rem;
+  }
+}
+
+@keyframes sticky-bg-shadow {
+  from {
+    box-shadow: none;
+  }
+  to {
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.08);
+  }
+}
+
+@keyframes sticky-bg-reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sticky-title {
+  from {
+    font-size: var(--title-from);
+  }
+  to {
+    font-size: var(--title-to);
+  }
+}
+
+@keyframes sticky-overline {
+  from {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+  to {
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+@keyframes sticky-chip {
+  from {
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+  }
+  to {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.75rem;
+  }
+}
+
+@keyframes sticky-gap {
+  from {
+    margin-bottom: 0;
+  }
+  to {
+    margin-bottom: -0.75rem;
+  }
+}
+
+/* --- Selectors --- */
+
+@media (min-width: 768px) {
+  body:has(.sticky-shrink-header) #page-header {
+    animation: sticky-hide-nav linear forwards;
+    animation-timeline: scroll();
+    animation-range: 0px 60px;
+  }
+}
+
+@utility sticky-shrink-header {
+  top: 0;
+  padding-top: 6rem;
+  padding-bottom: 1.5rem;
+  animation:
+    sticky-container ease-out forwards,
+    sticky-bg-shadow linear forwards;
+  animation-timeline: scroll(), scroll();
+  animation-range:
+    0px 120px,
+    0px 60px;
+}
+
+@utility sticky-shrink-bg {
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: color-mix(
+      in srgb,
+      var(--color-neutral-50) 10%,
+      transparent
+    );
+    backdrop-filter: blur(24px);
+
+    @media (min-width: 768px) {
+      opacity: 0;
+      animation: sticky-bg-reveal linear forwards;
+      animation-timeline: scroll();
+      animation-range: 0px 60px;
+    }
+  }
+}
+
+@utility sticky-shrink-title {
+  --title-from: 2.25rem;
+  --title-to: 1.5rem;
+  animation: sticky-title linear forwards;
+  animation-timeline: scroll();
+  animation-range: 0px 120px;
+
+  @media (min-width: 768px) {
+    --title-from: 3rem;
+    --title-to: 1.875rem;
+  }
+}
+
+@utility sticky-shrink-overline {
+  animation: sticky-overline linear forwards;
+  animation-timeline: scroll();
+  animation-range: 0px 120px;
+}
+
+@utility sticky-shrink-chip {
+  animation: sticky-chip linear forwards;
+  animation-timeline: scroll();
+  animation-range: 0px 120px;
+}
+
+@utility sticky-shrink-gap {
+  animation: sticky-gap linear forwards;
+  animation-timeline: scroll();
+  animation-range: 0px 120px;
 }
 
 /* ─── shadcn/ui token bridge ─── */

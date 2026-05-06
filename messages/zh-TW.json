@@ -2,7 +2,7 @@
   "common": {
     "siteName": "See You Wild 西揪團",
     "nav": {
-      "events": "活動行程",
+      "about": "關於我們",
       "contact": "聯絡我們",
       "exploreCta": "開始探索"
     },
@@ -145,7 +145,14 @@
     "allTypes": "所有類型",
     "allLocations": "所有地點",
     "typeLabel": "活動類型",
-    "locationLabel": "地點"
+    "locationLabel": "地點",
+    "type": {
+      "camping": "野營私廚",
+      "hot-spring": "野溪溫泉",
+      "sup": "SUP 立槳",
+      "tree-climbing": "攀樹體驗",
+      "river-tracing": "溯溪探險"
+    }
   },
   "paymentRef": {
     "title": "繳費回報",
@@ -275,8 +282,11 @@
     "seatCount": "可載人數",
     "totalPrice": "費用合計",
     "successTitle": "報名已送出",
+    "successEventSummary": "活動資訊",
+    "successRegistrationSummary": "報名摘要",
     "successTransferTo": "請於期限內匯款至",
     "successAccountHolder": "戶名",
+    "successEmailSent": "系統已寄送繳費通知至 {email}",
     "successReportDigits": "匯款後請至信箱收取確認信，點擊連結回報帳號末五碼，即完成報名。",
     "successConfirm": "收到，我去匯款"
   },

@@ -42,6 +42,9 @@ interface RegistrationModalProps {
   open: boolean;
   onClose: () => void;
   eventId: string;
+  eventTitle: string;
+  eventLocation: string;
+  eventDate: string;
   basePrice: number;
   carpoolSurcharge: number;
   selectedDate: string | null;
@@ -145,7 +148,12 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
           </ModalCard.Header>
           <ModalCard.Main>
             {isSubmitted ? (
-              <SuccessMainContent amount={submittedAmount} />
+              <SuccessMainContent
+                amount={submittedAmount}
+                eventTitle={props.eventTitle}
+                eventLocation={props.eventLocation}
+                eventDate={props.eventDate}
+              />
             ) : (
               <FormMainContent
                 formRef={formRef}
@@ -202,15 +210,53 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
 RegistrationModal.displayName = "RegistrationModal";
 export default RegistrationModal;
 
-const SuccessMainContent: React.FC<{ amount: number }> = (props) => {
+interface SuccessMainContentProps {
+  amount: number;
+  eventTitle: string;
+  eventLocation: string;
+  eventDate: string;
+}
+
+const SuccessMainContent: React.FC<SuccessMainContentProps> = (props) => {
   const t = useTranslations("registration");
   const format = useFormatter();
+  const { getValues } = useFormContext<RegistrationFormInput>();
+  const name = getValues("name");
+  const email = getValues("email");
+  const transport = getValues("transport");
 
   return (
     <div className="flex flex-col items-center gap-6 py-6">
       <IconCircleCheck className="size-12 text-success" />
 
       <div className="w-full space-y-4">
+        <div className="rounded-lg border border-stroke-default p-4 space-y-2">
+          <p className="typo-ui text-sm text-secondary">
+            {t("successEventSummary")}
+          </p>
+          <p className="typo-subtitle-1 text-primary">{props.eventTitle}</p>
+          <p className="typo-body-2 text-sm text-secondary">
+            {props.eventLocation} · {props.eventDate}
+          </p>
+        </div>
+
+        <div className="rounded-lg border border-stroke-default p-4 space-y-2">
+          <p className="typo-ui text-sm text-secondary">
+            {t("successRegistrationSummary")}
+          </p>
+          <div className="typo-body-2 text-sm text-primary space-y-1">
+            <p>
+              {t("name")}：{name}
+            </p>
+            <p>
+              {t("transport")}：
+              {transport === "self"
+                ? t("transportSelf")
+                : t("transportCarpool")}
+            </p>
+          </div>
+        </div>
+
         <div className="rounded-lg border border-stroke-default p-4 space-y-2">
           <p className="typo-body-2 text-secondary">{t("successTransferTo")}</p>
           <p className="typo-subtitle-1 text-accent-fg">
@@ -225,6 +271,10 @@ const SuccessMainContent: React.FC<{ amount: number }> = (props) => {
             </p>
           </div>
         </div>
+
+        <p className="typo-body-2 text-sm text-secondary text-center">
+          {t("successEmailSent", { email })}
+        </p>
 
         <p className="typo-body-2 text-sm text-secondary text-center">
           {t("successReportDigits")}

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 
+import Heading from "@/components/ui/atoms/Heading";
 import RadioOption from "@/components/ui/atoms/RadioOption";
 import EventCalendar from "@/components/ui/molecules/EventCalendar";
 import ModalCard from "@/components/ui/molecules/ModalCard";
@@ -124,7 +125,7 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
       <ModalCard.Main className="space-y-6">
         {/* Event Date */}
         <div className="space-y-2">
-          <h3 className="typo-ui text-sm text-primary">{t("eventDate")}</h3>
+          <Heading.H3 variant="ui">{t("eventDate")}</Heading.H3>
           <EventCalendar
             size="lg"
             className="w-full"
@@ -140,7 +141,7 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
 
         {/* Transport */}
         <div className="space-y-2">
-          <h3 className="typo-ui text-sm text-primary">{t("transport")}</h3>
+          <Heading.H3 variant="ui">{t("transport")}</Heading.H3>
           <div className="flex flex-wrap gap-1.5 md:gap-2">
             <RadioOption
               name="transport"
@@ -176,7 +177,7 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
         {/* Pickup Place (only when carpool selected) */}
         {isCarpool && (
           <div className="space-y-2">
-            <h3 className="typo-ui text-sm text-primary">{t("pickupPlace")}</h3>
+            <Heading.H3 variant="ui">{t("pickupPlace")}</Heading.H3>
             <div className="flex flex-wrap gap-1.5 md:gap-2">
               {props.pickupLocations.map((loc) => (
                 <RadioOption

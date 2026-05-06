@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import React, { useRef } from "react";
 
+import Heading from "@/components/ui/atoms/Heading";
 import { useTween } from "@/lib/gsap";
 import { useTranslations } from "@/lib/i18n/client";
 
@@ -38,16 +39,18 @@ const WhyChooseUsSection: React.FC = () => {
   return (
     <section
       ref={sectionRef}
-      className="pt-24 pb-28 md:py-32 px-6 md:px-12 bg-background"
+      className="pt-24 pb-28 md:py-32 px-10 md:px-16 bg-background"
     >
       <div ref={revealTriggerRef} className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <p className="why-item typo-overline text-sm mb-4 text-brand-500">
-            {t("overline")}
-          </p>
-          <h2 className="why-item typo-display text-4xl md:text-5xl text-primary">
+          <Heading.H2
+            variant="display"
+            overline={t("overline")}
+            overlineClassName="why-item mb-4"
+            className="why-item"
+          >
             {t("title")}
-          </h2>
+          </Heading.H2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
           {VALUE_KEYS.map((key, i) => {
@@ -60,12 +63,13 @@ const WhyChooseUsSection: React.FC = () => {
                 <div className="flex size-14 items-center justify-center rounded-full bg-brand-100">
                   <Icon className="size-6 text-accent" />
                 </div>
-                <h3 className="typo-sub-heading text-xl text-primary">
+                <Heading.H3
+                  variant="sub-heading"
+                  description={t(`items.${key}.desc`)}
+                  descriptionClassName="text-base leading-relaxed text-primary/70"
+                >
                   {t(`items.${key}.title`)}
-                </h3>
-                <p className="typo-body text-base leading-relaxed text-primary/70">
-                  {t(`items.${key}.desc`)}
-                </p>
+                </Heading.H3>
               </div>
             );
           })}

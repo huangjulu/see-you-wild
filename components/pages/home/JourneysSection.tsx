@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 
 import JourneyCard from "@/components/pages/home/JourneyCard";
 import Button from "@/components/ui/atoms/Button";
+import Heading from "@/components/ui/atoms/Heading";
 import { ScrollTrigger, useTimeline, useTween } from "@/lib/gsap";
 import { useTranslations } from "@/lib/i18n/client";
 
@@ -57,24 +58,24 @@ const JourneysSection: React.FC = () => {
       className="relative overflow-hidden bg-surface-brand bg-linear-180 from-journeys-gradient-from to-surface-brand from-[-15%] to-105%"
     >
       <div className="h-screen flex flex-col justify-center py-8">
-        <div className="max-w-7xl mx-auto w-full px-6 md:px-12 mb-10">
-          <div className="flex items-end justify-between">
-            <div>
-              <p className="typo-overline text-sm mb-4 text-white/70">
-                {t("overline")}
-              </p>
-              <h2 className="typo-display text-4xl md:text-5xl text-white">
-                {t("title")}
-              </h2>
-            </div>
-            <Button
-              theme="link"
-              href="/events"
-              className="text-white/70 hover:text-white"
+        <div className="max-w-7xl mx-auto w-full px-10 md:px-16 mb-10 flex items-end justify-between">
+          <div>
+            <Heading.H2
+              variant="display"
+              overline={t("overline")}
+              overlineClassName="mb-4 text-white/70"
+              className="text-white"
             >
-              {t("exploreMore")}
-            </Button>
+              {t("title")}
+            </Heading.H2>
           </div>
+          <Button
+            theme="link"
+            href="/events"
+            className="text-white/70 hover:text-white"
+          >
+            {t("exploreMore")}
+          </Button>
         </div>
         <div
           ref={trackRef}

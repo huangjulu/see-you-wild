@@ -1,10 +1,36 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { NextIntlClientProvider } from "next-intl";
 import { describe, expect, it, vi } from "vitest";
 
 import EventSearchBar from "../EventSearchBar";
 
+const messages = {
+  events: {
+    allTypes: "所有類型",
+    allLocations: "所有地點",
+    type: {
+      camping: "野營私廚",
+      "hot-spring": "野溪溫泉",
+      sup: "SUP 立槳",
+    },
+  },
+};
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="zh-TW" messages={messages}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
+
 const typeOptions = ["camping", "hot-spring", "sup"];
-const locationOptions = ["阿里山", "栗松溫泉", "花蓮鯉魚潭"];
+const locationOptions = [
+  { value: "", label: "所有地點" },
+  { value: "阿里山", label: "阿里山" },
+  { value: "栗松溫泉", label: "栗松溫泉" },
+];
 
 const baseProps = {
   typeOptions,
@@ -18,61 +44,26 @@ const baseProps = {
 };
 
 describe("EventSearchBar", () => {
-  it("顯示搜尋輸入框", () => {
-    render(<EventSearchBar {...baseProps} />);
-    expect(screen.getByPlaceholderText(/搜尋/)).toBeInTheDocument();
+  it("顯示活動類型選項", () => {
+    renderWithIntl(<EventSearchBar {...baseProps} />);
+    expect(screen.getAllByText("所有類型").length).toBeGreaterThan(0);
   });
 
-  it("顯示活動類型篩選 select", () => {
-    render(<EventSearchBar {...baseProps} />);
-    const typeSelect = screen.getByLabelText(/活動類型/);
-    expect(typeSelect).toBeInTheDocument();
+  it("type options 包含翻譯後的 label", () => {
+    renderWithIntl(<EventSearchBar {...baseProps} />);
+    expect(screen.getAllByText("野營私廚").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("野溪溫泉").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("SUP 立槳").length).toBeGreaterThan(0);
   });
 
-  it("顯示地點篩選 select", () => {
-    render(<EventSearchBar {...baseProps} />);
-    const locationSelect = screen.getByLabelText(/地點/);
-    expect(locationSelect).toBeInTheDocument();
-  });
-
-  it("輸入搜尋文字觸發 onSearchChange", () => {
-    render(<EventSearchBar {...baseProps} />);
-    const input = screen.getByPlaceholderText(/搜尋/);
-    fireEvent.change(input, { target: { value: "野營" } });
-    expect(baseProps.onSearchChange).toHaveBeenCalledWith("野營");
-  });
-
-  it("選擇活動類型觸發 onTypeChange", () => {
-    render(<EventSearchBar {...baseProps} />);
-    const select = screen.getByLabelText(/活動類型/);
-    fireEvent.change(select, { target: { value: "camping" } });
-    expect(baseProps.onTypeChange).toHaveBeenCalledWith("camping");
-  });
-
-  it("選擇地點觸發 onLocationChange", () => {
-    render(<EventSearchBar {...baseProps} />);
-    const select = screen.getByLabelText(/地點/);
-    fireEvent.change(select, { target: { value: "阿里山" } });
-    expect(baseProps.onLocationChange).toHaveBeenCalledWith("阿里山");
-  });
-
-  it("type select 包含所有 typeOptions", () => {
-    render(<EventSearchBar {...baseProps} />);
-    const select = screen.getByLabelText(/活動類型/);
-    typeOptions.forEach((opt) => {
-      expect(
-        select.querySelector(`option[value="${opt}"]`)
-      ).toBeInTheDocument();
-    });
-  });
-
-  it("location select 包含所有 locationOptions", () => {
-    render(<EventSearchBar {...baseProps} />);
-    const select = screen.getByLabelText(/地點/);
-    locationOptions.forEach((opt) => {
-      expect(
-        select.querySelector(`option[value="${opt}"]`)
-      ).toBeInTheDocument();
-    });
+  it("選擇活動類型觸發 onTypeChange（pill）", async () => {
+    const user = userEvent.setup();
+    const onTypeChange = vi.fn();
+    renderWithIntl(
+      <EventSearchBar {...baseProps} onTypeChange={onTypeChange} />
+    );
+    const pills = screen.getAllByText("野營私廚");
+    await user.click(pills[0]);
+    expect(onTypeChange).toHaveBeenCalledWith("camping");
   });
 });
