@@ -28,7 +28,7 @@ describe("Section", () => {
     expect(el.className).toContain("grid-cols-4");
     expect(el.className).toContain("max-w-7xl");
     expect(el.className).toContain("mx-auto");
-    expect(el.className).toContain("px-6");
+    expect(el.className).toContain("px-10");
     expect(el.className).toContain("gap-3");
   });
 

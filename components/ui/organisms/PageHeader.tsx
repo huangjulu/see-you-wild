@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import Button from "@/components/ui/atoms/Button";
 import Logo from "@/components/ui/atoms/Logo";
-import { NAV_ANCHORS } from "@/lib/constants";
+import { NAV_LINKS } from "@/lib/constants";
 import { useLocale, useTranslations } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 
@@ -18,16 +18,16 @@ const PageHeader: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navLinks = [
-    { label: t("nav.events"), href: NAV_ANCHORS.events },
-    { label: t("nav.contact"), href: NAV_ANCHORS.contact },
+    { label: t("nav.about"), href: NAV_LINKS.about },
+    { label: t("nav.contact"), href: NAV_LINKS.contact },
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 bg-linear-180 from-surface-deep/25 from-0% to-surface-brand/20 to-200% backdrop-blur-sm">
+    <header className="fixed top-0 left-0 right-0 z-99 px-10 md:px-16 bg-linear-180 from-surface-deep/25 from-0% to-surface-brand/20 to-200% backdrop-blur-sm">
       <div className="max-w-6xl mx-auto h-16 flex items-center justify-between text-white text-shadow-md">
         <a
           href={locale === "zh-TW" ? "/" : `/${locale}`}
-          className="flex items-center gap-3"
+          className="flex items-center gap-3 -translate-x-2"
           aria-label={t("siteName")}
         >
           <Logo size="sm" />

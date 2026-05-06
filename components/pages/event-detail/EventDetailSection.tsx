@@ -35,7 +35,7 @@ const EventDetailSection: React.FC<EventDetailSectionProps> = (props) => {
             onClick={function toggleExpand() {
               setExpanded((prev) => !prev);
             }}
-            className="relative z-10 mt-2 typo-ui text-sm hover:underline text-info"
+            className="relative z-10 mt-2 typo-ui text-sm hover:underline text-brand-500"
           >
             {expanded ? (
               <>
@@ -48,7 +48,7 @@ const EventDetailSection: React.FC<EventDetailSectionProps> = (props) => {
             )}
           </button>
           {!expanded && (
-            <div className="pointer-events-none absolute -inset-x-4 -bottom-4 h-20 bg-linear-to-b from-transparent from-10% via-white to-journeys-gradient-from/20" />
+            <div className="pointer-events-none absolute -inset-x-4 -bottom-4 h-20 bg-linear-to-b from-transparent from-10% via-white to-brand-700/10" />
           )}
         </div>
       </ModalCard.Main>

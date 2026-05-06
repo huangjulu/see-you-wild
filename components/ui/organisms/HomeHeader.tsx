@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 import Button from "@/components/ui/atoms/Button";
 import Logo from "@/components/ui/atoms/Logo";
-import { NAV_ANCHORS } from "@/lib/constants";
+import { NAV_LINKS } from "@/lib/constants";
 import { useScrolled } from "@/lib/hooks/useScrolled";
 import { useLocale, useTranslations } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
@@ -21,14 +21,14 @@ const HomeHeader: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navLinks = [
-    { label: t("nav.events"), href: NAV_ANCHORS.events },
-    { label: t("nav.contact"), href: NAV_ANCHORS.contact },
+    { label: t("nav.about"), href: "#about" },
+    { label: t("nav.contact"), href: NAV_LINKS.contact },
   ];
 
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 px-6 md:px-12 transition-all duration-500",
+        "fixed top-0 left-0 right-0 z-50 px-10 md:px-16 transition-all duration-500",
         scrolled
           ? "bg-linear-180 from-surface-deep/25 from-0% to-surface-brand/20 to-200% backdrop-blur-sm"
           : "bg-transparent border-transparent"
@@ -37,7 +37,7 @@ const HomeHeader: React.FC = () => {
       <div
         className={cn(
           "max-w-6xl mx-auto h-16 flex items-center justify-between transition-colors",
-          scrolled ? "text-white text-shadow-md" : "text-surface-deep-fg"
+          scrolled ? "text-white text-shadow-md" : "text-on-surface-brand"
         )}
       >
         <a
@@ -74,7 +74,7 @@ const HomeHeader: React.FC = () => {
               "ml-2 rounded-full px-5 py-1.5 text-sm tracking-widest",
               scrolled
                 ? " border-accent bg-brand-500 hover:bg-brand-400 text-white hover:shadow-none"
-                : "text-surface-deep-fg ring-1 ring-surface-deep-fg"
+                : "text-on-surface-brand ring-1 ring-surface-deep-fg"
             )}
           >
             {t("nav.exploreCta")}

@@ -2,6 +2,7 @@
 
 import React, { useRef } from "react";
 
+import Heading from "@/components/ui/atoms/Heading";
 import { useTween } from "@/lib/gsap";
 import { useTranslations } from "@/lib/i18n/client";
 
@@ -47,7 +48,7 @@ const PhilosophySection: React.FC = () => {
     <section
       id="about"
       ref={sectionRef}
-      className="py-24 md:py-32 px-6 md:px-12 bg-background"
+      className="py-24 md:py-32 px-10 md:px-16 bg-background"
     >
       <div
         ref={revealTriggerRef}
@@ -57,7 +58,10 @@ const PhilosophySection: React.FC = () => {
           <p className="reveal-up gsap-reveal typo-overline text-sm text-brand-500">
             {t("overline")}
           </p>
-          <h2 className="reveal-up gsap-reveal typo-display text-4xl md:text-5xl lg:text-6xl leading-tight text-primary">
+          <Heading.H2
+            variant="display"
+            className="reveal-up gsap-reveal lg:text-6xl leading-tight"
+          >
             {t("title")
               .split("\n")
               .map((line, i) => (
@@ -66,7 +70,7 @@ const PhilosophySection: React.FC = () => {
                   {line}
                 </React.Fragment>
               ))}
-          </h2>
+          </Heading.H2>
           <p className="reveal-up gsap-reveal typo-body text-lg leading-relaxed text-primary/70">
             {t("body1")}
           </p>

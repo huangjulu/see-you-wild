@@ -57,9 +57,7 @@ const DrawerContent: React.FC<DrawerContentProps> = (props) => {
         props.className
       )}
     >
-      <div className="flex justify-center pt-3 pb-2">
-        <div className="h-1 w-10 rounded-full bg-neutral-200" />
-      </div>
+      <div className="mx-auto mt-3 mb-2 h-1 w-10 rounded-full bg-neutral-200" />
       {props.children}
     </DrawerPrimitive.Popup>
   );

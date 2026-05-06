@@ -32,9 +32,9 @@ const LocaleError: React.FC<LocaleErrorProps> = (props) => {
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center text-center px-4 pt-16">
-      <Heading level="h1" className="text-6xl font-bold mb-4">
+      <Heading.H1 className="text-6xl font-bold mb-4">
         {t("heading")}
-      </Heading>
+      </Heading.H1>
       <Text muted className="text-xl mb-8">
         {t("message")}
       </Text>

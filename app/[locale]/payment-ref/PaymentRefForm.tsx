@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 import Button from "@/components/ui/atoms/Button";
+import Heading from "@/components/ui/atoms/Heading";
 import Input from "@/components/ui/atoms/Input";
 import { useTranslations } from "@/lib/i18n/client";
 import { paymentAccount } from "@/lib/payment";
@@ -139,10 +140,12 @@ const PaymentRefForm: React.FC = () => {
       {state.kind === "form" && (
         <div className="w-full space-y-6">
           <div className="text-center">
-            <h1 className="typo-heading-2 text-primary">{t("title")}</h1>
-            <p className="typo-body mt-1 text-secondary">
-              {state.info.event_title}
-            </p>
+            <Heading.H1
+              variant="sub-heading"
+              description={state.info.event_title}
+            >
+              {t("title")}
+            </Heading.H1>
           </div>
 
           <div className="rounded-lg border border-stroke-default bg-white p-4 space-y-2">

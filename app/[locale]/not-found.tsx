@@ -28,9 +28,9 @@ async function NotFound() {
       </span>
 
       <div className="relative z-10 flex flex-col items-center gap-4">
-        <Heading level="h1" className="text-2xl md:text-3xl text-white">
+        <Heading.H1 className="text-2xl md:text-3xl text-white">
           {t("title")}
-        </Heading>
+        </Heading.H1>
         <Text className="text-white/70 max-w-md">{t("message")}</Text>
         <div className="mt-4">
           <Button href="/" external={false} theme="ghost">

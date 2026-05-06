@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import React, { Suspense, useEffect, useState } from "react";
 
 import Button from "@/components/ui/atoms/Button";
+import Heading from "@/components/ui/atoms/Heading";
 import { useTranslations } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 
@@ -134,7 +135,7 @@ const AdminReviewContent: React.FC = () => {
       )}
     >
       <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-md">
-        <h1 className="mb-6 text-xl font-bold text-primary">{t("title")}</h1>
+        <Heading.H1 className="mb-6 text-xl">{t("title")}</Heading.H1>
 
         {info && (
           <dl className="mb-8 space-y-4">

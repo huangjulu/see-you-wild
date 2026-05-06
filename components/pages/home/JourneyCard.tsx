@@ -1,3 +1,5 @@
+import Heading from "@/components/ui/atoms/Heading";
+
 interface JourneyCardProps {
   title: string;
   subtitle: string;
@@ -17,10 +19,9 @@ const JourneyCard: React.FC<JourneyCardProps> = (props) => {
       />
       <div className="absolute inset-0 bg-linear-sto-t from-black/70 via-black/20 to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 p-6">
-        <p className="typo-overline text-sm mb-2 text-brand-500">
-          {props.subtitle}
-        </p>
-        <h3 className="typo-heading text-2xl text-white">{props.title}</h3>
+        <Heading.H3 overline={props.subtitle} className="text-2xl text-white">
+          {props.title}
+        </Heading.H3>
       </div>
     </div>
   );

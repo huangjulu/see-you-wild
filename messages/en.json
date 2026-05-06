@@ -2,7 +2,7 @@
   "common": {
     "siteName": "See You Wild",
     "nav": {
-      "events": "Events",
+      "about": "About",
       "contact": "Contact",
       "exploreCta": "Explore"
     },
@@ -154,7 +154,14 @@
     "allTypes": "All Types",
     "allLocations": "All Locations",
     "typeLabel": "Activity Type",
-    "locationLabel": "Location"
+    "locationLabel": "Location",
+    "type": {
+      "camping": "Wild Camping Chef",
+      "hot-spring": "Hot Springs",
+      "sup": "SUP Paddleboarding",
+      "tree-climbing": "Tree Climbing",
+      "river-tracing": "River Tracing"
+    }
   },
   "paymentRef": {
     "title": "Payment Confirmation",
@@ -284,8 +291,11 @@
     "seatCount": "Available Seats",
     "totalPrice": "Total Price",
     "successTitle": "Registration submitted",
+    "successEventSummary": "Event Info",
+    "successRegistrationSummary": "Registration Summary",
     "successTransferTo": "Transfer the amount to",
     "successAccountHolder": "Account holder",
+    "successEmailSent": "A payment notification has been sent to {email}",
     "successReportDigits": "Check your inbox for the confirmation email, then click the link to report the last 5 digits of your bank account to complete registration.",
     "successConfirm": "Got it, I'll transfer now"
   },

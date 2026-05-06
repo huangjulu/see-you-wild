@@ -1,5 +1,7 @@
 import Image from "next/image";
 
+import Heading from "@/components/ui/atoms/Heading";
+
 function RootNotFound() {
   return (
     <html lang="zh-TW">
@@ -26,9 +28,9 @@ function RootNotFound() {
           </span>
 
           <div className="relative z-10 flex flex-col items-center gap-4">
-            <h1 className="typo-heading text-2xl md:text-3xl text-white">
+            <Heading.H1 className="text-2xl md:text-3xl text-white">
               走進了未知的山徑
-            </h1>
+            </Heading.H1>
             <p className="typo-body text-white/70 max-w-md">
               這條路似乎還沒有人走過，讓我們回到營地重新出發。
             </p>

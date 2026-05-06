@@ -182,7 +182,7 @@
 @utility typo-overline {
   font-family: var(--font-serif);
   font-weight: var(--font-weight-ui);
-  letter-spacing: 0.3em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
 }
 
@@ -290,6 +290,88 @@ body {
 
 .animate-bounce-slow {
   animation: bounce 2s 4;
+}
+
+/* ─── Scroll-driven: sticky header shrink ─── */
+@keyframes shrink-header {
+  from {
+    padding-top: 6rem;
+    padding-bottom: 1.5rem;
+  }
+  to {
+    padding-top: 4.5rem;
+    padding-bottom: 1rem;
+  }
+}
+
+@keyframes shrink-title {
+  from {
+    font-size: var(--title-from);
+  }
+  to {
+    font-size: var(--title-to);
+  }
+}
+
+@keyframes shrink-overline {
+  from {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+  to {
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+@keyframes shrink-bg {
+  from {
+    background-color: transparent;
+    backdrop-filter: blur(0);
+    box-shadow: none;
+  }
+  to {
+    background-image: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-neutral-100) 50%, transparent),
+      transparent
+    );
+    backdrop-filter: blur(24px);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.08);
+  }
+}
+
+.sticky-shrink-header {
+  animation: shrink-header linear forwards;
+  animation-timeline: scroll();
+  animation-range: 0px 120px;
+}
+
+.sticky-shrink-bg {
+  animation: shrink-bg linear forwards;
+  animation-timeline: scroll();
+  animation-range: 0px 60px;
+}
+
+.sticky-shrink-title {
+  --title-from: 2.25rem;
+  --title-to: 1.5rem;
+  animation: shrink-title linear forwards;
+  animation-timeline: scroll();
+  animation-range: 0px 120px;
+}
+
+@media (min-width: 768px) {
+  .sticky-shrink-title {
+    --title-from: 3rem;
+    --title-to: 1.875rem;
+  }
+}
+
+.sticky-shrink-overline {
+  animation: shrink-overline linear forwards;
+  animation-timeline: scroll();
+  animation-range: 0px 120px;
 }
 
 /* ─── shadcn/ui token bridge ─── */

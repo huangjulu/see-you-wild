@@ -104,7 +104,7 @@ const Selector: React.FC<SelectorProps> = (props) => {
             </span>
             <Icon className="size-4 text-secondary" />
           </PopoverTrigger>
-          <PopoverContent className="w-(--anchor-width) rounded-md border border-neutral-200 p-1 ring-0 bg-white h-32 overflow-auto">
+          <PopoverContent className="w-(--anchor-width) rounded-md border border-neutral-200 p-1 ring-0 bg-white h-[9.6rem] overflow-auto">
             {optionList}
           </PopoverContent>
         </Popover>

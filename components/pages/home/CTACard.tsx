@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { useEffect, useRef } from "react";
 
 import Button from "@/components/ui/atoms/Button";
+import Heading from "@/components/ui/atoms/Heading";
 import { useReducedMotion } from "@/stores/motion";
 
 interface CTACardProps {
@@ -76,9 +77,12 @@ const CTACard: React.FC<CTACardProps> = (props) => {
           />
         </div>
         <div className="md:w-1/2 flex flex-col justify-center items-center md:items-start p-8 md:p-24 text-center md:text-left">
-          <h2 className="typo-display text-5xl md:text-7xl text-primary mb-8 leading-tight lowercase">
+          <Heading.H2
+            variant="display"
+            className="text-5xl md:text-7xl mb-8 leading-tight lowercase"
+          >
             {props.title}
-          </h2>
+          </Heading.H2>
           <p className="typo-body text-base md:text-lg text-secondary mb-12 max-w-sm leading-relaxed font-light">
             {props.description}
           </p>

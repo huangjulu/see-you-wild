@@ -4,7 +4,7 @@ import {
   EVENTS_CONFIG,
   INSTAGRAM_HANDLE,
   INSTAGRAM_URL,
-  NAV_ANCHORS,
+  NAV_LINKS,
   SITE_URL,
 } from "../constants";
 
@@ -38,8 +38,8 @@ describe("Social / navigation links", () => {
     expect(SITE_URL).toMatch(/^https?:\/\//);
   });
 
-  it("NAV_ANCHORS each have a value", () => {
-    Object.values(NAV_ANCHORS).forEach((anchor: string) => {
+  it("NAV_LINKS each have a value", () => {
+    Object.values(NAV_LINKS).forEach((anchor: string) => {
       expect(anchor).toBeTruthy();
     });
   });

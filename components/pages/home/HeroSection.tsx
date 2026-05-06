@@ -86,7 +86,7 @@ const HeroSection: React.FC = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 md:px-12 overflow-hidden"
+      className="relative min-h-screen flex flex-col items-center justify-center text-center px-10 md:px-16 overflow-hidden"
       aria-label="Hero"
     >
       <video
@@ -128,11 +128,12 @@ const HeroSection: React.FC = () => {
         </div>
       </div>
 
-      <div ref={scrollRef} className="absolute bottom-8 z-10">
-        <div className="flex flex-col items-center gap-2 text-white/60 text-shadow-md">
-          <span className="text-xs tracking-[0.2em] uppercase">Scroll</span>
-          <div className="w-px h-8 bg-white/40 animate-bounce-slow" />
-        </div>
+      <div
+        ref={scrollRef}
+        className="absolute bottom-8 z-10 flex flex-col items-center gap-2 text-white/60 text-shadow-md"
+      >
+        <span className="text-xs tracking-[0.2em] uppercase">Scroll</span>
+        <div className="w-px h-8 bg-white/40 animate-bounce-slow" />
       </div>
     </section>
   );

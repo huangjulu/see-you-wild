@@ -30,7 +30,7 @@ export const EVENTS_CONFIG: EventConfig[] = [
   },
 ];
 
-export const NAV_ANCHORS = {
-  events: "#events",
-  contact: "#contact",
+export const NAV_LINKS = {
+  about: "/#about",
+  contact: "/contact",
 };
