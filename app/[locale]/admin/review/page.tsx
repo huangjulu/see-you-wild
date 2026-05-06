@@ -87,7 +87,7 @@ const AdminReviewContent: React.FC = () => {
   }
 
   const alreadyReviewed =
-    info != null && (info.status === "paid" || info.status === "failed");
+    info && (info.status === "paid" || info.status === "failed");
 
   if (reviewStatus === "loading") {
     return (
@@ -136,7 +136,7 @@ const AdminReviewContent: React.FC = () => {
       <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-md">
         <h1 className="mb-6 text-xl font-bold text-primary">{t("title")}</h1>
 
-        {info != null && (
+        {info && (
           <dl className="mb-8 space-y-4">
             <div>
               <dt className="text-xs font-semibold uppercase tracking-wide text-secondary">

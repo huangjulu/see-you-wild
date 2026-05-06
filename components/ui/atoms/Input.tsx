@@ -75,8 +75,8 @@ const BaseInput: React.FC<BaseInputProps> = (props) => {
   const generatedId = useId();
   const inputId = props.id ?? generatedId;
   const resolvedSize = props.size ?? "md";
-  const hasLeftIcon = props.icon != null;
-  const hasRightIcon = props.endIcon != null;
+  const hasLeftIcon = !!props.icon;
+  const hasRightIcon = !!props.endIcon;
 
   const onRef = useRef((instance: HTMLInputElement | null) => {
     updateRef(props.ref, instance);
@@ -145,7 +145,7 @@ const BaseInput: React.FC<BaseInputProps> = (props) => {
             SIZE_CLASSES[resolvedSize],
             "border-stroke-default bg-white text-primary ring-stroke-focus",
             "placeholder:text-neutral-200",
-            "hover:border-stroke-strong hover:disabled:border-stroke-default",
+            "hover:border-brand-400 hover:disabled:border-stroke-default",
             "focus:border-accent focus:ring-2 focus:ring-brand-200/70 focus-visible:outline-none",
             "data-touched:invalid:border-critical data-touched:invalid:ring-critical/20 data-touched:invalid:focus:border-critical",
             "read-only:bg-neutral-100 read-only:text-secondary",

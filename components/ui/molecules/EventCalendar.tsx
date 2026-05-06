@@ -62,8 +62,8 @@ const EventCalendar: React.FC<EventCalendarProps> = (props) => {
 
   const changeDate = (date: Date | undefined) => {
     if (
-      date != null &&
-      props.availableDates != null &&
+      date &&
+      props.availableDates &&
       !props.availableDates.some((d) => isSameDay(d, date))
     ) {
       return;

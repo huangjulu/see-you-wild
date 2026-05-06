@@ -24,7 +24,7 @@ const EventPriceSidebar: React.FC<EventPriceSidebarProps> = (props) => {
     <>
       {/* Desktop: sticky sidebar */}
       <aside className="hidden md:block self-start sticky top-24">
-        <div className="rounded-2xl border border-stroke-default bg-white p-6 space-y-4 shadow-sm">
+        <div className="rounded-2xl border border-stroke-default/80 bg-white p-6 space-y-4 shadow-sm">
           <div>
             <p className="typo-ui text-sm text-secondary">{t("price")}</p>
             <p className="typo-heading text-3xl text-primary">

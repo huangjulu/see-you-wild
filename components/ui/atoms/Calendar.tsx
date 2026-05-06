@@ -115,10 +115,9 @@ function CalendarDayButton(props: CalendarDayButtonProps) {
 
   const { day, modifiers, className, markerDefs, size, ...rest } = props;
 
-  const activeMarkers =
-    markerDefs != null
-      ? Object.entries(markerDefs).filter(([name]) => modifiers[name])
-      : [];
+  const activeMarkers = markerDefs
+    ? Object.entries(markerDefs).filter(([name]) => modifiers[name])
+    : [];
 
   const activeLabel = activeMarkers.find(([, def]) => def.label != null)?.[1];
   const markerStyles = activeMarkers
@@ -188,12 +187,12 @@ function CalendarSelectDropdown(
         aria-label={props["aria-label"]}
         onClick={() => setListOpen((prev) => !prev)}
         className={cn(
-          "flex h-7 items-center gap-1 rounded-md border border-stroke-default bg-white px-2 text-sm transition-colors",
+          "flex h-7 items-center gap-1 rounded-md bg-white px-2 text-sm transition-colors",
           "hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-200/70"
         )}
       >
         <span>{selectedLabel ?? props.value}</span>
-        <IconChevronDown className="size-3 text-secondary" />
+        <IconChevronDown className="size-3 text-secondary/50" />
       </button>
       {listOpen && (
         <div className="absolute top-full left-0 z-200 mt-1 max-h-52 min-w-20 overflow-y-auto rounded-lg bg-white p-1 shadow-lg ring-1 ring-primary/10">
@@ -208,7 +207,7 @@ function CalendarSelectDropdown(
                 "hover:bg-brand-50 focus:bg-brand-50 focus:outline-none",
                 "disabled:opacity-50 disabled:pointer-events-none",
                 option.value.toString() === props.value?.toString() &&
-                  "bg-brand-50 font-medium"
+                  "bg-brand-50 font-medium text-brand-600"
               )}
             >
               {option.label}
@@ -263,7 +262,7 @@ function resolveCalendarConfig(
   let naviClassName: string | undefined;
 
   const naviEl = slots["navi"];
-  if (naviEl != null) {
+  if (naviEl) {
     naviClassName = slotProp(naviEl, "className");
     // React element props are opaque — bridge cast to read navi children
     const naviChildren = (naviEl.props as Record<string, unknown>)[
@@ -277,22 +276,22 @@ function resolveCalendarConfig(
       if (name === "chevrons") innerChevrons = child;
       else if (name === "caption") innerCaption = child;
     });
-    hasChevrons = innerChevrons != null;
-    if (innerChevrons != null) {
+    hasChevrons = !!innerChevrons;
+    if (innerChevrons) {
       chevronsClassName = slotProp(innerChevrons, "className");
     }
-    if (innerCaption != null) {
+    if (innerCaption) {
       captionLayout =
         (slotProp(innerCaption, "layout") as CaptionLayout | undefined) ??
         "label";
       captionClassName = slotProp(innerCaption, "className");
     }
   } else {
-    hasChevrons = slots["chevrons"] != null || !hasChildren;
-    if (slots["chevrons"] != null) {
+    hasChevrons = !!slots["chevrons"] || !hasChildren;
+    if (slots["chevrons"]) {
       chevronsClassName = slotProp(slots["chevrons"], "className");
     }
-    if (slots["caption"] != null) {
+    if (slots["caption"]) {
       captionLayout =
         (slotProp(slots["caption"], "layout") as CaptionLayout | undefined) ??
         "label";
@@ -304,7 +303,7 @@ function resolveCalendarConfig(
   let expandLabel: string | undefined;
   let gridClassName: string | undefined;
   const gridEl = slots["grid"];
-  if (gridEl != null) {
+  if (gridEl) {
     gridType = (slotProp(gridEl, "type") as GridType | undefined) ?? "month";
     expandLabel = slotProp(gridEl, "expandLabel");
     gridClassName = slotProp(gridEl, "className");
@@ -413,7 +412,12 @@ const _Calendar: React.FC<CalendarProps> = (props) => {
       );
       const hidden = diffWeeks < 0 || diffWeeks >= visibleWeeks;
 
-      return <tr {...trProps} className={hidden ? "hidden" : undefined} />;
+      return (
+        <tr
+          {...trProps}
+          className={cn(trProps.className, hidden && "hidden")}
+        />
+      );
     }
 
     return <tr {...trProps} />;
@@ -451,13 +455,13 @@ const _Calendar: React.FC<CalendarProps> = (props) => {
       config.naviClassName
     ),
     button_previous: cn(
-      "flex items-center justify-center size-(--cell-size) rounded-(--cell-radius) p-0",
+      "flex items-center justify-center size-(--cell-size) rounded-(--cell-radius) p-1",
       "border border-transparent text-primary hover:bg-brand-50 transition-colors",
       "aria-disabled:opacity-50",
       config.chevronsClassName
     ),
     button_next: cn(
-      "flex items-center justify-center size-(--cell-size) rounded-(--cell-radius) p-0",
+      "flex items-center justify-center size-(--cell-size) rounded-(--cell-radius) p-1",
       "border border-transparent text-primary hover:bg-brand-50 transition-colors",
       "aria-disabled:opacity-50",
       config.chevronsClassName
@@ -466,7 +470,7 @@ const _Calendar: React.FC<CalendarProps> = (props) => {
       "flex h-(--cell-size) w-full items-center justify-center px-(--cell-size)",
       config.captionClassName
     ),
-    dropdowns: "flex flex-row gap-1",
+    dropdowns: "flex flex-row gap-1 px-2",
     caption_label: "typo-ui text-sm font-medium select-none",
     weekdays: "flex",
     weekday:
@@ -550,10 +554,7 @@ function getAnchorWeekStart(
   modifiers: Record<string, Matcher> | undefined,
   monthStart: Date
 ): Date {
-  if (
-    modifiers?.available != null &&
-    typeof modifiers.available === "function"
-  ) {
+  if (modifiers?.available && typeof modifiers.available === "function") {
     const monthEnd = new Date(
       monthStart.getFullYear(),
       monthStart.getMonth() + 1,

@@ -39,7 +39,7 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
   }, [availableDateObjects]);
 
   const defaultMonth = nearestDate ?? new Date();
-  const defaultDateStr = nearestDate != null ? toDateStr(nearestDate) : null;
+  const defaultDateStr = nearestDate ? toDateStr(nearestDate) : null;
 
   const [selectedDate, setSelectedDate] = useState<string | null>(
     defaultDateStr

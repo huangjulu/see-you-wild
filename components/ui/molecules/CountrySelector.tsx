@@ -4,15 +4,10 @@ import Selector from "@/components/ui/molecules/Selector";
 import { COUNTRY_OPTIONS } from "@/lib/form-rules";
 import { useTranslations } from "@/lib/i18n/client";
 
-interface CountrySelectorProps {
-  label?: string;
-  placeholder?: string;
-  value?: string;
-  onChange?: (iso: string) => void;
-  onBlur?: () => void;
-  error?: string;
-  name?: string;
-}
+type CountrySelectorProps = Omit<
+  React.ComponentProps<typeof Selector>,
+  "options"
+>;
 
 const CountrySelector: React.FC<CountrySelectorProps> = (props) => {
   const tCountry = useTranslations("country");
@@ -22,18 +17,7 @@ const CountrySelector: React.FC<CountrySelectorProps> = (props) => {
     label: tCountry(country.iso),
   }));
 
-  return (
-    <Selector
-      label={props.label}
-      placeholder={props.placeholder}
-      options={options}
-      value={props.value}
-      onChange={props.onChange}
-      onBlur={props.onBlur}
-      error={props.error}
-      name={props.name}
-    />
-  );
+  return <Selector options={options} {...props} />;
 };
 
 CountrySelector.displayName = "CountrySelector";

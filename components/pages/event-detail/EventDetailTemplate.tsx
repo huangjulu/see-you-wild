@@ -59,7 +59,7 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
       {/* Content + Sidebar */}
       <Section as="div" className="mt-8">
         {/* Left column */}
-        <div className="col-span-4 md:col-span-5 lg:col-span-8 space-y-6">
+        <div className="col-span-4 md:col-span-5 lg:col-span-8 space-y-5">
           <EventDetailSection
             title={t("eventDetails")}
             content={event.description}

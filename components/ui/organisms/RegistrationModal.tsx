@@ -18,7 +18,7 @@ import ProgressBar from "@/components/ui/atoms/ProgressBar";
 import RadioOption from "@/components/ui/atoms/RadioOption";
 import Switch from "@/components/ui/atoms/Switch";
 import CountrySelector from "@/components/ui/molecules/CountrySelector";
-import DatePickerInput from "@/components/ui/molecules/DatePickerInput";
+import DrawerCalendar from "@/components/ui/molecules/DrawerCalendar";
 import IdNumberInput from "@/components/ui/molecules/IdNumberInput";
 import ModalCard from "@/components/ui/molecules/ModalCard";
 import PhoneInput from "@/components/ui/molecules/PhoneInput";
@@ -256,7 +256,7 @@ const FormMainContent: React.FC<FormMainContentProps> = (props) => {
           carpoolSurcharge={props.carpoolSurcharge}
         />
       </form>
-      {formState.errors.root != null && (
+      {formState.errors.root && (
         <p className="typo-ui text-sm text-critical mt-2">
           {formState.errors.root.message}
         </p>
@@ -300,9 +300,6 @@ const FormStepBasic: React.FC = () => {
 
   return (
     <fieldset className="space-y-3">
-      <legend className="typo-subtitle-2 text-primary mb-2">
-        {t("sectionBasic")}
-      </legend>
       <Input
         label={t("name")}
         placeholder={t("namePlaceholder")}
@@ -336,7 +333,7 @@ const FormStepBasic: React.FC = () => {
             {...register("gender")}
           />
         </div>
-        {errors.gender != null && (
+        {errors.gender && (
           <p className="typo-ui text-xs text-critical">
             {errors.gender.message}
           </p>
@@ -347,7 +344,7 @@ const FormStepBasic: React.FC = () => {
         name="birthday"
         control={control}
         render={({ field }) => (
-          <DatePickerInput
+          <DrawerCalendar
             label={t("birthday")}
             placeholder={t("birthdayPlaceholder")}
             value={field.value}
@@ -364,6 +361,7 @@ const FormStepBasic: React.FC = () => {
         render={({ field }) => (
           <CountrySelector
             label={t("country")}
+            className="w-full"
             placeholder={t("selectCountry")}
             value={field.value}
             onChange={field.onChange}
@@ -399,10 +397,6 @@ const FormStepIdentity: React.FC = () => {
 
   return (
     <fieldset className="space-y-3">
-      <legend className="typo-subtitle-2 text-primary mb-2">
-        {t("sectionIdentity")}
-      </legend>
-
       <Controller
         name="phone"
         control={control}
@@ -471,10 +465,6 @@ const FormStepEmergency: React.FC = () => {
 
   return (
     <fieldset className="space-y-4">
-      <legend className="typo-subtitle-2 text-primary mb-2">
-        {t("sectionEmergency")}
-      </legend>
-
       {showGuardianConsent && (
         <div className="space-y-2 rounded-md border border-stroke-default bg-brand-50 p-3">
           <p className="typo-ui text-sm text-secondary">{t("guardianHint")}</p>
@@ -498,7 +488,7 @@ const FormStepEmergency: React.FC = () => {
               </label>
             )}
           />
-          {errors.guardian_consent != null && (
+          {errors.guardian_consent && (
             <p className="typo-ui text-xs text-critical">
               {errors.guardian_consent.message}
             </p>
@@ -542,10 +532,6 @@ const FormStepActivity: React.FC = () => {
 
   return (
     <fieldset className="space-y-3">
-      <legend className="typo-subtitle-2 text-primary mb-2">
-        {t("sectionActivity")}
-      </legend>
-
       <div className="space-y-1">
         <span className="typo-ui text-sm text-primary">{t("dietary")}</span>
         <div className="flex flex-wrap gap-2">
@@ -570,7 +556,7 @@ const FormStepActivity: React.FC = () => {
             {...register("dietary")}
           />
         </div>
-        {errors.dietary != null && (
+        {errors.dietary && (
           <p className="typo-ui text-xs text-critical">
             {errors.dietary.message}
           </p>
@@ -622,10 +608,6 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
   return (
     <>
       <fieldset className="space-y-3">
-        <legend className="typo-subtitle-2 text-primary mb-2">
-          {t("sectionTransport")}
-        </legend>
-
         <div className="space-y-1">
           <span className="typo-ui text-sm text-primary">{t("transport")}</span>
           <div className="flex flex-wrap gap-2">
@@ -640,7 +622,7 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
               {...register("transport")}
             />
           </div>
-          {errors.transport != null && (
+          {errors.transport && (
             <p className="typo-ui text-xs text-critical">
               {errors.transport.message}
             </p>
@@ -668,7 +650,7 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
                   />
                 ))}
               </div>
-              {errors.pickup_location != null && (
+              {errors.pickup_location && (
                 <p className="typo-ui text-xs text-critical">
                   {errors.pickup_location.message}
                 </p>
@@ -691,7 +673,7 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
                   {...register("carpool_role")}
                 />
               </div>
-              {errors.carpool_role != null && (
+              {errors.carpool_role && (
                 <p className="typo-ui text-xs text-critical">
                   {errors.carpool_role.message}
                 </p>

@@ -147,9 +147,7 @@ interface ModalCardMainProps {
 const ModalCardMain: SlottableComponent<ModalCardMainProps> = Object.assign(
   (props: ModalCardMainProps) => (
     <Slot slot="main">
-      <main
-        className={cn("p-4 overflow-y-auto bg-background", props.className)}
-      >
+      <main className={cn("p-4 overflow-y-auto bg-linear-90", props.className)}>
         {props.children}
       </main>
     </Slot>
@@ -191,17 +189,16 @@ interface ModalCardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const _ModalCard: React.FC<ModalCardProps> = (props) => {
-  const slots = resolveSlots<ModalCardSlot>(props.children);
+  const { className, children, ...restProps } = props;
+  const slots = resolveSlots<ModalCardSlot>(children);
 
   return (
     <div
-      ref={props.ref}
-      tabIndex={props.tabIndex}
-      onClick={props.onClick}
       className={cn(
         "grid grid-rows-[auto_1fr_auto] overflow-clip rounded-xl bg-white border border-stroke-default shadow-sm",
-        props.className
+        className
       )}
+      {...restProps}
     >
       {slots["header"]}
       {slots["main"]}
