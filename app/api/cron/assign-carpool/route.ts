@@ -5,7 +5,7 @@ import { UnauthorizedError } from "@/lib/errors/domain";
 import { assignCarpool } from "@/lib/services/carpool";
 import { getSupabase } from "@/lib/supabase/client";
 
-export async function POST(request: Request) {
+export async function GET(request: Request) {
   try {
     const authHeader = request.headers.get("authorization");
     if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
