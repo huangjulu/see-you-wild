@@ -42,7 +42,7 @@ const HomeHeader: React.FC = () => {
       >
         <a
           href={locale === "zh-TW" ? "/" : `/${locale}`}
-          className="flex items-center gap-3"
+          className="flex items-center gap-3 -translate-x-2"
           aria-label={t("siteName")}
         >
           <Logo size="sm" />
@@ -50,7 +50,6 @@ const HomeHeader: React.FC = () => {
             {t("siteName")}
           </span>
         </a>
-
         <nav
           className="hidden md:flex items-center gap-8"
           aria-label="Main navigation"
@@ -74,7 +73,7 @@ const HomeHeader: React.FC = () => {
               "ml-2 rounded-full px-5 py-1.5 text-sm tracking-widest",
               scrolled
                 ? " border-accent bg-brand-500 hover:bg-brand-400 text-white hover:shadow-none"
-                : "text-on-surface-brand ring-1 ring-surface-deep-fg"
+                : "text-on-surface-brand ring-1 ring-on-surface-deep"
             )}
           >
             {t("nav.exploreCta")}

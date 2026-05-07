@@ -23,7 +23,10 @@ const PageHeader: React.FC = () => {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-99 px-10 md:px-16 bg-linear-180 from-surface-deep/25 from-0% to-surface-brand/20 to-200% backdrop-blur-sm">
+    <header
+      id="page-header"
+      className="fixed top-0 left-0 right-0 z-99 px-10 md:px-16 bg-linear-180 from-surface-deep/25 from-0% to-surface-brand/20 to-200% backdrop-blur-sm"
+    >
       <div className="max-w-6xl mx-auto h-16 flex items-center justify-between text-white text-shadow-md">
         <a
           href={locale === "zh-TW" ? "/" : `/${locale}`}
