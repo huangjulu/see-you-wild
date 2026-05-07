@@ -48,7 +48,7 @@ const EventDetailSection: React.FC<EventDetailSectionProps> = (props) => {
             )}
           </button>
           {!expanded && (
-            <div className="pointer-events-none absolute -inset-x-4 -bottom-4 h-20 bg-linear-to-b from-transparent from-10% via-white to-brand-700/10" />
+            <div className="pointer-events-none absolute -inset-x-5 -bottom-5 h-20 bg-linear-to-b from-transparent from-10% via-white to-brand-700/10" />
           )}
         </div>
       </ModalCard.Main>

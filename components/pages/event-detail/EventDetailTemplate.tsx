@@ -40,7 +40,7 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
   }
 
   return (
-    <main className="bg-linear-180 md:bg-radial-[at_top_left] from-brand-100 from-20% via-40% via-cyan-50 to-surface to-80% pb-24 md:pb-16">
+    <main className="bg-page-gradient pb-24 md:pb-16">
       {/* Title + description */}
       <Section as="div" className="pt-24 md:pt-28">
         <Heading.H1
