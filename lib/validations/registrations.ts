@@ -4,11 +4,11 @@ import {
   calculateAge,
   COUNTRY_ISO_CODES,
   E164_REGEX,
-  isValidTwId,
+  isValidTwDocument,
   LINE_ID_REGEX,
   MAX_LENGTHS,
   PASSPORT_REGEX,
-  TW_ID_REGEX,
+  TW_DOCUMENT_REGEX,
 } from "@/lib/form-rules";
 
 // Trim/lowercase/uppercase happen *before* min(1) so whitespace-only inputs fail validation,
@@ -18,7 +18,7 @@ const baseRegistrationSchema = z.object({
   country: z.enum(COUNTRY_ISO_CODES),
   name: z.string().trim().min(1).max(MAX_LENGTHS.name),
   email: z.string().trim().toLowerCase().email(),
-  phone: z.string().trim().regex(E164_REGEX, "invalidPhone"),
+  phone: z.string().trim().regex(E164_REGEX),
   line_id: z
     .union([
       z.literal("").transform(() => null),
@@ -49,7 +49,7 @@ const baseRegistrationSchema = z.object({
     .trim()
     .min(1)
     .max(MAX_LENGTHS.emergency_contact_name),
-  emergency_contact_phone: z.string().trim().regex(E164_REGEX, "invalidPhone"),
+  emergency_contact_phone: z.string().trim().regex(E164_REGEX),
   dietary: z.enum(["omnivore", "no_beef", "vegetarian", "vegan"]),
   wants_rental: z.boolean().default(false),
   notes: z
@@ -82,21 +82,21 @@ function addCarpoolIssues(
   if (!data.pickup_location) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "carpoolFieldRequired",
+      params: { key: "carpoolFieldRequired" },
       path: ["pickup_location"],
     });
   }
   if (!data.carpool_role) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "carpoolFieldRequired",
+      params: { key: "carpoolFieldRequired" },
       path: ["carpool_role"],
     });
   }
   if (data.carpool_role === "driver" && data.seat_count === null) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "seatCountRequired",
+      params: { key: "seatCountRequired" },
       path: ["seat_count"],
     });
   }
@@ -107,18 +107,18 @@ function addIdNumberIssue(
   ctx: z.RefinementCtx
 ): void {
   if (data.country === "TW") {
-    if (!TW_ID_REGEX.test(data.id_number)) {
+    if (!TW_DOCUMENT_REGEX.test(data.id_number)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "invalidTwId",
+        params: { key: "invalidTwDocument" },
         path: ["id_number"],
       });
       return;
     }
-    if (!isValidTwId(data.id_number)) {
+    if (!isValidTwDocument(data.id_number)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "invalidTwIdChecksum",
+        params: { key: "invalidTwIdChecksum" },
         path: ["id_number"],
       });
     }
@@ -128,7 +128,7 @@ function addIdNumberIssue(
   if (!PASSPORT_REGEX.test(data.id_number)) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "invalidPassport",
+      params: { key: "invalidPassport" },
       path: ["id_number"],
     });
   }
@@ -144,7 +144,7 @@ function addGuardianConsentIssue(
   if (age < 18 && data.guardian_consent !== true) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "guardianConsentRequired",
+      params: { key: "guardianConsentRequired" },
       path: ["guardian_consent"],
     });
   }
@@ -193,7 +193,9 @@ export function createRegistrationErrorMap(
 ): z.ZodErrorMap {
   return (issue) => {
     if (issue.code === "custom") {
-      return { message: t(issue.message ?? "required") };
+      const key =
+        (issue.params as { key?: string } | undefined)?.key ?? "required";
+      return { message: t(key) };
     }
     switch (issue.code) {
       case "too_small":

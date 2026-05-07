@@ -259,7 +259,7 @@ const SuccessMainContent: React.FC<SuccessMainContentProps> = (props) => {
 
         <div className="rounded-lg border border-stroke-default p-4 space-y-2">
           <p className="typo-body-2 text-secondary">{t("successTransferTo")}</p>
-          <p className="typo-subtitle-1 text-accent-fg">
+          <p className="typo-subtitle-1 text-accent">
             NT$ {format.number(props.amount)}
           </p>
           <div className="typo-ui text-sm text-primary space-y-1">
@@ -368,16 +368,19 @@ const FormStepBasic: React.FC = () => {
         <span className="typo-ui text-sm text-primary">{t("gender")}</span>
         <div className="flex flex-wrap gap-2">
           <RadioOption
+            variant="outlined"
             label={t("genderMale")}
             value="male"
             {...register("gender")}
           />
           <RadioOption
+            variant="outlined"
             label={t("genderFemale")}
             value="female"
             {...register("gender")}
           />
           <RadioOption
+            variant="outlined"
             label={t("genderOther")}
             value="other"
             {...register("gender")}
@@ -525,7 +528,7 @@ const FormStepEmergency: React.FC = () => {
               <label className="flex items-start gap-2 cursor-pointer">
                 <input
                   type="checkbox"
-                  className="mt-1 size-4 accent-brand-500"
+                  className="size-4 accent-brand-500"
                   checked={field.value === true}
                   onChange={(event) => field.onChange(event.target.checked)}
                   onBlur={field.onBlur}
@@ -586,21 +589,25 @@ const FormStepActivity: React.FC = () => {
         <span className="typo-ui text-sm text-primary">{t("dietary")}</span>
         <div className="flex flex-wrap gap-2">
           <RadioOption
+            variant="outlined"
             label={t("dietaryOmnivore")}
             value="omnivore"
             {...register("dietary")}
           />
           <RadioOption
+            variant="outlined"
             label={t("dietaryNoBeef")}
             value="no_beef"
             {...register("dietary")}
           />
           <RadioOption
+            variant="outlined"
             label={t("dietaryVegetarian")}
             value="vegetarian"
             {...register("dietary")}
           />
           <RadioOption
+            variant="outlined"
             label={t("dietaryVegan")}
             value="vegan"
             {...register("dietary")}
@@ -662,11 +669,13 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
           <span className="typo-ui text-sm text-primary">{t("transport")}</span>
           <div className="flex flex-wrap gap-2">
             <RadioOption
+              variant="outlined"
               label={t("transportSelf")}
               value="self"
               {...register("transport")}
             />
             <RadioOption
+              variant="outlined"
               label={`${t("transportCarpool")}  +NT$ ${format.number(props.carpoolSurcharge)}`}
               value="carpool"
               {...register("transport")}
@@ -693,6 +702,7 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
               <div className="flex flex-wrap gap-2">
                 {PICKUP_SLUGS.map((slug) => (
                   <RadioOption
+                    variant="outlined"
                     key={slug}
                     label={t(`pickupSlug.${slug}`)}
                     value={slug}
@@ -713,11 +723,13 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
               </span>
               <div className="flex flex-wrap gap-2">
                 <RadioOption
+                  variant="outlined"
                   label={t("carpoolPassenger")}
                   value="passenger"
                   {...register("carpool_role")}
                 />
                 <RadioOption
+                  variant="outlined"
                   label={t("carpoolDriver")}
                   value="driver"
                   {...register("carpool_role")}
@@ -762,7 +774,7 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
 
       <div className="flex items-center justify-between rounded-lg border border-stroke-default p-4">
         <span className="typo-ui text-primary">{t("totalPrice")}</span>
-        <span className="typo-subtitle-1 text-accent-fg">
+        <span className="typo-subtitle-1 text-accent">
           NT$ {format.number(totalPrice)}
         </span>
       </div>

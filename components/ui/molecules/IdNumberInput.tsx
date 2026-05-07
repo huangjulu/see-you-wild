@@ -18,10 +18,9 @@ const IdNumberInput: React.FC<IdNumberInputProps> = (props) => {
   const t = useTranslations("registration");
 
   const isTaiwan = props.country === "TW";
-  const labelKey = isTaiwan ? "idLabel.tw" : "idLabel.foreign";
-  const placeholderKey = isTaiwan
-    ? "idPlaceholder.tw"
-    : "idPlaceholder.foreign";
+  const placeholder = isTaiwan
+    ? t("idPlaceholder.tw")
+    : t("idPlaceholder.foreign");
 
   function onIdNumberChange(event: React.ChangeEvent<HTMLInputElement>) {
     const next = event.target.value.trim().toUpperCase();
@@ -32,8 +31,8 @@ const IdNumberInput: React.FC<IdNumberInputProps> = (props) => {
     <Input
       ref={props.ref}
       name={props.name}
-      label={t(labelKey)}
-      placeholder={t(placeholderKey)}
+      label={t("idLabel")}
+      placeholder={placeholder}
       value={props.value ?? ""}
       onChange={onIdNumberChange}
       onBlur={props.onBlur}
