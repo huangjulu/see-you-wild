@@ -7,7 +7,7 @@ const variantClass: Record<Variant, string> = {
   display: "typo-display text-4xl md:text-5xl text-primary",
   heading: "typo-heading text-primary",
   "sub-heading": "typo-sub-heading text-xl text-primary",
-  ui: "typo-ui text-sm text-primary",
+  ui: "typo-ui text-sm text-secondary",
 };
 
 interface HeadingProps {
@@ -42,7 +42,7 @@ function HeadingBase(props: HeadingProps) {
       {props.overline && (
         <p
           className={cn(
-            "typo-overline text-sm mb-2 text-brand-500",
+            "typo-overline text-sm mb-2 text-brand-500 ",
             props.overlineClassName
           )}
         >

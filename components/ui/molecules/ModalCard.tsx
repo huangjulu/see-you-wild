@@ -125,7 +125,7 @@ const ModalCardHeader: SlottableComponent<ModalCardHeaderProps> = Object.assign(
                 </div>
               )}
               {props.description && (
-                <div className="typo-body-2 text-black-60">
+                <div className="typo-body-2 text-secondary">
                   {props.description}
                 </div>
               )}
@@ -147,7 +147,12 @@ interface ModalCardMainProps {
 const ModalCardMain: SlottableComponent<ModalCardMainProps> = Object.assign(
   (props: ModalCardMainProps) => (
     <Slot slot="main">
-      <main className={cn("p-4 overflow-y-auto bg-linear-90", props.className)}>
+      <main
+        className={cn(
+          "pt-4 pb-5 px-5 overflow-y-auto bg-linear-90",
+          props.className
+        )}
+      >
         {props.children}
       </main>
     </Slot>

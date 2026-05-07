@@ -63,11 +63,11 @@ const DatePickerInput: React.FC<DatePickerInputProps> = (props) => {
           className={cn(
             "flex h-10 items-center justify-between rounded-md border px-4 text-left typo-body transition-colors",
             "border-stroke-default bg-white text-primary ring-stroke-focus",
-            "hover:border-stroke-strong hover:disabled:border-stroke-default",
+            "hover:border-brand-400 hover:disabled:border-stroke-default",
             "focus:border-accent focus:ring-2 focus:ring-brand-200/70 focus-visible:outline-none",
             "disabled:opacity-50 disabled:cursor-not-allowed",
             props.error != null &&
-              "border-error ring-error/20 focus:border-error",
+              "border-stroke-critical ring-stroke-critical/20 focus:border-stroke-critical",
             !displayValue && "text-neutral-200"
           )}
         >

@@ -32,7 +32,7 @@ const CookiePopup: React.FC = () => {
       <div className="flex items-center gap-6">
         <button
           onClick={onAcceptClick}
-          className="typo-overline text-on-surface-brand/80 border-b border-surface-deep-fg/30 pb-0.5 hover:border-surface-deep-fg transition-colors"
+          className="typo-overline text-on-surface-brand/80 border-b border-on-surface-deep/30 pb-0.5 hover:border-on-surface-deep transition-colors"
         >
           {t("cookie.accept")}
         </button>

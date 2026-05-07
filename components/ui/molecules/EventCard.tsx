@@ -28,10 +28,10 @@ const EventCard: React.FC<EventCardProps> = (props) => {
     <Link href={`/${locale}/events/${props.id}`} className="block">
       <article
         className={cn(
-          "group overflow-hidden rounded-2xl bg-white transition-shadow duration-300 hover:shadow-lg border border-neutral-100 shadow-2xs"
+          "group overflow-hidden rounded-2xl bg-white transition-shadow duration-300 hover:shadow-lg border border-neutral-100 shadow-2xs max-h-96 flex flex-col"
         )}
       >
-        <div className="relative aspect-4/3 overflow-hidden">
+        <div className="relative aspect-4/3 overflow-hidden shrink-0">
           <img
             src={props.image}
             alt={props.imageAlt}
@@ -47,9 +47,9 @@ const EventCard: React.FC<EventCardProps> = (props) => {
             {props.type}
           </Tag>
         </div>
-        <div className="p-4">
-          <Heading.H3 className="text-lg">{props.title}</Heading.H3>
-          <p className="typo-body text-sm text-secondary">
+        <div className="p-4 min-h-0">
+          <Heading.H3 className="text-lg truncate">{props.title}</Heading.H3>
+          <p className="typo-body text-sm text-secondary truncate">
             {props.location} · {props.startDate}
           </p>
           <p className="typo-ui text-base font-semibold mt-2 text-brand-500">

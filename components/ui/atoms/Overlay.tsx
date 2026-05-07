@@ -38,7 +38,7 @@ const Overlay: React.FC<OverlayProps> = (props) => {
   return (
     <div
       className={cn(
-        "fixed inset-0 z-50 flex items-center justify-center bg-black/40 overflow-clip",
+        "fixed inset-0 z-100 flex items-center justify-center bg-black/40 overflow-clip",
         props.className
       )}
       onClick={onBackdropClick}

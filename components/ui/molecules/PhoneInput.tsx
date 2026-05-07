@@ -19,8 +19,24 @@ interface PhoneInputProps {
 }
 
 const PhoneInput: React.FC<PhoneInputProps> = (props) => {
+  const dialCode = props.country.dialCode;
+
+  function formatDisplay(raw: string): string {
+    if (!raw.startsWith("+") || raw.length <= 1) return raw;
+    const digits = raw.slice(1);
+    const groups = digits.match(/.{1,3}/g) ?? [];
+    return `+${groups.join(" ")}`;
+  }
+
   function onPhoneInputChange(event: React.ChangeEvent<HTMLInputElement>) {
-    props.onChange?.(event.target.value);
+    let filtered = event.target.value.replace(/[^\d+]/g, "");
+    if (!filtered.startsWith("+")) {
+      filtered = `+${filtered}`;
+    }
+    if (filtered.length > 16) {
+      filtered = filtered.slice(0, 16);
+    }
+    props.onChange?.(filtered);
   }
 
   function onPhoneInputBlur() {
@@ -42,7 +58,7 @@ const PhoneInput: React.FC<PhoneInputProps> = (props) => {
         autoComplete="tel"
         label={props.label}
         placeholder={props.placeholder ?? props.country.phoneExample}
-        value={props.value ?? ""}
+        value={formatDisplay(props.value ?? "")}
         onChange={onPhoneInputChange}
         onBlur={onPhoneInputBlur}
         error={props.error}

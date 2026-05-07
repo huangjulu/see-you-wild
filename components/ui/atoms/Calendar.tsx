@@ -134,7 +134,7 @@ function CalendarDayButton(props: CalendarDayButtonProps) {
         "relative isolate z-10 border border-transparent flex flex-col items-center justify-center gap-1 aspect-square size-auto w-full min-w-(--cell-size) rounded-(--cell-radius) leading-none font-normal transition-colors duration-150",
         "hover:bg-brand-50 hover:border-accent/50",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-1",
-        "data-[selected-single=true]:bg-brand-400 data-[selected-single=true]:border-brand-600 data-[selected-single=true]:text-white ",
+        "data-[selected-single=true]:bg-brand-400 data-[selected-single=true]:border-brand-600/50 data-[selected-single=true]:text-white",
         "hover:data-[selected-single=true]:bg-brand-500",
         size === "lg" && "justify-start pt-2",
         ...markerStyles,
@@ -435,7 +435,7 @@ const _Calendar: React.FC<CalendarProps> = (props) => {
             type="button"
             onClick={() => setExpanded(true)}
             className={cn(
-              "w-full rounded-lg bg-brand-50 py-2 text-center typo-ui text-sm text-accent transition-all flex gap-2 items-center justify-center border border-brand-200",
+              "w-full rounded-lg bg-brand-50 py-2 text-center typo-ui text-sm text-accent transition-all flex gap-2 items-center justify-center border border-brand-200/60",
               "hover:bg-brand-100 "
             )}
           >
@@ -455,13 +455,13 @@ const _Calendar: React.FC<CalendarProps> = (props) => {
       config.naviClassName
     ),
     button_previous: cn(
-      "flex items-center justify-center size-(--cell-size) rounded-(--cell-radius) p-1",
+      "flex items-center justify-center size-(--cell-size) rounded-(--cell-radius)",
       "border border-transparent text-primary hover:bg-brand-50 transition-colors",
       "aria-disabled:opacity-50",
       config.chevronsClassName
     ),
     button_next: cn(
-      "flex items-center justify-center size-(--cell-size) rounded-(--cell-radius) p-1",
+      "flex items-center justify-center size-(--cell-size) rounded-(--cell-radius)",
       "border border-transparent text-primary hover:bg-brand-50 transition-colors",
       "aria-disabled:opacity-50",
       config.chevronsClassName
@@ -481,6 +481,11 @@ const _Calendar: React.FC<CalendarProps> = (props) => {
     disabled: "text-muted-foreground opacity-50",
     hidden: "invisible",
   } as const satisfies Partial<ClassNames>;
+
+  type DayPickerRootProps = {
+    className?: string;
+    rootRef?: React.Ref<HTMLDivElement>;
+  } & React.HTMLAttributes<HTMLDivElement>;
 
   const rdpComponents: Record<string, unknown> = {
     Root: (rootProps: DayPickerRootProps) => {
@@ -519,10 +524,10 @@ const _Calendar: React.FC<CalendarProps> = (props) => {
       modifiers={dpModifiers}
       onMonthChange={monthChange}
       className={cn(
-        "bg-white p-4 [--cell-radius:var(--radius-md)]",
+        "bg-neutral-50/80 p-4 [--cell-radius:var(--radius-md)]",
         CELL_SIZE[size],
         FONT_SIZE[size],
-        "rounded-xl overflow-hidden border border-neutral-200",
+        "rounded-xl overflow-hidden border border-neutral-200/50",
         props.className
       )}
       classNames={classNames}
@@ -578,8 +583,3 @@ function getAnchorWeekStart(
 
   return getMonday(monthStart);
 }
-
-type DayPickerRootProps = {
-  className?: string;
-  rootRef?: React.Ref<HTMLDivElement>;
-} & React.HTMLAttributes<HTMLDivElement>;

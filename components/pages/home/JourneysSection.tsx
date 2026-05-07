@@ -58,12 +58,12 @@ const JourneysSection: React.FC = () => {
       className="relative overflow-hidden bg-surface-brand bg-linear-180 from-journeys-gradient-from to-surface-brand from-[-15%] to-105%"
     >
       <div className="h-screen flex flex-col justify-center py-8">
-        <div className="max-w-7xl mx-auto w-full px-10 md:px-16 mb-10 flex items-end justify-between">
+        <div className="max-w-7xl mx-auto w-full px-10 md:px-16 mb-7 flex items-end justify-between">
           <div>
             <Heading.H2
               variant="display"
               overline={t("overline")}
-              overlineClassName="mb-4 text-white/70"
+              overlineClassName="mb-2 text-white/70"
               className="text-white"
             >
               {t("title")}

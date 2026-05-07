@@ -63,7 +63,7 @@ const DatePickerDrawer: React.FC<DatePickerDrawerProps> = (props) => {
             "focus:border-accent focus:ring-2 focus:ring-brand-200/70 focus-visible:outline-none",
             "disabled:opacity-50 disabled:cursor-not-allowed",
             props.error != null &&
-              "border-error ring-error/20 focus:border-error",
+              "border-stroke-critical ring-stroke-critical/20 focus:border-stroke-critical",
             !displayValue && "text-neutral-200"
           )}
         >

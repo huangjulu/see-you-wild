@@ -50,7 +50,7 @@ const EventCalendar: React.FC<EventCalendarProps> = (props) => {
       full: {
         match: fullMatcher,
         label: "客滿",
-        style: "pointer-events-none cursor-default text-gray-400",
+        style: "pointer-events-none cursor-default text-neutral-400/60",
       },
       available: {
         match: availableMatcher,

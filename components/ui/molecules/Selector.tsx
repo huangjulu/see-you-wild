@@ -4,7 +4,7 @@ import {
   ChevronDown as IconChevronDown,
   ChevronUp as IconChevronUp,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 
 import Drawer from "@/components/ui/atoms/Drawer";
 import {
@@ -49,16 +49,30 @@ const Selector: React.FC<SelectorProps> = (props) => {
   const triggerClassName = cn(
     "flex w-full h-10 items-center justify-between rounded-md border px-4 text-left typo-body transition-colors",
     "border-stroke-default bg-white text-primary ring-stroke-focus",
-    "hover:border-stroke-strong hover:disabled:border-stroke-default",
+    "hover:border-brand-400 hover:disabled:border-stroke-default",
     "focus:border-accent focus:ring-2 focus:ring-brand-200/70 focus-visible:outline-none",
     "disabled:opacity-50 disabled:cursor-not-allowed",
-    props.error != null && "border-error ring-error/20 focus:border-error",
+    props.error != null &&
+      "border-stroke-critical ring-stroke-critical/20 focus:border-stroke-critical",
     selectedOption == null && "text-neutral-200"
   );
+
+  const selectedRef = useCallback((node: HTMLButtonElement | null) => {
+    if (node == null) return;
+    requestAnimationFrame(() => {
+      const container = node.closest("[data-selector-list]");
+      if (!(container instanceof HTMLElement)) return;
+      const offsetTop = node.offsetTop - container.offsetTop;
+      container.scrollTop =
+        offsetTop - container.clientHeight / 2 + node.clientHeight / 2;
+    });
+    return () => {};
+  }, []);
 
   const optionList = props.options.map((option) => (
     <button
       key={option.value}
+      ref={option.value === props.value ? selectedRef : undefined}
       type="button"
       className={cn(
         "w-full rounded-sm px-3 py-2 text-left typo-body text-sm transition-colors",
@@ -88,7 +102,10 @@ const Selector: React.FC<SelectorProps> = (props) => {
             <Icon className="size-4 text-secondary" />
           </Drawer.Trigger>
           <Drawer.Content>
-            <div className="max-h-[60vh] overflow-y-auto px-4 pb-6 pt-2">
+            <div
+              data-selector-list
+              className="max-h-[60vh] overflow-y-auto px-4 pb-6 pt-2"
+            >
               {optionList}
             </div>
           </Drawer.Content>
@@ -104,7 +121,10 @@ const Selector: React.FC<SelectorProps> = (props) => {
             </span>
             <Icon className="size-4 text-secondary" />
           </PopoverTrigger>
-          <PopoverContent className="w-(--anchor-width) rounded-md border border-neutral-200 p-1 ring-0 bg-white h-[9.6rem] overflow-auto">
+          <PopoverContent
+            data-selector-list
+            className="w-(--anchor-width) rounded-md border border-neutral-200 p-1 ring-0 bg-white max-h-[9.6rem] overflow-auto"
+          >
             {optionList}
           </PopoverContent>
         </Popover>
