@@ -206,11 +206,18 @@
     "carpoolIncluded": "含共乘 NT$",
     "selectOptionsHint": "請先選擇日期與出發方式",
     "transport": "交通方式",
+    "carpool": "共乘",
+    "carpoolSubtitle": "依載客人數退費",
+    "carpoolRole": "共乘角色",
     "carpoolPickup": "共乘接送",
-    "needRide": "需要被載",
-    "canDrive": "可出車",
+    "needRide": "我要搭車",
+    "canDrive": "我來開車",
     "canDriveNote": "依載客人數退還活動費用",
-    "seatCount": "可載人數"
+    "driverNote": "依實際載客人數按比例退還 30%~50% 活動費用",
+    "driverOverflowNote": "若出車者已足將自動轉為乘客，亦可來信改為自行前往",
+    "seatCount": "可載人數",
+    "seatCountOption": "{count} 人",
+    "selectSeatCount": "選擇人數"
   },
   "registration": {
     "title": "報名表單",
@@ -241,13 +248,10 @@
     "genderMale": "男",
     "genderFemale": "女",
     "genderOther": "其他",
-    "idLabel": {
-      "tw": "身分證字號",
-      "foreign": "護照號碼"
-    },
+    "idLabel": "證件號碼",
     "idPlaceholder": {
-      "tw": "A123456789",
-      "foreign": "123456789"
+      "tw": "身分證或居留證號碼",
+      "foreign": "護照號碼"
     },
     "birthday": "生日",
     "birthdayPlaceholder": "選擇日期",
@@ -267,7 +271,8 @@
     "notesPlaceholder": "其他需求或注意事項（選填）",
     "transport": "交通方式",
     "transportSelf": "自行前往",
-    "transportCarpool": "共乘接送",
+    "transportCarpool": "共乘",
+    "carpoolNote": "依載客人數退還活動費用",
     "pickupLocation": "上車地點",
     "pickupSlug": {
       "taipei": "台北車站",
@@ -277,8 +282,8 @@
       "banqiao": "板橋車站"
     },
     "carpoolRole": "共乘角色",
-    "carpoolPassenger": "乘客",
-    "carpoolDriver": "司機",
+    "carpoolPassenger": "我要搭車",
+    "carpoolDriver": "我來開車",
     "seatCount": "可載人數",
     "totalPrice": "費用合計",
     "successTitle": "報名已送出",
@@ -309,6 +314,68 @@
     "CH": "瑞士",
     "SE": "瑞典"
   },
+  "contact": {
+    "overline": "CONTACT",
+    "title": "一起走進野地吧",
+    "subtitle": "選擇行程方案，或告訴我們你的想像",
+    "templates": {
+      "group4": { "label": "四人成行", "description": "4 人即可成團，我們安排路線、嚮導與裝備，你只需要帶朋友來。" },
+      "private": { "label": "團體包團", "description": "公司旅遊、社團出遊？10 人以上包團，行程可依需求微調。" },
+      "custom": { "label": "自由提案", "description": "你有自己的想法？告訴我們你想去哪、想做什麼，我們來規劃。" }
+    },
+    "sections": {
+      "contactInfo": "聯絡資訊",
+      "tripInfo": "行程資訊",
+      "notes": "補充說明"
+    },
+    "fields": {
+      "name": "姓名",
+      "email": "Email",
+      "phone": "電話",
+      "activityType": "活動類型",
+      "groupSize": "人數",
+      "preferredDate": "偏好日期",
+      "preferredDatePlaceholder": "例如：六月底的週末",
+      "duration": "天數",
+      "message": "補充說明"
+    },
+    "options": {
+      "activityType": {
+        "hot-spring": "野溪溫泉",
+        "camping": "山野露營",
+        "canyoning": "溯溪探險",
+        "other": "其他"
+      },
+      "groupSize": {
+        "4": "4 人",
+        "5-9": "5-9 人",
+        "10-15": "10-15 人",
+        "16-20": "16-20 人",
+        "20+": "20 人以上"
+      },
+      "duration": {
+        "1day": "一日",
+        "2d1n": "2天1夜",
+        "3d2n": "3天2夜",
+        "flexible": "依行程建議"
+      }
+    },
+    "placeholders": {
+      "group4": "有沒有特別想去的路線？或是需要注意的事情（例如體能、經驗）",
+      "private": "請簡述活動目的（員工旅遊、社團出遊？）和任何特殊需求",
+      "custom": "描述你的想像——想去哪裡、想做什麼、有多少時間？"
+    },
+    "submit": "送出提案",
+    "submitting": "送出中...",
+    "success": {
+      "title": "提案已送出",
+      "message": "我們會在 2 個工作天內回覆你的 Email。",
+      "reset": "再送一份"
+    },
+    "error": {
+      "submitFailed": "送出失敗，請稍後再試。"
+    }
+  },
   "validation": {
     "carpoolFieldRequired": "選擇共乘時必須填寫此欄位",
     "selfNoCarpool": "自行前往時不需填寫共乘資訊",
@@ -317,10 +384,10 @@
     "invalidEmail": "請輸入有效的電子郵件",
     "invalidFormat": "格式不正確",
     "invalidSelection": "請選擇有效的選項",
-    "invalidTwId": "身分證字號格式錯誤（應為 1 個英文字母 + 9 位數字）",
-    "invalidTwIdChecksum": "身分證字號檢核碼錯誤",
-    "invalidPassport": "護照號碼格式錯誤",
-    "invalidPhone": "電話號碼格式錯誤",
+    "invalidTwDocument": "身分證/居留證格式錯誤（應為 1 個英文字母 + 9 位數字或字母）",
+    "invalidTwIdChecksum": "身分證/居留證檢核碼錯誤",
+    "invalidPassport": "護照號碼格式錯誤（6-12 碼英數）",
+    "invalidPhone": "格式錯誤",
     "guardianConsentRequired": "未滿 18 歲須勾選監護人同意",
     "lineIdInvalid": "Line ID 格式錯誤",
     "nameTooLong": "姓名超過 50 字",

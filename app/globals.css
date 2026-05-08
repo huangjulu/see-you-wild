@@ -414,7 +414,7 @@ body {
 /* --- Selectors --- */
 
 @media (min-width: 768px) {
-  body:has(.sticky-shrink-header) #page-header {
+  body:has(.md\:sticky-shrink-header) #page-header {
     animation: sticky-hide-nav linear forwards;
     animation-timeline: scroll();
     animation-range: 0px 60px;
