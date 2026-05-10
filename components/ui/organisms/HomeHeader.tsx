@@ -1,10 +1,11 @@
 "use client";
 
-import { Menu as IconMenu, X as IconX } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Menu as IconMenu } from "lucide-react";
+import { useState } from "react";
 
 import Button from "@/components/ui/atoms/Button";
 import Logo from "@/components/ui/atoms/Logo";
+import MobileNav from "@/components/ui/organisms/MobileNav";
 import { NAV_LINKS } from "@/lib/constants";
 import { useScrolled } from "@/lib/hooks/useScrolled";
 import { useLocale, useTranslations } from "@/lib/i18n/client";
@@ -26,99 +27,80 @@ const HomeHeader: React.FC = () => {
   ];
 
   return (
-    <header
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 px-10 md:px-16 transition-all duration-500",
-        scrolled
-          ? "bg-linear-180 from-surface-deep/25 from-0% to-surface-brand/20 to-200% backdrop-blur-sm"
-          : "bg-transparent border-transparent"
-      )}
-    >
-      <div
+    <>
+      <header
         className={cn(
-          "max-w-6xl mx-auto h-16 flex items-center justify-between transition-colors",
-          scrolled ? "text-white text-shadow-md" : "text-on-surface-brand"
+          "fixed top-0 left-0 right-0 z-50 px-10 md:px-16 transition-all duration-500",
+          scrolled
+            ? "bg-linear-180 from-surface-deep/25 from-0% to-surface-brand/20 to-200% backdrop-blur-sm"
+            : "bg-transparent border-transparent"
         )}
       >
-        <a
-          href={locale === "zh-TW" ? "/" : `/${locale}`}
-          className="flex items-center gap-3 -translate-x-2"
-          aria-label={t("siteName")}
+        <div
+          className={cn(
+            "max-w-6xl mx-auto h-16 flex items-center justify-between transition-colors",
+            scrolled ? "text-white text-shadow-md" : "text-on-surface-brand"
+          )}
         >
-          <Logo size="sm" />
-          <span className="font-serif text-lg font-semibold hidden sm:inline [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-primary)_50%,transparent)]">
-            {t("siteName")}
-          </span>
-        </a>
-        <nav
-          className="hidden md:flex items-center gap-8"
-          aria-label="Main navigation"
-        >
-          {navLinks.map((link) => (
+          <a
+            href={locale === "zh-TW" ? "/" : `/${locale}`}
+            className="flex items-center gap-3 -translate-x-2"
+            aria-label={t("siteName")}
+          >
+            <Logo size="sm" />
+            <span className="font-serif text-lg font-semibold hidden sm:inline [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-primary)_50%,transparent)]">
+              {t("siteName")}
+            </span>
+          </a>
+          <nav
+            className="hidden md:flex items-center gap-8"
+            aria-label="Main navigation"
+          >
+            {navLinks.map((link) => (
+              <Button
+                key={link.href}
+                theme="link"
+                href={link.href}
+                underline={false}
+                className={NAV_LINK_CLASS}
+              >
+                {link.label}
+              </Button>
+            ))}
             <Button
-              key={link.href}
-              theme="link"
-              href={link.href}
               underline={false}
-              className={NAV_LINK_CLASS}
+              theme="link"
+              href="/events"
+              className={cn(
+                "ml-2 rounded-full px-5 py-1.5 text-sm tracking-widest",
+                scrolled
+                  ? " border-accent bg-brand-500 hover:bg-brand-400 text-white hover:shadow-none"
+                  : "text-on-surface-brand ring-1 ring-on-surface-deep"
+              )}
             >
-              {link.label}
+              {t("nav.exploreCta")}
             </Button>
-          ))}
-          <Button
-            underline={false}
-            theme="link"
-            href="/events"
-            className={cn(
-              "ml-2 rounded-full px-5 py-1.5 text-sm tracking-widest",
-              scrolled
-                ? " border-accent bg-brand-500 hover:bg-brand-400 text-white hover:shadow-none"
-                : "text-on-surface-brand ring-1 ring-on-surface-deep"
-            )}
-          >
-            {t("nav.exploreCta")}
-          </Button>
-        </nav>
+          </nav>
 
-        <button
-          className="md:hidden p-2.5"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={menuOpen}
-        >
-          {menuOpen ? <IconX size={24} /> : <IconMenu size={24} />}
-        </button>
-      </div>
-
-      <nav
-        className={cn(
-          "md:hidden  backdrop-blur-md border-t border-stroke-default/30 px-4 flex flex-col gap-4 text-primary overflow-hidden transition-all duration-300",
-          menuOpen ? "max-h-60 py-4 opacity-100" : "max-h-0 py-0 opacity-0"
-        )}
-        aria-label="Mobile navigation"
-        aria-hidden={!menuOpen}
-      >
-        {navLinks.map((link) => (
-          <Button
-            key={link.href}
-            theme="link"
-            href={link.href}
-            underline={false}
-            className={NAV_LINK_CLASS}
-            onClick={() => setMenuOpen(false)}
+          <button
+            className="md:hidden p-2.5"
+            onClick={() => setMenuOpen(true)}
+            aria-label="Open menu"
+            aria-expanded={menuOpen}
           >
-            {link.label}
-          </Button>
-        ))}
-        <a
-          href="/events"
-          className="typo-ui rounded-full bg-fill-brand px-5 py-2 text-center text-xs tracking-widest text-on-fill-brand transition-all duration-300 hover:bg-brand-500"
-          onClick={() => setMenuOpen(false)}
-        >
-          {t("nav.exploreCta")}
-        </a>
-      </nav>
-    </header>
+            <IconMenu size={24} />
+          </button>
+        </div>
+      </header>
+
+      <MobileNav
+        open={menuOpen}
+        onOpenChange={setMenuOpen}
+        navLinks={navLinks}
+        ctaLabel={t("nav.exploreCta")}
+        ctaHref="/events"
+      />
+    </>
   );
 };
 
