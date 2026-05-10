@@ -1,3 +1,4 @@
+import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 import type { ButtonTheme } from "./button.types";
@@ -80,20 +81,40 @@ export default Button;
 
 function renderElement(props: ButtonProps, className: string) {
   if (props.href != null) {
+    const isExternal =
+      props.external === true ||
+      props.href.startsWith("http") ||
+      props.href.startsWith("mailto:");
+    const isHash = props.href.startsWith("#");
+
+    if (isExternal || isHash) {
+      return (
+        <a
+          href={props.href}
+          {...(isExternal && {
+            target: "_blank",
+            rel: "noopener noreferrer",
+          })}
+          className={className}
+          aria-label={props.ariaLabel}
+          onClick={props.onClick}
+        >
+          {props.icon}
+          {props.children}
+        </a>
+      );
+    }
+
     return (
-      <a
+      <Link
         href={props.href}
-        {...(props.external && {
-          target: "_blank",
-          rel: "noopener noreferrer",
-        })}
         className={className}
         aria-label={props.ariaLabel}
         onClick={props.onClick}
       >
         {props.icon}
         {props.children}
-      </a>
+      </Link>
     );
   }
 

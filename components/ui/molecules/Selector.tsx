@@ -96,10 +96,10 @@ const Selector: React.FC<SelectorProps> = (props) => {
             disabled={props.disabled}
             className={triggerClassName}
           >
-            <span>
+            <span className="truncate">
               {selectedOption ? selectedOption.label : props.placeholder}
             </span>
-            <Icon className="size-4 text-secondary" />
+            <Icon className="size-4 text-secondary shrink-0" />
           </Drawer.Trigger>
           <Drawer.Content>
             <div
@@ -116,10 +116,10 @@ const Selector: React.FC<SelectorProps> = (props) => {
             disabled={props.disabled}
             className={triggerClassName}
           >
-            <span>
+            <span className="truncate">
               {selectedOption ? selectedOption.label : props.placeholder}
             </span>
-            <Icon className="size-4 text-secondary" />
+            <Icon className="size-4 text-secondary shrink-0" />
           </PopoverTrigger>
           <PopoverContent
             data-selector-list

@@ -1,10 +1,8 @@
 "use client";
 
-import Link from "next/link";
-
 import Heading from "@/components/ui/atoms/Heading";
 import Tag from "@/components/ui/atoms/Tag";
-import { useLocale } from "@/lib/i18n/client";
+import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 interface EventCardProps {
@@ -21,11 +19,10 @@ interface EventCardProps {
 }
 
 const EventCard: React.FC<EventCardProps> = (props) => {
-  const locale = useLocale();
   const formattedPrice = props.basePrice.toLocaleString("zh-TW");
 
   return (
-    <Link href={`/${locale}/events/${props.id}`} className="block">
+    <Link href={`/events/${props.id}`} className="block">
       <article
         className={cn(
           "group overflow-hidden rounded-2xl bg-white transition-shadow duration-300 hover:shadow-lg border border-neutral-100 shadow-2xs max-h-96 flex flex-col"

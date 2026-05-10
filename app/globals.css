@@ -413,12 +413,10 @@ body {
 
 /* --- Selectors --- */
 
-@media (min-width: 768px) {
-  body:has(.md\:sticky-shrink-header) #page-header {
-    animation: sticky-hide-nav linear forwards;
-    animation-timeline: scroll();
-    animation-range: 0px 60px;
-  }
+body:has(.sticky-shrink-header) #page-header {
+  animation: sticky-hide-nav linear forwards;
+  animation-timeline: scroll();
+  animation-range: 0px 60px;
 }
 
 @utility sticky-shrink-header {
@@ -446,13 +444,10 @@ body {
       transparent
     );
     backdrop-filter: blur(24px);
-
-    @media (min-width: 768px) {
-      opacity: 0;
-      animation: sticky-bg-reveal linear forwards;
-      animation-timeline: scroll();
-      animation-range: 0px 60px;
-    }
+    opacity: 0;
+    animation: sticky-bg-reveal linear forwards;
+    animation-timeline: scroll();
+    animation-range: 0px 60px;
   }
 }
 

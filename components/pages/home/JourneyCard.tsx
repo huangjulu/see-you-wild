@@ -1,4 +1,5 @@
 import Heading from "@/components/ui/atoms/Heading";
+import { Link } from "@/lib/i18n/navigation";
 
 interface JourneyCardProps {
   title: string;
@@ -28,12 +29,12 @@ const JourneyCard: React.FC<JourneyCardProps> = (props) => {
 
   if (props.href != null) {
     return (
-      <a
+      <Link
         href={props.href}
         className="journey-card shrink-0 w-60 md:w-105 group"
       >
         {content}
-      </a>
+      </Link>
     );
   }
 

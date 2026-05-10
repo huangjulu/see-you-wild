@@ -44,15 +44,17 @@ const DrawerContent: React.FC<DrawerContentProps> = (props) => {
   return (
     <DrawerPrimitive.Portal>
       <DrawerPrimitive.Backdrop className="fixed inset-0 z-40 bg-black/40" />
-      <DrawerPrimitive.Popup
-        className={cn(
-          "fixed inset-x-0 bottom-0 z-40 flex w-full flex-col rounded-t-2xl bg-white pb-[env(safe-area-inset-bottom)] outline-none",
-          props.className
-        )}
-      >
-        <div className="mx-auto mt-3 mb-2 h-1 w-10 rounded-full bg-neutral-200" />
-        {props.children}
-      </DrawerPrimitive.Popup>
+      <DrawerPrimitive.Viewport className="fixed inset-0 z-40 flex items-end">
+        <DrawerPrimitive.Popup
+          className={cn(
+            "flex w-full flex-col rounded-t-2xl bg-white pb-[env(safe-area-inset-bottom)] outline-none",
+            props.className
+          )}
+        >
+          <div className="mx-auto mt-3 mb-2 h-1 w-10 rounded-full bg-neutral-200" />
+          {props.children}
+        </DrawerPrimitive.Popup>
+      </DrawerPrimitive.Viewport>
     </DrawerPrimitive.Portal>
   );
 };

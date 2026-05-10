@@ -7,14 +7,14 @@ import Button from "@/components/ui/atoms/Button";
 import Logo from "@/components/ui/atoms/Logo";
 import MobileNav from "@/components/ui/organisms/MobileNav";
 import { NAV_LINKS } from "@/lib/constants";
-import { useLocale, useTranslations } from "@/lib/i18n/client";
+import { useTranslations } from "@/lib/i18n/client";
+import { Link } from "@/lib/i18n/navigation";
 
 const NAV_LINK_CLASS =
   "text-sm hover:[text-shadow:0_0.5px_16px_color-mix(in_srgb,var(--color-brand-800)_80%,transparent)] hover:text-white focus-visible:opacity-100 focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-current rounded-sm";
 
 const PageHeader: React.FC = () => {
   const t = useTranslations("common");
-  const locale = useLocale();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navLinks = [
@@ -29,8 +29,8 @@ const PageHeader: React.FC = () => {
         className="fixed top-0 left-0 right-0 z-99 px-10 md:px-16 bg-linear-180 from-surface-deep/25 from-0% to-surface-brand/20 to-200% backdrop-blur-sm"
       >
         <div className="max-w-6xl mx-auto h-16 flex items-center justify-between text-white text-shadow-md">
-          <a
-            href={locale === "zh-TW" ? "/" : `/${locale}`}
+          <Link
+            href="/"
             className="flex items-center gap-3 -translate-x-2"
             aria-label={t("siteName")}
           >
@@ -38,7 +38,7 @@ const PageHeader: React.FC = () => {
             <span className="font-serif text-lg font-semibold hidden sm:inline [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-primary)_50%,transparent)]">
               {t("siteName")}
             </span>
-          </a>
+          </Link>
 
           <nav
             className="hidden md:flex items-center gap-8"

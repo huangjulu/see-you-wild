@@ -30,12 +30,12 @@ const EventSearchBar: React.FC<EventSearchBarProps> = (props) => {
   ];
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap gap-2">
+    <div className="space-y-4 pt-2">
+      <div className="hidden md:flex flex-wrap gap-2">
         {typeSelectOptions.map((opt) => (
           <RadioOption
             key={`type-${opt.value}`}
-            className="rounded-full! px-4! py-3! text-base hover:shadow-sm md:sticky-shrink-chip"
+            className="rounded-full! px-4! py-3! text-base hover:shadow-sm sticky-shrink-chip"
             name="event-type-filter"
             value={opt.value}
             label={opt.label}
@@ -45,6 +45,14 @@ const EventSearchBar: React.FC<EventSearchBarProps> = (props) => {
         ))}
       </div>
       <div className="flex gap-3">
+        <div className="md:hidden w-1/3">
+          <Selector
+            options={typeSelectOptions}
+            value={props.selectedType}
+            onChange={props.onTypeChange}
+            placeholder={t("allTypes")}
+          />
+        </div>
         <div className="hidden md:block">
           <Selector
             options={props.locationOptions}

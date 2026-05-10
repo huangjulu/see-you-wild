@@ -12,8 +12,8 @@ export function useTranslations<NS extends MessageNamespace>(
   namespace: NS
 ): TranslationFunction<NS> {
   // next-intl 的 t() 回傳 opaque internal type (NamespacedMessageKeys + TranslateArgs)，
-  // ��法透過 generic constraint 與我們從 JSON 推導的 TranslationFunction 對接，
-  // 此處是兩套型別��統的唯一橋接點。
+  // 無法透過 generic constraint 與我們從 JSON 推導的 TranslationFunction 對接，
+  // 此處是兩套型別系統的唯一橋接點。
 
   return _useTranslations(namespace) as unknown as TranslationFunction<NS>;
 }

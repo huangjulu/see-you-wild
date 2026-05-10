@@ -5,6 +5,7 @@ import { useEffect } from "react";
 
 import Logo from "@/components/ui/atoms/Logo";
 import { INSTAGRAM_HANDLE, INSTAGRAM_URL } from "@/lib/constants";
+import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 interface MobileNavProps {
@@ -61,26 +62,37 @@ const MobileNav: React.FC<MobileNavProps> = (props) => {
         </div>
 
         <div className="flex-1 flex flex-col justify-center px-8 gap-2">
-          {props.navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={() => props.onOpenChange(false)}
-              className="font-serif text-2xl font-medium tracking-wide text-on-surface-deep py-4 block"
-            >
-              {link.label}
-            </a>
-          ))}
+          {props.navLinks.map((link) =>
+            link.href.startsWith("#") ? (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => props.onOpenChange(false)}
+                className="font-serif text-2xl font-medium tracking-wide text-on-surface-deep py-4 block"
+              >
+                {link.label}
+              </a>
+            ) : (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => props.onOpenChange(false)}
+                className="font-serif text-2xl font-medium tracking-wide text-on-surface-deep py-4 block"
+              >
+                {link.label}
+              </Link>
+            )
+          )}
         </div>
 
         <div className="px-8 pb-8 space-y-6">
-          <a
+          <Link
             href={props.ctaHref}
             onClick={() => props.onOpenChange(false)}
             className="block text-center rounded-full bg-fill-brand px-8 py-3 text-sm tracking-widest text-on-fill-brand typo-ui"
           >
             {props.ctaLabel}
-          </a>
+          </Link>
 
           <a
             href={INSTAGRAM_URL}

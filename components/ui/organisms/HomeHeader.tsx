@@ -8,7 +8,8 @@ import Logo from "@/components/ui/atoms/Logo";
 import MobileNav from "@/components/ui/organisms/MobileNav";
 import { NAV_LINKS } from "@/lib/constants";
 import { useScrolled } from "@/lib/hooks/useScrolled";
-import { useLocale, useTranslations } from "@/lib/i18n/client";
+import { useTranslations } from "@/lib/i18n/client";
+import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 const NAV_LINK_CLASS =
@@ -16,7 +17,6 @@ const NAV_LINK_CLASS =
 
 const HomeHeader: React.FC = () => {
   const t = useTranslations("common");
-  const locale = useLocale();
   const scrolled = useScrolled(50);
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -42,8 +42,8 @@ const HomeHeader: React.FC = () => {
             scrolled ? "text-white text-shadow-md" : "text-on-surface-brand"
           )}
         >
-          <a
-            href={locale === "zh-TW" ? "/" : `/${locale}`}
+          <Link
+            href="/"
             className="flex items-center gap-3 -translate-x-2"
             aria-label={t("siteName")}
           >
@@ -51,7 +51,7 @@ const HomeHeader: React.FC = () => {
             <span className="font-serif text-lg font-semibold hidden sm:inline [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-primary)_50%,transparent)]">
               {t("siteName")}
             </span>
-          </a>
+          </Link>
           <nav
             className="hidden md:flex items-center gap-8"
             aria-label="Main navigation"

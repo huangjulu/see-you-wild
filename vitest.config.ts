@@ -10,8 +10,18 @@ export default defineConfig({
     globals: true,
   },
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "."),
-    },
+    alias: [
+      {
+        find: /^@\/lib\/i18n\/navigation$/,
+        replacement: path.resolve(
+          __dirname,
+          "__mocks__/lib/i18n/navigation.ts"
+        ),
+      },
+      {
+        find: "@",
+        replacement: path.resolve(__dirname, "."),
+      },
+    ],
   },
 });
