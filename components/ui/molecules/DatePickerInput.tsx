@@ -22,6 +22,7 @@ interface DatePickerInputProps {
   name?: string;
   startYear?: number;
   endYear?: number;
+  minDate?: Date;
 }
 
 const DatePickerInput: React.FC<DatePickerInputProps> = (props) => {
@@ -80,7 +81,8 @@ const DatePickerInput: React.FC<DatePickerInputProps> = (props) => {
             size="sm"
             value={selectedDate}
             onChange={onDateSelect}
-            defaultMonth={selectedDate ?? new Date(2000, 0)}
+            disabled={props.minDate ? { before: props.minDate } : undefined}
+            defaultMonth={selectedDate ?? props.minDate ?? new Date(2000, 0)}
             startMonth={new Date(startYear, 0)}
             endMonth={new Date(endYear, 11)}
           >

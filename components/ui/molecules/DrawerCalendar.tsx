@@ -17,6 +17,7 @@ interface DrawerCalendarProps {
   name?: string;
   startYear?: number;
   endYear?: number;
+  minDate?: Date;
 }
 
 const DrawerCalendar: React.FC<DrawerCalendarProps> = (props) => {

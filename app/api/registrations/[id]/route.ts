@@ -1,5 +1,6 @@
 import { handleError } from "@/lib/api/handle-error";
 import { apiOk } from "@/lib/api-response";
+import { sendRegistrationCancelledEmail } from "@/lib/email/send-registration-cancelled-email";
 import {
   AlreadyRegisteredError,
   InternalError,
@@ -7,6 +8,7 @@ import {
 } from "@/lib/errors/domain";
 import { deleteRegistration } from "@/lib/services/registrations";
 import { getSupabase } from "@/lib/supabase/client";
+import type { EventRow, RegistrationRow } from "@/lib/types/database";
 import { updateRegistrationSchema } from "@/lib/validations/registrations";
 
 interface RouteParams {
@@ -73,7 +75,37 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
   try {
     const { id } = await params;
 
+    const { data: regData, error: regError } = await getSupabase()
+      .from("registrations")
+      .select("name, email, event_id")
+      .eq("id", id)
+      .single();
+
+    if (regError || !regData) {
+      throw new RegistrationNotFoundError();
+    }
+
+    const reg = regData as Pick<RegistrationRow, "name" | "email" | "event_id">;
+
+    const { data: eventData } = await getSupabase()
+      .from("events")
+      .select("title, start_date")
+      .eq("id", reg.event_id)
+      .single();
+
     await deleteRegistration(id);
+
+    if (eventData) {
+      const evt = eventData as Pick<EventRow, "title" | "start_date">;
+      sendRegistrationCancelledEmail({
+        to: reg.email,
+        customerName: reg.name,
+        eventTitle: evt.title,
+        eventDate: evt.start_date,
+      }).catch((err) =>
+        console.error("[notifier] registration cancelled email failed", err)
+      );
+    }
 
     return apiOk({ deleted: true });
   } catch (err) {

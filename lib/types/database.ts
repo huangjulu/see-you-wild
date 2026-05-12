@@ -23,6 +23,7 @@ export interface EventRow {
   payment_days: number;
   carpool_cutoff_days: number;
   min_participants: number;
+  image_url: string | null;
   status: EventStatus;
   first_created_at: string;
 }
@@ -76,9 +77,17 @@ export interface CarpoolAssignmentRow {
 // POST /api/events → request body
 export type EventCreateDto = Omit<EventRow, "first_created_at">;
 
+// PATCH /api/events/{eventId} → request body
+export type EventUpdateDto = Partial<Omit<EventRow, "id" | "first_created_at">>;
+
+// DELETE /api/events/{eventId} → request body
+export interface EventDeleteDto {
+  cancellation_reason: string;
+}
+
 // GET /api/events → response item
 export interface EventListDto extends EventRow {
-  registrations: RegistrationSummaryDto[];
+  registrations: RegistrationAdminDto[];
 }
 
 // --- Registration ---
@@ -112,6 +121,14 @@ export interface RegistrationSummaryDto {
   transport: Transport;
   payment_ref: string | null;
   created_at: string;
+}
+
+// GET /api/events → nested in EventListDto (admin-expanded fields)
+export interface RegistrationAdminDto extends RegistrationSummaryDto {
+  email: string;
+  phone: string;
+  amount_due: number;
+  event_id: string;
 }
 
 // PATCH /api/registrations/{id}/payment-ref → request body

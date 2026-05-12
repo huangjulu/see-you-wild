@@ -56,6 +56,7 @@ const baseEvent: EventRow = {
   payment_days: 7,
   carpool_cutoff_days: 3,
   min_participants: 4,
+  image_url: null,
   status: "open",
   first_created_at: "2026-04-01T00:00:00Z",
 };
