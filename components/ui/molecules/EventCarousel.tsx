@@ -91,18 +91,16 @@ const EventCarousel: React.FC<EventCarouselProps> = (props) => {
                   IMG
                 </div>
                 <div className="flex min-w-0 flex-1 flex-col justify-center">
-                  <p className="truncate text-sm font-bold text-primary">
+                  <p className="typo-ui truncate text-sm text-primary">
                     {event.title}
                   </p>
-                  <p className="truncate text-xs text-secondary">
+                  <p className="typo-body truncate text-xs text-secondary">
                     {event.location} · {event.start_date}
                   </p>
                   <p
                     className={cn(
-                      "text-xs",
-                      isActive
-                        ? "font-semibold text-brand-500"
-                        : "text-secondary"
+                      "typo-body text-xs",
+                      isActive ? "typo-ui text-brand-500" : "text-secondary"
                     )}
                   >
                     {event.registrations.length} 人報名
@@ -141,13 +139,13 @@ const EventCarousel: React.FC<EventCarouselProps> = (props) => {
                   IMG
                 </div>
                 <div className="flex min-w-0 flex-1 flex-col justify-center">
-                  <p className="truncate text-sm font-bold text-primary">
+                  <p className="typo-ui truncate text-sm text-primary">
                     {peekEvent.title}
                   </p>
-                  <p className="truncate text-xs text-secondary">
+                  <p className="typo-body truncate text-xs text-secondary">
                     {peekEvent.location} · {peekEvent.start_date}
                   </p>
-                  <p className="text-xs text-secondary">
+                  <p className="typo-body text-xs text-secondary">
                     {peekEvent.registrations.length} 人報名
                   </p>
                 </div>

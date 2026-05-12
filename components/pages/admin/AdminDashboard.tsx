@@ -4,6 +4,7 @@ import { Search as IconSearch } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import ReactDOM from "react-dom";
 
+import AdminDashboardSkeleton from "@/components/pages/admin/AdminDashboardSkeleton";
 import DeleteEventDialog from "@/components/pages/admin/DeleteEventDialog";
 import DeleteRegistrationDialog from "@/components/pages/admin/DeleteRegistrationDialog";
 import EventFormModal from "@/components/pages/admin/EventFormModal";
@@ -29,7 +30,7 @@ const TABLE_GRID =
 
 const AdminDashboard: React.FC = () => {
   const { toast } = useToast();
-  const { data: events } = adminApi.events.useList();
+  const { data: events, isLoading } = adminApi.events.useList();
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -77,6 +78,15 @@ const AdminDashboard: React.FC = () => {
 
   const selectedEventTitle =
     events?.find((e) => e.id === selectedEventId)?.title ?? null;
+
+  if (isLoading) {
+    return (
+      <>
+        <AdminSidebar />
+        <AdminDashboardSkeleton />
+      </>
+    );
+  }
 
   return (
     <>
@@ -132,7 +142,7 @@ const AdminDashboard: React.FC = () => {
             <div
               className={cn(
                 TABLE_GRID,
-                "sticky top-0 z-[1] border-b border-stroke-default bg-white py-2 text-[11px] font-bold uppercase tracking-wider text-secondary"
+                "sticky top-0 z-[1] border-b border-stroke-default bg-white py-2 typo-overline text-[11px] text-secondary"
               )}
             >
               <span>活動</span>
@@ -159,23 +169,23 @@ const AdminDashboard: React.FC = () => {
                   }
                   className={cn(
                     TABLE_GRID,
-                    "py-2.5 text-[13px] transition-colors",
+                    "typo-body py-2.5 text-[13px] transition-colors",
                     pendingReview
                       ? "cursor-pointer rounded border-l-[3px] border-brand-400 bg-surface-warm hover:bg-brand-100"
                       : "border-b border-neutral-100 hover:bg-neutral-50"
                   )}
                 >
-                  <span className="truncate text-xs text-secondary">
+                  <span className="typo-body truncate text-xs text-secondary">
                     {reg.eventTitle}
                   </span>
-                  <span className="font-semibold">{reg.name}</span>
-                  <span className="truncate text-xs text-secondary">
+                  <span className="typo-ui">{reg.name}</span>
+                  <span className="typo-body truncate text-xs text-secondary">
                     {reg.email}
                   </span>
-                  <span className="text-xs">{reg.phone}</span>
+                  <span className="typo-body text-xs">{reg.phone}</span>
                   <span
                     className={cn(
-                      "text-xs font-semibold",
+                      "typo-ui text-xs",
                       pendingReview && "text-brand-500",
                       reg.status === "paid" && "text-success",
                       reg.status === "pending" &&
@@ -189,16 +199,16 @@ const AdminDashboard: React.FC = () => {
                         ? "✓ 已付款"
                         : "等待匯款"}
                   </span>
-                  <span className="text-xs">{reg.transport}</span>
+                  <span className="typo-body text-xs">{reg.transport}</span>
                   <span
                     className={cn(
-                      "font-serif font-bold tracking-wider",
+                      "typo-body font-bold",
                       reg.payment_ref == null && "text-neutral-200"
                     )}
                   >
                     {reg.payment_ref ?? "—"}
                   </span>
-                  <span className="text-xs">
+                  <span className="typo-body text-xs">
                     <span className="opacity-50">$</span>
                     {reg.amount_due.toLocaleString("zh-TW")}
                   </span>

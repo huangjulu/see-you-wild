@@ -42,30 +42,26 @@ const PaymentReviewDialog: React.FC<PaymentReviewDialogProps> = (props) => {
         {reg != null && (
           <div className="mt-3 flex flex-col gap-3">
             <div className="flex flex-col gap-0.5">
-              <span className="text-xs font-semibold uppercase tracking-wide text-secondary">
-                姓名
-              </span>
-              <span className="text-sm text-primary">{reg.name}</span>
+              <span className="typo-overline text-xs text-secondary">姓名</span>
+              <span className="typo-body text-sm text-primary">{reg.name}</span>
             </div>
             <div className="flex flex-col gap-0.5">
-              <span className="text-xs font-semibold uppercase tracking-wide text-secondary">
-                活動
+              <span className="typo-overline text-xs text-secondary">活動</span>
+              <span className="typo-body text-sm text-primary">
+                {reg.eventTitle}
               </span>
-              <span className="text-sm text-primary">{reg.eventTitle}</span>
             </div>
             <div className="flex flex-col gap-0.5">
-              <span className="text-xs font-semibold uppercase tracking-wide text-secondary">
+              <span className="typo-overline text-xs text-secondary">
                 末五碼
               </span>
-              <span className="font-serif font-bold tracking-wider text-primary">
+              <span className="typo-body font-bold text-primary">
                 {reg.payment_ref ?? "—"}
               </span>
             </div>
             <div className="flex flex-col gap-0.5">
-              <span className="text-xs font-semibold uppercase tracking-wide text-secondary">
-                金額
-              </span>
-              <span className="text-sm font-semibold text-accent">
+              <span className="typo-overline text-xs text-secondary">金額</span>
+              <span className="typo-ui text-sm text-accent">
                 NT$ {reg.amount_due.toLocaleString("zh-TW")}
               </span>
             </div>

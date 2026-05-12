@@ -155,7 +155,7 @@ const AdminHistory: React.FC<AdminHistoryProps> = (props) => {
           <div
             className={cn(
               TABLE_GRID,
-              "sticky top-0 z-[1] border-b border-stroke-default bg-white py-2.5 text-[11px] font-bold uppercase tracking-wider text-secondary"
+              "sticky top-0 z-[1] border-b border-stroke-default bg-white py-2.5 typo-overline text-[11px] text-secondary"
             )}
           >
             <span>活動名稱</span>
@@ -190,16 +190,18 @@ const AdminHistory: React.FC<AdminHistoryProps> = (props) => {
                   isHighlighted ? "bg-surface-warm" : "hover:bg-neutral-50"
                 )}
               >
-                <span className="truncate font-semibold text-primary">
+                <span className="typo-ui truncate text-primary">
                   {row.title}
                 </span>
-                <span className="text-xs text-secondary">{row.dateRange}</span>
-                <span className="truncate text-xs text-secondary">
+                <span className="typo-body text-xs text-secondary">
+                  {row.dateRange}
+                </span>
+                <span className="typo-body truncate text-xs text-secondary">
                   {row.location}
                 </span>
-                <span className="text-xs">{row.totalCount}</span>
-                <span className="text-xs">{row.paidCount}</span>
-                <span className="text-xs font-semibold text-accent">
+                <span className="typo-body text-xs">{row.totalCount}</span>
+                <span className="typo-body text-xs">{row.paidCount}</span>
+                <span className="typo-ui text-xs text-accent">
                   {formatRevenue(row.revenue)}
                 </span>
               </div>
