@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 
+import FooterSlot from "@/app/[locale]/_components/FooterSlot";
 import HeaderSlot from "@/app/[locale]/_components/HeaderSlot";
 import GsapProvider from "@/components/providers/GsapProvider";
 import Footer from "@/components/ui/organisms/Footer";
@@ -36,7 +37,9 @@ const LocaleLayout: React.FC<LocaleLayoutProps> = async (props) => {
           <GsapProvider>
             <HeaderSlot />
             {props.children}
-            <Footer />
+            <FooterSlot>
+              <Footer />
+            </FooterSlot>
           </GsapProvider>
         </NextIntlClientProvider>
       </body>

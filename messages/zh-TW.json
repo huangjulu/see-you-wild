@@ -319,9 +319,18 @@
     "title": "一起走進野地吧",
     "subtitle": "選擇行程方案，或告訴我們你的想像",
     "templates": {
-      "group4": { "label": "四人成行", "description": "4 人即可成團，我們安排路線、嚮導與裝備，你只需要帶朋友來。" },
-      "private": { "label": "團體包團", "description": "公司旅遊、社團出遊？10 人以上包團，行程可依需求微調。" },
-      "custom": { "label": "自由提案", "description": "你有自己的想法？告訴我們你想去哪、想做什麼，我們來規劃。" }
+      "group4": {
+        "label": "四人成行",
+        "description": "4 人即可成團，我們安排路線、嚮導與裝備，你只需要帶朋友來。"
+      },
+      "private": {
+        "label": "團體包團",
+        "description": "公司旅遊、社團出遊？10 人以上包團，行程可依需求微調。"
+      },
+      "custom": {
+        "label": "自由提案",
+        "description": "你有自己的想法？告訴我們你想去哪、想做什麼，我們來規劃。"
+      }
     },
     "sections": {
       "contactInfo": "聯絡資訊",
@@ -393,5 +402,14 @@
     "nameTooLong": "姓名超過 50 字",
     "notesTooLong": "備註超過 500 字",
     "invalidBirthday": "生日格式錯誤"
+  },
+  "adminLogin": {
+    "title": "管理者登入",
+    "email": "Email",
+    "emailPlaceholder": "admin@seeyouwild.com",
+    "password": "密碼",
+    "passwordPlaceholder": "輸入密碼",
+    "submit": "登入",
+    "error": "登入失敗，請確認帳號密碼"
   }
 }

@@ -328,9 +328,18 @@
     "title": "Let's Head Into the Wild",
     "subtitle": "Choose a trip plan, or tell us what you have in mind",
     "templates": {
-      "group4": { "label": "Group of 4", "description": "4 people is all it takes. We arrange the route, guides, and gear — just bring your friends." },
-      "private": { "label": "Private Group", "description": "Corporate retreat or club outing? Groups of 10+ with customizable itinerary." },
-      "custom": { "label": "Custom Proposal", "description": "Have your own idea? Tell us where you want to go and what you want to do — we'll plan it." }
+      "group4": {
+        "label": "Group of 4",
+        "description": "4 people is all it takes. We arrange the route, guides, and gear — just bring your friends."
+      },
+      "private": {
+        "label": "Private Group",
+        "description": "Corporate retreat or club outing? Groups of 10+ with customizable itinerary."
+      },
+      "custom": {
+        "label": "Custom Proposal",
+        "description": "Have your own idea? Tell us where you want to go and what you want to do — we'll plan it."
+      }
     },
     "sections": {
       "contactInfo": "Contact Info",
@@ -402,5 +411,14 @@
     "nameTooLong": "Name too long (max 50)",
     "notesTooLong": "Notes too long (max 500)",
     "invalidBirthday": "Invalid birthday"
+  },
+  "adminLogin": {
+    "title": "Admin Login",
+    "email": "Email",
+    "emailPlaceholder": "admin@seeyouwild.com",
+    "password": "Password",
+    "passwordPlaceholder": "Enter password",
+    "submit": "Login",
+    "error": "Login failed, please check your credentials"
   }
 }
