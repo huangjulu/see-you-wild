@@ -15,6 +15,7 @@ import EventCarousel from "@/components/ui/molecules/EventCarousel";
 import SummaryBar from "@/components/ui/molecules/SummaryBar";
 import AdminSidebar from "@/components/ui/organisms/AdminSidebar";
 import { adminApi } from "@/lib/api/admin.api";
+import { useToast } from "@/lib/hooks/useToast";
 import type { EventListDto, RegistrationAdminDto } from "@/lib/types/database";
 import { cn } from "@/lib/utils";
 
@@ -24,9 +25,10 @@ interface FlatRegistration extends RegistrationAdminDto {
 }
 
 const TABLE_GRID =
-  "grid grid-cols-[1fr_1.2fr_1.5fr_1fr_0.7fr_0.8fr_0.7fr_0.8fr_0.6fr] items-center gap-2 px-3";
+  "grid grid-cols-[1.2fr_1fr_1.4fr_0.8fr_0.7fr_0.5fr_0.7fr_0.6fr_1fr] items-center gap-2 px-3";
 
 const AdminDashboard: React.FC = () => {
+  const { toast } = useToast();
   const { data: events } = adminApi.events.useList();
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -197,27 +199,63 @@ const AdminDashboard: React.FC = () => {
                     {reg.payment_ref ?? "—"}
                   </span>
                   <span className="text-xs">
+                    <span className="opacity-50">$</span>
                     {reg.amount_due.toLocaleString("zh-TW")}
                   </span>
                   <span className="flex gap-1">
-                    <button
-                      type="button"
-                      onClick={() => setEditingRegistration(reg)}
-                      className="rounded border border-stroke-default bg-white px-1.5 py-0.5 text-[11px] font-semibold text-primary transition-colors hover:border-stroke-strong"
+                    {reg.status === "pending" && reg.payment_ref == null && (
+                      <Button
+                        theme="outline"
+                        className="px-1.5 py-0.5 text-[11px]"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toast.info("驗證信已重新寄送");
+                        }}
+                      >
+                        重發驗證信
+                      </Button>
+                    )}
+                    {pendingReview && (
+                      <Button
+                        theme="solid"
+                        className="px-1.5 py-0.5 text-[11px] bg-fill-success text-on-fill-neutral hover:opacity-90"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setReviewingRegistration(reg);
+                        }}
+                      >
+                        確認收款
+                      </Button>
+                    )}
+                    <Button
+                      theme="outline"
+                      className="px-1.5 py-0.5 text-[11px]"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingRegistration(reg);
+                      }}
                     >
                       編輯
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setDeletingRegistration(reg)}
-                      className="rounded border border-red-300 bg-red-50 px-1.5 py-0.5 text-[11px] font-semibold text-critical transition-colors hover:bg-red-100"
+                    </Button>
+                    <Button
+                      theme="danger"
+                      className="px-1.5 py-0.5 text-[11px]"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDeletingRegistration(reg);
+                      }}
                     >
                       刪除
-                    </button>
+                    </Button>
                   </span>
                 </div>
               );
             })}
+            {filteredRegistrations.length === 0 && (
+              <div className="flex items-center justify-center py-16 text-sm text-secondary">
+                目前沒有報名資料
+              </div>
+            )}
           </div>
         </div>
       </main>

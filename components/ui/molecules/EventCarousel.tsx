@@ -94,7 +94,7 @@ const EventCarousel: React.FC<EventCarouselProps> = (props) => {
                   <p className="truncate text-sm font-bold text-primary">
                     {event.title}
                   </p>
-                  <p className="text-xs text-secondary">
+                  <p className="truncate text-xs text-secondary">
                     {event.location} · {event.start_date}
                   </p>
                   <p
@@ -135,8 +135,8 @@ const EventCarousel: React.FC<EventCarouselProps> = (props) => {
           })}
 
           {peekEvent && (
-            <div className="relative min-w-0 flex-1 gap-3 rounded-xl border border-stroke-default bg-white p-3 opacity-55 [mask-image:linear-gradient(to_right,black_30%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,black_30%,transparent_100%)] pointer-events-none">
-              <div className="flex gap-3">
+            <div className="pointer-events-none min-w-0 flex-1 flex-col rounded-xl border border-stroke-default bg-white p-3 opacity-55 [mask-image:linear-gradient(to_right,black_30%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,black_30%,transparent_100%)]">
+              <div className="flex flex-1 items-center gap-3">
                 <div className="flex size-14 shrink-0 items-center justify-center rounded-lg bg-neutral-200 text-[10px] text-secondary">
                   IMG
                 </div>
@@ -144,7 +144,7 @@ const EventCarousel: React.FC<EventCarouselProps> = (props) => {
                   <p className="truncate text-sm font-bold text-primary">
                     {peekEvent.title}
                   </p>
-                  <p className="text-xs text-secondary">
+                  <p className="truncate text-xs text-secondary">
                     {peekEvent.location} · {peekEvent.start_date}
                   </p>
                   <p className="text-xs text-secondary">

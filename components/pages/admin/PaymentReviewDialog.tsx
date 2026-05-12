@@ -3,6 +3,7 @@
 import Overlay from "@/components/ui/atoms/Overlay";
 import Dialog from "@/components/ui/molecules/Dialog";
 import { adminApi } from "@/lib/api/admin.api";
+import { useToast } from "@/lib/hooks/useToast";
 
 interface PaymentReviewDialogProps {
   open: boolean;
@@ -17,13 +18,18 @@ interface PaymentReviewDialogProps {
 }
 
 const PaymentReviewDialog: React.FC<PaymentReviewDialogProps> = (props) => {
+  const { toast } = useToast();
   const { mutate, isPending } = adminApi.registrations.useConfirmPayment();
 
   function onConfirm() {
     if (props.registration == null) return;
     mutate(props.registration.id, {
       onSuccess: () => {
+        toast.success("已確認收款");
         props.onClose();
+      },
+      onError: (err) => {
+        toast.error("操作失敗", { description: err.message });
       },
     });
   }

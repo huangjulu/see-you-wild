@@ -6,6 +6,7 @@ import Overlay from "@/components/ui/atoms/Overlay";
 import TextArea from "@/components/ui/atoms/TextArea";
 import Dialog from "@/components/ui/molecules/Dialog";
 import { adminApi } from "@/lib/api/admin.api";
+import { useToast } from "@/lib/hooks/useToast";
 import type { EventListDto } from "@/lib/types/database";
 
 interface DeleteEventDialogProps {
@@ -15,6 +16,7 @@ interface DeleteEventDialogProps {
 }
 
 const DeleteEventDialog: React.FC<DeleteEventDialogProps> = (props) => {
+  const { toast } = useToast();
   const [reason, setReason] = useState("");
   const [error, setError] = useState<string | null>(null);
   const deleteMutation = adminApi.events.useDelete();
@@ -33,9 +35,13 @@ const DeleteEventDialog: React.FC<DeleteEventDialogProps> = (props) => {
       { eventId: props.event.id, cancellationReason: reason.trim() },
       {
         onSuccess: () => {
+          toast.success("活動已刪除");
           setReason("");
           setError(null);
           props.onClose();
+        },
+        onError: (err) => {
+          toast.error("操作失敗", { description: err.message });
         },
       }
     );

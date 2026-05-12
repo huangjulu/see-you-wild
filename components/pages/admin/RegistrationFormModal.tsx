@@ -9,6 +9,7 @@ import Input from "@/components/ui/atoms/Input";
 import Overlay from "@/components/ui/atoms/Overlay";
 import ModalCard from "@/components/ui/molecules/ModalCard";
 import { adminApi } from "@/lib/api/admin.api";
+import { useToast } from "@/lib/hooks/useToast";
 import type { EventListDto, RegistrationAdminDto } from "@/lib/types/database";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +32,7 @@ interface RegistrationFormModalProps {
 }
 
 const RegistrationFormModal: React.FC<RegistrationFormModalProps> = (props) => {
+  const { toast } = useToast();
   const isEditMode = props.registration != null;
   const createMutation = adminApi.registrations.useCreate();
   const updateMutation = adminApi.registrations.useUpdate();
@@ -68,7 +70,15 @@ const RegistrationFormModal: React.FC<RegistrationFormModalProps> = (props) => {
       const { event_id: _eventId, ...data } = values;
       updateMutation.mutate(
         { id: props.registration.id, data },
-        { onSuccess: props.onClose }
+        {
+          onSuccess: () => {
+            toast.success("報名編輯成功");
+            props.onClose();
+          },
+          onError: (err) => {
+            toast.error("操作失敗", { description: err.message });
+          },
+        }
       );
     } else {
       createMutation.mutate(
@@ -89,7 +99,15 @@ const RegistrationFormModal: React.FC<RegistrationFormModalProps> = (props) => {
           seat_count: null,
           guardian_consent: null,
         },
-        { onSuccess: props.onClose }
+        {
+          onSuccess: () => {
+            toast.success("報名建立成功");
+            props.onClose();
+          },
+          onError: (err) => {
+            toast.error("操作失敗", { description: err.message });
+          },
+        }
       );
     }
   }

@@ -5,6 +5,7 @@ import React from "react";
 import Overlay from "@/components/ui/atoms/Overlay";
 import Dialog from "@/components/ui/molecules/Dialog";
 import { adminApi } from "@/lib/api/admin.api";
+import { useToast } from "@/lib/hooks/useToast";
 import type { RegistrationAdminDto } from "@/lib/types/database";
 
 interface DeleteRegistrationDialogProps {
@@ -16,6 +17,7 @@ interface DeleteRegistrationDialogProps {
 const DeleteRegistrationDialog: React.FC<DeleteRegistrationDialogProps> = (
   props
 ) => {
+  const { toast } = useToast();
   const deleteMutation = adminApi.registrations.useDelete();
 
   function handleConfirmDelete() {
@@ -23,7 +25,11 @@ const DeleteRegistrationDialog: React.FC<DeleteRegistrationDialogProps> = (
 
     deleteMutation.mutate(props.registration.id, {
       onSuccess: () => {
+        toast.success("報名已刪除");
         props.onClose();
+      },
+      onError: (err) => {
+        toast.error("操作失敗", { description: err.message });
       },
     });
   }

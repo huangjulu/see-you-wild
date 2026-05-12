@@ -17,22 +17,23 @@ import DrawerCalendar from "@/components/ui/molecules/DrawerCalendar";
 import ModalCard from "@/components/ui/molecules/ModalCard";
 import Selector from "@/components/ui/molecules/Selector";
 import { adminApi } from "@/lib/api/admin.api";
+import { useToast } from "@/lib/hooks/useToast";
 import type { EventListDto } from "@/lib/types/database";
 import { cn } from "@/lib/utils";
 
 const eventFormSchema = z
   .object({
-    title: z.string().min(1, ""),
-    type: z.string().min(1, ""),
-    location: z.string().min(1, ""),
-    start_date: z.string().date(""),
-    end_date: z.string().date(""),
-    base_price: z.number().int().positive(""),
-    carpool_surcharge: z.number().int().positive(""),
-    driver_refund_per_passenger: z.number().int().min(0, ""),
-    payment_days: z.number().int().positive(""),
-    carpool_cutoff_days: z.number().int().min(0, ""),
-    min_participants: z.number().int().min(1, ""),
+    title: z.string().min(1, "請輸入活動標題"),
+    type: z.string().min(1, "請輸入活動類型"),
+    location: z.string().min(1, "請輸入活動地點"),
+    start_date: z.string().date("請選擇開始日期"),
+    end_date: z.string().date("請選擇結束日期"),
+    base_price: z.number().int().positive("每人費用必須大於 0"),
+    carpool_surcharge: z.number().int().positive("共乘加價必須大於 0"),
+    driver_refund_per_passenger: z.number().int().min(0, "不可為負數"),
+    payment_days: z.number().int().positive("付款期限至少 1 天"),
+    carpool_cutoff_days: z.number().int().min(0, "不可為負數"),
+    min_participants: z.number().int().min(1, "至少 1 人"),
     status: z.enum(["open", "closed"]),
     image_url: z.string().url().nullable(),
   })
@@ -50,6 +51,7 @@ interface EventFormModalProps {
 }
 
 const EventFormModal: React.FC<EventFormModalProps> = (props) => {
+  const { toast } = useToast();
   const isEditMode = props.event != null;
   const createMutation = adminApi.events.useCreate();
   const updateMutation = adminApi.events.useUpdate();
@@ -62,8 +64,8 @@ const EventFormModal: React.FC<EventFormModalProps> = (props) => {
     location: "",
     start_date: "",
     end_date: "",
-    base_price: 0,
-    carpool_surcharge: 0,
+    base_price: 1000,
+    carpool_surcharge: 500,
     driver_refund_per_passenger: 0,
     payment_days: 3,
     carpool_cutoff_days: 3,
@@ -115,8 +117,12 @@ const EventFormModal: React.FC<EventFormModalProps> = (props) => {
         { eventId: props.event.id, data: finalValues },
         {
           onSuccess: () => {
+            toast.success("活動編輯成功");
             setPendingFile(null);
             props.onClose();
+          },
+          onError: (err) => {
+            toast.error("操作失敗", { description: err.message });
           },
         }
       );
@@ -124,8 +130,12 @@ const EventFormModal: React.FC<EventFormModalProps> = (props) => {
       const payload = { ...finalValues, id: crypto.randomUUID() };
       createMutation.mutate(payload, {
         onSuccess: () => {
+          toast.success("活動建立成功");
           setPendingFile(null);
           props.onClose();
+        },
+        onError: (err) => {
+          toast.error("操作失敗", { description: err.message });
         },
       });
     }
