@@ -11,10 +11,10 @@ import Heading from "@/components/ui/atoms/Heading";
 import Section from "@/components/ui/atoms/Section";
 import RegistrationModal from "@/components/ui/organisms/RegistrationModal";
 import { useTranslations } from "@/lib/i18n/client";
-import type { MockEventDetail } from "@/server/mockdata/mock-events";
+import type { EventDetailDto } from "@/lib/types/database";
 
 interface EventDetailTemplateProps {
-  event: MockEventDetail;
+  event: EventDetailDto;
 }
 
 const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
@@ -45,7 +45,7 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
       <Section as="div" className="pt-24 md:pt-28">
         <Heading.H1
           className="col-span-full text-3xl md:text-4xl"
-          description={`${event.location} · ${event.start_date}${event.end_date !== event.start_date ? ` — ${event.end_date}` : ""}`}
+          description={`${event.location} · ${event.startDate}${event.endDate !== event.startDate ? ` — ${event.endDate}` : ""}`}
           descriptionClassName="text-sm"
         >
           {event.title}
@@ -61,12 +61,14 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
       <Section as="div" className="mt-8">
         {/* Left column */}
         <div className="col-span-4 md:col-span-5 lg:col-span-8 space-y-5">
-          <EventDetailSection
-            title={t("eventDetails")}
-            content={event.description}
-            expandLabel={t("viewDetails")}
-            collapseLabel={t("collapse")}
-          />
+          {event.description !== "" && (
+            <EventDetailSection
+              title={t("eventDetails")}
+              content={event.description}
+              expandLabel={t("viewDetails")}
+              collapseLabel={t("collapse")}
+            />
+          )}
 
           <PackageOptions
             availableDates={event.availableDates}
@@ -75,18 +77,20 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
             onSelectionChange={setSelection}
           />
 
-          <EventDetailSection
-            title={t("safetyPolicy")}
-            content={event.safetyPolicy}
-            expandLabel={t("viewPolicy")}
-            collapseLabel={t("collapse")}
-          />
+          {event.safetyPolicy !== "" && (
+            <EventDetailSection
+              title={t("safetyPolicy")}
+              content={event.safetyPolicy}
+              expandLabel={t("viewPolicy")}
+              collapseLabel={t("collapse")}
+            />
+          )}
         </div>
 
         {/* Right column: Price Sidebar */}
         <div className="col-span-4 md:col-span-3 lg:col-span-4">
           <EventPriceSidebar
-            basePrice={event.base_price}
+            basePrice={event.basePrice}
             carpoolSurcharge={event.carpoolSurcharge}
             isSelfArrival={selection.transport === "self"}
             allOptionsSelected={allOptionsSelected}
@@ -102,13 +106,16 @@ const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
         eventId={event.id}
         eventTitle={event.title}
         eventLocation={event.location}
-        eventDate={event.start_date}
-        basePrice={event.base_price}
+        eventDate={event.startDate}
+        basePrice={event.basePrice}
         carpoolSurcharge={event.carpoolSurcharge}
         selectedDate={selection.selectedDate}
         selectedPickup={selection.selectedPickup}
         isSelfArrival={selection.transport === "self"}
+        carpoolRole={selection.carpoolRole}
+        seatCount={selection.seatCount}
         pickupLocations={event.pickupLocations}
+        paymentDays={event.paymentDays}
       />
     </main>
   );

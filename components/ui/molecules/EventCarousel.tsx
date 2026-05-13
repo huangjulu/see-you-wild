@@ -91,8 +91,8 @@ const EventCarousel: React.FC<EventCarouselProps> = (props) => {
                 >
                   {event.images[0] ? (
                     <img
-                      src={event.images[0]}
-                      alt={event.title}
+                      src={event.images[0].src}
+                      alt={event.images[0].alt}
                       className="size-full object-cover"
                     />
                   ) : (
@@ -147,8 +147,8 @@ const EventCarousel: React.FC<EventCarouselProps> = (props) => {
                 <div className="size-14 shrink-0 overflow-hidden rounded-lg">
                   {peekEvent.images[0] ? (
                     <img
-                      src={peekEvent.images[0]}
-                      alt={peekEvent.title}
+                      src={peekEvent.images[0].src}
+                      alt={peekEvent.images[0].alt}
                       className="size-full object-cover"
                     />
                   ) : (

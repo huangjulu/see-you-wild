@@ -23,9 +23,9 @@ const EventSearchBar: React.FC<EventSearchBarProps> = (props) => {
   const t = useTranslations("events");
   const typeSelectOptions = [
     { value: "", label: t("allTypes") },
-    ...props.typeOptions.map((slug) => ({
-      value: slug,
-      label: t(`type.${slug}`),
+    ...props.typeOptions.map((type) => ({
+      value: type,
+      label: type,
     })),
   ];
 

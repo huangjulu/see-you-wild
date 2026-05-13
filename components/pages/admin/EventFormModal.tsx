@@ -34,8 +34,10 @@ const eventFormSchema = z.object({
   payment_days: z.number().int().positive("付款期限至少 1 天"),
   carpool_cutoff_days: z.number().int().min(0, "不可為負數"),
   min_participants: z.number().int().min(1, "至少 1 人"),
+  description: z.string(),
+  pickup_locations: z.array(z.string()),
   safety_policy: z.string(),
-  images: z.array(z.string().url()),
+  images: z.array(z.object({ src: z.string().url(), alt: z.string() })),
   status: z.enum(["open", "closed"]),
 });
 
@@ -74,6 +76,8 @@ const EventFormModal: React.FC<EventFormModalProps> = (props) => {
     payment_days: 3,
     carpool_cutoff_days: 3,
     min_participants: 3,
+    description: "",
+    pickup_locations: [],
     safety_policy: "",
     images: [],
     status: "open",
@@ -91,6 +95,8 @@ const EventFormModal: React.FC<EventFormModalProps> = (props) => {
       payment_days: event.payment_days,
       carpool_cutoff_days: event.carpool_cutoff_days,
       min_participants: event.min_participants,
+      description: event.description,
+      pickup_locations: event.pickup_locations,
       safety_policy: event.safety_policy,
       images: event.images,
       status: event.status,
@@ -114,7 +120,8 @@ const EventFormModal: React.FC<EventFormModalProps> = (props) => {
       uploadedUrls.push(result.url);
     }
 
-    const allImages = [...values.images, ...uploadedUrls];
+    const uploadedImages = uploadedUrls.map((url) => ({ src: url, alt: "" }));
+    const allImages = [...values.images, ...uploadedImages];
 
     const sortedDates = [...values.available_dates].sort();
     const startDate = sortedDates[0];
@@ -169,7 +176,7 @@ const EventFormModal: React.FC<EventFormModalProps> = (props) => {
               className="flex flex-col gap-4"
             >
               <MultiImageUploadField
-                existingUrls={methods.watch("images")}
+                existingImages={methods.watch("images")}
                 pendingFiles={pendingFiles}
                 onPendingFilesChange={setPendingFiles}
                 onRemoveExisting={(index) => {
@@ -178,6 +185,13 @@ const EventFormModal: React.FC<EventFormModalProps> = (props) => {
                     "images",
                     current.filter((_, i) => i !== index)
                   );
+                }}
+                onUpdateAlt={(index, alt) => {
+                  const current = methods.getValues("images");
+                  const updated = current.map((img, i) =>
+                    i === index ? { ...img, alt } : img
+                  );
+                  methods.setValue("images", updated);
                 }}
               />
               <EventFormFields lockedDates={lockedDates} />
@@ -208,14 +222,15 @@ export default EventFormModal;
 // ---------------------------------------------------------------------------
 
 interface MultiImageUploadFieldProps {
-  existingUrls: string[];
+  existingImages: Array<{ src: string; alt: string }>;
   pendingFiles: File[];
   onPendingFilesChange: (files: File[]) => void;
   onRemoveExisting: (index: number) => void;
+  onUpdateAlt: (index: number, alt: string) => void;
 }
 
 const MultiImageUploadField: React.FC<MultiImageUploadFieldProps> = (props) => {
-  const totalCount = props.existingUrls.length + props.pendingFiles.length;
+  const totalCount = props.existingImages.length + props.pendingFiles.length;
   const maxReached = totalCount >= 3;
 
   function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -238,23 +253,35 @@ const MultiImageUploadField: React.FC<MultiImageUploadFieldProps> = (props) => {
     <div className="flex flex-col gap-2">
       <span className="typo-ui text-sm text-primary">封面照片</span>
       <div className="flex gap-4">
-        {props.existingUrls.map((url, index) => (
-          <div key={url} className="relative size-14 shrink-0">
-            <img
-              src={url}
-              alt={`活動圖片 ${index + 1}`}
-              className="size-14 rounded-lg object-cover border border-stroke-default"
+        {props.existingImages.map((img, index) => (
+          <div
+            key={img.src}
+            className="relative flex flex-col items-center gap-1 shrink-0"
+          >
+            <div className="relative size-14">
+              <img
+                src={img.src}
+                alt={img.alt || `活動圖片 ${index + 1}`}
+                className="size-14 rounded-lg object-cover border border-stroke-default"
+              />
+              <button
+                type="button"
+                onClick={() => props.onRemoveExisting(index)}
+                className={cn(
+                  "absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full",
+                  "bg-fill-critical text-on-fill-brand transition-colors hover:bg-critical"
+                )}
+              >
+                <IconX className="size-3" />
+              </button>
+            </div>
+            <input
+              type="text"
+              value={img.alt}
+              onChange={(e) => props.onUpdateAlt(index, e.target.value)}
+              placeholder="圖片描述（alt text）"
+              className="w-14 text-[10px] text-secondary border-b border-stroke-default bg-transparent outline-none text-center"
             />
-            <button
-              type="button"
-              onClick={() => props.onRemoveExisting(index)}
-              className={cn(
-                "absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full",
-                "bg-fill-critical text-on-fill-brand transition-colors hover:bg-critical"
-              )}
-            >
-              <IconX className="size-3" />
-            </button>
           </div>
         ))}
         {props.pendingFiles.map((file, index) => (
@@ -335,6 +362,12 @@ const EventFormFields: React.FC<EventFormFieldsProps> = (props) => {
           {...register("location")}
           error={errors.location?.message}
         />
+        <TextArea
+          label="活動說明"
+          placeholder="請輸入活動說明..."
+          rows={4}
+          {...register("description")}
+        />
       </fieldset>
 
       <fieldset className="space-y-3">
@@ -349,6 +382,20 @@ const EventFormFields: React.FC<EventFormFieldsProps> = (props) => {
               minDate={minDate}
               lockedDates={lockedDates}
               error={errors.available_dates?.message}
+            />
+          )}
+        />
+      </fieldset>
+
+      <fieldset className="space-y-3">
+        <legend className="typo-ui text-sm text-primary">上車地點</legend>
+        <Controller
+          name="pickup_locations"
+          control={control}
+          render={({ field }) => (
+            <PickupLocationsInput
+              value={field.value}
+              onChange={field.onChange}
             />
           )}
         />
@@ -594,6 +641,67 @@ const AvailableDatesPicker: React.FC<AvailableDatesPickerProps> = (props) => {
 };
 
 AvailableDatesPicker.displayName = "AvailableDatesPicker";
+
+// ---------------------------------------------------------------------------
+// PickupLocationsInput — tag-style multi-entry for pickup locations
+// ---------------------------------------------------------------------------
+
+interface PickupLocationsInputProps {
+  value: string[];
+  onChange: (locations: string[]) => void;
+}
+
+const PickupLocationsInput: React.FC<PickupLocationsInputProps> = (props) => {
+  const [inputValue, setInputValue] = useState("");
+
+  function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== "Enter") return;
+    e.preventDefault();
+    const trimmed = inputValue.trim();
+    if (trimmed === "" || props.value.includes(trimmed)) return;
+    props.onChange([...props.value, trimmed]);
+    setInputValue("");
+  }
+
+  function onRemove(index: number) {
+    props.onChange(props.value.filter((_, i) => i !== index));
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      <Input
+        placeholder="輸入地點名稱後按 Enter 新增"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        onKeyDown={onKeyDown}
+      />
+      {props.value.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {props.value.map((loc, index) => (
+            <span
+              key={loc}
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-full px-3 py-1 typo-ui text-xs border",
+                "bg-brand-50 text-accent border-brand-200/60"
+              )}
+            >
+              {loc}
+              <button
+                type="button"
+                onClick={() => onRemove(index)}
+                className="flex size-4 items-center justify-center rounded-full hover:bg-brand-100 transition-colors"
+              >
+                <IconX className="size-3" />
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+PickupLocationsInput.displayName = "PickupLocationsInput";
 
 // ---------------------------------------------------------------------------
 // Helpers

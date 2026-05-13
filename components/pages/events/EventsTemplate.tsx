@@ -10,8 +10,13 @@ import EventSearchBar from "@/components/ui/molecules/EventSearchBar";
 import useEventFilters from "@/lib/hooks/useEventFilters";
 import { useTranslations } from "@/lib/i18n/client";
 import { Link } from "@/lib/i18n/navigation";
+import type { EventListingItem } from "@/lib/types/database";
 
-const EventsTemplate: React.FC = () => {
+interface EventsTemplateProps {
+  events: EventListingItem[];
+}
+
+const EventsTemplate: React.FC<EventsTemplateProps> = (props) => {
   const t = useTranslations("events");
   const {
     searchQuery,
@@ -23,7 +28,7 @@ const EventsTemplate: React.FC = () => {
     typeOptions,
     locationOptions,
     filteredEvents,
-  } = useEventFilters();
+  } = useEventFilters(props.events);
 
   const locationSelectOptions = useMemo(() => {
     return [
@@ -79,10 +84,10 @@ const EventsTemplate: React.FC = () => {
                       {event.title}
                     </Heading.H3>
                     <p className="typo-body truncate text-sm text-secondary">
-                      {event.location} · {event.start_date}
+                      {event.location} · {event.startDate}
                     </p>
                     <p className="typo-ui mt-1 text-sm font-semibold text-brand-500">
-                      NT$ {event.base_price.toLocaleString("zh-TW")}
+                      NT$ {event.basePrice.toLocaleString("zh-TW")}
                     </p>
                   </ListCard>
                 </Link>
@@ -96,9 +101,9 @@ const EventsTemplate: React.FC = () => {
                   type={event.type}
                   location={event.location}
                   title={event.title}
-                  startDate={event.start_date}
-                  endDate={event.end_date}
-                  basePrice={event.base_price}
+                  startDate={event.startDate}
+                  endDate={event.endDate}
+                  basePrice={event.basePrice}
                   status={event.status}
                   image={event.image}
                   imageAlt={event.imageAlt}

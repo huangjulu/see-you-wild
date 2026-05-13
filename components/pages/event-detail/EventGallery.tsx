@@ -51,7 +51,7 @@ const EventGallery: React.FC<EventGalleryProps> = (props) => {
               className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
             />
           </button>
-          {side1 && (
+          {side1 ? (
             <button
               type="button"
               className="relative overflow-hidden"
@@ -67,8 +67,10 @@ const EventGallery: React.FC<EventGalleryProps> = (props) => {
                 className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
               />
             </button>
+          ) : (
+            <div className="bg-neutral-300" />
           )}
-          {side2 && (
+          {side2 ? (
             <button
               type="button"
               className="relative overflow-hidden"
@@ -84,6 +86,8 @@ const EventGallery: React.FC<EventGalleryProps> = (props) => {
                 className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
               />
             </button>
+          ) : (
+            <div className="bg-neutral-300" />
           )}
         </div>
 
