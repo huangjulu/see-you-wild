@@ -1,21 +1,13 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense } from "react";
 
 import Button from "@/components/ui/atoms/Button";
 import Heading from "@/components/ui/atoms/Heading";
+import { adminApi } from "@/lib/api/admin.api";
 import { useTranslations } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
-
-type ReviewStatus = "loading" | "ready" | "submitting" | "done" | "error";
-
-interface ReviewInfo {
-  customerName: string;
-  eventTitle: string;
-  paymentRef: string | null;
-  status: string;
-}
 
 const AdminReviewContent: React.FC = () => {
   const searchParams = useSearchParams();
@@ -23,98 +15,35 @@ const AdminReviewContent: React.FC = () => {
 
   const id = searchParams.get("id") ?? "";
   const token = searchParams.get("token") ?? "";
+  const isDone = searchParams.get("done") === "1";
 
-  const [reviewStatus, setReviewStatus] = useState<ReviewStatus>("loading");
-  const [info, setInfo] = useState<ReviewInfo | null>(null);
-  const [resultMessage, setResultMessage] = useState("");
-
-  useEffect(
-    function fetchReviewInfo() {
-      if (!id || !token) {
-        const url = new URL(window.location.href);
-        if (url.searchParams.get("done") === "1") {
-          setReviewStatus("done");
-        } else {
-          setReviewStatus("error");
-        }
-        return;
-      }
-
-      fetch(
-        `/api/admin/registrations/${id}/review-info?token=${encodeURIComponent(token)}`
-      )
-        .then((res) => {
-          if (!res.ok) throw new Error("Failed to fetch");
-          return res.json();
-        })
-        .then((data: ReviewInfo) => {
-          setInfo(data);
-          setReviewStatus("ready");
-        })
-        .catch(() => {
-          setReviewStatus("error");
-        });
-    },
-    [id, token]
-  );
+  const reviewInfoQuery = adminApi.review.useReviewInfo(id, token);
+  const submitReviewMutation = adminApi.review.useSubmitReview();
 
   function handlePaymentReview(status: "paid" | "failed") {
-    setReviewStatus("submitting");
-
-    fetch(`/api/admin/registrations/${id}/review`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token, status }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to submit");
-        return res.json();
-      })
-      .then(() => {
-        setResultMessage(
-          status === "paid" ? t("resultPaid") : t("resultFailed")
-        );
-        setReviewStatus("done");
-
-        window.history.replaceState(
-          {},
-          "",
-          `${window.location.pathname}?id=${id}&done=1`
-        );
-      })
-      .catch(() => {
-        setReviewStatus("error");
-      });
-  }
-
-  const alreadyReviewed =
-    info && (info.status === "paid" || info.status === "failed");
-
-  if (reviewStatus === "loading") {
-    return (
-      <main
-        className={cn(
-          "flex min-h-screen items-center justify-center bg-background"
-        )}
-      >
-        <p className="text-secondary">{t("loading")}</p>
-      </main>
+    submitReviewMutation.mutate(
+      { id, token, status },
+      {
+        onSuccess: () => {
+          window.history.replaceState(
+            {},
+            "",
+            `${window.location.pathname}?id=${id}&done=1`
+          );
+        },
+      }
     );
   }
 
-  if (reviewStatus === "error") {
-    return (
-      <main
-        className={cn(
-          "flex min-h-screen items-center justify-center bg-background"
-        )}
-      >
-        <p className="text-critical">{t("error")}</p>
-      </main>
-    );
-  }
+  if (isDone || submitReviewMutation.isSuccess) {
+    const submittedStatus = submitReviewMutation.variables?.status;
+    const resultMessage =
+      submittedStatus === "paid"
+        ? t("resultPaid")
+        : submittedStatus === "failed"
+          ? t("resultFailed")
+          : t("done");
 
-  if (reviewStatus === "done") {
     return (
       <main
         className={cn(
@@ -127,6 +56,34 @@ const AdminReviewContent: React.FC = () => {
       </main>
     );
   }
+
+  if (reviewInfoQuery.isPending) {
+    return (
+      <main
+        className={cn(
+          "flex min-h-screen items-center justify-center bg-background"
+        )}
+      >
+        <p className="text-secondary">{t("loading")}</p>
+      </main>
+    );
+  }
+
+  if (reviewInfoQuery.isError) {
+    return (
+      <main
+        className={cn(
+          "flex min-h-screen items-center justify-center bg-background"
+        )}
+      >
+        <p className="text-critical">{t("error")}</p>
+      </main>
+    );
+  }
+
+  const info = reviewInfoQuery.data;
+  const alreadyReviewed =
+    info && (info.status === "paid" || info.status === "failed");
 
   return (
     <main
@@ -170,7 +127,7 @@ const AdminReviewContent: React.FC = () => {
           <div className="flex gap-3">
             <Button
               theme="solid"
-              disabled={reviewStatus === "submitting"}
+              disabled={submitReviewMutation.isPending}
               onClick={() => handlePaymentReview("paid")}
               className="flex-1 bg-fill-success text-on-fill-neutral hover:opacity-90"
             >
@@ -178,7 +135,7 @@ const AdminReviewContent: React.FC = () => {
             </Button>
             <Button
               theme="danger"
-              disabled={reviewStatus === "submitting"}
+              disabled={submitReviewMutation.isPending}
               onClick={() => handlePaymentReview("failed")}
               className="flex-1"
             >

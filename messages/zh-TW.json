@@ -186,7 +186,8 @@
     "confirmPaid": "確認收款",
     "markFailed": "付款有誤",
     "resultPaid": "已確認收款，客戶將收到報名成功通知。",
-    "resultFailed": "已標記付款有誤，客戶將收到重新填寫的通知。"
+    "resultFailed": "已標記付款有誤，客戶將收到重新填寫的通知。",
+    "done": "審核已完成。"
   },
   "eventDetail": {
     "backToEvents": "返回活動列表",

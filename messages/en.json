@@ -195,7 +195,8 @@
     "confirmPaid": "Confirm Payment",
     "markFailed": "Payment Invalid",
     "resultPaid": "Payment confirmed. The customer will be notified of successful registration.",
-    "resultFailed": "Marked as invalid. The customer will receive a re-submission notification."
+    "resultFailed": "Marked as invalid. The customer will receive a re-submission notification.",
+    "done": "Review completed."
   },
   "eventDetail": {
     "backToEvents": "Back to Events",

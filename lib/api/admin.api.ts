@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
   EventListDto,
   EventRow,
+  RegistrationDetailDto,
   RegistrationRow,
 } from "@/lib/types/database";
 import type {
@@ -17,6 +18,13 @@ import type {
 
 interface ApiError {
   error: string;
+}
+
+interface ReviewInfo {
+  customerName: string;
+  eventTitle: string;
+  paymentRef: string | null;
+  status: string;
 }
 
 async function apiFetch<T>(url: string, init?: RequestInit): Promise<T> {
@@ -180,6 +188,40 @@ export const adminApi = {
             `/api/registrations/${registrationId}/resend-email`,
             { method: "POST" }
           ),
+      });
+    },
+
+    useDetail: (id: string | null) =>
+      useQuery<RegistrationDetailDto>({
+        queryKey: ["admin", "registrations", id],
+        queryFn: () =>
+          apiFetch<RegistrationDetailDto>(`/api/registrations/${id}`),
+        enabled: id != null,
+      }),
+  },
+
+  review: {
+    useReviewInfo: (id: string, token: string) =>
+      useQuery<ReviewInfo>({
+        queryKey: ["admin", "review", id],
+        queryFn: () =>
+          apiFetch<ReviewInfo>(
+            `/api/admin/registrations/${id}/review-info?token=${encodeURIComponent(token)}`
+          ),
+        enabled: id !== "" && token !== "",
+      }),
+
+    useSubmitReview: () => {
+      return useMutation<
+        unknown,
+        Error,
+        { id: string; token: string; status: "paid" | "failed" }
+      >({
+        mutationFn: ({ id, token, status }) =>
+          apiFetch(`/api/admin/registrations/${id}/review`, {
+            method: "PATCH",
+            body: JSON.stringify({ token, status }),
+          }),
       });
     },
   },

@@ -29,11 +29,7 @@ import {
 } from "@/lib/form-rules";
 import { useToast } from "@/lib/hooks/useToast";
 import { useTranslations } from "@/lib/i18n/client";
-import type {
-  EventListDto,
-  RegistrationAdminDto,
-  RegistrationDetailDto,
-} from "@/lib/types/database";
+import type { EventListDto, RegistrationAdminDto } from "@/lib/types/database";
 import { cn } from "@/lib/utils";
 import {
   createRegistrationErrorMap,
@@ -63,38 +59,21 @@ const RegistrationFormModal: React.FC<RegistrationFormModalProps> = (props) => {
   );
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [eventError, setEventError] = useState<string | null>(null);
-  const [fullRegistration, setFullRegistration] =
-    useState<RegistrationDetailDto | null>(null);
-  const [fetchError, setFetchError] = useState<string | null>(null);
+  const detailQuery = adminApi.registrations.useDetail(
+    props.registration?.id ?? null
+  );
 
   useEffect(
-    function fetchFullRegistrationForEdit() {
-      if (!props.registration) {
-        setFullRegistration(null);
-        return;
-      }
-      setFetchError(null);
-      setSelectedEventId(props.registration.event_id);
-      fetch(`/api/registrations/${props.registration.id}`)
-        .then((res) => {
-          if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
-          return res.json();
-        })
-        .then((data: RegistrationDetailDto) => {
-          setFullRegistration(data);
-          setSelectedDate(data.selected_date ?? "");
-        })
-        .catch((err: unknown) => {
-          const message =
-            err instanceof Error ? err.message : "Failed to load registration";
-          setFetchError(message);
-        });
+    function syncSelectedDate() {
+      if (!isEditMode || !detailQuery.data) return;
+      setSelectedEventId(detailQuery.data.event_id);
+      setSelectedDate(detailQuery.data.selected_date ?? "");
     },
-    [props.registration]
+    [isEditMode, detailQuery.data]
   );
 
   const formValues = React.useMemo(() => {
-    if (!fullRegistration) {
+    if (!detailQuery.data) {
       return {
         name: "",
         email: "",
@@ -117,31 +96,31 @@ const RegistrationFormModal: React.FC<RegistrationFormModalProps> = (props) => {
       };
     }
 
-    const pickupLocation = isValidPickupSlug(fullRegistration.pickup_location)
-      ? fullRegistration.pickup_location
+    const pickupLocation = isValidPickupSlug(detailQuery.data.pickup_location)
+      ? detailQuery.data.pickup_location
       : null;
 
     return {
-      name: fullRegistration.name,
-      email: fullRegistration.email,
-      phone: fullRegistration.phone,
-      line_id: fullRegistration.line_id,
-      country: fullRegistration.country,
-      gender: fullRegistration.gender,
-      id_number: fullRegistration.id_number,
-      birthday: fullRegistration.birthday,
-      guardian_consent: fullRegistration.guardian_consent,
-      emergency_contact_name: fullRegistration.emergency_contact_name,
-      emergency_contact_phone: fullRegistration.emergency_contact_phone,
-      dietary: fullRegistration.dietary,
-      wants_rental: fullRegistration.wants_rental,
-      notes: fullRegistration.notes,
-      transport: fullRegistration.transport,
+      name: detailQuery.data.name,
+      email: detailQuery.data.email,
+      phone: detailQuery.data.phone,
+      line_id: detailQuery.data.line_id,
+      country: detailQuery.data.country,
+      gender: detailQuery.data.gender,
+      id_number: detailQuery.data.id_number,
+      birthday: detailQuery.data.birthday,
+      guardian_consent: detailQuery.data.guardian_consent,
+      emergency_contact_name: detailQuery.data.emergency_contact_name,
+      emergency_contact_phone: detailQuery.data.emergency_contact_phone,
+      dietary: detailQuery.data.dietary,
+      wants_rental: detailQuery.data.wants_rental,
+      notes: detailQuery.data.notes,
+      transport: detailQuery.data.transport,
       pickup_location: pickupLocation,
-      carpool_role: fullRegistration.carpool_role,
-      seat_count: fullRegistration.seat_count,
+      carpool_role: detailQuery.data.carpool_role,
+      seat_count: detailQuery.data.seat_count,
     };
-  }, [fullRegistration]);
+  }, [detailQuery.data]);
 
   const methods = useForm({
     mode: "onBlur",
@@ -220,8 +199,10 @@ const RegistrationFormModal: React.FC<RegistrationFormModalProps> = (props) => {
             <ModalCard.Header.CloseButton onClick={props.onClose} />
           </ModalCard.Header>
           <ModalCard.Main>
-            {fetchError && (
-              <p className="typo-ui text-sm text-critical mb-4">{fetchError}</p>
+            {detailQuery.error && (
+              <p className="typo-ui text-sm text-critical mb-4">
+                {detailQuery.error.message}
+              </p>
             )}
             <form
               id={FORM_ID}
@@ -810,5 +791,5 @@ type PickupSlug = (typeof PICKUP_SLUGS)[number];
 
 function isValidPickupSlug(value: string | null): value is PickupSlug {
   if (value == null) return false;
-  return (PICKUP_SLUGS as readonly string[]).includes(value);
+  return PICKUP_SLUGS.some((slug) => slug === value);
 }
