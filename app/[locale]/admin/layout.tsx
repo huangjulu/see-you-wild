@@ -9,9 +9,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = (props) => {
   return (
     <QueryProvider>
       <ToastProvider>
-        <div className="flex h-screen overflow-hidden bg-background">
-          {props.children}
-        </div>
+        <div className="flex h-screen bg-background">{props.children}</div>
       </ToastProvider>
     </QueryProvider>
   );

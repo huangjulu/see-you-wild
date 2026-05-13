@@ -43,8 +43,8 @@ interface DrawerContentProps {
 const DrawerContent: React.FC<DrawerContentProps> = (props) => {
   return (
     <DrawerPrimitive.Portal>
-      <DrawerPrimitive.Backdrop className="fixed inset-0 z-40 bg-black/40" />
-      <DrawerPrimitive.Viewport className="fixed inset-0 z-40 flex items-end">
+      <DrawerPrimitive.Backdrop className="fixed inset-0 z-110 bg-black/40" />
+      <DrawerPrimitive.Viewport className="fixed inset-0 z-110 flex items-end">
         <DrawerPrimitive.Popup
           className={cn(
             "flex w-full flex-col rounded-t-2xl bg-white pb-[env(safe-area-inset-bottom)] outline-none",

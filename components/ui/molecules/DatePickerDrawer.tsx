@@ -75,7 +75,7 @@ const DatePickerDrawer: React.FC<DatePickerDrawerProps> = (props) => {
           <div className="flex justify-center px-4 pb-6 pt-2">
             <Calendar
               mode="single"
-              size="md"
+              size="sm"
               value={selectedDate}
               onChange={onDateSelect}
               disabled={props.minDate ? { before: props.minDate } : undefined}
@@ -87,7 +87,7 @@ const DatePickerDrawer: React.FC<DatePickerDrawerProps> = (props) => {
                 <Calendar.Chevrons />
                 <Calendar.Caption layout="dropdown" />
               </Calendar.Navi>
-              <Calendar.Grid type="month" />
+              <Calendar.Grid type="month" fixedWeeks={false} />
             </Calendar>
           </div>
         </Drawer.Content>

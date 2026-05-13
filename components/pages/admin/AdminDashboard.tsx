@@ -1,8 +1,7 @@
 "use client";
 
 import { Search as IconSearch } from "lucide-react";
-import React, { useMemo, useState } from "react";
-import ReactDOM from "react-dom";
+import React, { useMemo } from "react";
 
 import AdminDashboardSkeleton from "@/components/pages/admin/AdminDashboardSkeleton";
 import DeleteEventDialog from "@/components/pages/admin/DeleteEventDialog";
@@ -16,33 +15,19 @@ import EventCarousel from "@/components/ui/molecules/EventCarousel";
 import SummaryBar from "@/components/ui/molecules/SummaryBar";
 import AdminSidebar from "@/components/ui/organisms/AdminSidebar";
 import { adminApi } from "@/lib/api/admin.api";
+import type { FlatRegistration } from "@/lib/hooks/useAdminDashboard";
+import useAdminDashboard from "@/lib/hooks/useAdminDashboard";
 import { useToast } from "@/lib/hooks/useToast";
-import type { EventListDto, RegistrationAdminDto } from "@/lib/types/database";
 import { cn } from "@/lib/utils";
 
-interface FlatRegistration extends RegistrationAdminDto {
-  eventId: string;
-  eventTitle: string;
-}
-
 const TABLE_GRID =
-  "grid grid-cols-[1.2fr_1fr_1.4fr_0.8fr_0.7fr_0.5fr_0.7fr_0.6fr_1fr] items-center gap-2 px-3";
+  "grid grid-cols-[1.1fr_0.8fr_0.9fr_1.3fr_0.7fr_0.6fr_0.5fr_0.6fr_0.5fr_1fr] items-center gap-2 px-3";
 
 const AdminDashboard: React.FC = () => {
   const { toast } = useToast();
+  const resendEmailMutation = adminApi.registrations.useResendEmail();
   const { data: events, isLoading } = adminApi.events.useList();
-  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [editingEvent, setEditingEvent] = useState<EventListDto | null>(null);
-  const [deletingEvent, setDeletingEvent] = useState<EventListDto | null>(null);
-  const [showCreateRegistration, setShowCreateRegistration] = useState(false);
-  const [editingRegistration, setEditingRegistration] =
-    useState<RegistrationAdminDto | null>(null);
-  const [deletingRegistration, setDeletingRegistration] =
-    useState<FlatRegistration | null>(null);
-  const [reviewingRegistration, setReviewingRegistration] =
-    useState<FlatRegistration | null>(null);
+  const { state, dispatch } = useAdminDashboard();
 
   const allRegistrations = useMemo<FlatRegistration[]>(() => {
     if (!events) return [];
@@ -57,12 +42,12 @@ const AdminDashboard: React.FC = () => {
 
   const filteredRegistrations = useMemo(() => {
     let list =
-      selectedEventId != null
-        ? allRegistrations.filter((r) => r.eventId === selectedEventId)
+      state.selectedEventId != null
+        ? allRegistrations.filter((r) => r.eventId === state.selectedEventId)
         : allRegistrations;
 
-    if (searchQuery.trim() !== "") {
-      const q = searchQuery.toLowerCase();
+    if (state.searchQuery.trim() !== "") {
+      const q = state.searchQuery.toLowerCase();
       list = list.filter(
         (r) =>
           r.name.toLowerCase().includes(q) ||
@@ -72,12 +57,12 @@ const AdminDashboard: React.FC = () => {
     }
 
     return list.sort(sortPendingReviewFirst);
-  }, [allRegistrations, selectedEventId, searchQuery]);
+  }, [allRegistrations, state.selectedEventId, state.searchQuery]);
 
   const pendingReviewCount = allRegistrations.filter(isPendingReview).length;
 
   const selectedEventTitle =
-    events?.find((e) => e.id === selectedEventId)?.title ?? null;
+    events?.find((e) => e.id === state.selectedEventId)?.title ?? null;
 
   if (isLoading) {
     return (
@@ -96,11 +81,15 @@ const AdminDashboard: React.FC = () => {
 
         <EventCarousel
           events={events ?? []}
-          selectedEventId={selectedEventId}
-          onSelectEvent={setSelectedEventId}
-          onCreateEvent={() => setShowCreateModal(true)}
-          onEditEvent={setEditingEvent}
-          onDeleteEvent={setDeletingEvent}
+          selectedEventId={state.selectedEventId}
+          onSelectEvent={(eventId) =>
+            dispatch({ type: "SELECT_EVENT", eventId })
+          }
+          onCreateEvent={() => dispatch({ type: "OPEN_CREATE_EVENT" })}
+          onEditEvent={(event) => dispatch({ type: "OPEN_EDIT_EVENT", event })}
+          onDeleteEvent={(event) =>
+            dispatch({ type: "OPEN_DELETE_EVENT", event })
+          }
         />
 
         <div className="flex flex-2 flex-col overflow-hidden">
@@ -110,7 +99,9 @@ const AdminDashboard: React.FC = () => {
               {selectedEventTitle != null && (
                 <FilterTag
                   label={selectedEventTitle}
-                  onClear={() => setSelectedEventId(null)}
+                  onClear={() =>
+                    dispatch({ type: "SELECT_EVENT", eventId: null })
+                  }
                 />
               )}
             </div>
@@ -120,8 +111,10 @@ const AdminDashboard: React.FC = () => {
                 <input
                   type="text"
                   placeholder="搜尋姓名 / 末五碼..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  value={state.searchQuery}
+                  onChange={(e) =>
+                    dispatch({ type: "SET_SEARCH", query: e.target.value })
+                  }
                   className={cn(
                     "w-[200px] rounded-lg border border-stroke-default bg-background py-1.5 pl-8 pr-3 text-xs text-primary",
                     "placeholder:text-neutral-300",
@@ -131,7 +124,7 @@ const AdminDashboard: React.FC = () => {
               </div>
               <Button
                 theme="solid"
-                onClick={() => setShowCreateRegistration(true)}
+                onClick={() => dispatch({ type: "OPEN_CREATE_REGISTRATION" })}
               >
                 + 新增報名
               </Button>
@@ -146,6 +139,7 @@ const AdminDashboard: React.FC = () => {
               )}
             >
               <span>活動</span>
+              <span>活動日期</span>
               <span>姓名</span>
               <span>Email</span>
               <span>電話</span>
@@ -164,7 +158,11 @@ const AdminDashboard: React.FC = () => {
                   key={reg.id}
                   onClick={
                     pendingReview
-                      ? () => setReviewingRegistration(reg)
+                      ? () =>
+                          dispatch({
+                            type: "OPEN_REVIEW_PAYMENT",
+                            registration: reg,
+                          })
                       : undefined
                   }
                   className={cn(
@@ -177,6 +175,9 @@ const AdminDashboard: React.FC = () => {
                 >
                   <span className="typo-body truncate text-xs text-secondary">
                     {reg.eventTitle}
+                  </span>
+                  <span className="typo-body text-xs text-secondary">
+                    {reg.selected_date ?? "—"}
                   </span>
                   <span className="typo-ui">{reg.name}</span>
                   <span className="typo-body truncate text-xs text-secondary">
@@ -219,7 +220,13 @@ const AdminDashboard: React.FC = () => {
                         className="px-1.5 py-0.5 text-[11px]"
                         onClick={(e) => {
                           e.stopPropagation();
-                          toast.info("驗證信已重新寄送");
+                          resendEmailMutation.mutate(reg.id, {
+                            onSuccess: () => toast.success("驗證信已重新寄送"),
+                            onError: (err) =>
+                              toast.error("寄送失敗", {
+                                description: err.message,
+                              }),
+                          });
                         }}
                       >
                         重發驗證信
@@ -231,7 +238,10 @@ const AdminDashboard: React.FC = () => {
                         className="px-1.5 py-0.5 text-[11px] bg-fill-success text-on-fill-neutral hover:opacity-90"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setReviewingRegistration(reg);
+                          dispatch({
+                            type: "OPEN_REVIEW_PAYMENT",
+                            registration: reg,
+                          });
                         }}
                       >
                         確認收款
@@ -242,7 +252,10 @@ const AdminDashboard: React.FC = () => {
                       className="px-1.5 py-0.5 text-[11px]"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setEditingRegistration(reg);
+                        dispatch({
+                          type: "OPEN_EDIT_REGISTRATION",
+                          registration: reg,
+                        });
                       }}
                     >
                       編輯
@@ -252,7 +265,10 @@ const AdminDashboard: React.FC = () => {
                       className="px-1.5 py-0.5 text-[11px]"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setDeletingRegistration(reg);
+                        dispatch({
+                          type: "OPEN_DELETE_REGISTRATION",
+                          registration: reg,
+                        });
                       }}
                     >
                       刪除
@@ -270,59 +286,60 @@ const AdminDashboard: React.FC = () => {
         </div>
       </main>
 
-      {typeof document !== "undefined" &&
-        ReactDOM.createPortal(
-          <>
-            <EventFormModal
-              open={showCreateModal || editingEvent != null}
-              onClose={() => {
-                setShowCreateModal(false);
-                setEditingEvent(null);
-              }}
-              event={editingEvent}
-            />
+      <EventFormModal
+        open={
+          state.modal.type === "createEvent" || state.modal.type === "editEvent"
+        }
+        onClose={() => dispatch({ type: "CLOSE_MODAL" })}
+        event={state.modal.type === "editEvent" ? state.modal.event : null}
+      />
 
-            <DeleteEventDialog
-              open={deletingEvent != null}
-              onClose={() => setDeletingEvent(null)}
-              event={deletingEvent}
-            />
+      <DeleteEventDialog
+        open={state.modal.type === "deleteEvent"}
+        onClose={() => dispatch({ type: "CLOSE_MODAL" })}
+        event={state.modal.type === "deleteEvent" ? state.modal.event : null}
+      />
 
-            <RegistrationFormModal
-              open={showCreateRegistration || editingRegistration != null}
-              onClose={() => {
-                setShowCreateRegistration(false);
-                setEditingRegistration(null);
-              }}
-              registration={editingRegistration}
-              events={events ?? []}
-              preselectedEventId={selectedEventId}
-            />
+      <RegistrationFormModal
+        open={
+          state.modal.type === "createRegistration" ||
+          state.modal.type === "editRegistration"
+        }
+        onClose={() => dispatch({ type: "CLOSE_MODAL" })}
+        registration={
+          state.modal.type === "editRegistration"
+            ? state.modal.registration
+            : null
+        }
+        events={events ?? []}
+        preselectedEventId={state.selectedEventId}
+      />
 
-            <DeleteRegistrationDialog
-              open={deletingRegistration != null}
-              onClose={() => setDeletingRegistration(null)}
-              registration={deletingRegistration}
-            />
+      <DeleteRegistrationDialog
+        open={state.modal.type === "deleteRegistration"}
+        onClose={() => dispatch({ type: "CLOSE_MODAL" })}
+        registration={
+          state.modal.type === "deleteRegistration"
+            ? state.modal.registration
+            : null
+        }
+      />
 
-            <PaymentReviewDialog
-              open={reviewingRegistration != null}
-              onClose={() => setReviewingRegistration(null)}
-              registration={
-                reviewingRegistration
-                  ? {
-                      id: reviewingRegistration.id,
-                      name: reviewingRegistration.name,
-                      payment_ref: reviewingRegistration.payment_ref,
-                      amount_due: reviewingRegistration.amount_due,
-                      eventTitle: reviewingRegistration.eventTitle,
-                    }
-                  : null
+      <PaymentReviewDialog
+        open={state.modal.type === "reviewPayment"}
+        onClose={() => dispatch({ type: "CLOSE_MODAL" })}
+        registration={
+          state.modal.type === "reviewPayment"
+            ? {
+                id: state.modal.registration.id,
+                name: state.modal.registration.name,
+                payment_ref: state.modal.registration.payment_ref,
+                amount_due: state.modal.registration.amount_due,
+                eventTitle: state.modal.registration.eventTitle,
               }
-            />
-          </>,
-          document.body
-        )}
+            : null
+        }
+      />
     </>
   );
 };

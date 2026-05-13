@@ -90,7 +90,7 @@ const DatePickerInput: React.FC<DatePickerInputProps> = (props) => {
               <Calendar.Chevrons />
               <Calendar.Caption layout="dropdown" />
             </Calendar.Navi>
-            <Calendar.Grid type="month" />
+            <Calendar.Grid type="month" fixedWeeks={false} />
           </Calendar>
         </PopoverContent>
       </Popover>

@@ -74,7 +74,7 @@ const EventCarousel: React.FC<EventCarouselProps> = (props) => {
                 key={event.id}
                 onClick={() => onCardClick(event.id)}
                 className={cn(
-                  "relative flex min-w-0 flex-1 cursor-pointer gap-3 rounded-xl border p-3 transition-all",
+                  "relative flex min-w-0 basis-[calc((100%-42px)/3.5)] shrink-0 cursor-pointer gap-3 rounded-xl border p-3 transition-all",
                   isActive
                     ? "border-2 border-brand-400 bg-surface-warm"
                     : "border-stroke-default bg-white shadow-2xs hover:shadow-md"
@@ -82,13 +82,22 @@ const EventCarousel: React.FC<EventCarouselProps> = (props) => {
               >
                 <div
                   className={cn(
-                    "flex size-14 shrink-0 items-center justify-center rounded-lg text-[10px]",
-                    isActive
-                      ? "bg-brand-200 text-brand-600"
-                      : "bg-neutral-200 text-secondary"
+                    "size-14 shrink-0 overflow-hidden rounded-lg",
+                    !event.images[0] &&
+                      (isActive
+                        ? "flex items-center justify-center bg-brand-200 text-[10px] text-brand-600"
+                        : "flex items-center justify-center bg-neutral-200 text-[10px] text-secondary")
                   )}
                 >
-                  IMG
+                  {event.images[0] ? (
+                    <img
+                      src={event.images[0]}
+                      alt={event.title}
+                      className="size-full object-cover"
+                    />
+                  ) : (
+                    "IMG"
+                  )}
                 </div>
                 <div className="flex min-w-0 flex-1 flex-col justify-center">
                   <p className="typo-ui truncate text-sm text-primary">
@@ -133,10 +142,20 @@ const EventCarousel: React.FC<EventCarouselProps> = (props) => {
           })}
 
           {peekEvent && (
-            <div className="pointer-events-none min-w-0 flex-1 flex-col rounded-xl border border-stroke-default bg-white p-3 opacity-55 [mask-image:linear-gradient(to_right,black_30%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,black_30%,transparent_100%)]">
+            <div className="pointer-events-none min-w-0 basis-[calc((100%-42px)/3.5)] shrink-0 flex-col rounded-xl border border-stroke-default bg-white p-3 opacity-55 [mask-image:linear-gradient(to_right,black_30%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,black_30%,transparent_100%)]">
               <div className="flex flex-1 items-center gap-3">
-                <div className="flex size-14 shrink-0 items-center justify-center rounded-lg bg-neutral-200 text-[10px] text-secondary">
-                  IMG
+                <div className="size-14 shrink-0 overflow-hidden rounded-lg">
+                  {peekEvent.images[0] ? (
+                    <img
+                      src={peekEvent.images[0]}
+                      alt={peekEvent.title}
+                      className="size-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex size-full items-center justify-center bg-neutral-200 text-[10px] text-secondary">
+                      IMG
+                    </div>
+                  )}
                 </div>
                 <div className="flex min-w-0 flex-1 flex-col justify-center">
                   <p className="typo-ui truncate text-sm text-primary">

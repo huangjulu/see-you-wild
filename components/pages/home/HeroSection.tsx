@@ -95,14 +95,17 @@ const HeroSection: React.FC = () => {
         muted
         loop
         playsInline
-        className="absolute bottom-0 left-0 w-full h-[180%] object-cover will-change-transform"
+        className="absolute bottom-0 left-0 w-full h-[180%] object-cover will-change-transform pointer-events-none"
       >
         <source
           src="https://assets.mixkit.co/videos/1943/1943-720.mp4"
           type="video/mp4"
         />
       </video>
-      <div className="absolute inset-0 bg-neutral-950/40" aria-hidden="true" />
+      <div
+        className="absolute inset-0 bg-neutral-950/40 pointer-events-none"
+        aria-hidden="true"
+      />
 
       <div className="relative z-10 flex flex-col items-center max-w-4xl">
         <h1

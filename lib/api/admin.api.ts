@@ -172,5 +172,15 @@ export const adminApi = {
         },
       });
     },
+
+    useResendEmail: () => {
+      return useMutation<{ sent: boolean }, Error, string>({
+        mutationFn: (registrationId) =>
+          apiFetch<{ sent: boolean }>(
+            `/api/registrations/${registrationId}/resend-email`,
+            { method: "POST" }
+          ),
+      });
+    },
   },
 };

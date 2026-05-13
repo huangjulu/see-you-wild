@@ -94,6 +94,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
       const registration = await registrationApi.create({
         ...data,
         event_id: props.eventId,
+        selected_date: null,
       });
       setSubmittedAmount(registration.amount_due);
     } catch (err) {

@@ -77,6 +77,7 @@ const CalendarCaption: SlottableComponent<CalendarCaptionProps> = Object.assign(
 
 interface CalendarGridProps {
   type?: GridType;
+  fixedWeeks?: boolean;
   expandLabel?: string;
   className?: string;
   children?: React.ReactNode;
@@ -235,6 +236,7 @@ interface ResolvedCalendarConfig {
   hasChevrons: boolean;
   captionLayout: CaptionLayout;
   gridType: GridType;
+  fixedWeeks: boolean | undefined;
   expandLabel: string | undefined;
   chevronsClassName?: string;
   captionClassName?: string;
@@ -300,11 +302,16 @@ function resolveCalendarConfig(
   }
 
   let gridType: GridType = "month";
+  let fixedWeeks: boolean | undefined;
   let expandLabel: string | undefined;
   let gridClassName: string | undefined;
   const gridEl = slots["grid"];
   if (gridEl) {
     gridType = (slotProp(gridEl, "type") as GridType | undefined) ?? "month";
+    const fixedWeeksRaw = (gridEl.props as Record<string, unknown>)[
+      "fixedWeeks"
+    ];
+    if (typeof fixedWeeksRaw === "boolean") fixedWeeks = fixedWeeksRaw;
     expandLabel = slotProp(gridEl, "expandLabel");
     gridClassName = slotProp(gridEl, "className");
   }
@@ -313,6 +320,7 @@ function resolveCalendarConfig(
     hasChevrons,
     captionLayout,
     gridType,
+    fixedWeeks,
     expandLabel,
     chevronsClassName,
     captionClassName,
@@ -447,7 +455,7 @@ const _Calendar: React.FC<CalendarProps> = (props) => {
   }
 
   const classNames = {
-    root: "w-fit",
+    root: "w-full",
     months: "relative flex flex-col",
     month: cn("flex w-full flex-col gap-4", config.gridClassName),
     nav: cn(
@@ -514,7 +522,7 @@ const _Calendar: React.FC<CalendarProps> = (props) => {
       selected={props.value}
       onSelect={props.onChange}
       showOutsideDays
-      fixedWeeks={config.gridType === "month"}
+      fixedWeeks={config.fixedWeeks ?? config.gridType === "month"}
       locale={zhTW}
       defaultMonth={props.defaultMonth}
       disabled={props.disabled}
