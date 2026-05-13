@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CircleCheck as IconCircleCheck } from "lucide-react";
+import { CircleCheck as IconCircleCheck, Copy as IconCopy } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Controller,
@@ -54,6 +54,7 @@ interface RegistrationModalProps {
   carpoolRole: "driver" | "passenger" | null;
   seatCount: number | null;
   pickupLocations: string[];
+  paymentDays: number;
 }
 
 const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
@@ -175,9 +176,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
             {isSubmitted ? (
               <SuccessMainContent
                 amount={submittedAmount}
-                eventTitle={props.eventTitle}
-                eventLocation={props.eventLocation}
-                eventDate={props.eventDate}
+                paymentDays={props.paymentDays}
               />
             ) : (
               <FormMainContent
@@ -238,74 +237,132 @@ export default RegistrationModal;
 
 interface SuccessMainContentProps {
   amount: number;
-  eventTitle: string;
-  eventLocation: string;
-  eventDate: string;
+  paymentDays: number;
 }
 
 const SuccessMainContent: React.FC<SuccessMainContentProps> = (props) => {
   const t = useTranslations("registration");
   const format = useFormatter();
-  const { getValues } = useFormContext<RegistrationFormInput>();
-  const name = getValues("name");
-  const email = getValues("email");
-  const transport = getValues("transport");
+  const [copied, setCopied] = useState(false);
+
+  function onCopyAccount() {
+    const raw = paymentAccount.bankAccount.replace(/[-\s]/g, "");
+    navigator.clipboard.writeText(raw);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
 
   return (
     <div className="flex flex-col items-center gap-6 py-6">
-      <IconCircleCheck className="size-12 text-success" />
-
-      <div className="w-full space-y-4">
-        <div className="rounded-lg border border-stroke-default p-4 space-y-2">
-          <p className="typo-ui text-sm text-secondary">
-            {t("successEventSummary")}
-          </p>
-          <p className="typo-subtitle-1 text-primary">{props.eventTitle}</p>
-          <p className="typo-body-2 text-sm text-secondary">
-            {props.eventLocation} · {props.eventDate}
-          </p>
-        </div>
-
-        <div className="rounded-lg border border-stroke-default p-4 space-y-2">
-          <p className="typo-ui text-sm text-secondary">
-            {t("successRegistrationSummary")}
-          </p>
-          <div className="typo-body-2 text-sm text-primary space-y-1">
-            <p>
-              {t("name")}：{name}
-            </p>
-            <p>
-              {t("transport")}：
-              {transport === "self"
-                ? t("transportSelf")
-                : t("transportCarpool")}
-            </p>
-          </div>
-        </div>
-
-        <div className="rounded-lg border border-stroke-default p-4 space-y-2">
-          <p className="typo-body-2 text-secondary">{t("successTransferTo")}</p>
-          <p className="typo-subtitle-1 text-accent">
-            NT$ {format.number(props.amount)}
-          </p>
-          <div className="typo-ui text-sm text-primary space-y-1">
-            <p>
-              {paymentAccount.bankName}　{paymentAccount.bankAccount}
-            </p>
-            <p>
-              {t("successAccountHolder")}：{paymentAccount.accountHolder}
-            </p>
-          </div>
-        </div>
-
-        <p className="typo-body-2 text-sm text-secondary text-center">
-          {t("successEmailSent", { email })}
-        </p>
-
-        <p className="typo-body-2 text-sm text-secondary text-center">
-          {t("successReportDigits")}
-        </p>
+      <div className="relative flex items-center justify-center">
+        <svg
+          className="absolute size-[78px] text-green-50"
+          viewBox="0 0 100 100"
+          fill="currentColor"
+        >
+          <ellipse cx="50" cy="28" rx="12" ry="22" />
+          <ellipse
+            cx="50"
+            cy="28"
+            rx="12"
+            ry="22"
+            transform="rotate(36 50 50)"
+          />
+          <ellipse
+            cx="50"
+            cy="28"
+            rx="12"
+            ry="22"
+            transform="rotate(72 50 50)"
+          />
+          <ellipse
+            cx="50"
+            cy="28"
+            rx="12"
+            ry="22"
+            transform="rotate(108 50 50)"
+          />
+          <ellipse
+            cx="50"
+            cy="28"
+            rx="12"
+            ry="22"
+            transform="rotate(144 50 50)"
+          />
+          <ellipse
+            cx="50"
+            cy="28"
+            rx="12"
+            ry="22"
+            transform="rotate(180 50 50)"
+          />
+          <ellipse
+            cx="50"
+            cy="28"
+            rx="12"
+            ry="22"
+            transform="rotate(216 50 50)"
+          />
+          <ellipse
+            cx="50"
+            cy="28"
+            rx="12"
+            ry="22"
+            transform="rotate(252 50 50)"
+          />
+          <ellipse
+            cx="50"
+            cy="28"
+            rx="12"
+            ry="22"
+            transform="rotate(288 50 50)"
+          />
+          <ellipse
+            cx="50"
+            cy="28"
+            rx="12"
+            ry="22"
+            transform="rotate(324 50 50)"
+          />
+        </svg>
+        <IconCircleCheck className="relative size-12 text-success" />
       </div>
+
+      <p className="typo-body-2 text-secondary">
+        {t("successTransferTo", { days: props.paymentDays })}
+      </p>
+
+      <div className="w-full rounded-lg border border-stroke-default p-4 space-y-3">
+        <p className="typo-subtitle-1 text-xl text-accent">
+          NT$ {format.number(props.amount)}
+        </p>
+        <div className="typo-ui text-sm text-primary space-y-1">
+          <p>{paymentAccount.bankName}</p>
+          <div className="flex items-center gap-1.5">
+            <span>{paymentAccount.bankAccount}</span>
+            <button
+              type="button"
+              onClick={onCopyAccount}
+              className="inline-flex items-center justify-center size-6 rounded-lg border border-neutral-100/50 bg-neutral-50 text-neutral-300 transition-colors hover:text-neutral-400"
+              aria-label={t("copyAccount")}
+            >
+              <IconCopy className="size-3.5" />
+            </button>
+            {copied && (
+              <span className="typo-ui text-xs text-neutral-300">
+                {t("copied")}
+              </span>
+            )}
+          </div>
+          <p>
+            {t("successAccountHolder")}：{paymentAccount.accountHolder}
+          </p>
+        </div>
+      </div>
+
+      <p className="typo-body-2 text-sm text-secondary text-center">
+        {t("successReportDigits")}
+      </p>
     </div>
   );
 };

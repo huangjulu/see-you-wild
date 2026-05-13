@@ -303,9 +303,8 @@ export function toLocalPhone(e164: string, country: CountryRule): string {
 
 export function formatLocalPhone(digits: string): string {
   const cleaned = digits.replace(/\s/g, "");
-  if (cleaned.length <= 4) return cleaned;
-  const groups = cleaned.match(/.{1,4}/g) ?? [];
-  return groups.join(" ");
+  if (cleaned.length <= 1) return cleaned;
+  return `${cleaned[0]} ${cleaned.slice(1, 5)}${cleaned.length > 5 ? ` ${cleaned.slice(5, 9)}` : ""}`;
 }
 
 // ============================================

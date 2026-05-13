@@ -297,13 +297,12 @@
     "seatCount": "Available Seats",
     "totalPrice": "Total Price",
     "successTitle": "Registration submitted",
-    "successEventSummary": "Event Info",
-    "successRegistrationSummary": "Registration Summary",
-    "successTransferTo": "Transfer the amount to",
+    "successTransferTo": "Please transfer within {days} days to",
     "successAccountHolder": "Account holder",
-    "successEmailSent": "A payment notification has been sent to {email}",
     "successReportDigits": "Check your inbox for the confirmation email, then click the link to report the last 5 digits of your bank account to complete registration.",
-    "successConfirm": "Got it, I'll transfer now"
+    "successConfirm": "Got it, I'll transfer now",
+    "copyAccount": "Copy account number",
+    "copied": "Copied"
   },
   "country": {
     "TW": "Taiwan",
@@ -403,7 +402,7 @@
     "invalidEmail": "Please enter a valid email address",
     "invalidFormat": "Invalid format",
     "invalidSelection": "Please select a valid option",
-    "invalidTwDocument": "Invalid National ID/ARC format (1 letter + 9 digits or letters)",
+    "invalidTwDocument": "Invalid National ID/ARC format",
     "invalidTwIdChecksum": "National ID/ARC checksum invalid",
     "invalidPassport": "Invalid passport format (6-12 alphanumeric)",
     "invalidPhone": "Invalid phone number",

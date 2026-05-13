@@ -288,13 +288,12 @@
     "seatCount": "可載人數",
     "totalPrice": "費用合計",
     "successTitle": "報名已送出",
-    "successEventSummary": "活動資訊",
-    "successRegistrationSummary": "報名摘要",
-    "successTransferTo": "請於期限內匯款至",
+    "successTransferTo": "請於 {days} 天內匯款至",
     "successAccountHolder": "戶名",
-    "successEmailSent": "系統已寄送繳費通知至 {email}",
     "successReportDigits": "匯款後請至信箱收取確認信，點擊連結回報帳號末五碼，即完成報名。",
-    "successConfirm": "收到，我去匯款"
+    "successConfirm": "收到，我去匯款",
+    "copyAccount": "複製帳號",
+    "copied": "已複製"
   },
   "country": {
     "TW": "台灣",
@@ -394,7 +393,7 @@
     "invalidEmail": "請輸入有效的電子郵件",
     "invalidFormat": "格式不正確",
     "invalidSelection": "請選擇有效的選項",
-    "invalidTwDocument": "身分證/居留證格式錯誤（應為 1 個英文字母 + 9 位數字或字母）",
+    "invalidTwDocument": "身分證/居留證格式錯誤",
     "invalidTwIdChecksum": "身分證/居留證檢核碼錯誤",
     "invalidPassport": "護照號碼格式錯誤（6-12 碼英數）",
     "invalidPhone": "格式錯誤",
