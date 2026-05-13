@@ -12,9 +12,9 @@ import {
 import { cn } from "@/lib/utils";
 
 interface DatePickerInputProps {
-  value?: string;
-  onChange?: (value: string) => void;
-  onBlur?: () => void;
+  value: string;
+  onChange: (value: string) => void;
+  onBlur: () => void;
   label?: string;
   error?: string;
   placeholder?: string;
@@ -40,9 +40,9 @@ const DatePickerInput: React.FC<DatePickerInputProps> = (props) => {
     const yyyy = date.getFullYear();
     const mm = String(date.getMonth() + 1).padStart(2, "0");
     const dd = String(date.getDate()).padStart(2, "0");
-    props.onChange?.(`${yyyy}-${mm}-${dd}`);
+    props.onChange(`${yyyy}-${mm}-${dd}`);
     setOpen(false);
-    props.onBlur?.();
+    props.onBlur();
   }
 
   const displayValue = selectedDate

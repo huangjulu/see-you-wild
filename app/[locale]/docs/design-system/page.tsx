@@ -784,56 +784,7 @@ const PalettePreviewPage: React.FC = () => {
       </section>
 
       {/* ═══ SELECTOR ═══ */}
-      <section id="selector" className="mb-16">
-        <SectionLabel>Selector</SectionLabel>
-
-        <div className="mb-10">
-          <h3 className="typo-ui mb-4 text-sm text-primary">Basic</h3>
-          <div className="flex max-w-md flex-col gap-4">
-            <Selector
-              label="可載人數"
-              placeholder="選擇人數"
-              options={[
-                { value: "3", label: "3 人" },
-                { value: "4", label: "4 人" },
-                { value: "5", label: "5 人" },
-              ]}
-            />
-          </div>
-        </div>
-
-        <div className="mb-10">
-          <h3 className="typo-ui mb-4 text-sm text-primary">Error</h3>
-          <div className="flex max-w-md flex-col gap-4">
-            <Selector
-              label="可載人數"
-              placeholder="選擇人數"
-              options={[
-                { value: "3", label: "3 人" },
-                { value: "4", label: "4 人" },
-                { value: "5", label: "5 人" },
-              ]}
-              error="必填欄位"
-            />
-          </div>
-        </div>
-
-        <div className="mb-10">
-          <h3 className="typo-ui mb-4 text-sm text-primary">Disabled</h3>
-          <div className="flex max-w-md flex-col gap-4">
-            <Selector
-              label="可載人數"
-              placeholder="選擇人數"
-              options={[
-                { value: "3", label: "3 人" },
-                { value: "4", label: "4 人" },
-                { value: "5", label: "5 人" },
-              ]}
-              disabled
-            />
-          </div>
-        </div>
-      </section>
+      <SelectorDemoSection />
 
       {/* ═══ SLOT-BASED COMPONENTS (Dialog / ModalCard) ═══ */}
       <section id="slot-components" className="mb-16">
@@ -1881,3 +1832,63 @@ const PalettePreviewPage: React.FC = () => {
 
 PalettePreviewPage.displayName = "PalettePreviewPage";
 export default PalettePreviewPage;
+
+const SEAT_OPTIONS = [
+  { value: "3", label: "3 人" },
+  { value: "4", label: "4 人" },
+  { value: "5", label: "5 人" },
+];
+
+const SelectorDemoSection: React.FC = () => {
+  const [basicValue, setBasicValue] = useState("");
+  const [errorValue, setErrorValue] = useState("");
+
+  return (
+    <section id="selector" className="mb-16">
+      <SectionLabel>Selector</SectionLabel>
+
+      <div className="mb-10">
+        <h3 className="typo-ui mb-4 text-sm text-primary">Basic</h3>
+        <div className="flex max-w-md flex-col gap-4">
+          <Selector
+            label="可載人數"
+            placeholder="選擇人數"
+            options={SEAT_OPTIONS}
+            value={basicValue}
+            onChange={setBasicValue}
+          />
+        </div>
+      </div>
+
+      <div className="mb-10">
+        <h3 className="typo-ui mb-4 text-sm text-primary">Error</h3>
+        <div className="flex max-w-md flex-col gap-4">
+          <Selector
+            label="可載人數"
+            placeholder="選擇人數"
+            options={SEAT_OPTIONS}
+            value={errorValue}
+            onChange={setErrorValue}
+            error="必填欄位"
+          />
+        </div>
+      </div>
+
+      <div className="mb-10">
+        <h3 className="typo-ui mb-4 text-sm text-primary">Disabled</h3>
+        <div className="flex max-w-md flex-col gap-4">
+          <Selector
+            label="可載人數"
+            placeholder="選擇人數"
+            options={SEAT_OPTIONS}
+            value="3"
+            onChange={() => {}}
+            disabled
+          />
+        </div>
+      </div>
+    </section>
+  );
+};
+
+SelectorDemoSection.displayName = "SelectorDemoSection";

@@ -21,27 +21,27 @@ interface SelectorOption {
 }
 
 interface SelectorProps {
-  className?: string;
   options: SelectorOption[];
-  value?: string;
-  onChange?: (value: string) => void;
+  value: string;
+  onChange: (value: string) => void;
   onBlur?: () => void;
   label?: string;
   error?: string;
   placeholder?: string;
   disabled?: boolean;
   name?: string;
+  className?: string;
 }
 
 const Selector: React.FC<SelectorProps> = (props) => {
   const [open, setOpen] = useState(false);
-  const isTouchDevice = useMediaQuery("(pointer: coarse)");
+  const isSmallScreen = useMediaQuery("(max-width: 767px)");
   const Icon = open ? IconChevronUp : IconChevronDown;
 
   const selectedOption = props.options.find((o) => o.value === props.value);
 
   function onOptionSelect(value: string) {
-    props.onChange?.(value);
+    props.onChange(value);
     setOpen(false);
     props.onBlur?.();
   }
@@ -90,7 +90,7 @@ const Selector: React.FC<SelectorProps> = (props) => {
       {props.label != null && (
         <span className="typo-ui text-sm text-primary">{props.label}</span>
       )}
-      {isTouchDevice ? (
+      {isSmallScreen ? (
         <Drawer open={open} onOpenChange={setOpen}>
           <Drawer.Trigger
             disabled={props.disabled}

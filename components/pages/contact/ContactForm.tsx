@@ -56,9 +56,9 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
     },
   });
 
-  const activityTypeValue = watch("activityType");
-  const groupSizeValue = watch("groupSize");
-  const durationValue = watch("duration");
+  const activityTypeValue = watch("activityType") ?? "";
+  const groupSizeValue = watch("groupSize") ?? "";
+  const durationValue = watch("duration") ?? "";
 
   useEffect(
     function syncTemplatePrefills() {
