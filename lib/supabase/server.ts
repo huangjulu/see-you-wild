@@ -13,8 +13,12 @@ export async function createSupabaseServer() {
           return cookieStore.getAll();
         },
         setAll(cookiesToSet) {
-          for (const { name, value, options } of cookiesToSet) {
-            cookieStore.set(name, value, options);
+          try {
+            for (const { name, value, options } of cookiesToSet) {
+              cookieStore.set(name, value, options);
+            }
+          } catch {
+            // Server Component 裡 cookie 是唯讀的，auth refresh 的 setAll 可安全忽略
           }
         },
       },

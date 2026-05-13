@@ -43,4 +43,34 @@ describe("createEventSchema", () => {
       expect(result.data.min_participants).toBe(3);
     }
   });
+
+  it("defaults description to empty string", () => {
+    const result = createEventSchema.safeParse(validEvent);
+    if (result.success) {
+      expect(result.data.description).toBe("");
+    }
+  });
+
+  it("defaults pickup_locations to empty array", () => {
+    const result = createEventSchema.safeParse(validEvent);
+    if (result.success) {
+      expect(result.data.pickup_locations).toEqual([]);
+    }
+  });
+
+  it("accepts images with src and alt", () => {
+    const result = createEventSchema.safeParse({
+      ...validEvent,
+      images: [{ src: "https://example.com/img.jpg", alt: "活動照片" }],
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects images with invalid src URL", () => {
+    const result = createEventSchema.safeParse({
+      ...validEvent,
+      images: [{ src: "not-a-url", alt: "" }],
+    });
+    expect(result.success).toBe(false);
+  });
 });

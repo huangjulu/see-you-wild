@@ -13,7 +13,11 @@ export const createEventSchema = z.object({
   payment_days: z.number().int().positive(),
   carpool_cutoff_days: z.number().int().min(0).default(3),
   min_participants: z.number().int().min(1).default(3),
-  images: z.array(z.string().url()).default([]),
+  description: z.string().default(""),
+  pickup_locations: z.array(z.string()).default([]),
+  images: z
+    .array(z.object({ src: z.string().url(), alt: z.string() }))
+    .default([]),
   available_dates: z.array(z.string().date()).min(1),
   safety_policy: z.string().default(""),
   status: z.enum(["open", "closed"]).default("open"),
@@ -33,7 +37,11 @@ export const updateEventSchema = z.object({
   payment_days: z.number().int().positive().optional(),
   carpool_cutoff_days: z.number().int().min(0).optional(),
   min_participants: z.number().int().min(1).optional(),
-  images: z.array(z.string().url()).optional(),
+  description: z.string().optional(),
+  pickup_locations: z.array(z.string()).optional(),
+  images: z
+    .array(z.object({ src: z.string().url(), alt: z.string() }))
+    .optional(),
   available_dates: z.array(z.string().date()).optional(),
   safety_policy: z.string().optional(),
   status: z.enum(["open", "closed"]).optional(),

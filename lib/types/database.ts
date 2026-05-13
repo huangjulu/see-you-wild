@@ -23,7 +23,9 @@ export interface EventRow {
   payment_days: number;
   carpool_cutoff_days: number;
   min_participants: number;
-  images: string[];
+  description: string;
+  pickup_locations: string[];
+  images: Array<{ src: string; alt: string }>;
   available_dates: string[];
   safety_policy: string;
   status: EventStatus;
@@ -91,6 +93,73 @@ export interface EventDeleteDto {
 // GET /api/events → response item
 export interface EventListDto extends EventRow {
   registrations: RegistrationAdminDto[];
+}
+
+// GET /events/[id] → public detail page (Server Component)
+export interface EventDetailDto {
+  id: string;
+  type: string;
+  location: string;
+  title: string;
+  startDate: string;
+  endDate: string;
+  basePrice: number;
+  carpoolSurcharge: number;
+  description: string;
+  safetyPolicy: string;
+  images: Array<{ src: string; alt: string }>;
+  availableDates: string[];
+  pickupLocations: string[];
+  paymentDays: number;
+}
+
+export function toEventDetail(row: EventRow): EventDetailDto {
+  return {
+    id: row.id,
+    type: row.type,
+    location: row.location,
+    title: row.title,
+    startDate: row.start_date,
+    endDate: row.end_date,
+    basePrice: row.base_price,
+    carpoolSurcharge: row.carpool_surcharge,
+    description: row.description,
+    safetyPolicy: row.safety_policy,
+    images: row.images,
+    availableDates: row.available_dates,
+    pickupLocations: row.pickup_locations,
+    paymentDays: row.payment_days,
+  };
+}
+
+// GET /events → public listing page (Server Component)
+export interface EventListingItem {
+  id: string;
+  type: string;
+  location: string;
+  title: string;
+  startDate: string;
+  endDate: string;
+  basePrice: number;
+  status: EventStatus;
+  image: string;
+  imageAlt: string;
+}
+
+export function toEventListingItem(row: EventRow): EventListingItem {
+  const firstImage = row.images[0];
+  return {
+    id: row.id,
+    type: row.type,
+    location: row.location,
+    title: row.title,
+    startDate: row.start_date,
+    endDate: row.end_date,
+    basePrice: row.base_price,
+    status: row.status,
+    image: firstImage?.src ?? "",
+    imageAlt: firstImage?.alt ?? "",
+  };
 }
 
 // --- Registration ---

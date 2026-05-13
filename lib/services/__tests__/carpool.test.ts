@@ -23,6 +23,8 @@ const baseEvent: EventRow = {
   payment_days: 7,
   carpool_cutoff_days: 3,
   min_participants: 4,
+  description: "",
+  pickup_locations: [],
   images: [],
   available_dates: ["2026-05-01", "2026-05-02"],
   safety_policy: "",
