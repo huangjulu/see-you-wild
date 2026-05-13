@@ -1,9 +1,10 @@
 "use client";
 
+import { useState } from "react";
+
 import Input from "@/components/ui/atoms/Input";
 import type { CountryRule } from "@/lib/form-rules";
-import { formatLocalPhone } from "@/lib/form-rules";
-import { cn } from "@/lib/utils";
+import { normalizePhone } from "@/lib/form-rules";
 
 interface PhoneInputProps {
   country: CountryRule;
@@ -19,63 +20,60 @@ interface PhoneInputProps {
   className?: string;
 }
 
+function formatDisplay(raw: string): string {
+  if (!raw.startsWith("+") || raw.length <= 1) return raw;
+  const digits = raw.slice(1);
+  const groups = digits.match(/.{1,3}/g) ?? [];
+  return `+${groups.join(" ")}`;
+}
+
 const PhoneInput: React.FC<PhoneInputProps> = (props) => {
+  const [focused, setFocused] = useState(false);
+
   function onPhoneInputChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const filtered = event.target.value.replace(/\D/g, "");
+    let filtered = event.target.value.replace(/[^\d+]/g, "");
+    if (!filtered.startsWith("+")) {
+      filtered = `+${filtered}`;
+    }
+    if (filtered.length > 16) {
+      filtered = filtered.slice(0, 16);
+    }
     props.onChange(filtered);
   }
 
   function onPhoneInputFocus() {
-    const raw = props.value.replace(/\s/g, "");
-    if (raw !== props.value) {
-      props.onChange(raw);
-    }
+    setFocused(true);
   }
 
   function onPhoneInputBlur() {
-    const formatted = formatLocalPhone(props.value);
-    if (formatted !== props.value) {
-      props.onChange(formatted);
+    setFocused(false);
+    const raw = props.value;
+    const normalized = normalizePhone(raw, props.country);
+    if (normalized != null && normalized !== raw) {
+      props.onChange(normalized);
     }
     props.onBlur();
   }
 
+  const displayValue = focused ? props.value : formatDisplay(props.value);
+
   return (
     <div className="flex flex-col gap-1">
-      {props.label != null && (
-        <span className="typo-ui text-sm text-primary">{props.label}</span>
-      )}
-      <div
-        className={cn(
-          "flex items-center rounded-md border transition-colors bg-white",
-          "border-stroke-default ring-stroke-focus",
-          "hover:border-brand-400",
-          "focus-within:border-accent focus-within:ring-2 focus-within:ring-brand-200/70",
-          props.error != null &&
-            "border-critical ring-critical/20 focus-within:border-critical",
-          props.className
-        )}
-      >
-        <span className="typo-body text-sm text-secondary pl-3 shrink-0 select-none">
-          {props.country.dialCode}
-        </span>
-        <Input
-          ref={props.ref}
-          name={props.name}
-          type="tel"
-          inputMode="tel"
-          autoComplete="tel"
-          placeholder={props.placeholder ?? "9 1234 5678"}
-          value={props.value}
-          onChange={onPhoneInputChange}
-          onFocus={onPhoneInputFocus}
-          onBlur={onPhoneInputBlur}
-          className="border-none shadow-none focus:ring-0 focus:border-transparent pl-2"
-        />
-      </div>
-      {props.error != null && (
-        <p className="typo-ui text-xs text-critical">{props.error}</p>
-      )}
+      <Input
+        ref={props.ref}
+        name={props.name}
+        type="tel"
+        inputMode="tel"
+        autoComplete="tel"
+        label={props.label}
+        placeholder={props.placeholder ?? props.country.phoneExample}
+        value={displayValue}
+        onChange={onPhoneInputChange}
+        onFocus={onPhoneInputFocus}
+        onBlur={onPhoneInputBlur}
+        error={props.error}
+        className={props.className}
+      />
       {props.hint != null && props.error == null && (
         <p className="typo-ui text-xs text-secondary">{props.hint}</p>
       )}

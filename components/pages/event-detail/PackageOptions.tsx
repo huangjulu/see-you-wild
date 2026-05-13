@@ -35,6 +35,7 @@ const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
 
   const nearestDate = useMemo(() => {
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const nearest = availableDateObjects
       .filter((d) => d >= today)
       .sort((a, b) => a.getTime() - b.getTime())[0];
