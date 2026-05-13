@@ -56,7 +56,9 @@ const baseEvent: EventRow = {
   payment_days: 7,
   carpool_cutoff_days: 3,
   min_participants: 4,
-  image_url: null,
+  images: [],
+  available_dates: ["2026-05-01", "2026-05-02"],
+  safety_policy: "",
   status: "open",
   first_created_at: "2026-04-01T00:00:00Z",
 };
@@ -123,6 +125,7 @@ const baseRegistrationInput: CreateRegistrationInput = {
   carpool_role: null,
   seat_count: null,
   guardian_consent: null,
+  selected_date: null,
 };
 
 function setupSupabaseMock(chains: unknown[]) {

@@ -27,7 +27,7 @@ export async function GET() {
     const { data: allRegistrations, error: regError } = await getSupabase()
       .from("registrations")
       .select(
-        "id, name, email, phone, amount_due, status, transport, payment_ref, created_at, event_id"
+        "id, name, email, phone, amount_due, status, transport, payment_ref, selected_date, created_at, event_id"
       )
       .in("event_id", eventIds);
 

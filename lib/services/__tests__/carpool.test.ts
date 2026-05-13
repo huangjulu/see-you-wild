@@ -23,7 +23,9 @@ const baseEvent: EventRow = {
   payment_days: 7,
   carpool_cutoff_days: 3,
   min_participants: 4,
-  image_url: null,
+  images: [],
+  available_dates: ["2026-05-01", "2026-05-02"],
+  safety_policy: "",
   status: "open",
   first_created_at: "2026-04-01T00:00:00Z",
 };
@@ -53,6 +55,7 @@ function makeReg(overrides: Partial<RegistrationRow>): RegistrationRow {
     amount_due: 1100,
     payment_ref: null,
     status: "paid",
+    selected_date: null,
     created_at: "2026-04-01T00:00:00Z",
     confirmed_at: "2026-04-02T00:00:00Z",
     expires_at: "2026-04-08T00:00:00Z",

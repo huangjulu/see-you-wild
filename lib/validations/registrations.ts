@@ -66,6 +66,7 @@ const baseRegistrationSchema = z.object({
   carpool_role: z.enum(["passenger", "driver"]).nullable().default(null),
   seat_count: z.number().int().min(3).max(5).nullable().default(null),
   guardian_consent: z.boolean().nullable().default(null),
+  selected_date: z.string().date().nullable().default(null),
 });
 
 type BaseRegistrationData = z.infer<typeof baseRegistrationSchema>;
@@ -150,7 +151,10 @@ function addGuardianConsentIssue(
   }
 }
 
-type RegistrationRefinementData = Omit<BaseRegistrationData, "event_id">;
+type RegistrationRefinementData = Omit<
+  BaseRegistrationData,
+  "event_id" | "selected_date"
+>;
 
 function applyRegistrationRefinements(
   data: RegistrationRefinementData,
@@ -162,7 +166,7 @@ function applyRegistrationRefinements(
 }
 
 export const registrationFormSchema = baseRegistrationSchema
-  .omit({ event_id: true })
+  .omit({ event_id: true, selected_date: true })
   .superRefine(applyRegistrationRefinements);
 
 export const createRegistrationSchema = baseRegistrationSchema.superRefine(

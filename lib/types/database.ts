@@ -23,7 +23,9 @@ export interface EventRow {
   payment_days: number;
   carpool_cutoff_days: number;
   min_participants: number;
-  image_url: string | null;
+  images: string[];
+  available_dates: string[];
+  safety_policy: string;
   status: EventStatus;
   first_created_at: string;
 }
@@ -49,6 +51,7 @@ export interface RegistrationRow {
   carpool_role: CarpoolRole | null;
   seat_count: number | null;
   guardian_consent: boolean | null;
+  selected_date: string | null;
   amount_due: number;
   payment_ref: string | null;
   status: RegistrationStatus;
@@ -120,6 +123,7 @@ export interface RegistrationSummaryDto {
   status: RegistrationStatus;
   transport: Transport;
   payment_ref: string | null;
+  selected_date: string | null;
   created_at: string;
 }
 

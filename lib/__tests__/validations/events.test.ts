@@ -9,6 +9,7 @@ const validEvent = {
   title: "宜蘭秘境野溪溫泉",
   start_date: "2026-03-09",
   end_date: "2026-03-09",
+  available_dates: ["2026-03-09"],
   base_price: 2980,
   carpool_surcharge: 300,
   payment_days: 7,
@@ -20,11 +21,10 @@ describe("createEventSchema", () => {
     expect(result.success).toBe(true);
   });
 
-  it("rejects end_date before start_date", () => {
+  it("rejects empty available_dates", () => {
     const result = createEventSchema.safeParse({
       ...validEvent,
-      start_date: "2026-03-10",
-      end_date: "2026-03-09",
+      available_dates: [],
     });
     expect(result.success).toBe(false);
   });

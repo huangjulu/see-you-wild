@@ -15,8 +15,19 @@ type Env = z.infer<typeof envSchema> & { readonly canonicalUrl: string };
 
 let _env: Env | null = null;
 
+function isLocalUrl(url: string): boolean {
+  try {
+    const { hostname } = new URL(url);
+    return hostname === "localhost" || hostname === "127.0.0.1";
+  } catch {
+    return false;
+  }
+}
+
 function resolveCanonicalUrl(): string {
-  if (process.env.BASE_URL) return process.env.BASE_URL;
+  if (process.env.BASE_URL && !isLocalUrl(process.env.BASE_URL)) {
+    return process.env.BASE_URL;
+  }
   if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
     return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
   }
