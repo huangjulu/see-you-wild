@@ -292,6 +292,22 @@ export function normalizePhone(
   return E164_REGEX.test(candidate) ? candidate : null;
 }
 
+export function toLocalPhone(e164: string, country: CountryRule): string {
+  if (!e164.startsWith(country.dialCode)) return e164;
+  const withoutDialCode = e164.slice(country.dialCode.length);
+  if (country.trunkPrefix) {
+    return `${country.trunkPrefix}${withoutDialCode}`;
+  }
+  return withoutDialCode;
+}
+
+export function formatLocalPhone(digits: string): string {
+  const cleaned = digits.replace(/\s/g, "");
+  if (cleaned.length <= 4) return cleaned;
+  const groups = cleaned.match(/.{1,4}/g) ?? [];
+  return groups.join(" ");
+}
+
 // ============================================
 // Age calculation
 // ============================================

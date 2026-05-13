@@ -59,10 +59,7 @@ const baseRegistrationSchema = z.object({
     .nullable()
     .default(null),
   transport: z.enum(["self", "carpool"]),
-  pickup_location: z
-    .enum(["taipei", "nangang", "dapinglin", "sanchong", "banqiao"])
-    .nullable()
-    .default(null),
+  pickup_location: z.string().nullable().default(null),
   carpool_role: z.enum(["passenger", "driver"]).nullable().default(null),
   seat_count: z.number().int().min(3).max(5).nullable().default(null),
   guardian_consent: z.boolean().nullable().default(null),
@@ -167,6 +164,10 @@ function applyRegistrationRefinements(
 
 export const registrationFormSchema = baseRegistrationSchema
   .omit({ event_id: true, selected_date: true })
+  .extend({
+    phone: z.string().trim().min(1),
+    emergency_contact_phone: z.string().trim().min(1),
+  })
   .superRefine(applyRegistrationRefinements);
 
 export const createRegistrationSchema = baseRegistrationSchema.superRefine(

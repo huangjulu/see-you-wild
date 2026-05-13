@@ -28,6 +28,7 @@ import {
   calculateAge,
   type CountryRule,
   getCountryByIso,
+  normalizePhone,
 } from "@/lib/form-rules";
 import { useFormatter, useTranslations } from "@/lib/i18n/client";
 import { paymentAccount } from "@/lib/payment";
@@ -50,6 +51,8 @@ interface RegistrationModalProps {
   selectedDate: string | null;
   selectedPickup: string | null;
   isSelfArrival: boolean;
+  carpoolRole: "driver" | "passenger" | null;
+  seatCount: number | null;
   pickupLocations: string[];
 }
 
@@ -68,7 +71,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
     defaultValues: {
       name: "",
       email: "",
-      phone: "+886",
+      phone: "",
       line_id: null,
       country: "TW",
       gender: "male",
@@ -76,7 +79,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
       birthday: "",
       guardian_consent: null,
       emergency_contact_name: "",
-      emergency_contact_phone: "+886",
+      emergency_contact_phone: "",
       dietary: "omnivore",
       wants_rental: false,
       notes: null,
@@ -87,12 +90,33 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
     },
   });
 
+  useEffect(
+    function syncSelectionOnOpen() {
+      if (!props.open) return;
+      methods.setValue("transport", props.isSelfArrival ? "self" : "carpool");
+      methods.setValue("carpool_role", props.carpoolRole);
+      methods.setValue("seat_count", props.seatCount);
+      methods.setValue("pickup_location", props.selectedPickup);
+    },
+    [props.open]
+  );
+
   async function handleRegistrationSubmit(data: RegistrationFormInput) {
     if (methods.formState.isSubmitting) return;
+
+    const country = getCountryByIso(data.country) ?? FALLBACK_COUNTRY;
+    const normalizedPhone = normalizePhone(data.phone, country);
+    const normalizedEmergencyPhone = normalizePhone(
+      data.emergency_contact_phone,
+      FALLBACK_COUNTRY
+    );
 
     try {
       const registration = await registrationApi.create({
         ...data,
+        phone: normalizedPhone ?? data.phone,
+        emergency_contact_phone:
+          normalizedEmergencyPhone ?? data.emergency_contact_phone,
         event_id: props.eventId,
         selected_date: null,
       });
@@ -161,6 +185,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
                 currentStep={currentStep}
                 basePrice={props.basePrice}
                 carpoolSurcharge={props.carpoolSurcharge}
+                pickupLocations={props.pickupLocations}
                 onSubmit={methods.handleSubmit(handleRegistrationSubmit)}
               />
             )}
@@ -292,6 +317,7 @@ interface FormMainContentProps {
   currentStep: number;
   basePrice: number;
   carpoolSurcharge: number;
+  pickupLocations: string[];
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }
 
@@ -305,6 +331,7 @@ const FormMainContent: React.FC<FormMainContentProps> = (props) => {
           step={props.currentStep}
           basePrice={props.basePrice}
           carpoolSurcharge={props.carpoolSurcharge}
+          pickupLocations={props.pickupLocations}
         />
       </form>
       {formState.errors.root && (
@@ -322,6 +349,7 @@ interface FormRegistrationProps {
   step: number;
   basePrice: number;
   carpoolSurcharge: number;
+  pickupLocations: string[];
 }
 
 const FormRegistration: React.FC<FormRegistrationProps> = (props) => {
@@ -335,6 +363,7 @@ const FormRegistration: React.FC<FormRegistrationProps> = (props) => {
         <FormStepTransport
           basePrice={props.basePrice}
           carpoolSurcharge={props.carpoolSurcharge}
+          pickupLocations={props.pickupLocations}
         />
       )}
     </div>
@@ -432,22 +461,11 @@ FormStepBasic.displayName = "FormStepBasic";
 
 const FormStepIdentity: React.FC = () => {
   const t = useTranslations("registration");
-  const { control, setValue, getValues, formState } =
-    useFormContext<RegistrationFormInput>();
+  const { control, formState } = useFormContext<RegistrationFormInput>();
   const errors = formState.errors;
 
   const country = useWatch({ control, name: "country" });
   const countryRule = getCountryByIso(country) ?? FALLBACK_COUNTRY;
-
-  useEffect(
-    function syncPhoneCountryDefault() {
-      const currentPhone = getValues("phone");
-      if (currentPhone === "" || isOnlyDialCode(currentPhone)) {
-        setValue("phone", countryRule.dialCode, { shouldDirty: false });
-      }
-    },
-    [country, countryRule.dialCode, getValues, setValue]
-  );
 
   return (
     <fieldset className="space-y-3">
@@ -641,6 +659,7 @@ FormStepActivity.displayName = "FormStepActivity";
 interface FormStepTransportProps {
   basePrice: number;
   carpoolSurcharge: number;
+  pickupLocations: string[];
 }
 
 const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
@@ -701,12 +720,12 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
                 {t("pickupLocation")}
               </span>
               <div className="flex flex-wrap gap-2">
-                {PICKUP_SLUGS.map((slug) => (
+                {props.pickupLocations.map((loc) => (
                   <RadioOption
                     variant="outlined"
-                    key={slug}
-                    label={t(`pickupSlug.${slug}`)}
-                    value={slug}
+                    key={loc}
+                    label={loc}
+                    value={loc}
                     {...register("pickup_location")}
                   />
                 ))}
@@ -758,9 +777,7 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
                       label={t("seatCount")}
                       placeholder={t("selectSeatCount")}
                       options={seatCountOptions}
-                      value={
-                        field.value != null ? String(field.value) : undefined
-                      }
+                      value={field.value != null ? String(field.value) : ""}
                       onChange={(v) => field.onChange(parseInt(v, 10))}
                       onBlur={field.onBlur}
                       error={errors.seat_count?.message}
@@ -787,14 +804,6 @@ FormStepTransport.displayName = "FormStepTransport";
 
 const FORM_ID = "registration-form";
 
-const PICKUP_SLUGS = [
-  "taipei",
-  "nangang",
-  "dapinglin",
-  "sanchong",
-  "banqiao",
-] as const;
-
 const SEAT_COUNT_VALUES = [3, 4, 5] as const;
 
 const FALLBACK_COUNTRY: CountryRule = {
@@ -817,7 +826,3 @@ const STEP_FIELDS: Record<number, (keyof RegistrationFormInput)[]> = {
   3: ["dietary", "wants_rental", "notes"],
   4: ["transport", "pickup_location", "carpool_role", "seat_count"],
 };
-
-function isOnlyDialCode(value: string): boolean {
-  return /^\+\d{1,3}$/.test(value);
-}

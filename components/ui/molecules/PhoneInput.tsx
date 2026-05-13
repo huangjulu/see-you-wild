@@ -2,51 +2,46 @@
 
 import Input from "@/components/ui/atoms/Input";
 import type { CountryRule } from "@/lib/form-rules";
-import { normalizePhone } from "@/lib/form-rules";
+import { formatLocalPhone } from "@/lib/form-rules";
 
 interface PhoneInputProps {
   country: CountryRule;
+  value: string;
+  onChange: (value: string) => void;
+  onBlur: () => void;
+  name: string;
+  ref: React.Ref<HTMLInputElement>;
   label?: string;
   placeholder?: string;
   hint?: string;
   error?: string;
-  value?: string;
-  onChange?: (value: string) => void;
-  onBlur?: () => void;
-  name?: string;
   className?: string;
-  ref?: React.Ref<HTMLInputElement>;
 }
 
 const PhoneInput: React.FC<PhoneInputProps> = (props) => {
-  const dialCode = props.country.dialCode;
-
-  function formatDisplay(raw: string): string {
-    if (!raw.startsWith("+") || raw.length <= 1) return raw;
-    const digits = raw.slice(1);
-    const groups = digits.match(/.{1,3}/g) ?? [];
-    return `+${groups.join(" ")}`;
+  function onPhoneInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const filtered = event.target.value.replace(/\D/g, "");
+    props.onChange(filtered);
   }
 
-  function onPhoneInputChange(event: React.ChangeEvent<HTMLInputElement>) {
-    let filtered = event.target.value.replace(/[^\d+]/g, "");
-    if (!filtered.startsWith("+")) {
-      filtered = `+${filtered}`;
+  function onPhoneInputFocus() {
+    const raw = props.value.replace(/\s/g, "");
+    if (raw !== props.value) {
+      props.onChange(raw);
     }
-    if (filtered.length > 16) {
-      filtered = filtered.slice(0, 16);
-    }
-    props.onChange?.(filtered);
   }
 
   function onPhoneInputBlur() {
-    const raw = props.value ?? "";
-    const normalized = normalizePhone(raw, props.country);
-    if (normalized != null && normalized !== raw) {
-      props.onChange?.(normalized);
+    const formatted = formatLocalPhone(props.value);
+    if (formatted !== props.value) {
+      props.onChange(formatted);
     }
-    props.onBlur?.();
+    props.onBlur();
   }
+
+  const localExample = props.country.trunkPrefix
+    ? `${props.country.trunkPrefix}912 345 678`
+    : "912 345 678";
 
   return (
     <div className="flex flex-col gap-1">
@@ -57,9 +52,15 @@ const PhoneInput: React.FC<PhoneInputProps> = (props) => {
         inputMode="tel"
         autoComplete="tel"
         label={props.label}
-        placeholder={props.placeholder ?? props.country.phoneExample}
-        value={formatDisplay(props.value ?? "")}
+        placeholder={props.placeholder ?? localExample}
+        icon={
+          <span className="typo-body text-sm text-secondary">
+            {props.country.dialCode}
+          </span>
+        }
+        value={props.value}
         onChange={onPhoneInputChange}
+        onFocus={onPhoneInputFocus}
         onBlur={onPhoneInputBlur}
         error={props.error}
         className={props.className}

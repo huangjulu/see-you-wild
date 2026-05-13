@@ -5,13 +5,13 @@ import { useTranslations } from "@/lib/i18n/client";
 
 interface IdNumberInputProps {
   country: string;
-  value?: string;
-  onChange?: (value: string) => void;
-  onBlur?: () => void;
+  value: string;
+  onChange: (value: string) => void;
+  onBlur: () => void;
+  name: string;
+  ref: React.Ref<HTMLInputElement>;
   error?: string;
-  name?: string;
   className?: string;
-  ref?: React.Ref<HTMLInputElement>;
 }
 
 const IdNumberInput: React.FC<IdNumberInputProps> = (props) => {
@@ -23,8 +23,7 @@ const IdNumberInput: React.FC<IdNumberInputProps> = (props) => {
     : t("idPlaceholder.foreign");
 
   function onIdNumberChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const next = event.target.value.trim().toUpperCase();
-    props.onChange?.(next);
+    props.onChange(event.target.value);
   }
 
   return (
@@ -33,7 +32,7 @@ const IdNumberInput: React.FC<IdNumberInputProps> = (props) => {
       name={props.name}
       label={t("idLabel")}
       placeholder={placeholder}
-      value={props.value ?? ""}
+      value={props.value}
       onChange={onIdNumberChange}
       onBlur={props.onBlur}
       error={props.error}

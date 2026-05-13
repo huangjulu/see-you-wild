@@ -26,6 +26,8 @@ import {
   calculateAge,
   type CountryRule,
   getCountryByIso,
+  normalizePhone,
+  toLocalPhone,
 } from "@/lib/form-rules";
 import { useToast } from "@/lib/hooks/useToast";
 import { useTranslations } from "@/lib/i18n/client";
@@ -74,36 +76,20 @@ const RegistrationFormModal: React.FC<RegistrationFormModalProps> = (props) => {
 
   const formValues = React.useMemo(() => {
     if (!detailQuery.data) {
-      return {
-        name: "",
-        email: "",
-        phone: "+886",
-        line_id: null,
-        country: "TW" as const,
-        gender: "male" as const,
-        id_number: "",
-        birthday: "",
-        guardian_consent: null,
-        emergency_contact_name: "",
-        emergency_contact_phone: "+886",
-        dietary: "omnivore" as const,
-        wants_rental: false,
-        notes: null,
-        transport: "self" as const,
-        pickup_location: null,
-        carpool_role: null,
-        seat_count: null,
-      };
+      return DEFUALT_VALUE;
     }
 
     const pickupLocation = isValidPickupSlug(detailQuery.data.pickup_location)
       ? detailQuery.data.pickup_location
       : null;
 
+    const editCountry =
+      getCountryByIso(detailQuery.data.country) ?? FALLBACK_COUNTRY;
+
     return {
       name: detailQuery.data.name,
       email: detailQuery.data.email,
-      phone: detailQuery.data.phone,
+      phone: toLocalPhone(detailQuery.data.phone, editCountry),
       line_id: detailQuery.data.line_id,
       country: detailQuery.data.country,
       gender: detailQuery.data.gender,
@@ -111,7 +97,10 @@ const RegistrationFormModal: React.FC<RegistrationFormModalProps> = (props) => {
       birthday: detailQuery.data.birthday,
       guardian_consent: detailQuery.data.guardian_consent,
       emergency_contact_name: detailQuery.data.emergency_contact_name,
-      emergency_contact_phone: detailQuery.data.emergency_contact_phone,
+      emergency_contact_phone: toLocalPhone(
+        detailQuery.data.emergency_contact_phone,
+        FALLBACK_COUNTRY
+      ),
       dietary: detailQuery.data.dietary,
       wants_rental: detailQuery.data.wants_rental,
       notes: detailQuery.data.notes,
@@ -141,14 +130,24 @@ const RegistrationFormModal: React.FC<RegistrationFormModalProps> = (props) => {
     }
     setEventError(null);
 
-    const dataWithDate = {
+    const country = getCountryByIso(data.country) ?? FALLBACK_COUNTRY;
+    const normalizedPhone = normalizePhone(data.phone, country);
+    const normalizedEmergencyPhone = normalizePhone(
+      data.emergency_contact_phone,
+      FALLBACK_COUNTRY
+    );
+
+    const payload = {
       ...data,
+      phone: normalizedPhone ?? data.phone,
+      emergency_contact_phone:
+        normalizedEmergencyPhone ?? data.emergency_contact_phone,
       selected_date: selectedDate || null,
     };
 
     if (isEditMode && props.registration) {
       updateMutation.mutate(
-        { id: props.registration.id, data: dataWithDate },
+        { id: props.registration.id, data: payload },
         {
           onSuccess: () => {
             toast.success("報名編輯成功");
@@ -161,7 +160,7 @@ const RegistrationFormModal: React.FC<RegistrationFormModalProps> = (props) => {
       );
     } else {
       createMutation.mutate(
-        { ...dataWithDate, event_id: selectedEventId },
+        { ...payload, event_id: selectedEventId },
         {
           onSuccess: () => {
             toast.success("報名建立成功");
@@ -221,7 +220,7 @@ const RegistrationFormModal: React.FC<RegistrationFormModalProps> = (props) => {
                   label="活動日期"
                   placeholder="請選擇活動日期"
                   options={dateOptions}
-                  value={selectedDate || undefined}
+                  value={selectedDate}
                   onChange={setSelectedDate}
                 />
               )}
@@ -303,7 +302,7 @@ const FieldsetEvent: React.FC<FieldsetEventProps> = (props) => {
         label="活動"
         placeholder="請選擇活動"
         options={props.events}
-        value={props.value || undefined}
+        value={props.value}
         onChange={props.onChange}
         error={props.error ?? undefined}
         disabled={props.isEditMode}
@@ -411,22 +410,11 @@ FieldsetBasic.displayName = "FieldsetBasic";
 
 const FieldsetIdentity: React.FC = () => {
   const t = useTranslations("registration");
-  const { control, setValue, getValues, formState } =
-    useFormContext<RegistrationFormInput>();
+  const { control, formState } = useFormContext<RegistrationFormInput>();
   const errors = formState.errors;
 
   const country = useWatch({ control, name: "country" });
   const countryRule = getCountryByIso(country) ?? FALLBACK_COUNTRY;
-
-  useEffect(
-    function syncPhoneCountryDefault() {
-      const currentPhone = getValues("phone");
-      if (currentPhone === "" || isOnlyDialCode(currentPhone)) {
-        setValue("phone", countryRule.dialCode, { shouldDirty: false });
-      }
-    },
-    [country, countryRule.dialCode, getValues, setValue]
-  );
 
   return (
     <fieldset className="space-y-3">
@@ -737,9 +725,7 @@ const FieldsetTransport: React.FC = () => {
                     label={t("seatCount")}
                     placeholder={t("selectSeatCount")}
                     options={seatCountOptions}
-                    value={
-                      field.value != null ? String(field.value) : undefined
-                    }
+                    value={field.value != null ? String(field.value) : ""}
                     onChange={(v) => field.onChange(parseInt(v, 10))}
                     onBlur={field.onBlur}
                     error={errors.seat_count?.message}
@@ -783,13 +769,30 @@ const FALLBACK_COUNTRY: CountryRule = {
 
 const EMERGENCY_DEFAULT_COUNTRY: CountryRule = FALLBACK_COUNTRY;
 
-function isOnlyDialCode(value: string): boolean {
-  return /^\+\d{1,3}$/.test(value);
-}
-
 type PickupSlug = (typeof PICKUP_SLUGS)[number];
 
 function isValidPickupSlug(value: string | null): value is PickupSlug {
   if (value == null) return false;
   return PICKUP_SLUGS.some((slug) => slug === value);
 }
+
+const DEFUALT_VALUE = {
+  name: "",
+  email: "",
+  phone: "",
+  line_id: null,
+  country: "TW" as const,
+  gender: "male" as const,
+  id_number: "",
+  birthday: "",
+  guardian_consent: null,
+  emergency_contact_name: "",
+  emergency_contact_phone: "",
+  dietary: "omnivore" as const,
+  wants_rental: false,
+  notes: null,
+  transport: "self" as const,
+  pickup_location: null,
+  carpool_role: null,
+  seat_count: null,
+} as const;
