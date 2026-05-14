@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
 
 interface ListCardProps {
-  image: string;
-  imageAlt: string;
+  image?: string;
+  imageAlt?: string;
   size?: "sm" | "md" | "lg";
   className?: string;
   children: React.ReactNode;
@@ -45,13 +45,15 @@ const ListCard: React.FC<ListCardProps> = (props) => {
         props.className
       )}
     >
-      <img
-        src={props.image}
-        alt={props.imageAlt}
-        loading="lazy"
-        decoding="async"
-        className={cn("shrink-0 object-cover", config.img, config.image)}
-      />
+      {props.image && (
+        <img
+          src={props.image}
+          alt={props.imageAlt ?? ""}
+          loading="lazy"
+          decoding="async"
+          className={cn("shrink-0 object-cover", config.img, config.image)}
+        />
+      )}
       <div className="flex min-w-0 flex-1 flex-col justify-center">
         {props.children}
       </div>
