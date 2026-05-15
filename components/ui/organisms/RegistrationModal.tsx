@@ -63,6 +63,8 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
   const formRef = useRef<HTMLFormElement>(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [submittedAmount, setSubmittedAmount] = useState<number | null>(null);
+  const [submittedEmail, setSubmittedEmail] = useState("");
+  const mutation = registrationApi.useCreate();
 
   const methods = useForm({
     mode: "onBlur",
@@ -102,9 +104,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
     [props.open]
   );
 
-  async function handleRegistrationSubmit(data: RegistrationFormInput) {
-    if (methods.formState.isSubmitting) return;
-
+  function handleRegistrationSubmit(data: RegistrationFormInput) {
     const country = getCountryByIso(data.country) ?? FALLBACK_COUNTRY;
     const normalizedPhone = normalizePhone(data.phone, country);
     const normalizedEmergencyPhone = normalizePhone(
@@ -112,20 +112,26 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
       FALLBACK_COUNTRY
     );
 
-    try {
-      const registration = await registrationApi.create({
+    mutation.mutate(
+      {
         ...data,
         phone: normalizedPhone ?? data.phone,
         emergency_contact_phone:
           normalizedEmergencyPhone ?? data.emergency_contact_phone,
         event_id: props.eventId,
         selected_date: null,
-      });
-      setSubmittedAmount(registration.amount_due);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : t("submitError");
-      methods.setError("root", { message });
-    }
+      },
+      {
+        onSuccess: (registration) => {
+          setSubmittedAmount(registration.amount_due);
+          setSubmittedEmail(data.email);
+        },
+        onError: (err) => {
+          const message = err instanceof Error ? err.message : t("submitError");
+          methods.setError("root", { message });
+        },
+      }
+    );
   }
 
   async function handleNext() {
@@ -177,6 +183,10 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
               <SuccessMainContent
                 amount={submittedAmount}
                 paymentDays={props.paymentDays}
+                eventTitle={props.eventTitle}
+                eventDate={props.eventDate}
+                eventLocation={props.eventLocation}
+                email={submittedEmail}
               />
             ) : (
               <FormMainContent
@@ -238,12 +248,24 @@ export default RegistrationModal;
 interface SuccessMainContentProps {
   amount: number;
   paymentDays: number;
+  eventTitle: string;
+  eventDate: string;
+  eventLocation: string;
+  email: string;
 }
 
 const SuccessMainContent: React.FC<SuccessMainContentProps> = (props) => {
   const t = useTranslations("registration");
   const format = useFormatter();
   const [copied, setCopied] = useState(false);
+
+  const paymentDeadline = new Date();
+  paymentDeadline.setDate(paymentDeadline.getDate() + props.paymentDays);
+  const formattedDeadline = format.dateTime(paymentDeadline, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
 
   function onCopyAccount() {
     const raw = paymentAccount.bankAccount.replace(/[-\s]/g, "");
@@ -254,78 +276,23 @@ const SuccessMainContent: React.FC<SuccessMainContentProps> = (props) => {
 
   return (
     <div className="flex flex-col items-center gap-6 py-6">
-      <div className="relative flex items-center justify-center">
-        <svg
-          className="absolute size-[78px] text-green-50"
-          viewBox="0 0 100 100"
-          fill="currentColor"
-        >
-          <ellipse cx="50" cy="28" rx="12" ry="22" />
-          <ellipse
-            cx="50"
-            cy="28"
-            rx="12"
-            ry="22"
-            transform="rotate(36 50 50)"
-          />
-          <ellipse
-            cx="50"
-            cy="28"
-            rx="12"
-            ry="22"
-            transform="rotate(72 50 50)"
-          />
-          <ellipse
-            cx="50"
-            cy="28"
-            rx="12"
-            ry="22"
-            transform="rotate(108 50 50)"
-          />
-          <ellipse
-            cx="50"
-            cy="28"
-            rx="12"
-            ry="22"
-            transform="rotate(144 50 50)"
-          />
-          <ellipse
-            cx="50"
-            cy="28"
-            rx="12"
-            ry="22"
-            transform="rotate(180 50 50)"
-          />
-          <ellipse
-            cx="50"
-            cy="28"
-            rx="12"
-            ry="22"
-            transform="rotate(216 50 50)"
-          />
-          <ellipse
-            cx="50"
-            cy="28"
-            rx="12"
-            ry="22"
-            transform="rotate(252 50 50)"
-          />
-          <ellipse
-            cx="50"
-            cy="28"
-            rx="12"
-            ry="22"
-            transform="rotate(288 50 50)"
-          />
-          <ellipse
-            cx="50"
-            cy="28"
-            rx="12"
-            ry="22"
-            transform="rotate(324 50 50)"
-          />
-        </svg>
-        <IconCircleCheck className="relative size-12 text-success" />
+      <IconCircleCheck className="size-12 text-success" />
+
+      <div className="w-full rounded-lg border border-stroke-default p-4 space-y-2">
+        <dl className="typo-ui text-sm text-primary space-y-1">
+          <div className="flex justify-between">
+            <dt className="text-secondary">{t("successEventTitle")}</dt>
+            <dd>{props.eventTitle}</dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-secondary">{t("successEventDate")}</dt>
+            <dd>{props.eventDate}</dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-secondary">{t("successEventLocation")}</dt>
+            <dd>{props.eventLocation}</dd>
+          </div>
+        </dl>
       </div>
 
       <p className="typo-body-2 text-secondary">
@@ -357,8 +324,18 @@ const SuccessMainContent: React.FC<SuccessMainContentProps> = (props) => {
           <p>
             {t("successAccountHolder")}：{paymentAccount.accountHolder}
           </p>
+          <div className="flex justify-between pt-1 border-t border-stroke-default">
+            <span className="text-secondary">
+              {t("successPaymentDeadline")}
+            </span>
+            <span className="text-accent">{formattedDeadline}</span>
+          </div>
         </div>
       </div>
+
+      <p className="typo-body-2 text-sm text-secondary text-center">
+        {t("successEmailSent", { email: props.email })}
+      </p>
 
       <p className="typo-body-2 text-sm text-secondary text-center">
         {t("successReportDigits")}
@@ -375,7 +352,7 @@ interface FormMainContentProps {
   basePrice: number;
   carpoolSurcharge: number;
   pickupLocations: string[];
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  onSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
 }
 
 const FormMainContent: React.FC<FormMainContentProps> = (props) => {
