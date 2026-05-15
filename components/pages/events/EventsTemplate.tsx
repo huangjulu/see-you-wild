@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 
 import Heading from "@/components/ui/atoms/Heading";
 import ListCard from "@/components/ui/atoms/ListCard";
@@ -16,7 +16,7 @@ interface EventsTemplateProps {
   events: EventListingItem[];
 }
 
-const EventsTemplate: React.FC<EventsTemplateProps> = (props) => {
+const EventsTemplate = (props: EventsTemplateProps) => {
   const t = useTranslations("events");
   const {
     searchQuery,
@@ -38,7 +38,7 @@ const EventsTemplate: React.FC<EventsTemplateProps> = (props) => {
   }, [locationOptions, t]);
 
   return (
-    <main className="bg-page-gradient min-h-screen">
+    <main className="bg-page-gradient">
       <div className="sticky z-40 top-0 pt-24 pb-6 sticky-shrink-bg sticky-shrink-header">
         <Section as="div">
           <div className="col-span-full sticky-shrink-gap">

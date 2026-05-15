@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
 import EventDetailSection from "@/components/pages/event-detail/EventDetailSection";
 import EventGallery from "@/components/pages/event-detail/EventGallery";
@@ -17,7 +17,7 @@ interface EventDetailTemplateProps {
   event: EventDetailDto;
 }
 
-const EventDetailTemplate: React.FC<EventDetailTemplateProps> = (props) => {
+const EventDetailTemplate = (props: EventDetailTemplateProps) => {
   const t = useTranslations("eventDetail");
   const event = props.event;
 

@@ -4,7 +4,7 @@ import {
   ChevronLeft as IconChevronLeft,
   ChevronRight as IconChevronRight,
 } from "lucide-react";
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 
 import EventLightbox from "@/components/ui/molecules/EventLightbox";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,7 @@ interface EventGalleryProps {
   className?: string;
 }
 
-const EventGallery: React.FC<EventGalleryProps> = (props) => {
+const EventGallery = (props: EventGalleryProps) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [mobileIndex, setMobileIndex] = useState(0);

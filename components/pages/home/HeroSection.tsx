@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useRef } from "react";
+import { useRef } from "react";
 
 import Button from "@/components/ui/atoms/Button";
 import { useTimeline, useTween } from "@/lib/gsap";
 
-const HeroSection: React.FC = () => {
+const HeroSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const h1Ref = useRef<HTMLHeadingElement>(null);
   const subtitlesRef = useRef<HTMLDivElement>(null);

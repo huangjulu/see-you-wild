@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useRef } from "react";
+import { Fragment, useRef } from "react";
 
 import Heading from "@/components/ui/atoms/Heading";
 import { useTween } from "@/lib/gsap";
 import { useTranslations } from "@/lib/i18n/client";
 
-const PhilosophySection: React.FC = () => {
+const PhilosophySection = () => {
   const t = useTranslations("home.philosophy");
   const sectionRef = useRef<HTMLElement>(null);
   const revealTriggerRef = useRef<HTMLDivElement>(null);
@@ -65,10 +65,10 @@ const PhilosophySection: React.FC = () => {
             {t("title")
               .split("\n")
               .map((line, i) => (
-                <React.Fragment key={i}>
+                <Fragment key={i}>
                   {i > 0 && <br />}
                   {line}
-                </React.Fragment>
+                </Fragment>
               ))}
           </Heading.H2>
           <p className="reveal-up gsap-reveal typo-body text-lg leading-relaxed text-primary/70">

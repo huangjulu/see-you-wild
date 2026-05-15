@@ -1,7 +1,7 @@
 "use client";
 
 import { Minus as IconMinus, Plus as IconPlus } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import ModalCard from "@/components/ui/molecules/ModalCard";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,7 @@ interface EventDetailSectionProps {
   defaultExpanded?: boolean;
 }
 
-const EventDetailSection: React.FC<EventDetailSectionProps> = (props) => {
+const EventDetailSection = (props: EventDetailSectionProps) => {
   const [expanded, setExpanded] = useState(props.defaultExpanded ?? false);
 
   return (

@@ -26,7 +26,7 @@ function toDateStr(date: Date): string {
 type TransportMode = "self" | "carpool";
 type CarpoolRole = "passenger" | "driver";
 
-const PackageOptions: React.FC<PackageOptionsProps> = (props) => {
+const PackageOptions = (props: PackageOptionsProps) => {
   const t = useTranslations("eventDetail");
   const availableDateObjects = useMemo(
     () => props.availableDates.map((d) => new Date(d + "T00:00:00")),

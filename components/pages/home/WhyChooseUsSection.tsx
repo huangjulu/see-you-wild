@@ -5,7 +5,7 @@ import {
   Shield as IconShield,
   Sparkles as IconSparkles,
 } from "lucide-react";
-import React, { useRef } from "react";
+import { useRef } from "react";
 
 import Heading from "@/components/ui/atoms/Heading";
 import { useTween } from "@/lib/gsap";
@@ -14,7 +14,7 @@ import { useTranslations } from "@/lib/i18n/client";
 const VALUE_KEYS = ["safety", "experience", "quality"] as const;
 const VALUE_ICONS = [IconShield, IconMountain, IconSparkles];
 
-const WhyChooseUsSection: React.FC = () => {
+const WhyChooseUsSection = () => {
   const t = useTranslations("home.whyChooseUs");
   const sectionRef = useRef<HTMLElement>(null);
   const revealTriggerRef = useRef<HTMLDivElement>(null);

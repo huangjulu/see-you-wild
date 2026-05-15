@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import { useRef } from "react";
 
 import JourneyCard from "@/components/pages/home/JourneyCard";
 import Button from "@/components/ui/atoms/Button";
@@ -8,7 +8,7 @@ import Heading from "@/components/ui/atoms/Heading";
 import { ScrollTrigger, useTimeline, useTween } from "@/lib/gsap";
 import { useTranslations } from "@/lib/i18n/client";
 
-const JourneysSection: React.FC = () => {
+const JourneysSection = () => {
   const t = useTranslations("home.journeys");
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
