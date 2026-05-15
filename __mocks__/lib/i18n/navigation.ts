@@ -1,10 +1,10 @@
-import React from "react";
+import { type AnchorHTMLAttributes, createElement, forwardRef } from "react";
 
-export const Link = React.forwardRef<
+export const Link = forwardRef<
   HTMLAnchorElement,
-  React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }
+  AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }
 >(function Link(props, ref) {
-  return React.createElement("a", { ...props, ref });
+  return createElement("a", { ...props, ref });
 });
 
 Link.displayName = "Link";

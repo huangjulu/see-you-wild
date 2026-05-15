@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 import DatePickerDrawer from "@/components/ui/molecules/DatePickerDrawer";
 import DatePickerInput from "@/components/ui/molecules/DatePickerInput";
 import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
@@ -20,7 +18,7 @@ interface DrawerCalendarProps {
   minDate?: Date;
 }
 
-const DrawerCalendar: React.FC<DrawerCalendarProps> = (props) => {
+const DrawerCalendar = (props: DrawerCalendarProps) => {
   const isSmallScreen = useMediaQuery("(max-width: 767px)");
 
   if (isSmallScreen) {

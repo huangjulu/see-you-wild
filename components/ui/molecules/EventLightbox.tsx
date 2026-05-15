@@ -5,7 +5,7 @@ import {
   ChevronRight as IconChevronRight,
   X as IconX,
 } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -16,7 +16,7 @@ interface EventLightboxProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const EventLightbox: React.FC<EventLightboxProps> = (props) => {
+const EventLightbox = (props: EventLightboxProps) => {
   const [currentIndex, setCurrentIndex] = useState(props.initialIndex ?? 0);
 
   useEffect(

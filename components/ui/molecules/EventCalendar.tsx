@@ -16,7 +16,7 @@ interface EventCalendarProps extends Pick<
   expandLabel?: string;
 }
 
-const EventCalendar: React.FC<EventCalendarProps> = (props) => {
+const EventCalendar = (props: EventCalendarProps) => {
   const minDate = useMemo(() => {
     if (props.minAdvanceDays == null) return startOfDay(new Date());
     return addDays(new Date(), props.minAdvanceDays);

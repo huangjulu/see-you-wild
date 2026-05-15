@@ -12,7 +12,7 @@ interface DrawerRootProps {
   children: React.ReactNode;
 }
 
-const DrawerRoot: React.FC<DrawerRootProps> = (props) => {
+const DrawerRoot = (props: DrawerRootProps) => {
   function onOpenChange(open: boolean) {
     props.onOpenChange?.(open);
   }
@@ -28,7 +28,7 @@ DrawerRoot.displayName = "DrawerRoot";
 
 interface DrawerTriggerProps extends React.ComponentProps<"button"> {}
 
-const DrawerTrigger: React.FC<DrawerTriggerProps> = (props) => {
+const DrawerTrigger = (props: DrawerTriggerProps) => {
   const { className, ...restProps } = props;
   return <DrawerPrimitive.Trigger className={className} {...restProps} />;
 };
@@ -40,7 +40,7 @@ interface DrawerContentProps {
   children: React.ReactNode;
 }
 
-const DrawerContent: React.FC<DrawerContentProps> = (props) => {
+const DrawerContent = (props: DrawerContentProps) => {
   return (
     <DrawerPrimitive.Portal>
       <DrawerPrimitive.Backdrop className="fixed inset-0 z-110 bg-black/40" />

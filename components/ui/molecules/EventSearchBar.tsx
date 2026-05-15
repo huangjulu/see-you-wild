@@ -1,7 +1,6 @@
 "use client";
 
 import { Search as IconSearch } from "lucide-react";
-import React from "react";
 
 import Input from "@/components/ui/atoms/Input";
 import RadioOption from "@/components/ui/atoms/RadioOption";
@@ -19,7 +18,7 @@ interface EventSearchBarProps {
   onSearchChange: (value: string) => void;
 }
 
-const EventSearchBar: React.FC<EventSearchBarProps> = (props) => {
+const EventSearchBar = (props: EventSearchBarProps) => {
   const t = useTranslations("events");
   const typeSelectOptions = [
     { value: "", label: t("allTypes") },

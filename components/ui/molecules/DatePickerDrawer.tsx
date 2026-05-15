@@ -1,7 +1,7 @@
 "use client";
 
 import { Calendar as IconCalendar } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import Calendar from "@/components/ui/atoms/Calendar";
 import Drawer from "@/components/ui/atoms/Drawer";
@@ -21,7 +21,7 @@ interface DatePickerDrawerProps {
   minDate?: Date;
 }
 
-const DatePickerDrawer: React.FC<DatePickerDrawerProps> = (props) => {
+const DatePickerDrawer = (props: DatePickerDrawerProps) => {
   const [open, setOpen] = useState(false);
 
   const startYear = props.startYear ?? 1930;

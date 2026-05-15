@@ -4,7 +4,7 @@ import {
   ChevronDown as IconChevronDown,
   ChevronUp as IconChevronUp,
 } from "lucide-react";
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 
 import Drawer from "@/components/ui/atoms/Drawer";
 import {
@@ -33,7 +33,7 @@ interface SelectorProps {
   className?: string;
 }
 
-const Selector: React.FC<SelectorProps> = (props) => {
+const Selector = (props: SelectorProps) => {
   const [open, setOpen] = useState(false);
   const isSmallScreen = useMediaQuery("(max-width: 767px)");
   const Icon = open ? IconChevronUp : IconChevronDown;

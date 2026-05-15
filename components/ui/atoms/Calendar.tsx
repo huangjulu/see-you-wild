@@ -343,7 +343,7 @@ interface CalendarProps {
   children?: React.ReactNode;
 }
 
-const _Calendar: React.FC<CalendarProps> = (props) => {
+const _Calendar = (props: CalendarProps) => {
   const size = props.size ?? "md";
   const config = resolveCalendarConfig(props.children);
 

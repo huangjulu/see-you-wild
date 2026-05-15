@@ -6,7 +6,7 @@ interface SectionProps extends React.HTMLAttributes<HTMLElement> {
   as?: "section" | "div" | "main";
 }
 
-const Section: React.FC<SectionProps> = (props) => {
+const Section = (props: SectionProps) => {
   const { as: Tag = "section", className, children, ...restProps } = props;
   return (
     <Tag
