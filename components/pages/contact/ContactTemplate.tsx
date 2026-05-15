@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
 import Heading from "@/components/ui/atoms/Heading";
 import Section from "@/components/ui/atoms/Section";
@@ -9,12 +9,12 @@ import { useTranslations } from "@/lib/i18n/client";
 import ContactForm from "./ContactForm";
 import TemplateSelector from "./TemplateSelector";
 
-const ContactTemplate: React.FC = () => {
+const ContactTemplate = () => {
   const t = useTranslations("contact");
   const [selectedTemplate, setSelectedTemplate] = useState("group4");
 
   return (
-    <main className="bg-page-gradient min-h-screen">
+    <main className="bg-page-gradient">
       <Section as="div" className="pt-24 pb-24">
         <div className="hidden lg:block lg:col-span-5 lg:pr-6">
           <div className="sticky top-24 h-[calc(100vh-8rem)]">

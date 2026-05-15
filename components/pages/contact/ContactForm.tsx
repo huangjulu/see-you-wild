@@ -2,15 +2,19 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle as IconCheckCircle } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import Button from "@/components/ui/atoms/Button";
 import Input from "@/components/ui/atoms/Input";
 import TextArea from "@/components/ui/atoms/TextArea";
 import Selector from "@/components/ui/molecules/Selector";
+import { contactApi } from "@/lib/api/contact.api";
 import { useTranslations } from "@/lib/i18n/client";
-import { contactFormSchema } from "@/lib/validations/contact";
+import {
+  type ContactFormInput,
+  contactFormSchema,
+} from "@/lib/validations/contact";
 
 interface ContactFormProps {
   template: string;
@@ -29,10 +33,9 @@ const TEMPLATE_PREFILLS: Record<
   custom: { activityType: "", groupSize: "", duration: "" },
 };
 
-const ContactForm: React.FC<ContactFormProps> = (props) => {
+const ContactForm = (props: ContactFormProps) => {
   const t = useTranslations("contact");
-  const [submitted, setSubmitted] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  const mutation = contactApi.useSubmit();
 
   const {
     register,
@@ -40,7 +43,7 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
     setValue,
     watch,
     reset,
-    formState: { errors, dirtyFields, isSubmitting },
+    formState: { errors, dirtyFields },
   } = useForm({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
@@ -86,21 +89,15 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
     [props.template, dirtyFields, setValue]
   );
 
-  async function handleContactSubmit(data: Record<string, unknown>) {
-    setSubmitError(null);
-    const res = await fetch("/api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+  async function handleContactSubmit(data: ContactFormInput) {
+    await mutation.mutateAsync(data, {
+      onSuccess: () => {
+        reset();
+      },
     });
-    if (!res.ok) {
-      setSubmitError(t("error.submitFailed"));
-      return;
-    }
-    setSubmitted(true);
   }
 
-  if (submitted) {
+  if (mutation.isSuccess) {
     return (
       <div className="flex flex-col items-center gap-2 py-12 text-center bg-white rounded-xl border border-neutral-100">
         <IconCheckCircle className="h-12 w-12 text-success mb-2" />
@@ -215,12 +212,14 @@ const ContactForm: React.FC<ContactFormProps> = (props) => {
         />
       </fieldset>
 
-      {submitError != null && (
-        <p className="typo-body text-sm text-critical">{submitError}</p>
+      {mutation.error != null && (
+        <p className="typo-body text-sm text-critical">
+          {t("error.submitFailed")}
+        </p>
       )}
 
-      <Button theme="solid" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? t("submitting") : t("submit")}
+      <Button theme="solid" className="w-full" disabled={mutation.isPending}>
+        {mutation.isPending ? t("submitting") : t("submit")}
       </Button>
     </form>
   );

@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 import { useTranslations } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 
@@ -12,7 +10,7 @@ interface TemplateSelectorProps {
 
 const TEMPLATE_OPTIONS = ["group4", "private", "custom"] as const;
 
-const TemplateSelector: React.FC<TemplateSelectorProps> = (props) => {
+const TemplateSelector = (props: TemplateSelectorProps) => {
   const t = useTranslations("contact");
 
   return (
@@ -35,7 +33,9 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = (props) => {
         ))}
       </div>
       <p className="typo-body-2 text-sm text-secondary">
-        {t(`templates.${props.value as (typeof TEMPLATE_OPTIONS)[number]}.description`)}
+        {t(
+          `templates.${props.value as (typeof TEMPLATE_OPTIONS)[number]}.description`
+        )}
       </p>
     </div>
   );
