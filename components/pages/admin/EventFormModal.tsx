@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X as IconX } from "lucide-react";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { DayPicker } from "react-day-picker";
 import { zhTW } from "react-day-picker/locale";
 import {
@@ -49,7 +49,7 @@ interface EventFormModalProps {
   event: EventListDto | null;
 }
 
-const EventFormModal: React.FC<EventFormModalProps> = (props) => {
+const EventFormModal = (props: EventFormModalProps) => {
   const { toast } = useToast();
   const isEditMode = props.event != null;
   const createMutation = adminApi.events.useCreate();
@@ -57,7 +57,7 @@ const EventFormModal: React.FC<EventFormModalProps> = (props) => {
   const uploadMutation = adminApi.uploadImage();
   const [pendingFiles, setPendingFiles] = useState<File[]>([]);
 
-  const lockedDates = React.useMemo(() => {
+  const lockedDates = useMemo(() => {
     if (!props.event) return [];
     const dates = props.event.registrations
       .map((r) => r.selected_date)
@@ -229,7 +229,7 @@ interface MultiImageUploadFieldProps {
   onUpdateAlt: (index: number, alt: string) => void;
 }
 
-const MultiImageUploadField: React.FC<MultiImageUploadFieldProps> = (props) => {
+const MultiImageUploadField = (props: MultiImageUploadFieldProps) => {
   const totalCount = props.existingImages.length + props.pendingFiles.length;
   const maxReached = totalCount >= 3;
 
@@ -327,7 +327,7 @@ interface EventFormFieldsProps {
   lockedDates: string[];
 }
 
-const EventFormFields: React.FC<EventFormFieldsProps> = (props) => {
+const EventFormFields = (props: EventFormFieldsProps) => {
   const lockedDates = props.lockedDates;
   const {
     register,
@@ -526,15 +526,15 @@ interface AvailableDatesPickerProps {
   error?: string;
 }
 
-const AvailableDatesPicker: React.FC<AvailableDatesPickerProps> = (props) => {
-  const selectedSet = React.useMemo(() => new Set(props.value), [props.value]);
+const AvailableDatesPicker = (props: AvailableDatesPickerProps) => {
+  const selectedSet = useMemo(() => new Set(props.value), [props.value]);
 
-  const selectedDates = React.useMemo(
+  const selectedDates = useMemo(
     () => props.value.map((d) => new Date(d + "T00:00:00")),
     [props.value]
   );
 
-  const lockedSet = React.useMemo(
+  const lockedSet = useMemo(
     () => new Set(props.lockedDates),
     [props.lockedDates]
   );
@@ -651,7 +651,7 @@ interface PickupLocationsInputProps {
   onChange: (locations: string[]) => void;
 }
 
-const PickupLocationsInput: React.FC<PickupLocationsInputProps> = (props) => {
+const PickupLocationsInput = (props: PickupLocationsInputProps) => {
   const [inputValue, setInputValue] = useState("");
 
   function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {

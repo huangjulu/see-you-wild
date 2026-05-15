@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
 import Overlay from "@/components/ui/atoms/Overlay";
 import TextArea from "@/components/ui/atoms/TextArea";
@@ -15,7 +15,7 @@ interface DeleteEventDialogProps {
   event: EventListDto | null;
 }
 
-const DeleteEventDialog: React.FC<DeleteEventDialogProps> = (props) => {
+const DeleteEventDialog = (props: DeleteEventDialogProps) => {
   const { toast } = useToast();
   const [reason, setReason] = useState("");
   const [error, setError] = useState<string | null>(null);

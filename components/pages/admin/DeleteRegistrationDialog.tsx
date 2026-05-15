@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 import Overlay from "@/components/ui/atoms/Overlay";
 import Dialog from "@/components/ui/molecules/Dialog";
 import { adminApi } from "@/lib/api/admin.api";
@@ -14,9 +12,7 @@ interface DeleteRegistrationDialogProps {
   registration: (RegistrationAdminDto & { eventTitle: string }) | null;
 }
 
-const DeleteRegistrationDialog: React.FC<DeleteRegistrationDialogProps> = (
-  props
-) => {
+const DeleteRegistrationDialog = (props: DeleteRegistrationDialogProps) => {
   const { toast } = useToast();
   const deleteMutation = adminApi.registrations.useDelete();
 

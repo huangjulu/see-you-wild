@@ -1,7 +1,7 @@
 "use client";
 
 import { Search as IconSearch } from "lucide-react";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 
 import AdminDashboardSkeleton from "@/components/pages/admin/AdminDashboardSkeleton";
 import DeleteEventDialog from "@/components/pages/admin/DeleteEventDialog";
@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 const TABLE_GRID =
   "grid grid-cols-[1.1fr_0.8fr_0.9fr_1.3fr_0.7fr_0.6fr_0.5fr_0.6fr_0.5fr_1fr] items-center gap-2 px-3";
 
-const AdminDashboard: React.FC = () => {
+const AdminDashboard = () => {
   const { toast } = useToast();
   const resendEmailMutation = adminApi.registrations.useResendEmail();
   const { data: events, isLoading } = adminApi.events.useList();

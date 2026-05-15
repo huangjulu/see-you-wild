@@ -1,17 +1,14 @@
-import QueryProvider from "@/components/providers/QueryProvider";
 import ToastProvider from "@/components/providers/ToastProvider";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
-const AdminLayout: React.FC<AdminLayoutProps> = (props) => {
+const AdminLayout = (props: AdminLayoutProps) => {
   return (
-    <QueryProvider>
-      <ToastProvider>
-        <div className="flex h-screen bg-background">{props.children}</div>
-      </ToastProvider>
-    </QueryProvider>
+    <ToastProvider>
+      <div className="flex h-screen bg-background">{props.children}</div>
+    </ToastProvider>
   );
 };
 

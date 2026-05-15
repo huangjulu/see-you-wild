@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 
 import Button from "@/components/ui/atoms/Button";
 import Heading from "@/components/ui/atoms/Heading";
@@ -9,7 +9,7 @@ import { adminApi } from "@/lib/api/admin.api";
 import { useTranslations } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 
-const AdminReviewContent: React.FC = () => {
+const AdminReviewContent = () => {
   const searchParams = useSearchParams();
   const t = useTranslations("adminReview");
 
@@ -148,7 +148,7 @@ const AdminReviewContent: React.FC = () => {
   );
 };
 
-const AdminReviewPage: React.FC = () => {
+const AdminReviewPage = () => {
   return (
     <Suspense>
       <AdminReviewContent />

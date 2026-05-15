@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import Selector from "@/components/ui/molecules/Selector";
 import AdminSidebar from "@/components/ui/organisms/AdminSidebar";
@@ -92,7 +92,7 @@ function formatRevenue(amount: number): string {
 
 interface AdminHistoryProps {}
 
-const AdminHistory: React.FC<AdminHistoryProps> = (props) => {
+const AdminHistory = (props: AdminHistoryProps) => {
   void props;
 
   const { data: events } = adminApi.events.useList();

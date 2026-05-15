@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Controller,
   FormProvider,
@@ -47,7 +47,7 @@ interface RegistrationFormModalProps {
   preselectedEventId: string | null;
 }
 
-const RegistrationFormModal: React.FC<RegistrationFormModalProps> = (props) => {
+const RegistrationFormModal = (props: RegistrationFormModalProps) => {
   const t = useTranslations("registration");
   const tValidation = useTranslations("validation");
   const { toast } = useToast();
@@ -74,7 +74,7 @@ const RegistrationFormModal: React.FC<RegistrationFormModalProps> = (props) => {
     [isEditMode, detailQuery.data]
   );
 
-  const formValues = React.useMemo(() => {
+  const formValues = useMemo(() => {
     if (!detailQuery.data) {
       return DEFUALT_VALUE;
     }
@@ -295,7 +295,7 @@ interface FieldsetEventProps {
   error: string | null;
 }
 
-const FieldsetEvent: React.FC<FieldsetEventProps> = (props) => {
+const FieldsetEvent = (props: FieldsetEventProps) => {
   return (
     <fieldset className="space-y-3">
       <Selector
@@ -317,7 +317,7 @@ FieldsetEvent.displayName = "FieldsetEvent";
 // Fieldset: Basic
 // ---------------------------------------------------------------------------
 
-const FieldsetBasic: React.FC = () => {
+const FieldsetBasic = () => {
   const t = useTranslations("registration");
   const { register, control, formState } =
     useFormContext<RegistrationFormInput>();
@@ -408,7 +408,7 @@ FieldsetBasic.displayName = "FieldsetBasic";
 // Fieldset: Identity
 // ---------------------------------------------------------------------------
 
-const FieldsetIdentity: React.FC = () => {
+const FieldsetIdentity = () => {
   const t = useTranslations("registration");
   const { control, formState } = useFormContext<RegistrationFormInput>();
   const errors = formState.errors;
@@ -478,7 +478,7 @@ FieldsetIdentity.displayName = "FieldsetIdentity";
 // Fieldset: Emergency
 // ---------------------------------------------------------------------------
 
-const FieldsetEmergency: React.FC = () => {
+const FieldsetEmergency = () => {
   const t = useTranslations("registration");
   const { register, control, formState } =
     useFormContext<RegistrationFormInput>();
@@ -554,7 +554,7 @@ FieldsetEmergency.displayName = "FieldsetEmergency";
 // Fieldset: Activity
 // ---------------------------------------------------------------------------
 
-const FieldsetActivity: React.FC = () => {
+const FieldsetActivity = () => {
   const t = useTranslations("registration");
   const { register, formState } = useFormContext<RegistrationFormInput>();
   const errors = formState.errors;
@@ -617,7 +617,7 @@ FieldsetActivity.displayName = "FieldsetActivity";
 // Fieldset: Transport
 // ---------------------------------------------------------------------------
 
-const FieldsetTransport: React.FC = () => {
+const FieldsetTransport = () => {
   const t = useTranslations("registration");
   const { register, watch, control, formState } =
     useFormContext<RegistrationFormInput>();

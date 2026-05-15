@@ -1,39 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
 import Button from "@/components/ui/atoms/Button";
 import Heading from "@/components/ui/atoms/Heading";
 import Input from "@/components/ui/atoms/Input";
+import { authApi } from "@/lib/api/auth.api";
 import { useTranslations } from "@/lib/i18n/client";
-import { createSupabaseBrowser } from "@/lib/supabase/browser";
 import { cn } from "@/lib/utils";
 
-const AdminLoginPage: React.FC = () => {
+const AdminLoginPage = () => {
   const t = useTranslations("adminLogin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const loginMutation = authApi.useLogin();
 
-  async function handleLoginSubmit(e: React.FormEvent) {
+  function handleLoginSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError(null);
-    setLoading(true);
-
-    const supabase = createSupabaseBrowser();
-    const { error: authError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (authError) {
-      setError(t("error"));
-      setLoading(false);
-      return;
-    }
-
-    window.location.href = window.location.pathname.replace("/login", "");
+    loginMutation.mutate({ email, password });
   }
 
   return (
@@ -76,12 +60,16 @@ const AdminLoginPage: React.FC = () => {
           required
         />
 
-        {error != null && (
-          <p className="typo-ui text-sm text-critical">{error}</p>
+        {loginMutation.error != null && (
+          <p className="typo-ui text-sm text-critical">{t("error")}</p>
         )}
 
-        <Button theme="solid" disabled={loading} className="w-full">
-          {loading ? "..." : t("submit")}
+        <Button
+          theme="solid"
+          disabled={loginMutation.isPending}
+          className="w-full"
+        >
+          {loginMutation.isPending ? "..." : t("submit")}
         </Button>
       </form>
     </main>
