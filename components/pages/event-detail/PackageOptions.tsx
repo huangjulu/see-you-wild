@@ -202,6 +202,9 @@ const PackageOptions = (props: PackageOptionsProps) => {
           )}
         >
           <div className="overflow-hidden space-y-4">
+            <p className="typo-ui text-sm text-accent">
+              {t("carpoolLockWarning")}
+            </p>
             {/* Carpool role */}
             <div className="space-y-2">
               <Heading.H4 variant="ui">{t("carpoolRole")}</Heading.H4>

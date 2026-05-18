@@ -227,7 +227,8 @@
     "driverOverflowNote": "If enough drivers are available, you'll be reassigned as a passenger. You may also request to switch to self-arrival.",
     "seatCount": "Seat capacity",
     "seatCountOption": "{count} seats",
-    "selectSeatCount": "Select seats"
+    "selectSeatCount": "Select seats",
+    "carpoolLockWarning": "Once you choose carpool, you cannot switch back to self-arrival. Your carpool role will be arranged by the organizer before the event."
   },
   "registration": {
     "title": "Registration Form",

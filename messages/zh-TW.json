@@ -218,7 +218,8 @@
     "driverOverflowNote": "若出車者已足將自動轉為乘客，亦可來信改為自行前往",
     "seatCount": "可載人數",
     "seatCountOption": "{count} 人",
-    "selectSeatCount": "選擇人數"
+    "selectSeatCount": "選擇人數",
+    "carpoolLockWarning": "選擇共乘後將無法自行更改為自行前往，共乘角色將由主辦方於活動前統一安排通知。"
   },
   "registration": {
     "title": "報名表單",
