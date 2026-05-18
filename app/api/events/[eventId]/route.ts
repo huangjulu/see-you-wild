@@ -1,6 +1,11 @@
 import { handleError } from "@/lib/api/handle-error";
 import { apiOk } from "@/lib/api-response";
-import { EventNotFoundError, InternalError } from "@/lib/errors/domain";
+import {
+  CarpoolCutoffInPastError,
+  CarpoolDatesLockedError,
+  EventNotFoundError,
+  InternalError,
+} from "@/lib/errors/domain";
 import { getSupabase } from "@/lib/supabase/client";
 import type { EventRow } from "@/lib/types/database";
 import { deleteEventSchema, updateEventSchema } from "@/lib/validations/events";
@@ -35,6 +40,51 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     const { eventId } = await params;
     const body = await request.json();
     const parsed = updateEventSchema.parse(body);
+
+    const changingCarpoolDates =
+      parsed.start_date !== undefined ||
+      parsed.carpool_cutoff_days !== undefined;
+
+    if (changingCarpoolDates) {
+      // Guard 1: carpool assignments already exist → block modification
+      const { data: assignments } = await getSupabase()
+        .from("carpool_assignments")
+        .select("id")
+        .eq("event_id", eventId);
+
+      if (assignments && assignments.length > 0) {
+        throw new CarpoolDatesLockedError();
+      }
+
+      // Guard 2: new cutoff date must not be in the past
+      const { data: existing } = await getSupabase()
+        .from("events")
+        .select("start_date, carpool_cutoff_days")
+        .eq("id", eventId)
+        .single();
+
+      if (!existing) {
+        throw new EventNotFoundError();
+      }
+
+      const newStartDate = parsed.start_date ?? existing.start_date;
+      const newCutoffDays =
+        parsed.carpool_cutoff_days ?? existing.carpool_cutoff_days ?? 3;
+
+      // Parse YYYY-MM-DD parts to avoid UTC-vs-local midnight mismatch when
+      // new Date("YYYY-MM-DD") creates a UTC midnight that compares wrong in +8 timezones.
+      const [year, month, day] = newStartDate
+        .split("-")
+        .map((s) => parseInt(s, 10));
+      const cutoffDate = new Date(year, month - 1, day - newCutoffDays);
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (cutoffDate < today) {
+        throw new CarpoolCutoffInPastError();
+      }
+    }
 
     const { data, error } = await getSupabase()
       .from("events")

@@ -84,6 +84,22 @@ export class HasCarpoolAssignmentError extends DomainError {
   }
 }
 
+export class CarpoolDatesLockedError extends DomainError {
+  readonly status = 400;
+  constructor() {
+    super(
+      "Cannot modify start_date or carpool_cutoff_days after carpool assignments have been generated"
+    );
+  }
+}
+
+export class CarpoolCutoffInPastError extends DomainError {
+  readonly status = 400;
+  constructor() {
+    super("Cutoff date cannot be in the past");
+  }
+}
+
 /**
  * Catch-all for unexpected failures (DB connection drops, unknown PG errors, etc.).
  * `cause` carries the original error for server-side logging — never serialised to the client.
