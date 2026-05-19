@@ -12,6 +12,7 @@ interface SendRegistrationEmailParams {
   amountDue: number;
   expiresAt: string;
   baseUrl: string;
+  transport?: "self" | "carpool";
 }
 
 export async function sendRegistrationEmail(
@@ -28,6 +29,13 @@ export async function sendRegistrationEmail(
       day: "numeric",
     }
   );
+
+  const carpoolNotice =
+    params.transport === "carpool"
+      ? `<tr><td style="padding: 20px 24px; font-size: 14px; color: #6b7280; line-height: 1.6;">
+      你已選擇共乘方案，共乘角色將由主辦方於活動前統一安排，届時會另行通知。
+    </td></tr>`
+      : "";
 
   const html = `<!DOCTYPE html>
 <html lang="zh-Hant" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -195,6 +203,9 @@ export async function sendRegistrationEmail(
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr><td style="padding-top: 28px;"></td></tr>
               </table>
+
+              <!-- Carpool notice (conditional) -->
+              ${carpoolNotice}
 
               <!-- CTA: Payment confirmation -->
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">

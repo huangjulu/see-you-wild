@@ -46,6 +46,7 @@ export async function POST(_request: Request, { params }: RouteParams) {
       amountDue: typedRegistration.amount_due,
       expiresAt: typedRegistration.expires_at,
       baseUrl: getEnv().canonicalUrl,
+      transport: typedRegistration.transport,
     });
 
     return apiOk({ sent: true });
