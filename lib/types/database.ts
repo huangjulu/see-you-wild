@@ -71,6 +71,7 @@ export interface CarpoolAssignmentRow {
   final_role: FinalRole;
   refund_amount: number;
   created_at: string;
+  notified_at: string | null;
 }
 
 // ============================================
