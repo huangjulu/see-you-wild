@@ -87,31 +87,16 @@ function makeRegsChain(result: { data: unknown; error: unknown }) {
   };
 }
 
-function makeDeleteChain(result: { error: unknown }) {
-  return {
-    delete: () => ({
-      eq: vi.fn().mockResolvedValue(result),
-    }),
-  };
-}
-
-function makeInsertChain(result: { data: unknown; error: unknown }) {
-  return {
-    insert: () => ({
-      select: vi.fn().mockResolvedValue(result),
-    }),
-  };
-}
-
-function setupSupabaseMock(chains: unknown[]) {
+function setupSupabaseMock(chains: unknown[], rpcResult?: { error: unknown }) {
   const fromMock = vi.fn();
   for (const chain of chains) {
     fromMock.mockReturnValueOnce(chain);
   }
   // SupabaseClient is opaque 3rd-party type; building a full mock is impractical.
-  // assignCarpool only uses .from(), so we narrow via unknown to the partial shape we control.
+  // assignCarpool uses .from() and .rpc(), so we narrow via unknown to the partial shape we control.
   vi.mocked(getSupabase).mockReturnValue({
     from: fromMock,
+    rpc: vi.fn().mockResolvedValue(rpcResult ?? { error: null }),
   } as unknown as SupabaseClient);
 }
 
@@ -377,35 +362,20 @@ describe("assignCarpool", () => {
     await expect(assignCarpool("evt-1")).rejects.toThrow(InternalError);
   });
 
-  it("delete 舊指派失敗時 throw InternalError", async () => {
+  it("RPC replace 失敗時 throw InternalError", async () => {
     const driver = makeReg({
       id: "drv-1",
       carpool_role: "driver",
       seat_count: 3,
     });
 
-    setupSupabaseMock([
-      makeEventChain({ data: baseEvent, error: null }),
-      makeRegsChain({ data: [driver], error: null }),
-      makeDeleteChain({ error: { message: "delete failed" } }),
-    ]);
-
-    await expect(assignCarpool("evt-1")).rejects.toThrow(InternalError);
-  });
-
-  it("insert 新指派失敗時 throw InternalError", async () => {
-    const driver = makeReg({
-      id: "drv-1",
-      carpool_role: "driver",
-      seat_count: 3,
-    });
-
-    setupSupabaseMock([
-      makeEventChain({ data: baseEvent, error: null }),
-      makeRegsChain({ data: [driver], error: null }),
-      makeDeleteChain({ error: null }),
-      makeInsertChain({ data: null, error: { message: "insert failed" } }),
-    ]);
+    setupSupabaseMock(
+      [
+        makeEventChain({ data: baseEvent, error: null }),
+        makeRegsChain({ data: [driver], error: null }),
+      ],
+      { error: { message: "rpc failed" } }
+    );
 
     await expect(assignCarpool("evt-1")).rejects.toThrow(InternalError);
   });
