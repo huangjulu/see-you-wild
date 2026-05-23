@@ -8,6 +8,9 @@ export const INSTAGRAM_URL =
   "https://www.instagram.com/c_you_wild?igsh=MTZ5eXU1aWNna3Zqdw==";
 export const INSTAGRAM_HANDLE = "@c_you_wild";
 
+export const LINE_OA_URL = "https://line.me/R/ti/p/@427qyovq";
+export const CONTACT_EMAIL = "seeyouwild.tw@gmail.com";
+
 interface EventConfig {
   id: string;
   image: string;
