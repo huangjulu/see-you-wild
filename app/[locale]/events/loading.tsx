@@ -1,7 +1,7 @@
 import Section from "@/components/ui/atoms/Section";
 import Skeleton from "@/components/ui/atoms/Skeleton";
 
-const EventsLoading: React.FC = () => {
+const EventsLoading = () => {
   return (
     <main className="bg-page-gradient min-h-screen">
       {/* Header area */}

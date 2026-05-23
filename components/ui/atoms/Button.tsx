@@ -21,7 +21,7 @@ interface ButtonProps {
 // link 不套用（link 是 inline text，沒有 box）；base 是首頁 Hero 的大 CTA，自成一格。
 const BOX_LAYOUT = "items-center justify-center gap-2 px-4 py-2 rounded-md";
 
-const Button: React.FC<ButtonProps> = (props) => {
+const Button = (props: ButtonProps) => {
   let themeClass: string;
   switch (props.theme) {
     case "solid":

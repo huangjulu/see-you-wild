@@ -8,7 +8,7 @@ interface FilterTagProps {
   className?: string;
 }
 
-const FilterTag: React.FC<FilterTagProps> = (props) => {
+const FilterTag = (props: FilterTagProps) => {
   return (
     <span
       className={cn(

@@ -5,7 +5,7 @@ interface TagProps {
   className?: string;
 }
 
-const Tag: React.FC<TagProps> = (props) => {
+const Tag = (props: TagProps) => {
   return (
     <span
       className={cn(

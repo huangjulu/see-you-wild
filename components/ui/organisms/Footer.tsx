@@ -4,7 +4,7 @@ import { getTranslations } from "@/lib/i18n/server";
 
 import LargeBrandText from "../molecules/LargeBrandText";
 
-const Footer: React.FC = async () => {
+const Footer = async () => {
   const t = await getTranslations("common");
   const year = new Date().getFullYear();
 

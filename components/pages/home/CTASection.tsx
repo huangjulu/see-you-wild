@@ -1,7 +1,7 @@
 import CTACard from "@/components/pages/home/CTACard";
 import { getTranslations } from "@/lib/i18n/server";
 
-const CTASection: React.FC = async () => {
+const CTASection = async () => {
   const t = await getTranslations("home.cta");
 
   return (

@@ -10,7 +10,7 @@ interface PageProps {
   params: Promise<{ locale: string; id: string }>;
 }
 
-const EventDetailPage: React.FC<PageProps> = async (props) => {
+const EventDetailPage = async (props: PageProps) => {
   const { id } = await props.params;
   const { data } = await getSupabase()
     .from("events")

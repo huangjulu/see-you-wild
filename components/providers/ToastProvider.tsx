@@ -55,7 +55,7 @@ interface ToastProviderProps {
   children: React.ReactNode;
 }
 
-const ToastProvider: React.FC<ToastProviderProps> = (props) => {
+const ToastProvider = (props: ToastProviderProps) => {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const timersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(
     new Map()

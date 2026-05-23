@@ -57,7 +57,7 @@ interface RegistrationModalProps {
   paymentDays: number;
 }
 
-const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
+const RegistrationModal = (props: RegistrationModalProps) => {
   const t = useTranslations("registration");
   const tValidation = useTranslations("validation");
   const formRef = useRef<HTMLFormElement>(null);
@@ -254,7 +254,7 @@ interface SuccessMainContentProps {
   email: string;
 }
 
-const SuccessMainContent: React.FC<SuccessMainContentProps> = (props) => {
+const SuccessMainContent = (props: SuccessMainContentProps) => {
   const t = useTranslations("registration");
   const format = useFormatter();
   const [copied, setCopied] = useState(false);
@@ -355,7 +355,7 @@ interface FormMainContentProps {
   onSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
 }
 
-const FormMainContent: React.FC<FormMainContentProps> = (props) => {
+const FormMainContent = (props: FormMainContentProps) => {
   const { formState } = useFormContext<RegistrationFormInput>();
 
   return (
@@ -386,7 +386,7 @@ interface FormRegistrationProps {
   pickupLocations: string[];
 }
 
-const FormRegistration: React.FC<FormRegistrationProps> = (props) => {
+const FormRegistration = (props: FormRegistrationProps) => {
   return (
     <div className="space-y-6">
       {props.step === 0 && <FormStepBasic />}
@@ -406,7 +406,7 @@ const FormRegistration: React.FC<FormRegistrationProps> = (props) => {
 
 FormRegistration.displayName = "FormRegistration";
 
-const FormStepBasic: React.FC = () => {
+const FormStepBasic = () => {
   const t = useTranslations("registration");
   const { register, control, formState } =
     useFormContext<RegistrationFormInput>();
@@ -493,7 +493,7 @@ const FormStepBasic: React.FC = () => {
 
 FormStepBasic.displayName = "FormStepBasic";
 
-const FormStepIdentity: React.FC = () => {
+const FormStepIdentity = () => {
   const t = useTranslations("registration");
   const { control, formState } = useFormContext<RegistrationFormInput>();
   const errors = formState.errors;
@@ -559,7 +559,7 @@ const FormStepIdentity: React.FC = () => {
 
 FormStepIdentity.displayName = "FormStepIdentity";
 
-const FormStepEmergency: React.FC = () => {
+const FormStepEmergency = () => {
   const t = useTranslations("registration");
   const { register, control, formState } =
     useFormContext<RegistrationFormInput>();
@@ -631,7 +631,7 @@ const FormStepEmergency: React.FC = () => {
 
 FormStepEmergency.displayName = "FormStepEmergency";
 
-const FormStepActivity: React.FC = () => {
+const FormStepActivity = () => {
   const t = useTranslations("registration");
   const { register, formState } = useFormContext<RegistrationFormInput>();
   const errors = formState.errors;
@@ -696,7 +696,7 @@ interface FormStepTransportProps {
   pickupLocations: string[];
 }
 
-const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
+const FormStepTransport = (props: FormStepTransportProps) => {
   const t = useTranslations("registration");
   const format = useFormatter();
   const { register, watch, control, formState } =

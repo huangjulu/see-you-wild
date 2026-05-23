@@ -14,7 +14,7 @@ interface IdNumberInputProps {
   className?: string;
 }
 
-const IdNumberInput: React.FC<IdNumberInputProps> = (props) => {
+const IdNumberInput = (props: IdNumberInputProps) => {
   const t = useTranslations("registration");
 
   const isTaiwan = props.country === "TW";

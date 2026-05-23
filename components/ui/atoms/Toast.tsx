@@ -50,7 +50,7 @@ const variantConfig = {
   }
 >;
 
-const Toast: React.FC<ToastProps> = (props) => {
+const Toast = (props: ToastProps) => {
   const config = variantConfig[props.variant];
   const Icon = config.icon;
 

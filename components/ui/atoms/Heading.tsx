@@ -71,24 +71,12 @@ function HeadingBase(props: HeadingProps) {
 
 type LevelProps = Omit<HeadingProps, "level">;
 
-const H1: React.FC<LevelProps> = (props) => (
-  <HeadingBase {...props} level="h1" />
-);
-const H2: React.FC<LevelProps> = (props) => (
-  <HeadingBase {...props} level="h2" />
-);
-const H3: React.FC<LevelProps> = (props) => (
-  <HeadingBase {...props} level="h3" />
-);
-const H4: React.FC<LevelProps> = (props) => (
-  <HeadingBase {...props} level="h4" />
-);
-const H5: React.FC<LevelProps> = (props) => (
-  <HeadingBase {...props} level="h5" />
-);
-const H6: React.FC<LevelProps> = (props) => (
-  <HeadingBase {...props} level="h6" />
-);
+const H1 = (props: LevelProps) => <HeadingBase {...props} level="h1" />;
+const H2 = (props: LevelProps) => <HeadingBase {...props} level="h2" />;
+const H3 = (props: LevelProps) => <HeadingBase {...props} level="h3" />;
+const H4 = (props: LevelProps) => <HeadingBase {...props} level="h4" />;
+const H5 = (props: LevelProps) => <HeadingBase {...props} level="h5" />;
+const H6 = (props: LevelProps) => <HeadingBase {...props} level="h6" />;
 
 H1.displayName = "Heading.H1";
 H2.displayName = "Heading.H2";

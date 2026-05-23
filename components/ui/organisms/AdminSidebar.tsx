@@ -14,7 +14,7 @@ const NAV_ITEMS = [
   { href: "/admin/history", icon: IconArchive, label: "歷史" },
 ] as const;
 
-const AdminSidebar: React.FC = () => {
+const AdminSidebar = () => {
   const pathname = usePathname();
 
   return (

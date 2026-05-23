@@ -1,7 +1,7 @@
 import Section from "@/components/ui/atoms/Section";
 import Skeleton from "@/components/ui/atoms/Skeleton";
 
-const EventDetailLoading: React.FC = () => {
+const EventDetailLoading = () => {
   return (
     <main className="bg-page-gradient pb-24 md:pb-16">
       {/* Title */}

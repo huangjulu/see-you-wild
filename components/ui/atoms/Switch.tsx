@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 
 type SwitchProps = React.ComponentProps<"input">;
 
-const Switch: React.FC<SwitchProps> = (props) => {
+const Switch = (props: SwitchProps) => {
   const onSwitchChange: React.ChangeEventHandler<HTMLInputElement> = (
     event
   ) => {

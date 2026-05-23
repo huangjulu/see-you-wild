@@ -11,7 +11,7 @@ interface OverlayProps {
   children: React.ReactNode;
 }
 
-const Overlay: React.FC<OverlayProps> = (props) => {
+const Overlay = (props: OverlayProps) => {
   useEffect(
     function lockBodyScroll() {
       if (!props.open) return;

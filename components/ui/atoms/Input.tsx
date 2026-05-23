@@ -23,15 +23,13 @@ interface InputProps extends Omit<
   label?: string;
 }
 
-const Input: React.FC<InputProps> = (props) => {
+const Input = (props: InputProps) => {
   return <BaseInput {...props} />;
 };
 
 Input.displayName = "Input";
 
-const PasswordInput: React.FC<Omit<InputProps, "type" | "endIcon">> = (
-  props
-) => {
+const PasswordInput = (props) => {
   const [showPassword, setShowPassword] = useState(false);
   const resolvedSize = props.size ?? "md";
 
@@ -71,7 +69,7 @@ interface BaseInputProps extends InputProps {
   endIconIsInteractive?: boolean;
 }
 
-const BaseInput: React.FC<BaseInputProps> = (props) => {
+const BaseInput = (props: BaseInputProps) => {
   const generatedId = useId();
   const inputId = props.id ?? generatedId;
   const resolvedSize = props.size ?? "md";

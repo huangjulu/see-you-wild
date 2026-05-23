@@ -8,7 +8,7 @@ import { getSupabase } from "@/lib/supabase/client";
 import type { EventRow } from "@/lib/types/database";
 import { toEventListingItem } from "@/lib/types/database";
 
-const EventsPage: React.FC<PageProps> = async (props) => {
+const EventsPage = async (props: PageProps) => {
   const { locale } = await props.params;
 
   if (!isValidLocale(locale)) {

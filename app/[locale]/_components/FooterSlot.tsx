@@ -8,7 +8,7 @@ interface FooterSlotProps {
 
 const ADMIN_PATH_PATTERN = /\/admin(\/|$)/;
 
-const FooterSlot: React.FC<FooterSlotProps> = (props) => {
+const FooterSlot = (props: FooterSlotProps) => {
   const pathname = usePathname();
 
   if (ADMIN_PATH_PATTERN.test(pathname)) return null;

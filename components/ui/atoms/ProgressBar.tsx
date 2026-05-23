@@ -7,7 +7,7 @@ interface ProgressBarProps {
   className?: string;
 }
 
-const ProgressBar: React.FC<ProgressBarProps> = (props) => {
+const ProgressBar = (props: ProgressBarProps) => {
   const percentage = Math.round(
     ((props.currentStep + 1) / props.totalSteps) * 100
   );

@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 const TABLE_GRID =
   "grid grid-cols-[1.2fr_1fr_1.4fr_0.8fr_0.7fr_0.5fr_0.7fr_0.6fr_1fr] items-center gap-2 px-3";
 
-const AdminDashboardSkeleton: React.FC = () => {
+const AdminDashboardSkeleton = () => {
   return (
     <main className="flex flex-1 flex-col overflow-hidden">
       {/* SummaryBar placeholder */}

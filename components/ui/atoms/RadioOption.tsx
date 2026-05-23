@@ -19,7 +19,7 @@ const VARIANT_CLASSES: Record<RadioOptionVariant, string> = {
   ),
 };
 
-const RadioOption: React.FC<RadioOptionProps> = (props) => {
+const RadioOption = (props: RadioOptionProps) => {
   const {
     className,
     label,

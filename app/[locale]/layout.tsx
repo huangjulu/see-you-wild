@@ -21,7 +21,7 @@ type LocaleLayoutProps = PageProps & {
   children: React.ReactNode;
 };
 
-const LocaleLayout: React.FC<LocaleLayoutProps> = async (props) => {
+const LocaleLayout = async (props: LocaleLayoutProps) => {
   const locale = (await props.params).locale;
 
   if (!isValidLocale(locale)) {

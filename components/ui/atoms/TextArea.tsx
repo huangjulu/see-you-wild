@@ -13,7 +13,7 @@ interface TextAreaProps extends Omit<
   label?: string;
 }
 
-const TextArea: React.FC<TextAreaProps> = (props) => {
+const TextArea = (props: TextAreaProps) => {
   const generatedId = useId();
   const textareaId = props.id ?? generatedId;
 

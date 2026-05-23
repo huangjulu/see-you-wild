@@ -2,7 +2,7 @@ import SocialIcon from "@/components/ui/atoms/SocialIcon";
 import { INSTAGRAM_URL } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
-const SocialLinks: React.FC<{ className?: string }> = (props) => {
+const SocialLinks = (props: { className?: string }) => {
   return (
     <nav
       aria-label="Social media links"

@@ -17,7 +17,7 @@ interface PaymentReviewDialogProps {
   } | null;
 }
 
-const PaymentReviewDialog: React.FC<PaymentReviewDialogProps> = (props) => {
+const PaymentReviewDialog = (props: PaymentReviewDialogProps) => {
   const { toast } = useToast();
   const { mutate, isPending } = adminApi.registrations.useConfirmPayment();
 

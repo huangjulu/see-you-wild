@@ -262,11 +262,11 @@ const typoScale = [
 
 /* ─── Components ─── */
 
-const Swatch: React.FC<{
+const Swatch = (props: {
   color: string;
   label: string;
   highlight?: boolean;
-}> = (props) => (
+}) => (
   <div className="flex flex-col items-center gap-1">
     <div
       style={{ backgroundColor: props.color }}
@@ -282,11 +282,11 @@ const Swatch: React.FC<{
   </div>
 );
 
-const ScaleRow: React.FC<{
+const ScaleRow = (props: {
   name: string;
   scale: Record<string, string>;
   base: string;
-}> = (props) => (
+}) => (
   <div className="mb-8">
     <h3 className="typo-ui mb-3 text-sm text-primary">{props.name}</h3>
     <div className="flex flex-wrap gap-3">
@@ -302,7 +302,7 @@ const ScaleRow: React.FC<{
   </div>
 );
 
-const SectionLabel: React.FC<{ children: React.ReactNode }> = (props) => (
+const SectionLabel = (props: { children: React.ReactNode }) => (
   <h2 className="mb-6 text-xs font-medium uppercase tracking-widest text-neutral-400">
     {props.children}
   </h2>
@@ -334,7 +334,7 @@ const sections = [
   { id: "token-map", label: "Token Map" },
 ];
 
-const PalettePreviewPage: React.FC = () => {
+const PalettePreviewPage = () => {
   const [activeSection, setActiveSection] = useState<string>("color-scales");
   const [switchOn, setSwitchOn] = useState<boolean>(false);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
@@ -1839,7 +1839,7 @@ const SEAT_OPTIONS = [
   { value: "5", label: "5 人" },
 ];
 
-const SelectorDemoSection: React.FC = () => {
+const SelectorDemoSection = () => {
   const [basicValue, setBasicValue] = useState("");
   const [errorValue, setErrorValue] = useState("");
 

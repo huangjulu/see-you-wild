@@ -16,7 +16,7 @@ interface MobileNavProps {
   ctaHref: string;
 }
 
-const MobileNav: React.FC<MobileNavProps> = (props) => {
+const MobileNav = (props: MobileNavProps) => {
   useEffect(
     function lockBodyScroll() {
       if (!props.open) return;

@@ -13,7 +13,7 @@ import { Link } from "@/lib/i18n/navigation";
 const NAV_LINK_CLASS =
   "text-sm hover:[text-shadow:0_0.5px_16px_color-mix(in_srgb,var(--color-brand-800)_80%,transparent)] hover:text-white focus-visible:opacity-100 focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-current rounded-sm";
 
-const PageHeader: React.FC = () => {
+const PageHeader = () => {
   const t = useTranslations("common");
   const [menuOpen, setMenuOpen] = useState(false);
 

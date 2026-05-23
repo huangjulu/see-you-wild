@@ -6,7 +6,7 @@ interface TextProps {
   muted?: boolean;
 }
 
-const Text: React.FC<TextProps> = (props) => {
+const Text = (props: TextProps) => {
   return (
     <p
       className={cn(

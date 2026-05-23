@@ -1,7 +1,8 @@
 import { Suspense } from "react";
+
 import PaymentRefForm from "./PaymentRefForm";
 
-const PaymentRefPage: React.FC = () => {
+const PaymentRefPage = () => {
   return (
     <Suspense>
       <PaymentRefForm />

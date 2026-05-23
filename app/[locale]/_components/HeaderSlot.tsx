@@ -8,7 +8,7 @@ import PageHeader from "@/components/ui/organisms/PageHeader";
 const HOME_PATH_PATTERN = /^\/(zh-TW|en)?\/?$/;
 const ADMIN_PATH_PATTERN = /\/admin(\/|$)/;
 
-const HeaderSlot: React.FC = () => {
+const HeaderSlot = () => {
   const pathname = usePathname();
 
   if (ADMIN_PATH_PATTERN.test(pathname)) return null;

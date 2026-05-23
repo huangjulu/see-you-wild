@@ -7,7 +7,7 @@ interface QueryProviderProps {
   children: React.ReactNode;
 }
 
-const QueryProvider: React.FC<QueryProviderProps> = (props) => {
+const QueryProvider = (props: QueryProviderProps) => {
   const client = useRef<QueryClient | null>(null);
   if (client.current == null) {
     client.current = new QueryClient({

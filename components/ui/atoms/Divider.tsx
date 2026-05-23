@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-const Divider: React.FC<{ className?: string }> = (props) => {
+const Divider = (props: { className?: string }) => {
   return (
     <div
       className={cn("flex items-center justify-center py-12", props.className)}

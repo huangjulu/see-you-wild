@@ -5,7 +5,7 @@ interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   rowClassName?: string;
 }
 
-const Skeleton: React.FC<SkeletonProps> = (props) => {
+const Skeleton = (props: SkeletonProps) => {
   const { rows = 1, rowClassName, className, ...rest } = props;
 
   if (rows === 1) {

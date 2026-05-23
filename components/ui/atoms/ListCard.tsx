@@ -32,7 +32,7 @@ const sizeConfig = {
   },
 } as const;
 
-const ListCard: React.FC<ListCardProps> = (props) => {
+const ListCard = (props: ListCardProps) => {
   const config = sizeConfig[props.size ?? "md"];
 
   return (

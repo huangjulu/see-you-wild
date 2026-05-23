@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 import { useTranslations } from "@/lib/i18n/client";
 
-const CookiePopup: React.FC = () => {
+const CookiePopup = () => {
   const t = useTranslations("common");
   const [isVisible, setIsVisible] = useState(false);
 

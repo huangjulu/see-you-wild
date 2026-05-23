@@ -18,7 +18,7 @@ interface EventCardProps {
   imageAlt: string;
 }
 
-const EventCard: React.FC<EventCardProps> = (props) => {
+const EventCard = (props: EventCardProps) => {
   const formattedPrice = props.basePrice.toLocaleString("zh-TW");
 
   return (

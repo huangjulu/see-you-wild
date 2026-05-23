@@ -12,7 +12,7 @@ type LocaleErrorProps = {
   reset: () => void;
 };
 
-const LocaleError: React.FC<LocaleErrorProps> = (props) => {
+const LocaleError = (props: LocaleErrorProps) => {
   const t = useTranslations("common.error");
 
   useEffect(

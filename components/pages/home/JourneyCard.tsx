@@ -8,7 +8,7 @@ interface JourneyCardProps {
   href?: string;
 }
 
-const JourneyCard: React.FC<JourneyCardProps> = (props) => {
+const JourneyCard = (props: JourneyCardProps) => {
   const content = (
     <div className="relative h-80 md:h-100 rounded-2xl overflow-hidden">
       <img

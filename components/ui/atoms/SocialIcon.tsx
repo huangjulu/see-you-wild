@@ -27,7 +27,7 @@ const icons = {
   ),
 };
 
-const SocialIcon: React.FC<SocialIconProps> = (props) => {
+const SocialIcon = (props: SocialIconProps) => {
   return (
     <a
       href={props.href}

@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 const NAV_LINK_CLASS =
   "text-sm hover:[text-shadow:0_0.5px_16px_color-mix(in_srgb,var(--color-brand-800)_80%,transparent)] hover:text-white focus-visible:opacity-100 focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-current rounded-sm";
 
-const HomeHeader: React.FC = () => {
+const HomeHeader = () => {
   const t = useTranslations("common");
   const scrolled = useScrolled(50);
 
@@ -47,7 +47,6 @@ const HomeHeader: React.FC = () => {
             className="flex items-center gap-3 -translate-x-2"
             aria-label={t("siteName")}
           >
-            <Logo size="sm" />
             <span className="font-serif text-lg font-semibold hidden sm:inline [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-primary)_50%,transparent)]">
               {t("siteName")}
             </span>

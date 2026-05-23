@@ -18,7 +18,7 @@ interface CTACardProps {
 
 const MAX_TILT = 6;
 
-const CTACard: React.FC<CTACardProps> = (props) => {
+const CTACard = (props: CTACardProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
 

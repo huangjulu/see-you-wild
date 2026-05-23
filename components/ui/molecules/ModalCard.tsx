@@ -194,7 +194,7 @@ interface ModalCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
 }
 
-const _ModalCard: React.FC<ModalCardProps> = (props) => {
+const _ModalCard = (props: ModalCardProps) => {
   const { className, children, ...restProps } = props;
   const slots = resolveSlots<ModalCardSlot>(children);
 

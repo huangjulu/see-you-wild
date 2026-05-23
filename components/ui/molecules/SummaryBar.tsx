@@ -4,7 +4,7 @@ interface SummaryBarProps {
   count: number;
 }
 
-const SummaryBar: React.FC<SummaryBarProps> = (props) => {
+const SummaryBar = (props: SummaryBarProps) => {
   if (props.count <= 0) return null;
 
   return (

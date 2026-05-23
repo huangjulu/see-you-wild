@@ -21,7 +21,7 @@ interface EventCarouselProps {
 
 const CARDS_PER_PAGE = 3;
 
-const EventCarousel: React.FC<EventCarouselProps> = (props) => {
+const EventCarousel = (props: EventCarouselProps) => {
   const [page, setPage] = useState(0);
 
   const totalPages = Math.max(

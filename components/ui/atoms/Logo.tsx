@@ -5,7 +5,7 @@ interface LogoProps {
   className?: string;
 }
 
-const Logo: React.FC<LogoProps> = (props) => {
+const Logo = (props: LogoProps) => {
   const { size = "lg" } = props;
 
   return (

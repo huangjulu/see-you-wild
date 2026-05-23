@@ -27,7 +27,7 @@ function formatDisplay(raw: string): string {
   return `+${groups.join(" ")}`;
 }
 
-const PhoneInput: React.FC<PhoneInputProps> = (props) => {
+const PhoneInput = (props: PhoneInputProps) => {
   const [focused, setFocused] = useState(false);
 
   function onPhoneInputChange(event: React.ChangeEvent<HTMLInputElement>) {
