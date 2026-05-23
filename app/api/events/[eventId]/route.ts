@@ -75,7 +75,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       // new Date("YYYY-MM-DD") creates a UTC midnight that compares wrong in +8 timezones.
       const [year, month, day] = newStartDate
         .split("-")
-        .map((s) => parseInt(s, 10));
+        .map((s: string) => parseInt(s, 10));
       const cutoffDate = new Date(year, month - 1, day - newCutoffDays);
 
       const today = new Date();
