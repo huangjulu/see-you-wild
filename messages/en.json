@@ -54,9 +54,11 @@
           "subtitle": "Tree Climbing"
         },
         "river-tracing": {
-          "title": "River Tracing Adventure",
+          "title": "Hidden River Tracing",
           "subtitle": "River Tracing"
-        }
+        },
+        "yacht": { "title": "Yacht Cruise", "subtitle": "Yacht Tour" },
+        "rafting": { "title": "Packraft Adventure", "subtitle": "Rafting" }
       }
     },
     "whyChooseUs": {

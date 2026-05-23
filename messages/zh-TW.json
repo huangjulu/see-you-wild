@@ -47,7 +47,9 @@
         "camping": { "title": "星空野營私廚", "subtitle": "Wild Camping" },
         "sup": { "title": "SUP 立槳日出團", "subtitle": "Paddleboarding" },
         "tree-climbing": { "title": "攀樹森林浴", "subtitle": "Tree Climbing" },
-        "river-tracing": { "title": "溯溪探險", "subtitle": "River Tracing" }
+        "river-tracing": { "title": "秘境溯溪", "subtitle": "River Tracing" },
+        "yacht": { "title": "遊艇旅遊", "subtitle": "Yacht Tour" },
+        "rafting": { "title": "背包艇泛舟", "subtitle": "Rafting" }
       }
     },
     "whyChooseUs": {
