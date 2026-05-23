@@ -81,7 +81,7 @@ const PhilosophySection = () => {
         <div className="reveal-up gsap-reveal">
           <div className="relative rounded-2xl overflow-hidden aspect-[3/4]">
             <img
-              src="https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=1200&q=80"
+              src="https://pub-4f074e0ebf814197a45996298c88925f.r2.dev/home-philosophy.webp"
               alt={t("imageAlt")}
               loading="lazy"
               decoding="async"
