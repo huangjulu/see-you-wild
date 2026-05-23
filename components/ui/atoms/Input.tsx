@@ -29,7 +29,7 @@ const Input = (props: InputProps) => {
 
 Input.displayName = "Input";
 
-const PasswordInput = (props) => {
+const PasswordInput = (props: Omit<InputProps, "type" | "endIcon">) => {
   const [showPassword, setShowPassword] = useState(false);
   const resolvedSize = props.size ?? "md";
 
