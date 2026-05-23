@@ -63,6 +63,11 @@ function makeRequest(body: Record<string, unknown>): Request {
 
 const params = Promise.resolve({ id: "reg-1" });
 
+const OPEN_EVENT_CHAIN = makeSelectSingleChain({
+  data: { status: "open" },
+  error: null,
+});
+
 beforeEach(() => {
   vi.clearAllMocks();
 });
@@ -75,6 +80,7 @@ describe("PATCH /api/registrations/[id] — carpool guard", () => {
           data: { transport: "carpool", event_id: "evt-1" },
           error: null,
         }),
+        OPEN_EVENT_CHAIN,
       ]);
 
       const res = await PATCH(makeRequest({ transport: "self" }), { params });
@@ -90,6 +96,7 @@ describe("PATCH /api/registrations/[id] — carpool guard", () => {
           data: { transport: "self", event_id: "evt-1" },
           error: null,
         }),
+        OPEN_EVENT_CHAIN,
         makeUpdateSelectSingleChain({
           data: { id: "reg-1", transport: "self" },
           error: null,
@@ -109,6 +116,7 @@ describe("PATCH /api/registrations/[id] — carpool guard", () => {
           data: { transport: "self", event_id: "evt-1" },
           error: null,
         }),
+        OPEN_EVENT_CHAIN,
       ]);
 
       const res = await PATCH(
@@ -127,6 +135,7 @@ describe("PATCH /api/registrations/[id] — carpool guard", () => {
           data: { transport: "self", event_id: "evt-1" },
           error: null,
         }),
+        OPEN_EVENT_CHAIN,
       ]);
 
       const res = await PATCH(
@@ -145,6 +154,7 @@ describe("PATCH /api/registrations/[id] — carpool guard", () => {
           data: { transport: "self", event_id: "evt-1" },
           error: null,
         }),
+        OPEN_EVENT_CHAIN,
         makeUpdateSelectSingleChain({
           data: { id: "reg-1", transport: "carpool" },
           error: null,
@@ -176,6 +186,7 @@ describe("PATCH /api/registrations/[id] — carpool guard", () => {
           data: { transport: "carpool", event_id: "evt-1" },
           error: null,
         }),
+        OPEN_EVENT_CHAIN,
         {
           select: () => ({
             eq: () => ({
@@ -208,6 +219,7 @@ describe("PATCH /api/registrations/[id] — carpool guard", () => {
           data: { transport: "carpool", event_id: "evt-1" },
           error: null,
         }),
+        OPEN_EVENT_CHAIN,
         {
           select: () => ({
             eq: () => ({
@@ -238,6 +250,7 @@ describe("PATCH /api/registrations/[id] — carpool guard", () => {
           data: { transport: "self", event_id: "evt-1" },
           error: null,
         }),
+        OPEN_EVENT_CHAIN,
         makeUpdateSelectSingleChain({
           data: { id: "reg-1", carpool_role: null },
           error: null,
@@ -258,6 +271,7 @@ describe("PATCH /api/registrations/[id] — carpool guard", () => {
           data: { transport: "carpool", event_id: "evt-1" },
           error: null,
         }),
+        OPEN_EVENT_CHAIN,
         makeUpdateSelectSingleChain({
           data: { id: "reg-1", notes: "備注" },
           error: null,

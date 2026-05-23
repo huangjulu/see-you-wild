@@ -125,7 +125,7 @@ export const adminApi = {
       const queryClient = useQueryClient();
       return useMutation<RegistrationRow, Error, CreateRegistrationInput>({
         mutationFn: (data) =>
-          apiFetch<RegistrationRow>("/api/registrations", {
+          apiFetch<RegistrationRow>("/api/admin/registrations", {
             method: "POST",
             body: JSON.stringify(data),
           }),
@@ -143,7 +143,7 @@ export const adminApi = {
         { id: string; data: UpdateRegistrationInput }
       >({
         mutationFn: ({ id, data }) =>
-          apiFetch<RegistrationRow>(`/api/registrations/${id}`, {
+          apiFetch<RegistrationRow>(`/api/admin/registrations/${id}`, {
             method: "PATCH",
             body: JSON.stringify(data),
           }),
@@ -157,10 +157,13 @@ export const adminApi = {
       const queryClient = useQueryClient();
       return useMutation<RegistrationRow, Error, string>({
         mutationFn: (registrationId) =>
-          apiFetch<RegistrationRow>(`/api/registrations/${registrationId}`, {
-            method: "PATCH",
-            body: JSON.stringify({ status: "paid" }),
-          }),
+          apiFetch<RegistrationRow>(
+            `/api/admin/registrations/${registrationId}`,
+            {
+              method: "PATCH",
+              body: JSON.stringify({ status: "paid" }),
+            }
+          ),
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["admin", "events"] });
         },
@@ -172,7 +175,7 @@ export const adminApi = {
       return useMutation<{ deleted: boolean }, Error, string>({
         mutationFn: (registrationId) =>
           apiFetch<{ deleted: boolean }>(
-            `/api/registrations/${registrationId}`,
+            `/api/admin/registrations/${registrationId}`,
             { method: "DELETE" }
           ),
         onSuccess: () => {
@@ -185,7 +188,7 @@ export const adminApi = {
       return useMutation<{ sent: boolean }, Error, string>({
         mutationFn: (registrationId) =>
           apiFetch<{ sent: boolean }>(
-            `/api/registrations/${registrationId}/resend-email`,
+            `/api/admin/registrations/${registrationId}/resend-email`,
             { method: "POST" }
           ),
       });
@@ -195,7 +198,7 @@ export const adminApi = {
       useQuery<RegistrationDetailDto>({
         queryKey: ["admin", "registrations", id],
         queryFn: () =>
-          apiFetch<RegistrationDetailDto>(`/api/registrations/${id}`),
+          apiFetch<RegistrationDetailDto>(`/api/admin/registrations/${id}`),
         enabled: id != null,
       }),
   },

@@ -5,7 +5,6 @@ import { apiOk } from "@/lib/api-response";
 import { sendRegistrationCancelledEmail } from "@/lib/email/send-registration-cancelled-email";
 import {
   AlreadyRegisteredError,
-  EventClosedError,
   InternalError,
   RegistrationNotFoundError,
 } from "@/lib/errors/domain";
@@ -62,17 +61,6 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 
     const reg = existing as Pick<RegistrationRow, "transport" | "event_id">;
 
-    const { data: eventForGuard } = await getSupabase()
-      .from("events")
-      .select("status")
-      .eq("id", reg.event_id)
-      .single();
-
-    if (eventForGuard?.status !== "open") {
-      throw new EventClosedError();
-    }
-
-    // Guard 1: carpool → self is not allowed once carpool is set
     if (reg.transport === "carpool" && parsed.transport === "self") {
       return NextResponse.json(
         { error: "Cannot switch from carpool to self transport" },
@@ -80,7 +68,6 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       );
     }
 
-    // Guard 2: self → carpool requires carpool_role and pickup_location
     if (reg.transport === "self" && parsed.transport === "carpool") {
       if (!parsed.carpool_role || !parsed.pickup_location) {
         return NextResponse.json(
@@ -93,8 +80,6 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       }
     }
 
-    // Guard 3: carpool preference fields are locked after cutoff date
-    // Check against raw body — parsed may include Zod defaults for unspecified fields
     const carpoolFieldChanged = CARPOOL_FIELDS.some((field) => field in body);
 
     if (carpoolFieldChanged && reg.transport === "carpool") {
@@ -140,7 +125,6 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       .single();
 
     if (error) {
-      // PATCH may update email and collide with the (event_id, lower(email)) unique index.
       if (
         error.code === "23505" &&
         error.message?.includes("registrations_event_email")
@@ -171,16 +155,6 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     }
 
     const reg = regData as Pick<RegistrationRow, "name" | "email" | "event_id">;
-
-    const { data: eventForGuard } = await getSupabase()
-      .from("events")
-      .select("status")
-      .eq("id", reg.event_id)
-      .single();
-
-    if (eventForGuard?.status !== "open") {
-      throw new EventClosedError();
-    }
 
     const { data: eventData } = await getSupabase()
       .from("events")
