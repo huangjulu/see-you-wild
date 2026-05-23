@@ -7,7 +7,8 @@
       "exploreCta": "開始探索"
     },
     "footer": {
-      "rights": "All rights reserved."
+      "rights": "All rights reserved.",
+      "servicePolicy": "服務條款與退改政策"
     },
     "error": {
       "heading": "Oops",

@@ -7,7 +7,8 @@
       "exploreCta": "Explore"
     },
     "footer": {
-      "rights": "All rights reserved."
+      "rights": "All rights reserved.",
+      "servicePolicy": "Service Policy"
     },
     "error": {
       "heading": "Oops",

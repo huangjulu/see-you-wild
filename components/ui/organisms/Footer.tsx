@@ -1,5 +1,5 @@
 import SocialIcon from "@/components/ui/atoms/SocialIcon";
-import { INSTAGRAM_URL } from "@/lib/constants";
+import { CONTACT_EMAIL, INSTAGRAM_URL, LINE_OA_URL } from "@/lib/constants";
 import { getTranslations } from "@/lib/i18n/server";
 
 import LargeBrandText from "../molecules/LargeBrandText";
@@ -26,11 +26,30 @@ const Footer = async () => {
             href={INSTAGRAM_URL}
             className="min-w-0 min-h-0 text-on-surface-brand/70 hover:text-on-surface-brand"
           />
+          <SocialIcon
+            platform="line"
+            href={LINE_OA_URL}
+            className="min-w-0 min-h-0 text-on-surface-brand/70 hover:text-on-surface-brand"
+          />
         </div>
         <hr
           className="border-on-surface-deep/20 max-w-xs mx-auto"
           aria-hidden="true"
         />
+        <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-6 text-sm text-on-surface-brand/60">
+          <a
+            href={`mailto:${CONTACT_EMAIL}`}
+            className="hover:text-on-surface-brand transition-colors duration-300"
+          >
+            {CONTACT_EMAIL}
+          </a>
+          <a
+            href="/service-policy"
+            className="hover:text-on-surface-brand transition-colors duration-300"
+          >
+            {t("footer.servicePolicy")}
+          </a>
+        </div>
         <p className="text-sm text-on-surface-brand/50">
           &copy; {year} {t("siteName")}. {t("footer.rights")}
         </p>
