@@ -35,7 +35,7 @@ const EventGallery = (props: EventGalleryProps) => {
     <>
       <div className={props.className}>
         {/* Desktop: 1 big + 2 small */}
-        <div className="hidden md:grid md:grid-cols-3 md:grid-rows-2 gap-1 rounded-2xl overflow-hidden aspect-3/1">
+        <div className="hidden md:grid md:grid-cols-3 md:grid-rows-2 gap-1 rounded-2xl overflow-hidden aspect-3/1 shadow-md">
           <button
             type="button"
             className="col-span-2 row-span-2 relative overflow-hidden"
@@ -92,7 +92,7 @@ const EventGallery = (props: EventGalleryProps) => {
         </div>
 
         {/* Mobile: single image carousel (no lightbox) */}
-        <div className="relative md:hidden rounded-2xl overflow-hidden aspect-[4/3]">
+        <div className="relative md:hidden rounded-2xl overflow-hidden aspect-[4/3] shadow-md">
           <img
             src={images[mobileIndex].src}
             alt={images[mobileIndex].alt}
