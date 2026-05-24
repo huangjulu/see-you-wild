@@ -12,7 +12,6 @@ import {
   DayPicker,
   type DropdownOption,
   type Matcher,
-  type MonthCaptionProps,
   type NavProps,
 } from "react-day-picker";
 import { zhTW } from "react-day-picker/locale";
@@ -25,7 +24,7 @@ type CalendarSlot = "chevrons" | "caption" | "grid" | "navi";
 
 type CalendarSize = "sm" | "md" | "lg";
 
-type GridType = "month" | "week" | "biweek";
+type GridType = "month";
 
 type CaptionLayout = "label" | "dropdown";
 
@@ -78,7 +77,6 @@ const CalendarCaption: SlottableComponent<CalendarCaptionProps> = Object.assign(
 interface CalendarGridProps {
   type?: GridType;
   fixedWeeks?: boolean;
-  expandLabel?: string;
   className?: string;
   children?: React.ReactNode;
 }
@@ -116,6 +114,8 @@ function CalendarDayButton(props: CalendarDayButtonProps) {
 
   const { day, modifiers, className, markerDefs, size, ...rest } = props;
 
+  const isWeekend = day.date.getDay() === 0 || day.date.getDay() === 6;
+
   const activeMarkers = markerDefs
     ? Object.entries(markerDefs).filter(([name]) => modifiers[name])
     : [];
@@ -132,20 +132,27 @@ function CalendarDayButton(props: CalendarDayButtonProps) {
       data-day={`${day.date.getFullYear()}-${String(day.date.getMonth() + 1).padStart(2, "0")}-${String(day.date.getDate()).padStart(2, "0")}`}
       data-selected-single={modifiers.selected}
       className={cn(
-        "relative isolate z-10 border border-transparent flex flex-col items-center justify-center gap-1 aspect-square size-auto w-full min-w-(--cell-size) rounded-(--cell-radius) leading-none font-normal transition-colors duration-150",
+        "relative isolate z-10 border border-transparent flex flex-col items-center justify-center gap-1 aspect-square size-auto w-full rounded-(--cell-radius) leading-none font-normal transition-colors duration-150",
+        size !== "lg" && "min-w-(--cell-size)",
         "hover:bg-brand-50 hover:border-accent/50",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-1",
         "data-[selected-single=true]:bg-brand-400 data-[selected-single=true]:border-brand-600/50 data-[selected-single=true]:text-white",
         "hover:data-[selected-single=true]:bg-brand-500",
         size === "lg" && "justify-start pt-2",
         ...markerStyles,
+        isWeekend && !modifiers.selected && "text-critical",
         className
       )}
       {...rest}
     >
       {rest.children}
       {activeLabel?.label != null && (
-        <span className={cn("block leading-none", LABEL_SIZE[size])}>
+        <span
+          className={cn(
+            "hidden md:inline-block leading-none",
+            LABEL_SIZE[size]
+          )}
+        >
           {activeLabel.label}
         </span>
       )}
@@ -222,6 +229,20 @@ function CalendarSelectDropdown(
 
 CalendarSelectDropdown.displayName = "CalendarSelectDropdown";
 
+function WeekendAwareWeekday(
+  weekdayProps: React.ThHTMLAttributes<HTMLTableCellElement>
+) {
+  const label =
+    typeof weekdayProps.children === "string" ? weekdayProps.children : "";
+  const isWeekend = label === "日" || label === "六";
+  return (
+    <th
+      {...weekdayProps}
+      className={cn(weekdayProps.className, isWeekend && "text-critical")}
+    />
+  );
+}
+
 // React element props are opaque — bridge cast to read declarative slot config
 function slotProp(el: React.ReactElement, key: string): string | undefined {
   const val: unknown = (el.props as Record<string, unknown>)[key];
@@ -237,7 +258,6 @@ interface ResolvedCalendarConfig {
   captionLayout: CaptionLayout;
   gridType: GridType;
   fixedWeeks: boolean | undefined;
-  expandLabel: string | undefined;
   chevronsClassName?: string;
   captionClassName?: string;
   gridClassName?: string;
@@ -303,7 +323,6 @@ function resolveCalendarConfig(
 
   let gridType: GridType = "month";
   let fixedWeeks: boolean | undefined;
-  let expandLabel: string | undefined;
   let gridClassName: string | undefined;
   const gridEl = slots["grid"];
   if (gridEl) {
@@ -312,7 +331,6 @@ function resolveCalendarConfig(
       "fixedWeeks"
     ];
     if (typeof fixedWeeksRaw === "boolean") fixedWeeks = fixedWeeksRaw;
-    expandLabel = slotProp(gridEl, "expandLabel");
     gridClassName = slotProp(gridEl, "className");
   }
 
@@ -321,7 +339,6 @@ function resolveCalendarConfig(
     captionLayout,
     gridType,
     fixedWeeks,
-    expandLabel,
     chevronsClassName,
     captionClassName,
     gridClassName,
@@ -347,28 +364,11 @@ const _Calendar = (props: CalendarProps) => {
   const size = props.size ?? "md";
   const config = resolveCalendarConfig(props.children);
 
-  const hasCompactView =
-    config.gridType === "week" || config.gridType === "biweek";
-  const [expanded, setExpanded] = useState(!hasCompactView);
-
-  const visibleWeeks =
-    config.gridType === "week"
-      ? 1
-      : config.gridType === "biweek"
-        ? 2
-        : undefined;
-
   const dpModifiers = props.markers
     ? Object.fromEntries(
         Object.entries(props.markers).map(([name, def]) => [name, def.match])
       )
     : undefined;
-
-  function monthChange() {
-    if (hasCompactView && !expanded) {
-      setExpanded(true);
-    }
-  }
 
   const rdpCaptionLayout: "label" | "dropdown" =
     config.captionLayout === "dropdown" ? "dropdown" : "label";
@@ -398,62 +398,6 @@ const _Calendar = (props: CalendarProps) => {
     return <nav {...divProps} />;
   }
 
-  function CompactWeek(
-    weekProps: React.HTMLAttributes<HTMLTableRowElement> & {
-      week: { weekNumber: number; days: { date: Date }[] };
-    }
-  ) {
-    const { week, ...trProps } = weekProps;
-
-    if (!expanded && visibleWeeks != null) {
-      const firstDayOfWeek = week.days[0].date;
-      const monthStart = new Date(
-        firstDayOfWeek.getFullYear(),
-        firstDayOfWeek.getMonth(),
-        1
-      );
-      const anchorWeekStart = getAnchorWeekStart(dpModifiers, monthStart);
-      const weekMonday = getMonday(firstDayOfWeek);
-      const diffWeeks = Math.round(
-        (weekMonday.getTime() - anchorWeekStart.getTime()) /
-          (7 * 24 * 60 * 60 * 1000)
-      );
-      const hidden = diffWeeks < 0 || diffWeeks >= visibleWeeks;
-
-      return (
-        <tr
-          {...trProps}
-          className={cn(trProps.className, hidden && "hidden")}
-        />
-      );
-    }
-
-    return <tr {...trProps} />;
-  }
-
-  function CaptionWithToggle(
-    captionProps: MonthCaptionProps
-  ): React.ReactElement {
-    const { calendarMonth: _c, displayIndex: _d, ...divProps } = captionProps;
-    return (
-      <>
-        <div {...divProps} />
-        {hasCompactView && !expanded && config.expandLabel != null && (
-          <button
-            type="button"
-            onClick={() => setExpanded(true)}
-            className={cn(
-              "w-full rounded-lg bg-brand-50 py-2 text-center typo-ui text-sm text-accent transition-all flex gap-2 items-center justify-center border border-brand-200/60",
-              "hover:bg-brand-100 "
-            )}
-          >
-            {config.expandLabel}
-          </button>
-        )}
-      </>
-    );
-  }
-
   const classNames = {
     root: "w-full",
     months: "relative flex flex-col",
@@ -480,6 +424,7 @@ const _Calendar = (props: CalendarProps) => {
     ),
     dropdowns: "flex flex-row gap-1 px-2",
     caption_label: "typo-ui text-sm font-medium select-none",
+    month_grid: "w-full table-fixed",
     weekdays: "flex",
     weekday:
       "flex-1 rounded-(--cell-radius) text-[0.8rem] font-normal text-muted-foreground select-none",
@@ -504,8 +449,7 @@ const _Calendar = (props: CalendarProps) => {
     DayButton: (dayProps: React.ComponentProps<typeof DayButtonType>) => (
       <CalendarDayButton markerDefs={props.markers} size={size} {...dayProps} />
     ),
-    Week: CompactWeek,
-    MonthCaption: CaptionWithToggle,
+    Weekday: WeekendAwareWeekday,
   };
 
   if (!config.hasChevrons) {
@@ -522,7 +466,7 @@ const _Calendar = (props: CalendarProps) => {
       selected={props.value}
       onSelect={props.onChange}
       showOutsideDays
-      fixedWeeks={config.fixedWeeks ?? config.gridType === "month"}
+      fixedWeeks={config.fixedWeeks ?? true}
       locale={zhTW}
       defaultMonth={props.defaultMonth}
       disabled={props.disabled}
@@ -530,12 +474,11 @@ const _Calendar = (props: CalendarProps) => {
       startMonth={props.startMonth}
       endMonth={props.endMonth}
       modifiers={dpModifiers}
-      onMonthChange={monthChange}
       className={cn(
         "bg-neutral-50/80 p-4 [--cell-radius:var(--radius-md)]",
         CELL_SIZE[size],
         FONT_SIZE[size],
-        "rounded-xl overflow-hidden border border-neutral-200/50",
+        "rounded-xl border border-neutral-200/50",
         props.className
       )}
       classNames={classNames}
@@ -553,41 +496,3 @@ const Calendar = Object.assign(_Calendar, {
 
 _Calendar.displayName = "Calendar";
 export default Calendar;
-
-function getMonday(date: Date): Date {
-  const d = new Date(date);
-  const day = d.getDay();
-  const offset = day === 0 ? 6 : day - 1;
-  d.setDate(d.getDate() - offset);
-  d.setHours(0, 0, 0, 0);
-  return d;
-}
-
-function getAnchorWeekStart(
-  modifiers: Record<string, Matcher> | undefined,
-  monthStart: Date
-): Date {
-  if (modifiers?.available && typeof modifiers.available === "function") {
-    const monthEnd = new Date(
-      monthStart.getFullYear(),
-      monthStart.getMonth() + 1,
-      0
-    );
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    for (
-      let d = new Date(Math.max(today.getTime(), monthStart.getTime()));
-      d <= monthEnd;
-      d.setDate(d.getDate() + 1)
-    ) {
-      // react-day-picker Matcher is a union type. typeof === "function" narrows at runtime
-      // but TS can't narrow through Record access — this is a necessary bridge cast.
-      if ((modifiers.available as (date: Date) => boolean)(new Date(d))) {
-        return getMonday(d);
-      }
-    }
-  }
-
-  return getMonday(monthStart);
-}

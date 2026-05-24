@@ -1,5 +1,4 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import Calendar from "../Calendar";
@@ -107,37 +106,5 @@ describe("Calendar Grid type", () => {
     const tbody = container.querySelector("tbody");
     const weekRows = tbody?.querySelectorAll("tr");
     expect(weekRows?.length).toBe(6);
-  });
-
-  it("type='biweek' 時只顯示 2 週，其餘 hidden", () => {
-    const { container } = render(
-      <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)}>
-        <Calendar.Grid type="biweek" expandLabel="展開完整月份" />
-      </Calendar>
-    );
-    expect(screen.getByText("展開完整月份")).toBeInTheDocument();
-    const rows = container.querySelectorAll("tr");
-    const hiddenRows = Array.from(rows).filter((r) =>
-      r.classList.contains("hidden")
-    );
-    expect(hiddenRows.length).toBeGreaterThan(0);
-  });
-
-  it("點展開按鈕後所有週都顯示，按鈕消失", async () => {
-    const user = userEvent.setup();
-    const { container } = render(
-      <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)}>
-        <Calendar.Grid type="biweek" expandLabel="展開完整月份" />
-      </Calendar>
-    );
-
-    await user.click(screen.getByText("展開完整月份"));
-
-    expect(screen.queryByText("展開完整月份")).not.toBeInTheDocument();
-    const rows = container.querySelectorAll("tr");
-    const hiddenRows = Array.from(rows).filter((r) =>
-      r.classList.contains("hidden")
-    );
-    expect(hiddenRows.length).toBe(0);
   });
 });

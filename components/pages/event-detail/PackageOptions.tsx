@@ -165,8 +165,6 @@ const PackageOptions = (props: PackageOptionsProps) => {
             onChange={handleDateSelect}
             availableDates={availableDateObjects}
             minAdvanceDays={3}
-            gridType="biweek"
-            expandLabel="展開完整月份"
             defaultMonth={defaultMonth}
           />
         </div>

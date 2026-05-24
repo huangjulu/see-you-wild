@@ -1017,20 +1017,6 @@ const PalettePreviewPage = () => {
                 <Calendar.Grid type="month" />
               </Calendar>
             </div>
-            <div className="space-y-2">
-              <p className="typo-ui text-xs text-secondary">
-                biweek + expandLabel
-              </p>
-              <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)}>
-                <Calendar.Grid type="biweek" expandLabel="展開完整月份" />
-              </Calendar>
-            </div>
-            <div className="space-y-2">
-              <p className="typo-ui text-xs text-secondary">week</p>
-              <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)}>
-                <Calendar.Grid type="week" expandLabel="展開完整月份" />
-              </Calendar>
-            </div>
           </div>
 
           {/* Markers (EventCalendar) */}
@@ -1047,20 +1033,6 @@ const PalettePreviewPage = () => {
                   new Date(2026, 4, 25),
                   new Date(2026, 5, 8),
                 ]}
-                defaultMonth={new Date(2026, 4, 1)}
-              />
-            </div>
-            <div className="space-y-2">
-              <p className="typo-ui text-xs text-secondary">biweek + markers</p>
-              <EventCalendar
-                size="lg"
-                availableDates={[
-                  new Date(2026, 4, 18),
-                  new Date(2026, 4, 25),
-                  new Date(2026, 5, 8),
-                ]}
-                gridType="biweek"
-                expandLabel="查看更多日期"
                 defaultMonth={new Date(2026, 4, 1)}
               />
             </div>

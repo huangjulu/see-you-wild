@@ -12,8 +12,6 @@ interface EventCalendarProps extends Pick<
 > {
   availableDates?: Date[];
   minAdvanceDays?: number;
-  gridType?: React.ComponentProps<typeof Calendar.Grid>["type"];
-  expandLabel?: string;
 }
 
 const EventCalendar = (props: EventCalendarProps) => {
@@ -71,8 +69,6 @@ const EventCalendar = (props: EventCalendarProps) => {
     props.onChange?.(date);
   };
 
-  const gridType = props.gridType ?? "month";
-
   return (
     <Calendar
       mode="single"
@@ -88,7 +84,7 @@ const EventCalendar = (props: EventCalendarProps) => {
         <Calendar.Chevrons />
         <Calendar.Caption layout="label" />
       </Calendar.Navi>
-      <Calendar.Grid type={gridType} expandLabel={props.expandLabel} />
+      <Calendar.Grid />
     </Calendar>
   );
 };
