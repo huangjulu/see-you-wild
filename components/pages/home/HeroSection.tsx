@@ -86,7 +86,7 @@ const HeroSection = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen flex flex-col items-center justify-center text-center px-10 md:px-16 overflow-hidden"
+      className="relative min-h-screen flex flex-col items-center justify-center text-center px-8 md:px-16 overflow-hidden"
       aria-label="Hero"
     >
       <video

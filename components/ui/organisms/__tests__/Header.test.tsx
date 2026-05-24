@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import { describe, expect, it } from "vitest";
 
-import HomeHeader from "../HomeHeader";
+import Header from "../Header";
 
 const messages = {
   common: {
@@ -28,10 +28,10 @@ const messages = {
   },
 };
 
-function renderHeader() {
+function renderHeader(variant: "home" | "page" = "home") {
   return render(
     <NextIntlClientProvider locale="zh-TW" messages={messages}>
-      <HomeHeader />
+      <Header variant={variant} />
     </NextIntlClientProvider>
   );
 }

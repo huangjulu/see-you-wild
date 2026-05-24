@@ -67,7 +67,7 @@ const JourneysSection = () => {
       className="relative overflow-hidden bg-surface-brand bg-linear-180 from-journeys-gradient-from to-surface-brand from-[-15%] to-105%"
     >
       <div className="h-screen flex flex-col justify-center py-8">
-        <div className="max-w-7xl mx-auto w-full px-10 md:px-16 mb-7 flex items-end justify-between">
+        <div className="max-w-7xl mx-auto w-full px-8 md:px-16 mb-7 flex items-end justify-between">
           <div>
             <Heading.H2
               variant="display"

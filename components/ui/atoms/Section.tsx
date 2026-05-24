@@ -11,7 +11,7 @@ const Section = (props: SectionProps) => {
   return (
     <Tag
       className={cn(
-        "mx-auto max-w-7xl px-10 md:px-16",
+        "mx-auto max-w-7xl px-8 md:px-16",
         "grid grid-cols-4 md:grid-cols-8 lg:grid-cols-12",
         "gap-3 md:gap-4 lg:gap-6",
         className

@@ -2,8 +2,7 @@
 
 import { usePathname } from "next/navigation";
 
-import HomeHeader from "@/components/ui/organisms/HomeHeader";
-import PageHeader from "@/components/ui/organisms/PageHeader";
+import Header from "@/components/ui/organisms/Header";
 
 const HOME_PATH_PATTERN = /^\/(zh-TW|en)?\/?$/;
 const ADMIN_PATH_PATTERN = /\/admin(\/|$)/;
@@ -14,7 +13,7 @@ const HeaderSlot = () => {
   if (ADMIN_PATH_PATTERN.test(pathname)) return null;
 
   const isHome = HOME_PATH_PATTERN.test(pathname);
-  return isHome ? <HomeHeader /> : <PageHeader />;
+  return <Header variant={isHome ? "home" : "page"} />;
 };
 
 HeaderSlot.displayName = "HeaderSlot";

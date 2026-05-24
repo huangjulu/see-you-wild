@@ -48,7 +48,7 @@ const PhilosophySection = () => {
     <section
       id="about"
       ref={sectionRef}
-      className="py-24 md:py-32 px-10 md:px-16 bg-background"
+      className="py-24 md:py-32 px-8 md:px-16 bg-background"
     >
       <div
         ref={revealTriggerRef}

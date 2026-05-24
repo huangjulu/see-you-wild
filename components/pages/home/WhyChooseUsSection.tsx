@@ -39,7 +39,7 @@ const WhyChooseUsSection = () => {
   return (
     <section
       ref={sectionRef}
-      className="pt-24 pb-28 md:py-32 px-10 md:px-16 bg-background"
+      className="pt-24 pb-28 md:py-32 px-8 md:px-16 bg-background"
     >
       <div ref={revealTriggerRef} className="max-w-7xl mx-auto">
         <div className="text-center mb-16">

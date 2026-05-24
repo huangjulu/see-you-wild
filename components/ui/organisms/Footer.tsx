@@ -9,7 +9,7 @@ const Footer = async () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="pt-12 py-12 px-10 md:px-16 text-center border-t border-on-surface-deep/10 relative z-0 bg-surface-deep overflow-clip">
+    <footer className="pt-12 py-12 px-8 md:px-16 text-center border-t border-on-surface-deep/10 relative z-0 bg-surface-deep overflow-clip">
       <div className="max-w-6xl mx-auto space-y-4">
         <div className="flex items-center justify-center gap-3">
           <p className="font-serif text-lg font-semibold text-on-surface-brand">

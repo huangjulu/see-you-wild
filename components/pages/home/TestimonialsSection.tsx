@@ -131,7 +131,7 @@ const TestimonialsSection = () => {
       ref={sectionRef}
       className="bg-linear-180 from-background to-brand-100"
     >
-      <div className="relative py-24 md:py-32 px-10 md:px-16 [mask-image:linear-gradient(to_bottom,transparent_0%,black_12%,black_95%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,black_12%,black_95%,transparent_100%)]">
+      <div className="relative py-24 md:py-32 px-8 md:px-16 [mask-image:linear-gradient(to_bottom,transparent_0%,black_12%,black_95%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,black_12%,black_95%,transparent_100%)]">
         <div
           ref={ghostRef}
           className="absolute inset-0 will-change-transform pointer-events-none"

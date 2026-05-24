@@ -35,5 +35,4 @@ export const EVENTS_CONFIG: EventConfig[] = [
 
 export const NAV_LINKS = {
   about: "/#about",
-  contact: "/contact",
 };
