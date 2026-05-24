@@ -20,6 +20,9 @@ export const createEventSchema = z.object({
     .default([]),
   available_dates: z.array(z.string().date()).min(1),
   safety_policy: z.string().default(""),
+  preparation_notes: z.string().max(500).default(""),
+  faq: z.string().max(1000).default(""),
+  refund_policy: z.string().max(1000).default(""),
   status: z.enum(["open", "closed"]).default("open"),
 });
 
@@ -44,6 +47,9 @@ export const updateEventSchema = z.object({
     .optional(),
   available_dates: z.array(z.string().date()).optional(),
   safety_policy: z.string().optional(),
+  preparation_notes: z.string().max(500).optional(),
+  faq: z.string().max(1000).optional(),
+  refund_policy: z.string().max(1000).optional(),
   status: z.enum(["open", "closed"]).optional(),
 });
 

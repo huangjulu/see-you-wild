@@ -28,6 +28,9 @@ export interface EventRow {
   images: Array<{ src: string; alt: string }>;
   available_dates: string[];
   safety_policy: string;
+  preparation_notes: string;
+  faq: string;
+  refund_policy: string;
   status: EventStatus;
   first_created_at: string;
 }
@@ -108,6 +111,9 @@ export interface EventDetailDto {
   carpoolSurcharge: number;
   description: string;
   safetyPolicy: string;
+  preparationNotes: string;
+  faq: string;
+  refundPolicy: string;
   images: Array<{ src: string; alt: string }>;
   availableDates: string[];
   pickupLocations: string[];
@@ -126,6 +132,9 @@ export function toEventDetail(row: EventRow): EventDetailDto {
     carpoolSurcharge: row.carpool_surcharge,
     description: row.description,
     safetyPolicy: row.safety_policy,
+    preparationNotes: row.preparation_notes,
+    faq: row.faq,
+    refundPolicy: row.refund_policy,
     images: row.images,
     availableDates: row.available_dates,
     pickupLocations: row.pickup_locations,

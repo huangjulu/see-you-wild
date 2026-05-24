@@ -226,12 +226,17 @@
     "needRide": "I need a ride",
     "canDrive": "I'll drive",
     "canDriveNote": "Refund based on passenger count",
-    "driverNote": "Receive a 30%–50% refund of the activity fee based on the number of passengers you carry",
-    "driverOverflowNote": "If enough drivers are available, you'll be reassigned as a passenger. You may also request to switch to self-arrival.",
+    "driverNote": "Receive a fixed refund per passenger you carry",
+    "driverOverflowNote": "If enough drivers are available, you'll be reassigned as a passenger without affecting your participation.",
     "seatCount": "Seat capacity",
     "seatCountOption": "{count} seats",
     "selectSeatCount": "Select seats",
-    "carpoolLockWarning": "Once you choose carpool, you cannot switch back to self-arrival. Your carpool role will be arranged by the organizer before the event."
+    "carpoolLockWarning": "Once you choose carpool, you cannot switch back to self-arrival. Your carpool role will be arranged by the organizer before the event.",
+    "preparationNotes": "Preparation & Dress Code",
+    "faq": "FAQ",
+    "refundPolicy": "Cancellation & Refund Policy",
+    "viewFaq": "View FAQ",
+    "viewRefundPolicy": "View Policy"
   },
   "registration": {
     "title": "Registration Form",
@@ -331,77 +336,6 @@
     "NL": "Netherlands",
     "CH": "Switzerland",
     "SE": "Sweden"
-  },
-  "contact": {
-    "overline": "CONTACT",
-    "title": "Let's Head Into the Wild",
-    "subtitle": "Choose a trip plan, or tell us what you have in mind",
-    "templates": {
-      "group4": {
-        "label": "Group of 4",
-        "description": "4 people is all it takes. We arrange the route, guides, and gear — just bring your friends."
-      },
-      "private": {
-        "label": "Private Group",
-        "description": "Corporate retreat or club outing? Groups of 10+ with customizable itinerary."
-      },
-      "custom": {
-        "label": "Custom Proposal",
-        "description": "Have your own idea? Tell us where you want to go and what you want to do — we'll plan it."
-      }
-    },
-    "sections": {
-      "contactInfo": "Contact Info",
-      "tripInfo": "Trip Details",
-      "notes": "Additional Notes"
-    },
-    "fields": {
-      "name": "Name",
-      "email": "Email",
-      "phone": "Phone",
-      "activityType": "Activity Type",
-      "groupSize": "Group Size",
-      "preferredDate": "Preferred Date",
-      "preferredDatePlaceholder": "e.g. a weekend in late June",
-      "duration": "Duration",
-      "message": "Additional Notes"
-    },
-    "options": {
-      "activityType": {
-        "hot-spring": "Wild Hot Springs",
-        "camping": "Mountain Camping",
-        "canyoning": "Canyoning Adventure",
-        "other": "Other"
-      },
-      "groupSize": {
-        "4": "4 people",
-        "5-9": "5-9 people",
-        "10-15": "10-15 people",
-        "16-20": "16-20 people",
-        "20+": "20+ people"
-      },
-      "duration": {
-        "1day": "Day trip",
-        "2d1n": "2 days / 1 night",
-        "3d2n": "3 days / 2 nights",
-        "flexible": "Flexible"
-      }
-    },
-    "placeholders": {
-      "group4": "Any particular route in mind? Or anything we should know (e.g. fitness level, experience)",
-      "private": "Brief description of the purpose (corporate retreat, club outing?) and any special requirements",
-      "custom": "Describe your vision — where do you want to go, what do you want to do, how much time do you have?"
-    },
-    "submit": "Submit Proposal",
-    "submitting": "Submitting...",
-    "success": {
-      "title": "Proposal Submitted",
-      "message": "We'll get back to you via email within 2 business days.",
-      "reset": "Submit Another"
-    },
-    "error": {
-      "submitFailed": "Submission failed. Please try again later."
-    }
   },
   "validation": {
     "carpoolFieldRequired": "This field is required when choosing carpool",

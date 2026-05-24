@@ -31,6 +31,9 @@ const baseEvent: EventRow = {
   images: [],
   available_dates: ["2026-05-01", "2026-05-02"],
   safety_policy: "",
+  preparation_notes: "",
+  faq: "",
+  refund_policy: "",
   status: "open",
   first_created_at: "2026-04-01T00:00:00Z",
 };

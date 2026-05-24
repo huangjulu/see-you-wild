@@ -217,12 +217,17 @@
     "needRide": "我要搭車",
     "canDrive": "我來開車",
     "canDriveNote": "依載客人數退還活動費用",
-    "driverNote": "依實際載客人數按比例退還 30%~50% 活動費用",
-    "driverOverflowNote": "若出車者已足將自動轉為乘客，亦可來信改為自行前往",
+    "driverNote": "依實際載客人數退還固定金額（每位乘客退還一定費用）",
+    "driverOverflowNote": "若司機人數已足，將自動轉為乘客，不影響活動參加",
     "seatCount": "可載人數",
     "seatCountOption": "{count} 人",
     "selectSeatCount": "選擇人數",
-    "carpoolLockWarning": "選擇共乘後將無法自行更改為自行前往，共乘角色將由主辦方於活動前統一安排通知。"
+    "carpoolLockWarning": "選擇共乘後將無法自行更改為自行前往，共乘角色將由主辦方於活動前統一安排通知。",
+    "preparationNotes": "行前準備與穿著建議",
+    "faq": "常見 Q&A",
+    "refundPolicy": "退改事項",
+    "viewFaq": "展開 Q&A",
+    "viewRefundPolicy": "展開退改事項"
   },
   "registration": {
     "title": "報名表單",
@@ -322,77 +327,6 @@
     "NL": "荷蘭",
     "CH": "瑞士",
     "SE": "瑞典"
-  },
-  "contact": {
-    "overline": "CONTACT",
-    "title": "一起走進野地吧",
-    "subtitle": "選擇行程方案，或告訴我們你的想像",
-    "templates": {
-      "group4": {
-        "label": "四人成行",
-        "description": "4 人即可成團，我們安排路線、嚮導與裝備，你只需要帶朋友來。"
-      },
-      "private": {
-        "label": "團體包團",
-        "description": "公司旅遊、社團出遊？10 人以上包團，行程可依需求微調。"
-      },
-      "custom": {
-        "label": "自由提案",
-        "description": "你有自己的想法？告訴我們你想去哪、想做什麼，我們來規劃。"
-      }
-    },
-    "sections": {
-      "contactInfo": "聯絡資訊",
-      "tripInfo": "行程資訊",
-      "notes": "補充說明"
-    },
-    "fields": {
-      "name": "姓名",
-      "email": "Email",
-      "phone": "電話",
-      "activityType": "活動類型",
-      "groupSize": "人數",
-      "preferredDate": "偏好日期",
-      "preferredDatePlaceholder": "例如：六月底的週末",
-      "duration": "天數",
-      "message": "補充說明"
-    },
-    "options": {
-      "activityType": {
-        "hot-spring": "野溪溫泉",
-        "camping": "山野露營",
-        "canyoning": "溯溪探險",
-        "other": "其他"
-      },
-      "groupSize": {
-        "4": "4 人",
-        "5-9": "5-9 人",
-        "10-15": "10-15 人",
-        "16-20": "16-20 人",
-        "20+": "20 人以上"
-      },
-      "duration": {
-        "1day": "一日",
-        "2d1n": "2天1夜",
-        "3d2n": "3天2夜",
-        "flexible": "依行程建議"
-      }
-    },
-    "placeholders": {
-      "group4": "有沒有特別想去的路線？或是需要注意的事情（例如體能、經驗）",
-      "private": "請簡述活動目的（員工旅遊、社團出遊？）和任何特殊需求",
-      "custom": "描述你的想像——想去哪裡、想做什麼、有多少時間？"
-    },
-    "submit": "送出提案",
-    "submitting": "送出中...",
-    "success": {
-      "title": "提案已送出",
-      "message": "我們會在 2 個工作天內回覆你的 Email。",
-      "reset": "再送一份"
-    },
-    "error": {
-      "submitFailed": "送出失敗，請稍後再試。"
-    }
   },
   "validation": {
     "carpoolFieldRequired": "選擇共乘時必須填寫此欄位",

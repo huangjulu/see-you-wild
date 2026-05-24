@@ -37,6 +37,9 @@ const eventFormSchema = z.object({
   description: z.string(),
   pickup_locations: z.array(z.string()),
   safety_policy: z.string(),
+  preparation_notes: z.string().max(500),
+  faq: z.string().max(1000),
+  refund_policy: z.string().max(1000),
   images: z.array(z.object({ src: z.string().url(), alt: z.string() })),
   status: z.enum(["open", "closed"]),
 });
@@ -79,6 +82,9 @@ const EventFormModal = (props: EventFormModalProps) => {
     description: "",
     pickup_locations: [],
     safety_policy: "",
+    preparation_notes: "",
+    faq: "",
+    refund_policy: "",
     images: [],
     status: "open",
   };
@@ -98,6 +104,9 @@ const EventFormModal = (props: EventFormModalProps) => {
       description: event.description,
       pickup_locations: event.pickup_locations,
       safety_policy: event.safety_policy,
+      preparation_notes: event.preparation_notes,
+      faq: event.faq,
+      refund_policy: event.refund_policy,
       images: event.images,
       status: event.status,
     };
@@ -407,6 +416,33 @@ const EventFormFields = (props: EventFormFieldsProps) => {
           placeholder="請輸入活動安全須知..."
           rows={4}
           {...register("safety_policy")}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <span className="typo-ui text-sm text-primary">行前準備與穿著建議</span>
+        <TextArea
+          placeholder="行前準備注意事項..."
+          rows={6}
+          {...register("preparation_notes")}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <span className="typo-ui text-sm text-primary">常見 Q&A</span>
+        <TextArea
+          placeholder="常見問題與解答..."
+          rows={6}
+          {...register("faq")}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <span className="typo-ui text-sm text-primary">退改事項</span>
+        <TextArea
+          placeholder="退費與改期規則..."
+          rows={6}
+          {...register("refund_policy")}
         />
       </div>
 
