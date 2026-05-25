@@ -11,7 +11,7 @@ interface TestimonialCardProps {
 const PAPER_SHADOW =
   "shadow-[0_1px_0_0_rgba(200,180,160,0.3),0_2px_4px_-1px_rgba(45,58,64,0.06),1px_0_0_0_rgba(200,180,160,0.15),-1px_0_0_0_rgba(200,180,160,0.15)]";
 
-const TestimonialCard: React.FC<TestimonialCardProps> = (props) => {
+const TestimonialCard = (props: TestimonialCardProps) => {
   return (
     <div
       className={cn(

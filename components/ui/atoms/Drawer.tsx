@@ -12,9 +12,7 @@ interface DrawerRootProps {
   children: React.ReactNode;
 }
 
-const DrawerRoot: React.FC<DrawerRootProps> = (props) => {
-  const dismissible = props.dismissible ?? true;
-
+const DrawerRoot = (props: DrawerRootProps) => {
   function onOpenChange(open: boolean) {
     props.onOpenChange?.(open);
   }
@@ -22,13 +20,6 @@ const DrawerRoot: React.FC<DrawerRootProps> = (props) => {
   return (
     <DrawerPrimitive.Root open={props.open} onOpenChange={onOpenChange}>
       {props.children}
-      <DrawerPrimitive.Portal>
-        <DrawerPrimitive.Backdrop
-          className="fixed inset-0 z-40 bg-black/40"
-          onClick={dismissible ? undefined : (e) => e.stopPropagation()}
-        />
-        <DrawerPrimitive.Viewport className="fixed inset-0 z-40 flex items-end" />
-      </DrawerPrimitive.Portal>
     </DrawerPrimitive.Root>
   );
 };
@@ -37,7 +28,7 @@ DrawerRoot.displayName = "DrawerRoot";
 
 interface DrawerTriggerProps extends React.ComponentProps<"button"> {}
 
-const DrawerTrigger: React.FC<DrawerTriggerProps> = (props) => {
+const DrawerTrigger = (props: DrawerTriggerProps) => {
   const { className, ...restProps } = props;
   return <DrawerPrimitive.Trigger className={className} {...restProps} />;
 };
@@ -49,19 +40,22 @@ interface DrawerContentProps {
   children: React.ReactNode;
 }
 
-const DrawerContent: React.FC<DrawerContentProps> = (props) => {
+const DrawerContent = (props: DrawerContentProps) => {
   return (
-    <DrawerPrimitive.Popup
-      className={cn(
-        "flex w-full flex-col rounded-t-2xl bg-white pb-[env(safe-area-inset-bottom)] outline-none",
-        props.className
-      )}
-    >
-      <div className="flex justify-center pt-3 pb-2">
-        <div className="h-1 w-10 rounded-full bg-neutral-200" />
-      </div>
-      {props.children}
-    </DrawerPrimitive.Popup>
+    <DrawerPrimitive.Portal>
+      <DrawerPrimitive.Backdrop className="fixed inset-0 z-110 bg-black/40" />
+      <DrawerPrimitive.Viewport className="fixed inset-0 z-110 flex items-end">
+        <DrawerPrimitive.Popup
+          className={cn(
+            "flex w-full flex-col rounded-t-2xl bg-white pb-[env(safe-area-inset-bottom)] outline-none",
+            props.className
+          )}
+        >
+          <div className="mx-auto mt-3 mb-2 h-1 w-10 rounded-full bg-neutral-200" />
+          {props.children}
+        </DrawerPrimitive.Popup>
+      </DrawerPrimitive.Viewport>
+    </DrawerPrimitive.Portal>
   );
 };
 

@@ -3,8 +3,10 @@ import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 
+import FooterSlot from "@/app/[locale]/_components/FooterSlot";
 import HeaderSlot from "@/app/[locale]/_components/HeaderSlot";
 import GsapProvider from "@/components/providers/GsapProvider";
+import QueryProvider from "@/components/providers/QueryProvider";
 import Footer from "@/components/ui/organisms/Footer";
 import { SITE_URL } from "@/lib/constants";
 import * as fonts from "@/lib/font.config";
@@ -19,7 +21,7 @@ type LocaleLayoutProps = PageProps & {
   children: React.ReactNode;
 };
 
-const LocaleLayout: React.FC<LocaleLayoutProps> = async (props) => {
+const LocaleLayout = async (props: LocaleLayoutProps) => {
   const locale = (await props.params).locale;
 
   if (!isValidLocale(locale)) {
@@ -31,13 +33,17 @@ const LocaleLayout: React.FC<LocaleLayoutProps> = async (props) => {
 
   return (
     <html lang={locale} className={cn(fontVariable)}>
-      <body className="antialiased">
+      <body className="antialiased min-h-screen flex flex-col">
         <NextIntlClientProvider messages={messages}>
-          <GsapProvider>
-            <HeaderSlot />
-            {props.children}
-            <Footer />
-          </GsapProvider>
+          <QueryProvider>
+            <GsapProvider>
+              <HeaderSlot />
+              <div className="flex-1">{props.children}</div>
+              <FooterSlot>
+                <Footer />
+              </FooterSlot>
+            </GsapProvider>
+          </QueryProvider>
         </NextIntlClientProvider>
       </body>
     </html>

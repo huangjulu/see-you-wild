@@ -9,7 +9,7 @@ type CountrySelectorProps = Omit<
   "options"
 >;
 
-const CountrySelector: React.FC<CountrySelectorProps> = (props) => {
+const CountrySelector = (props: CountrySelectorProps) => {
   const tCountry = useTranslations("country");
 
   const options = COUNTRY_OPTIONS.map((country) => ({

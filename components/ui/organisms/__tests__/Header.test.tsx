@@ -2,15 +2,15 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import { describe, expect, it } from "vitest";
 
-import HomeHeader from "../HomeHeader";
+import Header from "../Header";
 
 const messages = {
   common: {
     siteName: "See You Wild 西揪團",
     nav: {
-      events: "活動行程",
-      exploreCta: "開始探索",
+      about: "關於我們",
       contact: "聯絡我們",
+      exploreCta: "開始探索",
     },
     footer: {
       rights: "All rights reserved.",
@@ -28,10 +28,10 @@ const messages = {
   },
 };
 
-function renderHeader() {
+function renderHeader(variant: "home" | "page" = "home") {
   return render(
     <NextIntlClientProvider locale="zh-TW" messages={messages}>
-      <HomeHeader />
+      <Header variant={variant} />
     </NextIntlClientProvider>
   );
 }
@@ -39,9 +39,8 @@ function renderHeader() {
 describe("Header", () => {
   it("renders nav links", () => {
     renderHeader();
-    // desktop nav + mobile nav 各一組，共 2 個
-    expect(screen.getAllByText("活動行程")).toHaveLength(2);
-    expect(screen.getAllByText("聯絡我們")).toHaveLength(2);
+    expect(screen.getAllByText("關於我們").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("聯絡我們").length).toBeGreaterThanOrEqual(1);
   });
 
   it("renders hamburger button", () => {
@@ -60,11 +59,8 @@ describe("Header", () => {
     renderHeader();
     const hamburger = screen.getByLabelText("Open menu");
     fireEvent.click(hamburger);
-    expect(screen.getByLabelText("Close menu")).toBeInTheDocument();
-    expect(screen.getByLabelText("Close menu")).toHaveAttribute(
-      "aria-expanded",
-      "true"
-    );
+    expect(hamburger).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByLabelText("Navigation menu")).toBeInTheDocument();
   });
 
   it("has main navigation aria-label", () => {

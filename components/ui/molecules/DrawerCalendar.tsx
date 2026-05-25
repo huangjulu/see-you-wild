@@ -1,15 +1,13 @@
 "use client";
 
-import React from "react";
-
 import DatePickerDrawer from "@/components/ui/molecules/DatePickerDrawer";
 import DatePickerInput from "@/components/ui/molecules/DatePickerInput";
 import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 
 interface DrawerCalendarProps {
-  value?: string;
-  onChange?: (value: string) => void;
-  onBlur?: () => void;
+  value: string;
+  onChange: (value: string) => void;
+  onBlur: () => void;
   label?: string;
   error?: string;
   placeholder?: string;
@@ -17,12 +15,13 @@ interface DrawerCalendarProps {
   name?: string;
   startYear?: number;
   endYear?: number;
+  minDate?: Date;
 }
 
-const DrawerCalendar: React.FC<DrawerCalendarProps> = (props) => {
-  const isTouchDevice = useMediaQuery("(pointer: coarse)");
+const DrawerCalendar = (props: DrawerCalendarProps) => {
+  const isSmallScreen = useMediaQuery("(max-width: 767px)");
 
-  if (isTouchDevice) {
+  if (isSmallScreen) {
     return <DatePickerDrawer {...props} />;
   }
   return <DatePickerInput {...props} />;

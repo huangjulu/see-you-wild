@@ -5,11 +5,11 @@ interface TagProps {
   className?: string;
 }
 
-const Tag: React.FC<TagProps> = (props) => {
+const Tag = (props: TagProps) => {
   return (
     <span
       className={cn(
-        "typo-overline inline-block px-4 py-1 text-xs border border-foreground/40 rounded-full text-primary/80",
+        "typo-overline inline-block px-4 py-1 text-xs border border-primary/40 rounded-full text-primary/80",
         props.className
       )}
     >

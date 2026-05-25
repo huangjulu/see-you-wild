@@ -8,6 +8,10 @@ out/
 
 
 .husky/
+.superpowers/
+
+# Debug screenshots
+*.png
 
 *.stackdump
 tsconfig.tsbuildinfo

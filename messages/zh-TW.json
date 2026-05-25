@@ -2,12 +2,13 @@
   "common": {
     "siteName": "See You Wild 西揪團",
     "nav": {
-      "events": "活動行程",
+      "about": "關於我們",
       "contact": "聯絡我們",
       "exploreCta": "開始探索"
     },
     "footer": {
-      "rights": "All rights reserved."
+      "rights": "All rights reserved.",
+      "servicePolicy": "服務條款與退改政策"
     },
     "error": {
       "heading": "Oops",
@@ -46,7 +47,9 @@
         "camping": { "title": "星空野營私廚", "subtitle": "Wild Camping" },
         "sup": { "title": "SUP 立槳日出團", "subtitle": "Paddleboarding" },
         "tree-climbing": { "title": "攀樹森林浴", "subtitle": "Tree Climbing" },
-        "river-tracing": { "title": "溯溪探險", "subtitle": "River Tracing" }
+        "river-tracing": { "title": "秘境溯溪", "subtitle": "River Tracing" },
+        "yacht": { "title": "遊艇旅遊", "subtitle": "Yacht Tour" },
+        "rafting": { "title": "背包艇泛舟", "subtitle": "Rafting" }
       }
     },
     "whyChooseUs": {
@@ -145,7 +148,14 @@
     "allTypes": "所有類型",
     "allLocations": "所有地點",
     "typeLabel": "活動類型",
-    "locationLabel": "地點"
+    "locationLabel": "地點",
+    "type": {
+      "camping": "野營私廚",
+      "hot-spring": "野溪溫泉",
+      "sup": "SUP 立槳",
+      "tree-climbing": "攀樹體驗",
+      "river-tracing": "溯溪探險"
+    }
   },
   "paymentRef": {
     "title": "繳費回報",
@@ -179,7 +189,8 @@
     "confirmPaid": "確認收款",
     "markFailed": "付款有誤",
     "resultPaid": "已確認收款，客戶將收到報名成功通知。",
-    "resultFailed": "已標記付款有誤，客戶將收到重新填寫的通知。"
+    "resultFailed": "已標記付款有誤，客戶將收到重新填寫的通知。",
+    "done": "審核已完成。"
   },
   "eventDetail": {
     "backToEvents": "返回活動列表",
@@ -199,11 +210,24 @@
     "carpoolIncluded": "含共乘 NT$",
     "selectOptionsHint": "請先選擇日期與出發方式",
     "transport": "交通方式",
+    "carpool": "共乘",
+    "carpoolSubtitle": "依載客人數退費",
+    "carpoolRole": "共乘角色",
     "carpoolPickup": "共乘接送",
-    "needRide": "需要被載",
-    "canDrive": "可出車",
+    "needRide": "我要搭車",
+    "canDrive": "我來開車",
     "canDriveNote": "依載客人數退還活動費用",
-    "seatCount": "可載人數"
+    "driverNote": "依實際載客人數退還固定金額（每位乘客退還一定費用）",
+    "driverOverflowNote": "若司機人數已足，將自動轉為乘客，不影響活動參加",
+    "seatCount": "可載人數",
+    "seatCountOption": "{count} 人",
+    "selectSeatCount": "選擇人數",
+    "carpoolLockWarning": "選擇共乘後將無法自行更改為自行前往，共乘角色將由主辦方於活動前統一安排通知。",
+    "preparationNotes": "行前準備與穿著建議",
+    "faq": "常見 Q&A",
+    "refundPolicy": "退改事項",
+    "viewFaq": "展開 Q&A",
+    "viewRefundPolicy": "展開退改事項"
   },
   "registration": {
     "title": "報名表單",
@@ -234,13 +258,10 @@
     "genderMale": "男",
     "genderFemale": "女",
     "genderOther": "其他",
-    "idLabel": {
-      "tw": "身分證字號",
-      "foreign": "護照號碼"
-    },
+    "idLabel": "證件號碼",
     "idPlaceholder": {
-      "tw": "A123456789",
-      "foreign": "123456789"
+      "tw": "身分證或居留證號碼",
+      "foreign": "護照號碼"
     },
     "birthday": "生日",
     "birthdayPlaceholder": "選擇日期",
@@ -260,7 +281,8 @@
     "notesPlaceholder": "其他需求或注意事項（選填）",
     "transport": "交通方式",
     "transportSelf": "自行前往",
-    "transportCarpool": "共乘接送",
+    "transportCarpool": "共乘",
+    "carpoolNote": "依載客人數退還活動費用",
     "pickupLocation": "上車地點",
     "pickupSlug": {
       "taipei": "台北車站",
@@ -270,15 +292,22 @@
       "banqiao": "板橋車站"
     },
     "carpoolRole": "共乘角色",
-    "carpoolPassenger": "乘客",
-    "carpoolDriver": "司機",
+    "carpoolPassenger": "我要搭車",
+    "carpoolDriver": "我來開車",
     "seatCount": "可載人數",
     "totalPrice": "費用合計",
     "successTitle": "報名已送出",
-    "successTransferTo": "請於期限內匯款至",
+    "successEventTitle": "活動名稱",
+    "successEventDate": "活動日期",
+    "successEventLocation": "活動地點",
+    "successPaymentDeadline": "繳費期限",
+    "successTransferTo": "請於 {days} 天內匯款至",
     "successAccountHolder": "戶名",
+    "successEmailSent": "確認信已寄送至 {email}",
     "successReportDigits": "匯款後請至信箱收取確認信，點擊連結回報帳號末五碼，即完成報名。",
-    "successConfirm": "收到，我去匯款"
+    "successConfirm": "收到，我去匯款",
+    "copyAccount": "複製帳號",
+    "copied": "已複製"
   },
   "country": {
     "TW": "台灣",
@@ -307,14 +336,23 @@
     "invalidEmail": "請輸入有效的電子郵件",
     "invalidFormat": "格式不正確",
     "invalidSelection": "請選擇有效的選項",
-    "invalidTwId": "身分證字號格式錯誤（應為 1 個英文字母 + 9 位數字）",
-    "invalidTwIdChecksum": "身分證字號檢核碼錯誤",
-    "invalidPassport": "護照號碼格式錯誤",
-    "invalidPhone": "電話號碼格式錯誤",
+    "invalidTwDocument": "身分證/居留證格式錯誤",
+    "invalidTwIdChecksum": "身分證/居留證檢核碼錯誤",
+    "invalidPassport": "護照號碼格式錯誤（6-12 碼英數）",
+    "invalidPhone": "格式錯誤",
     "guardianConsentRequired": "未滿 18 歲須勾選監護人同意",
     "lineIdInvalid": "Line ID 格式錯誤",
     "nameTooLong": "姓名超過 50 字",
     "notesTooLong": "備註超過 500 字",
     "invalidBirthday": "生日格式錯誤"
+  },
+  "adminLogin": {
+    "title": "管理者登入",
+    "email": "Email",
+    "emailPlaceholder": "admin@seeyouwild.com",
+    "password": "密碼",
+    "passwordPlaceholder": "輸入密碼",
+    "submit": "登入",
+    "error": "登入失敗，請確認帳號密碼"
   }
 }

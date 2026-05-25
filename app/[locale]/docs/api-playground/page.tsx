@@ -548,7 +548,7 @@ interface VariantSelectorProps {
   onSelect: (key: string) => void;
 }
 
-const VariantSelector: React.FC<VariantSelectorProps> = (props) => (
+const VariantSelector = (props: VariantSelectorProps) => (
   <div className="mb-3 flex overflow-hidden rounded-md border border-border">
     {props.variants.map((v) => (
       <button
@@ -573,7 +573,7 @@ interface DtoTableProps {
   rows: DtoRow[];
 }
 
-const DtoTable: React.FC<DtoTableProps> = (props) => (
+const DtoTable = (props: DtoTableProps) => (
   <table className="w-full border-collapse text-sm">
     <thead>
       <tr>
@@ -626,7 +626,7 @@ interface DtoCardComponentProps {
   card: DtoCardProps;
 }
 
-const DtoCard: React.FC<DtoCardComponentProps> = (props) => {
+const DtoCard = (props: DtoCardComponentProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(
     props.card.tabs ? props.card.tabs[0].id : ""
@@ -693,7 +693,7 @@ interface EndpointCardComponentProps {
   onToggle: (id: string) => void;
 }
 
-const EndpointCard: React.FC<EndpointCardComponentProps> = (props) => {
+const EndpointCard = (props: EndpointCardComponentProps) => {
   const ep = props.endpoint;
   const cardId = `${ep.method}:${ep.path}`;
   const isOpen = props.openId === cardId;
@@ -895,7 +895,7 @@ EndpointCard.displayName = "EndpointCard";
 
 // ─── Page ───────────────────────────────────────────────────────────────────
 
-const ApiPlaygroundPage: React.FC = () => {
+const ApiPlaygroundPage = () => {
   const [openEndpointId, setOpenEndpointId] = useState<string | null>(null);
   const [baseUrl, setBaseUrl] = useState("");
 

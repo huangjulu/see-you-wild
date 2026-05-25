@@ -5,7 +5,7 @@ import type { Locale, PageProps } from "@/lib/i18n";
 import { isValidLocale } from "@/lib/i18n";
 import { getEventSchemas, getLocalBusinessSchema } from "@/lib/seo/schemas";
 
-const HomePage: React.FC<PageProps> = async (props) => {
+const HomePage = async (props: PageProps) => {
   const { locale } = await props.params;
 
   if (!isValidLocale(locale)) {
@@ -27,7 +27,7 @@ interface SEOStrategyProps {
   locale: Locale;
 }
 
-const SEOStrategy: React.FC<SEOStrategyProps> = async (props) => {
+const SEOStrategy = async (props: SEOStrategyProps) => {
   const localBusinessSchema = await getLocalBusinessSchema(props.locale);
   const eventSchemas = await getEventSchemas(props.locale);
   return (

@@ -29,6 +29,7 @@ export function createRegistrationNotifier(context: NotifierContext) {
       amountDue: registration.amount_due,
       expiresAt: registration.expires_at,
       baseUrl,
+      transport: registration.transport === "carpool" ? "carpool" : "self",
     });
   }
 

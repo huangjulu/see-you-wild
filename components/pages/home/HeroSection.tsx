@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useRef } from "react";
+import { useRef } from "react";
 
 import Button from "@/components/ui/atoms/Button";
 import { useTimeline, useTween } from "@/lib/gsap";
 
-const HeroSection: React.FC = () => {
+const HeroSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const h1Ref = useRef<HTMLHeadingElement>(null);
   const subtitlesRef = useRef<HTMLDivElement>(null);
@@ -86,7 +86,7 @@ const HeroSection: React.FC = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 md:px-12 overflow-hidden"
+      className="relative min-h-screen flex flex-col items-center justify-center text-center px-8 md:px-16 overflow-hidden"
       aria-label="Hero"
     >
       <video
@@ -95,14 +95,17 @@ const HeroSection: React.FC = () => {
         muted
         loop
         playsInline
-        className="absolute bottom-0 left-0 w-full h-[180%] object-cover will-change-transform"
+        className="absolute bottom-0 left-0 w-full h-[180%] object-cover will-change-transform pointer-events-none"
       >
         <source
           src="https://assets.mixkit.co/videos/1943/1943-720.mp4"
           type="video/mp4"
         />
       </video>
-      <div className="absolute inset-0 bg-neutral-950/40" aria-hidden="true" />
+      <div
+        className="absolute inset-0 bg-neutral-950/40 pointer-events-none"
+        aria-hidden="true"
+      />
 
       <div className="relative z-10 flex flex-col items-center max-w-4xl">
         <h1
@@ -128,11 +131,12 @@ const HeroSection: React.FC = () => {
         </div>
       </div>
 
-      <div ref={scrollRef} className="absolute bottom-8 z-10">
-        <div className="flex flex-col items-center gap-2 text-white/60 text-shadow-md">
-          <span className="text-xs tracking-[0.2em] uppercase">Scroll</span>
-          <div className="w-px h-8 bg-white/40 animate-bounce-slow" />
-        </div>
+      <div
+        ref={scrollRef}
+        className="absolute bottom-8 z-10 flex flex-col items-center gap-2 text-white/60 text-shadow-md"
+      >
+        <span className="text-xs tracking-[0.2em] uppercase">Scroll</span>
+        <div className="w-px h-8 bg-white/40 animate-bounce-slow" />
       </div>
     </section>
   );

@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { useEffect, useRef } from "react";
 
 import Button from "@/components/ui/atoms/Button";
+import Heading from "@/components/ui/atoms/Heading";
 import { useReducedMotion } from "@/stores/motion";
 
 interface CTACardProps {
@@ -17,7 +18,7 @@ interface CTACardProps {
 
 const MAX_TILT = 6;
 
-const CTACard: React.FC<CTACardProps> = (props) => {
+const CTACard = (props: CTACardProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
 
@@ -64,7 +65,7 @@ const CTACard: React.FC<CTACardProps> = (props) => {
     <div className="perspective-[1000px]">
       <div
         ref={cardRef}
-        className="flex flex-col md:flex-row min-h-137.5 bg-surface-warm overflow-hidden shadow-2xl rounded-2xl will-change-transform transition-shadow duration-300 hover:shadow-[0_30px_60px_-15px_rgba(45,58,64,0.25)]"
+        className="flex flex-col md:flex-row min-h-120 bg-surface-warm overflow-hidden shadow-2xl rounded-2xl will-change-transform transition-shadow duration-300 hover:shadow-[0_30px_60px_-15px_rgba(45,58,64,0.25)]"
       >
         <div className="md:w-1/2 relative h-87.5 md:h-auto overflow-hidden">
           <img
@@ -75,17 +76,20 @@ const CTACard: React.FC<CTACardProps> = (props) => {
             className="absolute inset-0 w-full h-full object-cover"
           />
         </div>
-        <div className="md:w-1/2 flex flex-col justify-center items-center md:items-start p-8 md:p-24 text-center md:text-left">
-          <h2 className="typo-display text-5xl md:text-7xl text-primary mb-8 leading-tight lowercase">
+        <div className="md:w-1/2 flex flex-col justify-center items-center md:items-start p-8 md:p-20 text-center md:text-left">
+          <Heading.H2
+            variant="display"
+            className="text-5xl md:text-6xl mb-6 leading-tight lowercase"
+          >
             {props.title}
-          </h2>
+          </Heading.H2>
           <p className="typo-body text-base md:text-lg text-secondary mb-12 max-w-sm leading-relaxed font-light">
             {props.description}
           </p>
           <Button
             theme="base"
             href={props.buttonHref}
-            className="tracking-[0.3em] uppercase border-fill-neutral text-primary hover:bg-fill-neutral hover:text-surface-warm"
+            className="tracking-[0.3em] uppercase border-neutral-800 text-primary hover:bg-fill-neutral hover:text-brand-50"
           >
             {props.buttonText}
           </Button>

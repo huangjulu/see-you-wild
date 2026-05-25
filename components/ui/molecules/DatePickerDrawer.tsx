@@ -1,16 +1,16 @@
 "use client";
 
 import { Calendar as IconCalendar } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import Calendar from "@/components/ui/atoms/Calendar";
 import Drawer from "@/components/ui/atoms/Drawer";
 import { cn } from "@/lib/utils";
 
 interface DatePickerDrawerProps {
-  value?: string;
-  onChange?: (value: string) => void;
-  onBlur?: () => void;
+  value: string;
+  onChange: (value: string) => void;
+  onBlur: () => void;
   label?: string;
   error?: string;
   placeholder?: string;
@@ -18,9 +18,10 @@ interface DatePickerDrawerProps {
   name?: string;
   startYear?: number;
   endYear?: number;
+  minDate?: Date;
 }
 
-const DatePickerDrawer: React.FC<DatePickerDrawerProps> = (props) => {
+const DatePickerDrawer = (props: DatePickerDrawerProps) => {
   const [open, setOpen] = useState(false);
 
   const startYear = props.startYear ?? 1930;
@@ -35,9 +36,9 @@ const DatePickerDrawer: React.FC<DatePickerDrawerProps> = (props) => {
     const yyyy = date.getFullYear();
     const mm = String(date.getMonth() + 1).padStart(2, "0");
     const dd = String(date.getDate()).padStart(2, "0");
-    props.onChange?.(`${yyyy}-${mm}-${dd}`);
+    props.onChange(`${yyyy}-${mm}-${dd}`);
     setOpen(false);
-    props.onBlur?.();
+    props.onBlur();
   }
 
   const displayValue = selectedDate
@@ -63,7 +64,7 @@ const DatePickerDrawer: React.FC<DatePickerDrawerProps> = (props) => {
             "focus:border-accent focus:ring-2 focus:ring-brand-200/70 focus-visible:outline-none",
             "disabled:opacity-50 disabled:cursor-not-allowed",
             props.error != null &&
-              "border-error ring-error/20 focus:border-error",
+              "border-stroke-critical ring-stroke-critical/20 focus:border-stroke-critical",
             !displayValue && "text-neutral-200"
           )}
         >
@@ -74,10 +75,11 @@ const DatePickerDrawer: React.FC<DatePickerDrawerProps> = (props) => {
           <div className="flex justify-center px-4 pb-6 pt-2">
             <Calendar
               mode="single"
-              size="md"
+              size="sm"
               value={selectedDate}
               onChange={onDateSelect}
-              defaultMonth={selectedDate ?? new Date(2000, 0)}
+              disabled={props.minDate ? { before: props.minDate } : undefined}
+              defaultMonth={selectedDate ?? props.minDate ?? new Date(2000, 0)}
               startMonth={new Date(startYear, 0)}
               endMonth={new Date(endYear, 11)}
             >
@@ -85,7 +87,7 @@ const DatePickerDrawer: React.FC<DatePickerDrawerProps> = (props) => {
                 <Calendar.Chevrons />
                 <Calendar.Caption layout="dropdown" />
               </Calendar.Navi>
-              <Calendar.Grid type="month" />
+              <Calendar.Grid type="month" fixedWeeks={false} />
             </Calendar>
           </div>
         </Drawer.Content>

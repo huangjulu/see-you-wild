@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CircleCheck as IconCircleCheck } from "lucide-react";
+import { CircleCheck as IconCircleCheck, Copy as IconCopy } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Controller,
@@ -24,10 +24,12 @@ import ModalCard from "@/components/ui/molecules/ModalCard";
 import PhoneInput from "@/components/ui/molecules/PhoneInput";
 import Selector from "@/components/ui/molecules/Selector";
 import { registrationApi } from "@/lib/api/registration.api";
+import { PICKUP_LOCATIONS } from "@/lib/constants";
 import {
   calculateAge,
   type CountryRule,
   getCountryByIso,
+  normalizePhone,
 } from "@/lib/form-rules";
 import { useFormatter, useTranslations } from "@/lib/i18n/client";
 import { paymentAccount } from "@/lib/payment";
@@ -42,20 +44,27 @@ interface RegistrationModalProps {
   open: boolean;
   onClose: () => void;
   eventId: string;
+  eventTitle: string;
+  eventLocation: string;
+  eventDate: string;
   basePrice: number;
   carpoolSurcharge: number;
   selectedDate: string | null;
   selectedPickup: string | null;
   isSelfArrival: boolean;
-  pickupLocations: string[];
+  carpoolRole: "driver" | "passenger" | null;
+  seatCount: number | null;
+  paymentDays: number;
 }
 
-const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
+const RegistrationModal = (props: RegistrationModalProps) => {
   const t = useTranslations("registration");
   const tValidation = useTranslations("validation");
   const formRef = useRef<HTMLFormElement>(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [submittedAmount, setSubmittedAmount] = useState<number | null>(null);
+  const [submittedEmail, setSubmittedEmail] = useState("");
+  const mutation = registrationApi.useCreate();
 
   const methods = useForm({
     mode: "onBlur",
@@ -65,7 +74,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
     defaultValues: {
       name: "",
       email: "",
-      phone: "+886",
+      phone: "",
       line_id: null,
       country: "TW",
       gender: "male",
@@ -73,7 +82,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
       birthday: "",
       guardian_consent: null,
       emergency_contact_name: "",
-      emergency_contact_phone: "+886",
+      emergency_contact_phone: "",
       dietary: "omnivore",
       wants_rental: false,
       notes: null,
@@ -84,19 +93,45 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
     },
   });
 
-  async function handleRegistrationSubmit(data: RegistrationFormInput) {
-    if (methods.formState.isSubmitting) return;
+  useEffect(
+    function syncSelectionOnOpen() {
+      if (!props.open) return;
+      methods.setValue("transport", props.isSelfArrival ? "self" : "carpool");
+      methods.setValue("carpool_role", props.carpoolRole);
+      methods.setValue("seat_count", props.seatCount);
+      methods.setValue("pickup_location", props.selectedPickup);
+    },
+    [props.open]
+  );
 
-    try {
-      const registration = await registrationApi.create({
+  function handleRegistrationSubmit(data: RegistrationFormInput) {
+    const country = getCountryByIso(data.country) ?? FALLBACK_COUNTRY;
+    const normalizedPhone = normalizePhone(data.phone, country);
+    const normalizedEmergencyPhone = normalizePhone(
+      data.emergency_contact_phone,
+      FALLBACK_COUNTRY
+    );
+
+    mutation.mutate(
+      {
         ...data,
+        phone: normalizedPhone ?? data.phone,
+        emergency_contact_phone:
+          normalizedEmergencyPhone ?? data.emergency_contact_phone,
         event_id: props.eventId,
-      });
-      setSubmittedAmount(registration.amount_due);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : t("submitError");
-      methods.setError("root", { message });
-    }
+        selected_date: null,
+      },
+      {
+        onSuccess: (registration) => {
+          setSubmittedAmount(registration.amount_due);
+          setSubmittedEmail(data.email);
+        },
+        onError: (err) => {
+          const message = err instanceof Error ? err.message : t("submitError");
+          methods.setError("root", { message });
+        },
+      }
+    );
   }
 
   async function handleNext() {
@@ -145,7 +180,14 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
           </ModalCard.Header>
           <ModalCard.Main>
             {isSubmitted ? (
-              <SuccessMainContent amount={submittedAmount} />
+              <SuccessMainContent
+                amount={submittedAmount}
+                paymentDays={props.paymentDays}
+                eventTitle={props.eventTitle}
+                eventDate={props.eventDate}
+                eventLocation={props.eventLocation}
+                email={submittedEmail}
+              />
             ) : (
               <FormMainContent
                 formRef={formRef}
@@ -202,34 +244,101 @@ const RegistrationModal: React.FC<RegistrationModalProps> = (props) => {
 RegistrationModal.displayName = "RegistrationModal";
 export default RegistrationModal;
 
-const SuccessMainContent: React.FC<{ amount: number }> = (props) => {
+interface SuccessMainContentProps {
+  amount: number;
+  paymentDays: number;
+  eventTitle: string;
+  eventDate: string;
+  eventLocation: string;
+  email: string;
+}
+
+const SuccessMainContent = (props: SuccessMainContentProps) => {
   const t = useTranslations("registration");
   const format = useFormatter();
+  const [copied, setCopied] = useState(false);
+
+  const paymentDeadline = new Date();
+  paymentDeadline.setDate(paymentDeadline.getDate() + props.paymentDays);
+  const formattedDeadline = format.dateTime(paymentDeadline, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+
+  function onCopyAccount() {
+    const raw = paymentAccount.bankAccount.replace(/[-\s]/g, "");
+    navigator.clipboard.writeText(raw);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
 
   return (
     <div className="flex flex-col items-center gap-6 py-6">
       <IconCircleCheck className="size-12 text-success" />
 
-      <div className="w-full space-y-4">
-        <div className="rounded-lg border border-stroke-default p-4 space-y-2">
-          <p className="typo-body-2 text-secondary">{t("successTransferTo")}</p>
-          <p className="typo-subtitle-1 text-accent-fg">
-            NT$ {format.number(props.amount)}
+      <div className="w-full rounded-lg border border-stroke-default p-4 space-y-2">
+        <dl className="typo-ui text-sm text-primary space-y-1">
+          <div className="flex justify-between">
+            <dt className="text-secondary">{t("successEventTitle")}</dt>
+            <dd>{props.eventTitle}</dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-secondary">{t("successEventDate")}</dt>
+            <dd>{props.eventDate}</dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-secondary">{t("successEventLocation")}</dt>
+            <dd>{props.eventLocation}</dd>
+          </div>
+        </dl>
+      </div>
+
+      <p className="typo-body-2 text-secondary">
+        {t("successTransferTo", { days: props.paymentDays })}
+      </p>
+
+      <div className="w-full rounded-lg border border-stroke-default p-4 space-y-3">
+        <p className="typo-subtitle-1 text-xl text-accent">
+          NT$ {format.number(props.amount)}
+        </p>
+        <div className="typo-ui text-sm text-primary space-y-1">
+          <p>{paymentAccount.bankName}</p>
+          <div className="flex items-center gap-1.5">
+            <span>{paymentAccount.bankAccount}</span>
+            <button
+              type="button"
+              onClick={onCopyAccount}
+              className="inline-flex items-center justify-center size-6 rounded-lg border border-neutral-100/50 bg-neutral-50 text-neutral-300 transition-colors hover:text-neutral-400"
+              aria-label={t("copyAccount")}
+            >
+              <IconCopy className="size-3.5" />
+            </button>
+            {copied && (
+              <span className="typo-ui text-xs text-neutral-300">
+                {t("copied")}
+              </span>
+            )}
+          </div>
+          <p>
+            {t("successAccountHolder")}：{paymentAccount.accountHolder}
           </p>
-          <div className="typo-ui text-sm text-primary space-y-1">
-            <p>
-              {paymentAccount.bankName}　{paymentAccount.bankAccount}
-            </p>
-            <p>
-              {t("successAccountHolder")}：{paymentAccount.accountHolder}
-            </p>
+          <div className="flex justify-between pt-1 border-t border-stroke-default">
+            <span className="text-secondary">
+              {t("successPaymentDeadline")}
+            </span>
+            <span className="text-accent">{formattedDeadline}</span>
           </div>
         </div>
-
-        <p className="typo-body-2 text-sm text-secondary text-center">
-          {t("successReportDigits")}
-        </p>
       </div>
+
+      <p className="typo-body-2 text-sm text-secondary text-center">
+        {t("successEmailSent", { email: props.email })}
+      </p>
+
+      <p className="typo-body-2 text-sm text-secondary text-center">
+        {t("successReportDigits")}
+      </p>
     </div>
   );
 };
@@ -241,10 +350,11 @@ interface FormMainContentProps {
   currentStep: number;
   basePrice: number;
   carpoolSurcharge: number;
-  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+
+  onSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
 }
 
-const FormMainContent: React.FC<FormMainContentProps> = (props) => {
+const FormMainContent = (props: FormMainContentProps) => {
   const { formState } = useFormContext<RegistrationFormInput>();
 
   return (
@@ -273,7 +383,7 @@ interface FormRegistrationProps {
   carpoolSurcharge: number;
 }
 
-const FormRegistration: React.FC<FormRegistrationProps> = (props) => {
+const FormRegistration = (props: FormRegistrationProps) => {
   return (
     <div className="space-y-6">
       {props.step === 0 && <FormStepBasic />}
@@ -292,7 +402,7 @@ const FormRegistration: React.FC<FormRegistrationProps> = (props) => {
 
 FormRegistration.displayName = "FormRegistration";
 
-const FormStepBasic: React.FC = () => {
+const FormStepBasic = () => {
   const t = useTranslations("registration");
   const { register, control, formState } =
     useFormContext<RegistrationFormInput>();
@@ -318,16 +428,19 @@ const FormStepBasic: React.FC = () => {
         <span className="typo-ui text-sm text-primary">{t("gender")}</span>
         <div className="flex flex-wrap gap-2">
           <RadioOption
+            variant="outlined"
             label={t("genderMale")}
             value="male"
             {...register("gender")}
           />
           <RadioOption
+            variant="outlined"
             label={t("genderFemale")}
             value="female"
             {...register("gender")}
           />
           <RadioOption
+            variant="outlined"
             label={t("genderOther")}
             value="other"
             {...register("gender")}
@@ -376,24 +489,13 @@ const FormStepBasic: React.FC = () => {
 
 FormStepBasic.displayName = "FormStepBasic";
 
-const FormStepIdentity: React.FC = () => {
+const FormStepIdentity = () => {
   const t = useTranslations("registration");
-  const { control, setValue, getValues, formState } =
-    useFormContext<RegistrationFormInput>();
+  const { control, formState } = useFormContext<RegistrationFormInput>();
   const errors = formState.errors;
 
   const country = useWatch({ control, name: "country" });
   const countryRule = getCountryByIso(country) ?? FALLBACK_COUNTRY;
-
-  useEffect(
-    function syncPhoneCountryDefault() {
-      const currentPhone = getValues("phone");
-      if (currentPhone === "" || isOnlyDialCode(currentPhone)) {
-        setValue("phone", countryRule.dialCode, { shouldDirty: false });
-      }
-    },
-    [country, countryRule.dialCode, getValues, setValue]
-  );
 
   return (
     <fieldset className="space-y-3">
@@ -453,7 +555,7 @@ const FormStepIdentity: React.FC = () => {
 
 FormStepIdentity.displayName = "FormStepIdentity";
 
-const FormStepEmergency: React.FC = () => {
+const FormStepEmergency = () => {
   const t = useTranslations("registration");
   const { register, control, formState } =
     useFormContext<RegistrationFormInput>();
@@ -475,7 +577,7 @@ const FormStepEmergency: React.FC = () => {
               <label className="flex items-start gap-2 cursor-pointer">
                 <input
                   type="checkbox"
-                  className="mt-1 size-4 accent-brand-500"
+                  className="size-4 accent-brand-500"
                   checked={field.value === true}
                   onChange={(event) => field.onChange(event.target.checked)}
                   onBlur={field.onBlur}
@@ -525,7 +627,7 @@ const FormStepEmergency: React.FC = () => {
 
 FormStepEmergency.displayName = "FormStepEmergency";
 
-const FormStepActivity: React.FC = () => {
+const FormStepActivity = () => {
   const t = useTranslations("registration");
   const { register, formState } = useFormContext<RegistrationFormInput>();
   const errors = formState.errors;
@@ -536,21 +638,25 @@ const FormStepActivity: React.FC = () => {
         <span className="typo-ui text-sm text-primary">{t("dietary")}</span>
         <div className="flex flex-wrap gap-2">
           <RadioOption
+            variant="outlined"
             label={t("dietaryOmnivore")}
             value="omnivore"
             {...register("dietary")}
           />
           <RadioOption
+            variant="outlined"
             label={t("dietaryNoBeef")}
             value="no_beef"
             {...register("dietary")}
           />
           <RadioOption
+            variant="outlined"
             label={t("dietaryVegetarian")}
             value="vegetarian"
             {...register("dietary")}
           />
           <RadioOption
+            variant="outlined"
             label={t("dietaryVegan")}
             value="vegan"
             {...register("dietary")}
@@ -585,7 +691,7 @@ interface FormStepTransportProps {
   carpoolSurcharge: number;
 }
 
-const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
+const FormStepTransport = (props: FormStepTransportProps) => {
   const t = useTranslations("registration");
   const format = useFormatter();
   const { register, watch, control, formState } =
@@ -612,11 +718,13 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
           <span className="typo-ui text-sm text-primary">{t("transport")}</span>
           <div className="flex flex-wrap gap-2">
             <RadioOption
+              variant="outlined"
               label={t("transportSelf")}
               value="self"
               {...register("transport")}
             />
             <RadioOption
+              variant="outlined"
               label={`${t("transportCarpool")}  +NT$ ${format.number(props.carpoolSurcharge)}`}
               value="carpool"
               {...register("transport")}
@@ -641,11 +749,12 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
                 {t("pickupLocation")}
               </span>
               <div className="flex flex-wrap gap-2">
-                {PICKUP_SLUGS.map((slug) => (
+                {PICKUP_LOCATIONS.map((loc) => (
                   <RadioOption
-                    key={slug}
-                    label={t(`pickupSlug.${slug}`)}
-                    value={slug}
+                    variant="outlined"
+                    key={loc}
+                    label={loc}
+                    value={loc}
                     {...register("pickup_location")}
                   />
                 ))}
@@ -663,11 +772,13 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
               </span>
               <div className="flex flex-wrap gap-2">
                 <RadioOption
+                  variant="outlined"
                   label={t("carpoolPassenger")}
                   value="passenger"
                   {...register("carpool_role")}
                 />
                 <RadioOption
+                  variant="outlined"
                   label={t("carpoolDriver")}
                   value="driver"
                   {...register("carpool_role")}
@@ -695,9 +806,7 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
                       label={t("seatCount")}
                       placeholder={t("selectSeatCount")}
                       options={seatCountOptions}
-                      value={
-                        field.value != null ? String(field.value) : undefined
-                      }
+                      value={field.value != null ? String(field.value) : ""}
                       onChange={(v) => field.onChange(parseInt(v, 10))}
                       onBlur={field.onBlur}
                       error={errors.seat_count?.message}
@@ -712,7 +821,7 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
 
       <div className="flex items-center justify-between rounded-lg border border-stroke-default p-4">
         <span className="typo-ui text-primary">{t("totalPrice")}</span>
-        <span className="typo-subtitle-1 text-accent-fg">
+        <span className="typo-subtitle-1 text-accent">
           NT$ {format.number(totalPrice)}
         </span>
       </div>
@@ -723,14 +832,6 @@ const FormStepTransport: React.FC<FormStepTransportProps> = (props) => {
 FormStepTransport.displayName = "FormStepTransport";
 
 const FORM_ID = "registration-form";
-
-const PICKUP_SLUGS = [
-  "taipei",
-  "nangang",
-  "dapinglin",
-  "sanchong",
-  "banqiao",
-] as const;
 
 const SEAT_COUNT_VALUES = [3, 4, 5] as const;
 
@@ -754,7 +855,3 @@ const STEP_FIELDS: Record<number, (keyof RegistrationFormInput)[]> = {
   3: ["dietary", "wants_rental", "notes"],
   4: ["transport", "pickup_location", "carpool_role", "seat_count"],
 };
-
-function isOnlyDialCode(value: string): boolean {
-  return /^\+\d{1,3}$/.test(value);
-}

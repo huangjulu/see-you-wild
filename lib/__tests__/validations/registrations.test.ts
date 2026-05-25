@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   calculateAge,
   getCountryByIso,
-  isValidTwId,
+  isValidTwDocument,
   normalizePhone,
 } from "@/lib/form-rules";
 import {
@@ -53,6 +53,15 @@ function getIssue(
   return result.error.issues.find((i) => i.path.join(".") === path);
 }
 
+function getIssueKey(
+  result: ReturnType<typeof createRegistrationSchema.safeParse>,
+  path: string
+): string | undefined {
+  const issue = getIssue(result, path);
+  if (!issue) return undefined;
+  return (issue as { params?: { key?: string } }).params?.key;
+}
+
 describe("createRegistrationSchema — TW id_number", () => {
   it("接受合法身分證 (regex + checksum 對)", () => {
     const result = createRegistrationSchema.safeParse({
@@ -68,24 +77,23 @@ describe("createRegistrationSchema — TW id_number", () => {
       id_number: INVALID_CHECKSUM_TW_IDS[0],
     });
     expect(result.success).toBe(false);
-    expect(getIssue(result, "id_number")?.message).toBe("invalidTwIdChecksum");
+    expect(getIssueKey(result, "id_number")).toBe("invalidTwIdChecksum");
   });
 
-  it("格式錯 (數字過少) → invalidTwId", () => {
+  it("TW + 位數不足 → invalidTwDocument", () => {
     const result = createRegistrationSchema.safeParse({
       ...validSelfRegistration,
       id_number: "A12345",
     });
     expect(result.success).toBe(false);
-    expect(getIssue(result, "id_number")?.message).toBe("invalidTwId");
+    expect(getIssueKey(result, "id_number")).toBe("invalidTwDocument");
   });
 
-  it("格式錯 (小寫字母) → invalidTwId", () => {
+  it("TW + 小寫字母 → toUpperCase 後通過 checksum", () => {
     const result = createRegistrationSchema.safeParse({
       ...validSelfRegistration,
       id_number: "a123456789",
     });
-    // schema does .toUpperCase before refine, so this should pass the regex; checksum dictates result
     expect(result.success).toBe(true);
   });
 });
@@ -107,10 +115,10 @@ describe("createRegistrationSchema — non-TW passport", () => {
       id_number: "AB12",
     });
     expect(result.success).toBe(false);
-    expect(getIssue(result, "id_number")?.message).toBe("invalidPassport");
+    expect(getIssueKey(result, "id_number")).toBe("invalidPassport");
   });
 
-  it("非 TW + 護照格式錯 (含小寫) → invalidPassport (toUpperCase 後仍應通過)", () => {
+  it("護照含小寫 → toUpperCase 後通過", () => {
     const result = createRegistrationSchema.safeParse({
       ...validSelfRegistration,
       country: "JP",
@@ -197,7 +205,7 @@ describe("createRegistrationSchema — guardian_consent", () => {
       birthday: makeMinorBirthday(),
     });
     expect(result.success).toBe(false);
-    expect(getIssue(result, "guardian_consent")?.message).toBe(
+    expect(getIssueKey(result, "guardian_consent")).toBe(
       "guardianConsentRequired"
     );
   });
@@ -209,7 +217,7 @@ describe("createRegistrationSchema — guardian_consent", () => {
       guardian_consent: false,
     });
     expect(result.success).toBe(false);
-    expect(getIssue(result, "guardian_consent")?.message).toBe(
+    expect(getIssueKey(result, "guardian_consent")).toBe(
       "guardianConsentRequired"
     );
   });
@@ -354,18 +362,26 @@ describe("updateRegistrationSchema", () => {
   });
 });
 
-describe("isValidTwId", () => {
+describe("isValidTwDocument", () => {
   it.each(VALID_TW_IDS)("合法身分證 %s 通過", (id) => {
-    expect(isValidTwId(id)).toBe(true);
+    expect(isValidTwDocument(id)).toBe(true);
   });
 
   it.each(INVALID_CHECKSUM_TW_IDS)("checksum 錯誤 %s 不通過", (id) => {
-    expect(isValidTwId(id)).toBe(false);
+    expect(isValidTwDocument(id)).toBe(false);
   });
 
   it("格式錯誤回 false", () => {
-    expect(isValidTwId("12345")).toBe(false);
-    expect(isValidTwId("a123456789")).toBe(false);
+    expect(isValidTwDocument("12345")).toBe(false);
+    expect(isValidTwDocument("a123456789")).toBe(false);
+  });
+
+  it("舊式統一證號 AA00000009 通過", () => {
+    expect(isValidTwDocument("AA00000009")).toBe(true);
+  });
+
+  it("新式統一證號（第二碼 8/9）通過 checksum", () => {
+    expect(isValidTwDocument("A800000014")).toBe(true);
   });
 });
 

@@ -4,7 +4,7 @@ type RootLayoutProps = {
   children: React.ReactNode;
 };
 
-const RootLayout: React.FC<RootLayoutProps> = (props) => {
+const RootLayout = (props: RootLayoutProps) => {
   return props.children;
 };
 

@@ -33,7 +33,7 @@ interface GsapProviderProps {
   children: React.ReactNode;
 }
 
-const GsapProvider: React.FC<GsapProviderProps> = (props) => {
+const GsapProvider = (props: GsapProviderProps) => {
   const reduceMotion = useSyncExternalStore(
     subscribe,
     getSnapshot,

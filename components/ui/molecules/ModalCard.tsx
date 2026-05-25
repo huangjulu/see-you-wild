@@ -46,8 +46,9 @@ const HeaderCloseButton: SlottableComponent<ButtonProps> = Object.assign(
       <Slot slot="header-close-button">
         <Button
           ref={attachEscListener}
+          className="px-2! hover:bg-neutral-50 hover:text-neutral-500 text-neutral-300"
           theme="text"
-          icon={<IconX className="size-4 text-brand-400" />}
+          icon={<IconX className="size-4" />}
           {...props}
         />
       </Slot>
@@ -109,7 +110,7 @@ const ModalCardHeader: SlottableComponent<ModalCardHeaderProps> = Object.assign(
         <header
           style={{ "--min-h": "4rem" } as React.CSSProperties}
           className={cn(
-            "flex min-h-[--min-h] items-center gap-4 pt-4 pl-4",
+            "flex min-h-[--min-h] items-center gap-4 pt-4 px-4",
             props.className
           )}
         >
@@ -125,7 +126,7 @@ const ModalCardHeader: SlottableComponent<ModalCardHeaderProps> = Object.assign(
                 </div>
               )}
               {props.description && (
-                <div className="typo-body-2 text-black-60">
+                <div className="typo-body-2 text-secondary">
                   {props.description}
                 </div>
               )}
@@ -147,7 +148,12 @@ interface ModalCardMainProps {
 const ModalCardMain: SlottableComponent<ModalCardMainProps> = Object.assign(
   (props: ModalCardMainProps) => (
     <Slot slot="main">
-      <main className={cn("p-4 overflow-y-auto bg-linear-90", props.className)}>
+      <main
+        className={cn(
+          "pt-4 pb-5 px-5 overflow-y-auto bg-linear-90",
+          props.className
+        )}
+      >
         {props.children}
       </main>
     </Slot>
@@ -188,14 +194,14 @@ interface ModalCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
 }
 
-const _ModalCard: React.FC<ModalCardProps> = (props) => {
+const _ModalCard = (props: ModalCardProps) => {
   const { className, children, ...restProps } = props;
   const slots = resolveSlots<ModalCardSlot>(children);
 
   return (
     <div
       className={cn(
-        "grid grid-rows-[auto_1fr_auto] overflow-clip rounded-xl bg-white border border-stroke-default shadow-sm",
+        "grid grid-rows-[auto_1fr_auto] max-h-dvh overflow-clip rounded-xl bg-white border border-stroke-default shadow-sm",
         className
       )}
       {...restProps}

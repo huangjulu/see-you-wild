@@ -184,7 +184,7 @@ export function getCountryByIso(iso: string): CountryRule | undefined {
 // ID number rules
 // ============================================
 
-export const TW_ID_REGEX: RegExp = /^[A-Z]\d{9}$/;
+export const TW_DOCUMENT_REGEX: RegExp = /^[A-Z][\dA-D]\d{8}$/;
 export const PASSPORT_REGEX: RegExp = /^[A-Z0-9]{6,12}$/;
 
 const TW_ID_LETTER_VALUES: Record<string, number> = {
@@ -216,19 +216,35 @@ const TW_ID_LETTER_VALUES: Record<string, number> = {
   Z: 33,
 };
 
+const RESIDENT_SECOND_LETTER_VALUES: Record<string, number> = {
+  A: 0,
+  B: 1,
+  C: 2,
+  D: 3,
+};
+
 const TW_ID_WEIGHTS: readonly number[] = [1, 9, 8, 7, 6, 5, 4, 3, 2, 1, 1];
 
-export function isValidTwId(id: string): boolean {
-  if (!TW_ID_REGEX.test(id)) return false;
+export function isValidTwDocument(id: string): boolean {
+  if (!TW_DOCUMENT_REGEX.test(id)) return false;
 
-  const letterValue = TW_ID_LETTER_VALUES[id[0]];
-  if (letterValue === undefined) return false;
+  const firstLetterValue = TW_ID_LETTER_VALUES[id[0]];
+  if (firstLetterValue === undefined) return false;
+
+  let secondDigit: number;
+  const secondChar = id[1];
+  if (secondChar >= "A" && secondChar <= "D") {
+    secondDigit = RESIDENT_SECOND_LETTER_VALUES[secondChar]!;
+  } else {
+    secondDigit = secondChar.charCodeAt(0) - "0".charCodeAt(0);
+  }
 
   const digits: number[] = [
-    Math.floor(letterValue / 10),
-    letterValue % 10,
+    Math.floor(firstLetterValue / 10),
+    firstLetterValue % 10,
+    secondDigit,
     ...id
-      .slice(1)
+      .slice(2)
       .split("")
       .map((d) => d.charCodeAt(0) - "0".charCodeAt(0)),
   ];
@@ -274,6 +290,21 @@ export function normalizePhone(
 
   const candidate = `${country.dialCode}${local}`;
   return E164_REGEX.test(candidate) ? candidate : null;
+}
+
+export function toLocalPhone(e164: string, country: CountryRule): string {
+  if (!e164.startsWith(country.dialCode)) return e164;
+  const withoutDialCode = e164.slice(country.dialCode.length);
+  if (country.trunkPrefix) {
+    return `${country.trunkPrefix}${withoutDialCode}`;
+  }
+  return withoutDialCode;
+}
+
+export function formatLocalPhone(digits: string): string {
+  const cleaned = digits.replace(/\s/g, "");
+  if (cleaned.length <= 1) return cleaned;
+  return `${cleaned[0]} ${cleaned.slice(1, 5)}${cleaned.length > 5 ? ` ${cleaned.slice(5, 9)}` : ""}`;
 }
 
 // ============================================

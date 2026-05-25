@@ -4,7 +4,7 @@ import {
   ChevronDown as IconChevronDown,
   ChevronUp as IconChevronUp,
 } from "lucide-react";
-import React, { useState } from "react";
+import { useCallback, useState } from "react";
 
 import Drawer from "@/components/ui/atoms/Drawer";
 import {
@@ -21,27 +21,27 @@ interface SelectorOption {
 }
 
 interface SelectorProps {
-  className?: string;
   options: SelectorOption[];
-  value?: string;
-  onChange?: (value: string) => void;
+  value: string;
+  onChange: (value: string) => void;
   onBlur?: () => void;
   label?: string;
   error?: string;
   placeholder?: string;
   disabled?: boolean;
   name?: string;
+  className?: string;
 }
 
-const Selector: React.FC<SelectorProps> = (props) => {
+const Selector = (props: SelectorProps) => {
   const [open, setOpen] = useState(false);
-  const isTouchDevice = useMediaQuery("(pointer: coarse)");
+  const isSmallScreen = useMediaQuery("(max-width: 767px)");
   const Icon = open ? IconChevronUp : IconChevronDown;
 
   const selectedOption = props.options.find((o) => o.value === props.value);
 
   function onOptionSelect(value: string) {
-    props.onChange?.(value);
+    props.onChange(value);
     setOpen(false);
     props.onBlur?.();
   }
@@ -49,16 +49,30 @@ const Selector: React.FC<SelectorProps> = (props) => {
   const triggerClassName = cn(
     "flex w-full h-10 items-center justify-between rounded-md border px-4 text-left typo-body transition-colors",
     "border-stroke-default bg-white text-primary ring-stroke-focus",
-    "hover:border-stroke-strong hover:disabled:border-stroke-default",
+    "hover:border-brand-400 hover:disabled:border-stroke-default",
     "focus:border-accent focus:ring-2 focus:ring-brand-200/70 focus-visible:outline-none",
     "disabled:opacity-50 disabled:cursor-not-allowed",
-    props.error != null && "border-error ring-error/20 focus:border-error",
+    props.error != null &&
+      "border-stroke-critical ring-stroke-critical/20 focus:border-stroke-critical",
     selectedOption == null && "text-neutral-200"
   );
+
+  const selectedRef = useCallback((node: HTMLButtonElement | null) => {
+    if (node == null) return;
+    requestAnimationFrame(() => {
+      const container = node.closest("[data-selector-list]");
+      if (!(container instanceof HTMLElement)) return;
+      const offsetTop = node.offsetTop - container.offsetTop;
+      container.scrollTop =
+        offsetTop - container.clientHeight / 2 + node.clientHeight / 2;
+    });
+    return () => {};
+  }, []);
 
   const optionList = props.options.map((option) => (
     <button
       key={option.value}
+      ref={option.value === props.value ? selectedRef : undefined}
       type="button"
       className={cn(
         "w-full rounded-sm px-3 py-2 text-left typo-body text-sm transition-colors",
@@ -76,19 +90,22 @@ const Selector: React.FC<SelectorProps> = (props) => {
       {props.label != null && (
         <span className="typo-ui text-sm text-primary">{props.label}</span>
       )}
-      {isTouchDevice ? (
+      {isSmallScreen ? (
         <Drawer open={open} onOpenChange={setOpen}>
           <Drawer.Trigger
             disabled={props.disabled}
             className={triggerClassName}
           >
-            <span>
+            <span className="truncate">
               {selectedOption ? selectedOption.label : props.placeholder}
             </span>
-            <Icon className="size-4 text-secondary" />
+            <Icon className="size-4 text-secondary shrink-0" />
           </Drawer.Trigger>
           <Drawer.Content>
-            <div className="max-h-[60vh] overflow-y-auto px-4 pb-6 pt-2">
+            <div
+              data-selector-list
+              className="max-h-[60vh] overflow-y-auto px-4 pb-6 pt-2"
+            >
               {optionList}
             </div>
           </Drawer.Content>
@@ -99,12 +116,15 @@ const Selector: React.FC<SelectorProps> = (props) => {
             disabled={props.disabled}
             className={triggerClassName}
           >
-            <span>
+            <span className="truncate">
               {selectedOption ? selectedOption.label : props.placeholder}
             </span>
-            <Icon className="size-4 text-secondary" />
+            <Icon className="size-4 text-secondary shrink-0" />
           </PopoverTrigger>
-          <PopoverContent className="w-(--anchor-width) rounded-md border border-neutral-200 p-1 ring-0 bg-white h-32 overflow-auto">
+          <PopoverContent
+            data-selector-list
+            className="w-(--anchor-width) rounded-md border border-neutral-200 p-1 ring-0 bg-white max-h-[9.6rem] overflow-auto"
+          >
             {optionList}
           </PopoverContent>
         </Popover>

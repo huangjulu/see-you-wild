@@ -1,11 +1,11 @@
 "use client";
 
 import { SplitText } from "gsap/SplitText";
-import React, { useRef } from "react";
+import { useRef } from "react";
 
 import { ScrollTrigger, useTimeline } from "@/lib/gsap";
 
-const OpeningAnimation: React.FC = () => {
+const OpeningAnimation = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const brandRef = useRef<HTMLDivElement>(null);
   const videoWrapRef = useRef<HTMLDivElement>(null);

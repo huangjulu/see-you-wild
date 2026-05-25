@@ -2,12 +2,13 @@
   "common": {
     "siteName": "See You Wild",
     "nav": {
-      "events": "Events",
+      "about": "About",
       "contact": "Contact",
       "exploreCta": "Explore"
     },
     "footer": {
-      "rights": "All rights reserved."
+      "rights": "All rights reserved.",
+      "servicePolicy": "Service Policy"
     },
     "error": {
       "heading": "Oops",
@@ -53,9 +54,11 @@
           "subtitle": "Tree Climbing"
         },
         "river-tracing": {
-          "title": "River Tracing Adventure",
+          "title": "Hidden River Tracing",
           "subtitle": "River Tracing"
-        }
+        },
+        "yacht": { "title": "Yacht Cruise", "subtitle": "Yacht Tour" },
+        "rafting": { "title": "Packraft Adventure", "subtitle": "Rafting" }
       }
     },
     "whyChooseUs": {
@@ -154,7 +157,14 @@
     "allTypes": "All Types",
     "allLocations": "All Locations",
     "typeLabel": "Activity Type",
-    "locationLabel": "Location"
+    "locationLabel": "Location",
+    "type": {
+      "camping": "Wild Camping Chef",
+      "hot-spring": "Hot Springs",
+      "sup": "SUP Paddleboarding",
+      "tree-climbing": "Tree Climbing",
+      "river-tracing": "River Tracing"
+    }
   },
   "paymentRef": {
     "title": "Payment Confirmation",
@@ -188,7 +198,8 @@
     "confirmPaid": "Confirm Payment",
     "markFailed": "Payment Invalid",
     "resultPaid": "Payment confirmed. The customer will be notified of successful registration.",
-    "resultFailed": "Marked as invalid. The customer will receive a re-submission notification."
+    "resultFailed": "Marked as invalid. The customer will receive a re-submission notification.",
+    "done": "Review completed."
   },
   "eventDetail": {
     "backToEvents": "Back to Events",
@@ -208,11 +219,24 @@
     "carpoolIncluded": "Incl. carpool NT$",
     "selectOptionsHint": "Please select date and transport first",
     "transport": "Transport",
+    "carpool": "Carpool",
+    "carpoolSubtitle": "Refund based on passengers",
+    "carpoolRole": "Carpool Role",
     "carpoolPickup": "Carpool Pickup",
-    "needRide": "Need a ride",
-    "canDrive": "Can drive",
+    "needRide": "I need a ride",
+    "canDrive": "I'll drive",
     "canDriveNote": "Refund based on passenger count",
-    "seatCount": "Seat capacity"
+    "driverNote": "Receive a fixed refund per passenger you carry",
+    "driverOverflowNote": "If enough drivers are available, you'll be reassigned as a passenger without affecting your participation.",
+    "seatCount": "Seat capacity",
+    "seatCountOption": "{count} seats",
+    "selectSeatCount": "Select seats",
+    "carpoolLockWarning": "Once you choose carpool, you cannot switch back to self-arrival. Your carpool role will be arranged by the organizer before the event.",
+    "preparationNotes": "Preparation & Dress Code",
+    "faq": "FAQ",
+    "refundPolicy": "Cancellation & Refund Policy",
+    "viewFaq": "View FAQ",
+    "viewRefundPolicy": "View Policy"
   },
   "registration": {
     "title": "Registration Form",
@@ -243,13 +267,10 @@
     "genderMale": "Male",
     "genderFemale": "Female",
     "genderOther": "Other",
-    "idLabel": {
-      "tw": "National ID",
-      "foreign": "Passport Number"
-    },
+    "idLabel": "ID Number",
     "idPlaceholder": {
-      "tw": "A123456789",
-      "foreign": "123456789"
+      "tw": "National ID or ARC number",
+      "foreign": "Passport number"
     },
     "birthday": "Birthday",
     "birthdayPlaceholder": "Select date",
@@ -268,8 +289,9 @@
     "notes": "Notes (optional)",
     "notesPlaceholder": "Other needs or notes (optional)",
     "transport": "Transport",
-    "transportSelf": "Self-arrival",
-    "transportCarpool": "Carpool Pickup",
+    "transportSelf": "Going alone",
+    "transportCarpool": "Carpool",
+    "carpoolNote": "Refund based on passenger count",
     "pickupLocation": "Pickup Location",
     "pickupSlug": {
       "taipei": "Taipei Main Station",
@@ -279,15 +301,22 @@
       "banqiao": "Banqiao Station"
     },
     "carpoolRole": "Carpool Role",
-    "carpoolPassenger": "Passenger",
-    "carpoolDriver": "Driver",
+    "carpoolPassenger": "I need a ride",
+    "carpoolDriver": "I'll drive",
     "seatCount": "Available Seats",
     "totalPrice": "Total Price",
     "successTitle": "Registration submitted",
-    "successTransferTo": "Transfer the amount to",
+    "successEventTitle": "Event",
+    "successEventDate": "Date",
+    "successEventLocation": "Location",
+    "successPaymentDeadline": "Payment deadline",
+    "successTransferTo": "Please transfer within {days} days to",
     "successAccountHolder": "Account holder",
+    "successEmailSent": "Confirmation email sent to {email}",
     "successReportDigits": "Check your inbox for the confirmation email, then click the link to report the last 5 digits of your bank account to complete registration.",
-    "successConfirm": "Got it, I'll transfer now"
+    "successConfirm": "Got it, I'll transfer now",
+    "copyAccount": "Copy account number",
+    "copied": "Copied"
   },
   "country": {
     "TW": "Taiwan",
@@ -316,14 +345,23 @@
     "invalidEmail": "Please enter a valid email address",
     "invalidFormat": "Invalid format",
     "invalidSelection": "Please select a valid option",
-    "invalidTwId": "Invalid Taiwan ID format (1 letter + 9 digits)",
-    "invalidTwIdChecksum": "Taiwan ID checksum invalid",
-    "invalidPassport": "Invalid passport format",
+    "invalidTwDocument": "Invalid National ID/ARC format",
+    "invalidTwIdChecksum": "National ID/ARC checksum invalid",
+    "invalidPassport": "Invalid passport format (6-12 alphanumeric)",
     "invalidPhone": "Invalid phone number",
     "guardianConsentRequired": "Guardian consent required for under 18",
     "lineIdInvalid": "Invalid Line ID format",
     "nameTooLong": "Name too long (max 50)",
     "notesTooLong": "Notes too long (max 500)",
     "invalidBirthday": "Invalid birthday"
+  },
+  "adminLogin": {
+    "title": "Admin Login",
+    "email": "Email",
+    "emailPlaceholder": "admin@seeyouwild.com",
+    "password": "Password",
+    "passwordPlaceholder": "Enter password",
+    "submit": "Login",
+    "error": "Login failed, please check your credentials"
   }
 }

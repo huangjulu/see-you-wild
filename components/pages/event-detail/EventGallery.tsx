@@ -4,7 +4,7 @@ import {
   ChevronLeft as IconChevronLeft,
   ChevronRight as IconChevronRight,
 } from "lucide-react";
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 
 import EventLightbox from "@/components/ui/molecules/EventLightbox";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,7 @@ interface EventGalleryProps {
   className?: string;
 }
 
-const EventGallery: React.FC<EventGalleryProps> = (props) => {
+const EventGallery = (props: EventGalleryProps) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [mobileIndex, setMobileIndex] = useState(0);
@@ -35,7 +35,7 @@ const EventGallery: React.FC<EventGalleryProps> = (props) => {
     <>
       <div className={props.className}>
         {/* Desktop: 1 big + 2 small */}
-        <div className="hidden md:grid md:grid-cols-3 md:grid-rows-2 gap-1 rounded-2xl overflow-hidden aspect-3/1">
+        <div className="hidden md:grid md:grid-cols-3 md:grid-rows-2 gap-1 rounded-2xl overflow-hidden aspect-3/1 shadow-md">
           <button
             type="button"
             className="col-span-2 row-span-2 relative overflow-hidden"
@@ -51,7 +51,7 @@ const EventGallery: React.FC<EventGalleryProps> = (props) => {
               className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
             />
           </button>
-          {side1 && (
+          {side1 ? (
             <button
               type="button"
               className="relative overflow-hidden"
@@ -67,8 +67,10 @@ const EventGallery: React.FC<EventGalleryProps> = (props) => {
                 className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
               />
             </button>
+          ) : (
+            <div className="bg-neutral-300" />
           )}
-          {side2 && (
+          {side2 ? (
             <button
               type="button"
               className="relative overflow-hidden"
@@ -84,11 +86,13 @@ const EventGallery: React.FC<EventGalleryProps> = (props) => {
                 className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
               />
             </button>
+          ) : (
+            <div className="bg-neutral-300" />
           )}
         </div>
 
         {/* Mobile: single image carousel (no lightbox) */}
-        <div className="relative md:hidden rounded-2xl overflow-hidden aspect-[4/3]">
+        <div className="relative md:hidden rounded-2xl overflow-hidden aspect-[4/3] shadow-md">
           <img
             src={images[mobileIndex].src}
             alt={images[mobileIndex].alt}

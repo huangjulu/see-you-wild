@@ -98,7 +98,7 @@ interface DialogProps {
   children?: React.ReactNode;
 }
 
-const _Dialog: React.FC<DialogProps> = (props) => {
+const _Dialog = (props: DialogProps) => {
   const slots = resolveSlots<DialogSlot>(props.children);
 
   return (

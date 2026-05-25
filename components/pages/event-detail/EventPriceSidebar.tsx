@@ -12,7 +12,7 @@ interface EventPriceSidebarProps {
   onBook: () => void;
 }
 
-const EventPriceSidebar: React.FC<EventPriceSidebarProps> = (props) => {
+const EventPriceSidebar = (props: EventPriceSidebarProps) => {
   const t = useTranslations("eventDetail");
   const totalPrice =
     props.basePrice + (props.isSelfArrival ? 0 : props.carpoolSurcharge);

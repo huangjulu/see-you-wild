@@ -5,36 +5,34 @@ import { useTranslations } from "@/lib/i18n/client";
 
 interface IdNumberInputProps {
   country: string;
-  value?: string;
-  onChange?: (value: string) => void;
-  onBlur?: () => void;
+  value: string;
+  onChange: (value: string) => void;
+  onBlur: () => void;
+  name: string;
+  ref: React.Ref<HTMLInputElement>;
   error?: string;
-  name?: string;
   className?: string;
-  ref?: React.Ref<HTMLInputElement>;
 }
 
-const IdNumberInput: React.FC<IdNumberInputProps> = (props) => {
+const IdNumberInput = (props: IdNumberInputProps) => {
   const t = useTranslations("registration");
 
   const isTaiwan = props.country === "TW";
-  const labelKey = isTaiwan ? "idLabel.tw" : "idLabel.foreign";
-  const placeholderKey = isTaiwan
-    ? "idPlaceholder.tw"
-    : "idPlaceholder.foreign";
+  const placeholder = isTaiwan
+    ? t("idPlaceholder.tw")
+    : t("idPlaceholder.foreign");
 
   function onIdNumberChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const next = event.target.value.trim().toUpperCase();
-    props.onChange?.(next);
+    props.onChange(event.target.value);
   }
 
   return (
     <Input
       ref={props.ref}
       name={props.name}
-      label={t(labelKey)}
-      placeholder={t(placeholderKey)}
-      value={props.value ?? ""}
+      label={t("idLabel")}
+      placeholder={placeholder}
+      value={props.value}
       onChange={onIdNumberChange}
       onBlur={props.onBlur}
       error={props.error}

@@ -1,9 +1,8 @@
 "use client";
 
-import Link from "next/link";
-
+import Heading from "@/components/ui/atoms/Heading";
 import Tag from "@/components/ui/atoms/Tag";
-import { useLocale } from "@/lib/i18n/client";
+import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 interface EventCardProps {
@@ -19,18 +18,17 @@ interface EventCardProps {
   imageAlt: string;
 }
 
-const EventCard: React.FC<EventCardProps> = (props) => {
-  const locale = useLocale();
+const EventCard = (props: EventCardProps) => {
   const formattedPrice = props.basePrice.toLocaleString("zh-TW");
 
   return (
-    <Link href={`/${locale}/events/${props.id}`} className="block">
+    <Link href={`/events/${props.id}`} className="block">
       <article
         className={cn(
-          "group overflow-hidden rounded-2xl bg-surface transition-shadow duration-300 hover:shadow-lg border border-neutral-100 shadow-2xs"
+          "group overflow-hidden rounded-2xl bg-white transition-shadow duration-300 hover:shadow-lg border border-neutral-100 shadow-2xs max-h-96 flex flex-col"
         )}
       >
-        <div className="relative aspect-4/3 overflow-hidden">
+        <div className="relative aspect-4/3 overflow-hidden shrink-0">
           <img
             src={props.image}
             alt={props.imageAlt}
@@ -38,14 +36,20 @@ const EventCard: React.FC<EventCardProps> = (props) => {
             decoding="async"
             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
+          <div
+            className="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent to-50% pointer-events-none"
+            aria-hidden="true"
+          />
+          <Tag className="absolute top-3 left-3 z-10 border-white text-white">
+            {props.type}
+          </Tag>
         </div>
-        <div className="space-y-2 p-4">
-          <Tag>{props.type}</Tag>
-          <h3 className="typo-heading text-lg">{props.title}</h3>
-          <p className="typo-body text-sm text-secondary">
+        <div className="p-4 min-h-0">
+          <Heading.H3 className="text-lg truncate">{props.title}</Heading.H3>
+          <p className="typo-body text-sm text-secondary truncate">
             {props.location} · {props.startDate}
           </p>
-          <p className="typo-ui text-base font-semibold">
+          <p className="typo-ui text-base font-semibold mt-2 text-brand-500">
             NT$ {formattedPrice}
           </p>
         </div>

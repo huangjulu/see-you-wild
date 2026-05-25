@@ -5,7 +5,7 @@ import { getSupabase } from "@/lib/supabase/client";
 import type {
   EventListDto,
   EventRow,
-  RegistrationSummaryDto,
+  RegistrationAdminDto,
 } from "@/lib/types/database";
 import { createEventSchema } from "@/lib/validations/events";
 
@@ -26,7 +26,9 @@ export async function GET() {
     // Single batched read instead of N+1 per-event queries (SYW-036 I7).
     const { data: allRegistrations, error: regError } = await getSupabase()
       .from("registrations")
-      .select("id, name, status, transport, payment_ref, created_at, event_id")
+      .select(
+        "id, name, email, phone, amount_due, status, transport, payment_ref, selected_date, created_at, event_id"
+      )
       .in("event_id", eventIds);
 
     if (regError) {
@@ -67,12 +69,10 @@ export async function POST(request: Request) {
   }
 }
 
-type JoinedRegistration = RegistrationSummaryDto & { event_id: string };
-
 function groupRegistrationsByEvent(
-  registrations: JoinedRegistration[]
-): Map<string, RegistrationSummaryDto[]> {
-  const map = new Map<string, RegistrationSummaryDto[]>();
+  registrations: RegistrationAdminDto[]
+): Map<string, RegistrationAdminDto[]> {
+  const map = new Map<string, RegistrationAdminDto[]>();
   for (const reg of registrations) {
     if (!map.has(reg.event_id)) map.set(reg.event_id, []);
     map.get(reg.event_id)!.push(reg);

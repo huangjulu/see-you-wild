@@ -52,27 +52,21 @@ export async function assignCarpool(
     return [];
   }
 
-  const { error: deleteError } = await getSupabase()
-    .from("carpool_assignments")
-    .delete()
-    .eq("event_id", eventId);
-
-  if (deleteError) {
-    throw new InternalError(deleteError.message, deleteError);
-  }
-
   const assignments = buildAssignments(eventId, typedEvent, carpoolRegs);
 
-  const { data: inserted, error: insertError } = await getSupabase()
-    .from("carpool_assignments")
-    .insert(assignments)
-    .select();
+  const { error: rpcError } = await getSupabase().rpc(
+    "replace_carpool_assignments",
+    {
+      p_event_id: eventId,
+      p_assignments: JSON.stringify(assignments),
+    }
+  );
 
-  if (insertError) {
-    throw new InternalError(insertError.message, insertError);
+  if (rpcError) {
+    throw new InternalError(rpcError.message, rpcError);
   }
 
-  return (inserted ?? []) as CarpoolAssignment[];
+  return assignments;
 }
 
 export function buildAssignments(

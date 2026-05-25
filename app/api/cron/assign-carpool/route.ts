@@ -5,7 +5,7 @@ import { UnauthorizedError } from "@/lib/errors/domain";
 import { assignCarpool } from "@/lib/services/carpool";
 import { getSupabase } from "@/lib/supabase/client";
 
-export async function POST(request: Request) {
+export async function GET(request: Request) {
   try {
     const authHeader = request.headers.get("authorization");
     if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       const startDate = new Date(event.start_date);
       const cutoffDate = new Date(startDate);
       cutoffDate.setDate(cutoffDate.getDate() - event.carpool_cutoff_days);
-      return cutoffDate.toISOString().slice(0, 10) === today;
+      return cutoffDate.toISOString().slice(0, 10) <= today;
     });
 
     const results: Array<{ eventId: string; assigned: number }> = [];
@@ -37,33 +37,63 @@ export async function POST(request: Request) {
     for (const event of targetEvents) {
       const assignments = await assignCarpool(event.id);
 
-      const registrationIds = assignments.map((a) => a.registration_id);
+      const { data: unnotified } = await getSupabase()
+        .from("carpool_assignments")
+        .select(
+          "id, car_group, pickup_location, registration_id, final_role, refund_amount"
+        )
+        .eq("event_id", event.id)
+        .is("notified_at", null);
 
-      if (registrationIds.length > 0) {
-        const { data: registrations } = await getSupabase()
-          .from("registrations")
-          .select("id, name, email, pickup_location")
-          .in("id", registrationIds);
+      if (!unnotified || unnotified.length === 0) {
+        results.push({ eventId: event.id, assigned: assignments.length });
+        continue;
+      }
 
-        const regMap = new Map((registrations ?? []).map((r) => [r.id, r]));
+      const regIds = unnotified.map((a) => a.registration_id);
+      const { data: regs } = await getSupabase()
+        .from("registrations")
+        .select("id, name, email, pickup_location")
+        .in("id", regIds);
+      const regMap = new Map((regs ?? []).map((r) => [r.id, r]));
 
-        for (const assignment of assignments) {
-          const reg = regMap.get(assignment.registration_id);
-          if (!reg) continue;
+      const groupedByCarGroup = new Map<number, typeof unnotified>();
+      for (const a of unnotified) {
+        const group = groupedByCarGroup.get(a.car_group) ?? [];
+        group.push(a);
+        groupedByCarGroup.set(a.car_group, group);
+      }
 
-          const role: "driver" | "passenger" =
-            assignment.final_role === "driver" ? "driver" : "passenger";
+      const overflowGroups = new Set<number>();
+      for (const [carGroup, members] of groupedByCarGroup) {
+        if (!members.some((m) => m.final_role === "driver")) {
+          overflowGroups.add(carGroup);
+        }
+      }
 
-          sendCarpoolRoleEmail({
+      for (const assignment of unnotified) {
+        const reg = regMap.get(assignment.registration_id);
+        if (!reg) continue;
+
+        try {
+          await sendCarpoolRoleEmail({
             to: reg.email,
             customerName: reg.name,
             eventTitle: event.title,
             eventStartDate: event.start_date,
-            role,
+            role: assignment.final_role === "driver" ? "driver" : "passenger",
             pickupLocation: reg.pickup_location ?? assignment.pickup_location,
             refundAmount: assignment.refund_amount,
             carGroup: assignment.car_group,
-          }).catch(console.error);
+            isOverflow: overflowGroups.has(assignment.car_group),
+          });
+
+          await getSupabase()
+            .from("carpool_assignments")
+            .update({ notified_at: new Date().toISOString() })
+            .eq("id", assignment.id);
+        } catch (err) {
+          console.error(`Failed to notify ${reg.email}:`, err);
         }
       }
 

@@ -1,6 +1,8 @@
-export const locales = ["zh-TW", "en"] as const;
+import routing from "@/i18n/routing";
+
+export const locales = routing.locales;
 export type Locale = (typeof locales)[number];
-export const defaultLocale: Locale = "zh-TW";
+export const defaultLocale = routing.defaultLocale as Locale;
 
 export function isValidLocale(value: string): value is Locale {
   return locales.includes(value as Locale);

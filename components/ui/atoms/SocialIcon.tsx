@@ -25,15 +25,30 @@ const icons = {
       <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
     </svg>
   ),
+  line: (
+    <img
+      src="/icons/line-logo.svg"
+      alt=""
+      aria-hidden="true"
+      width={88}
+      height={24}
+      className="h-6 w-auto"
+    />
+  ),
 };
 
-const SocialIcon: React.FC<SocialIconProps> = (props) => {
+const ariaLabels: Record<string, string> = {
+  instagram: "Follow us on Instagram",
+  line: "Chat with us on LINE",
+};
+
+const SocialIcon = (props: SocialIconProps) => {
   return (
     <a
       href={props.href}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label={`Follow us on ${props.platform}`}
+      aria-label={ariaLabels[props.platform] ?? `Visit our ${props.platform}`}
       className={cn(
         "inline-flex items-center justify-center min-w-11 min-h-11 text-white/70 hover:text-white transition-colors duration-300",
         props.className

@@ -23,6 +23,14 @@ const baseEvent: EventRow = {
   payment_days: 7,
   carpool_cutoff_days: 3,
   min_participants: 4,
+  description: "",
+  pickup_locations: [],
+  images: [],
+  available_dates: ["2026-05-01", "2026-05-02"],
+  safety_policy: "",
+  preparation_notes: "",
+  faq: "",
+  refund_policy: "",
   status: "open",
   first_created_at: "2026-04-01T00:00:00Z",
 };
@@ -52,6 +60,7 @@ function makeReg(overrides: Partial<RegistrationRow>): RegistrationRow {
     amount_due: 1100,
     payment_ref: null,
     status: "paid",
+    selected_date: null,
     created_at: "2026-04-01T00:00:00Z",
     confirmed_at: "2026-04-02T00:00:00Z",
     expires_at: "2026-04-08T00:00:00Z",
@@ -81,31 +90,16 @@ function makeRegsChain(result: { data: unknown; error: unknown }) {
   };
 }
 
-function makeDeleteChain(result: { error: unknown }) {
-  return {
-    delete: () => ({
-      eq: vi.fn().mockResolvedValue(result),
-    }),
-  };
-}
-
-function makeInsertChain(result: { data: unknown; error: unknown }) {
-  return {
-    insert: () => ({
-      select: vi.fn().mockResolvedValue(result),
-    }),
-  };
-}
-
-function setupSupabaseMock(chains: unknown[]) {
+function setupSupabaseMock(chains: unknown[], rpcResult?: { error: unknown }) {
   const fromMock = vi.fn();
   for (const chain of chains) {
     fromMock.mockReturnValueOnce(chain);
   }
   // SupabaseClient is opaque 3rd-party type; building a full mock is impractical.
-  // assignCarpool only uses .from(), so we narrow via unknown to the partial shape we control.
+  // assignCarpool uses .from() and .rpc(), so we narrow via unknown to the partial shape we control.
   vi.mocked(getSupabase).mockReturnValue({
     from: fromMock,
+    rpc: vi.fn().mockResolvedValue(rpcResult ?? { error: null }),
   } as unknown as SupabaseClient);
 }
 
@@ -371,35 +365,20 @@ describe("assignCarpool", () => {
     await expect(assignCarpool("evt-1")).rejects.toThrow(InternalError);
   });
 
-  it("delete 舊指派失敗時 throw InternalError", async () => {
+  it("RPC replace 失敗時 throw InternalError", async () => {
     const driver = makeReg({
       id: "drv-1",
       carpool_role: "driver",
       seat_count: 3,
     });
 
-    setupSupabaseMock([
-      makeEventChain({ data: baseEvent, error: null }),
-      makeRegsChain({ data: [driver], error: null }),
-      makeDeleteChain({ error: { message: "delete failed" } }),
-    ]);
-
-    await expect(assignCarpool("evt-1")).rejects.toThrow(InternalError);
-  });
-
-  it("insert 新指派失敗時 throw InternalError", async () => {
-    const driver = makeReg({
-      id: "drv-1",
-      carpool_role: "driver",
-      seat_count: 3,
-    });
-
-    setupSupabaseMock([
-      makeEventChain({ data: baseEvent, error: null }),
-      makeRegsChain({ data: [driver], error: null }),
-      makeDeleteChain({ error: null }),
-      makeInsertChain({ data: null, error: { message: "insert failed" } }),
-    ]);
+    setupSupabaseMock(
+      [
+        makeEventChain({ data: baseEvent, error: null }),
+        makeRegsChain({ data: [driver], error: null }),
+      ],
+      { error: { message: "rpc failed" } }
+    );
 
     await expect(assignCarpool("evt-1")).rejects.toThrow(InternalError);
   });

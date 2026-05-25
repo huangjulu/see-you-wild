@@ -12,11 +12,9 @@ interface EventCalendarProps extends Pick<
 > {
   availableDates?: Date[];
   minAdvanceDays?: number;
-  gridType?: React.ComponentProps<typeof Calendar.Grid>["type"];
-  expandLabel?: string;
 }
 
-const EventCalendar: React.FC<EventCalendarProps> = (props) => {
+const EventCalendar = (props: EventCalendarProps) => {
   const minDate = useMemo(() => {
     if (props.minAdvanceDays == null) return startOfDay(new Date());
     return addDays(new Date(), props.minAdvanceDays);
@@ -50,7 +48,7 @@ const EventCalendar: React.FC<EventCalendarProps> = (props) => {
       full: {
         match: fullMatcher,
         label: "客滿",
-        style: "pointer-events-none cursor-default text-gray-400",
+        style: "pointer-events-none cursor-default text-neutral-400/40",
       },
       available: {
         match: availableMatcher,
@@ -71,8 +69,6 @@ const EventCalendar: React.FC<EventCalendarProps> = (props) => {
     props.onChange?.(date);
   };
 
-  const gridType = props.gridType ?? "month";
-
   return (
     <Calendar
       mode="single"
@@ -88,7 +84,7 @@ const EventCalendar: React.FC<EventCalendarProps> = (props) => {
         <Calendar.Chevrons />
         <Calendar.Caption layout="label" />
       </Calendar.Navi>
-      <Calendar.Grid type={gridType} expandLabel={props.expandLabel} />
+      <Calendar.Grid />
     </Calendar>
   );
 };

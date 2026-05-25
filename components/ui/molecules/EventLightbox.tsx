@@ -5,7 +5,7 @@ import {
   ChevronRight as IconChevronRight,
   X as IconX,
 } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -16,7 +16,7 @@ interface EventLightboxProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const EventLightbox: React.FC<EventLightboxProps> = (props) => {
+const EventLightbox = (props: EventLightboxProps) => {
   const [currentIndex, setCurrentIndex] = useState(props.initialIndex ?? 0);
 
   useEffect(
@@ -64,7 +64,7 @@ const EventLightbox: React.FC<EventLightboxProps> = (props) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90"
       onClick={function onBackdrop() {
         props.onOpenChange(false);
       }}

@@ -2,7 +2,7 @@
 
 import { ChevronsDown as IconChevronsDown } from "lucide-react";
 
-const ScrollIndicator: React.FC = () => {
+const ScrollIndicator = () => {
   return (
     <button
       onClick={() => {

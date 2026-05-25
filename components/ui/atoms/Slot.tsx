@@ -7,7 +7,7 @@ interface SlotProps {
   children?: React.ReactNode;
 }
 
-const Slot: React.FC<SlotProps> = (props) => (
+const Slot = (props: SlotProps) => (
   <div data-slot={props.slot} className={cn("contents", props.className)}>
     {props.children}
   </div>

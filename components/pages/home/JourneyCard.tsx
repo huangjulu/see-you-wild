@@ -1,3 +1,6 @@
+import Heading from "@/components/ui/atoms/Heading";
+import { Link } from "@/lib/i18n/navigation";
+
 interface JourneyCardProps {
   title: string;
   subtitle: string;
@@ -5,7 +8,7 @@ interface JourneyCardProps {
   href?: string;
 }
 
-const JourneyCard: React.FC<JourneyCardProps> = (props) => {
+const JourneyCard = (props: JourneyCardProps) => {
   const content = (
     <div className="relative h-80 md:h-100 rounded-2xl overflow-hidden">
       <img
@@ -17,22 +20,21 @@ const JourneyCard: React.FC<JourneyCardProps> = (props) => {
       />
       <div className="absolute inset-0 bg-linear-sto-t from-black/70 via-black/20 to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 p-6">
-        <p className="typo-overline text-sm mb-2 text-brand-500">
-          {props.subtitle}
-        </p>
-        <h3 className="typo-heading text-2xl text-white">{props.title}</h3>
+        <Heading.H3 overline={props.subtitle} className="text-2xl text-white">
+          {props.title}
+        </Heading.H3>
       </div>
     </div>
   );
 
   if (props.href != null) {
     return (
-      <a
+      <Link
         href={props.href}
         className="journey-card shrink-0 w-60 md:w-105 group"
       >
         {content}
-      </a>
+      </Link>
     );
   }
 

@@ -12,6 +12,7 @@ interface SendCarpoolRoleEmailParams {
   pickupLocation: string;
   refundAmount: number;
   carGroup: number;
+  isOverflow?: boolean;
 }
 
 export async function sendCarpoolRoleEmail(params: SendCarpoolRoleEmailParams) {
@@ -50,8 +51,10 @@ export async function sendCarpoolRoleEmail(params: SendCarpoolRoleEmailParams) {
 
   const roleNote =
     params.role === "driver"
-      ? `感謝你擔任車手！你的退還金額將在活動結束後匯入你的帳戶，辛苦了。`
-      : `活動方已為你安排交通，請在指定時間前往集合地點候車。`;
+      ? "感謝你擔任車手！你的退還金額將在活動結束後匯入你的帳戶，辛苦了。"
+      : params.isOverflow
+        ? "主辦方將另行安排交通，請留意後續通知。"
+        : "活動方已為你安排交通，請在指定時間前往集合地點候車。";
 
   const html = `<!DOCTYPE html>
 <html lang="zh-Hant" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">

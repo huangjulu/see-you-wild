@@ -1,14 +1,14 @@
 import CTACard from "@/components/pages/home/CTACard";
 import { getTranslations } from "@/lib/i18n/server";
 
-const CTASection: React.FC = async () => {
+const CTASection = async () => {
   const t = await getTranslations("home.cta");
 
   return (
     <section className="py-16 md:py-24 bg-linear-180 from-brand-100 from-50% to-surface-deep to-50%">
       <div className="max-w-360 mx-auto px-8 md:px-12">
         <CTACard
-          imageSrc="https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?q=80&w=2070&auto=format&fit=crop"
+          imageSrc="https://pub-4f074e0ebf814197a45996298c88925f.r2.dev/home-cta.webp"
           imageAlt={t("imageAlt")}
           title={t("title")}
           description={t("description")}

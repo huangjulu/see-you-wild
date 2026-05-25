@@ -14,8 +14,16 @@ import React, { useEffect, useState } from "react";
 
 import Button from "@/components/ui/atoms/Button";
 import Calendar from "@/components/ui/atoms/Calendar";
+import Drawer from "@/components/ui/atoms/Drawer";
+import Heading from "@/components/ui/atoms/Heading";
 import Input from "@/components/ui/atoms/Input";
+import ListCard from "@/components/ui/atoms/ListCard";
+import ProgressBar from "@/components/ui/atoms/ProgressBar";
 import RadioOption from "@/components/ui/atoms/RadioOption";
+import Switch from "@/components/ui/atoms/Switch";
+import Tag from "@/components/ui/atoms/Tag";
+import Text from "@/components/ui/atoms/Text";
+import TextArea from "@/components/ui/atoms/TextArea";
 import Dialog from "@/components/ui/molecules/Dialog";
 import EventCalendar from "@/components/ui/molecules/EventCalendar";
 import ModalCard from "@/components/ui/molecules/ModalCard";
@@ -254,11 +262,11 @@ const typoScale = [
 
 /* ─── Components ─── */
 
-const Swatch: React.FC<{
+const Swatch = (props: {
   color: string;
   label: string;
   highlight?: boolean;
-}> = (props) => (
+}) => (
   <div className="flex flex-col items-center gap-1">
     <div
       style={{ backgroundColor: props.color }}
@@ -274,11 +282,11 @@ const Swatch: React.FC<{
   </div>
 );
 
-const ScaleRow: React.FC<{
+const ScaleRow = (props: {
   name: string;
   scale: Record<string, string>;
   base: string;
-}> = (props) => (
+}) => (
   <div className="mb-8">
     <h3 className="typo-ui mb-3 text-sm text-primary">{props.name}</h3>
     <div className="flex flex-wrap gap-3">
@@ -294,7 +302,7 @@ const ScaleRow: React.FC<{
   </div>
 );
 
-const SectionLabel: React.FC<{ children: React.ReactNode }> = (props) => (
+const SectionLabel = (props: { children: React.ReactNode }) => (
   <h2 className="mb-6 text-xs font-medium uppercase tracking-widest text-neutral-400">
     {props.children}
   </h2>
@@ -304,11 +312,19 @@ const sections = [
   { id: "color-scales", label: "Color Scales" },
   { id: "semantic-tokens", label: "Semantic Tokens" },
   { id: "typography", label: "Typography" },
+  { id: "heading", label: "Heading" },
+  { id: "text", label: "Text" },
   { id: "buttons", label: "Buttons" },
+  { id: "list-card", label: "ListCard" },
+  { id: "tag", label: "Tag" },
   { id: "slot-components", label: "Dialog / ModalCard / Calendar" },
   { id: "input", label: "Input" },
+  { id: "text-area", label: "TextArea" },
   { id: "selector", label: "Selector" },
   { id: "shadcn-components", label: "shadcn/ui Components" },
+  { id: "switch", label: "Switch" },
+  { id: "progress-bar", label: "ProgressBar" },
+  { id: "drawer", label: "Drawer" },
   { id: "section-rhythm", label: "Section Rhythm" },
   { id: "testimonial-card", label: "Testimonial Card" },
   { id: "toast", label: "Toast" },
@@ -318,8 +334,10 @@ const sections = [
   { id: "token-map", label: "Token Map" },
 ];
 
-const PalettePreviewPage: React.FC = () => {
+const PalettePreviewPage = () => {
   const [activeSection, setActiveSection] = useState<string>("color-scales");
+  const [switchOn, setSwitchOn] = useState<boolean>(false);
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
   useEffect(function observeSections() {
     const observer = new IntersectionObserver(
@@ -489,6 +507,70 @@ const PalettePreviewPage: React.FC = () => {
         </div>
       </section>
 
+      {/* ═══ HEADING ═══ */}
+      <section id="heading" className="mb-16">
+        <SectionLabel>Heading</SectionLabel>
+        <div className="space-y-6 overflow-hidden rounded-xl border border-stroke-default p-6">
+          <div className="flex items-baseline gap-4">
+            <span className="w-28 shrink-0 font-mono text-xs text-neutral-400">
+              display
+            </span>
+            <Heading.H1 variant="display">See You Wild</Heading.H1>
+          </div>
+          <div className="flex items-baseline gap-4">
+            <span className="w-28 shrink-0 font-mono text-xs text-neutral-400">
+              heading
+            </span>
+            <Heading.H2 variant="heading">即將到來的活動</Heading.H2>
+          </div>
+          <div className="flex items-baseline gap-4">
+            <span className="w-28 shrink-0 font-mono text-xs text-neutral-400">
+              sub-heading
+            </span>
+            <Heading.H3 variant="sub-heading">野營私廚｜阿里山秘境</Heading.H3>
+          </div>
+          <div className="flex items-baseline gap-4">
+            <span className="w-28 shrink-0 font-mono text-xs text-neutral-400">
+              ui
+            </span>
+            <Heading.H4 variant="ui">活動資訊</Heading.H4>
+          </div>
+          <div className="border-t border-stroke-default pt-4">
+            <p className="typo-ui mb-3 text-xs text-neutral-400">
+              overline + description
+            </p>
+            <Heading.H2
+              variant="heading"
+              overline="Outdoor Adventure"
+              description="帶你走進台灣最美的戶外秘境，體驗野營私廚、野溪溫泉等探險活動。"
+            >
+              山海之間・野放靈魂
+            </Heading.H2>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ TEXT ═══ */}
+      <section id="text" className="mb-16">
+        <SectionLabel>Text</SectionLabel>
+        <div className="max-w-xl space-y-4 overflow-hidden rounded-xl border border-stroke-default p-6">
+          <div className="space-y-1">
+            <p className="typo-ui text-xs text-neutral-400">normal</p>
+            <Text>
+              See You Wild
+              帶你走進台灣最美的戶外秘境，體驗野營私廚、野溪溫泉、SUP
+              立槳等探險活動。在星空下享受私廚料理，感受最純粹的戶外體驗。
+            </Text>
+          </div>
+          <div className="space-y-1">
+            <p className="typo-ui text-xs text-neutral-400">muted</p>
+            <Text muted>
+              活動含保險、裝備租借、專業教練帶領，適合初次體驗的冒險者。報名截止日前三天可申請退費。
+            </Text>
+          </div>
+        </div>
+      </section>
+
       {/* ═══ BUTTONS ═══ */}
       <section id="buttons" className="mb-16">
         <SectionLabel>Button Styles</SectionLabel>
@@ -521,6 +603,80 @@ const PalettePreviewPage: React.FC = () => {
             <Button theme="danger">取消報名</Button>
             <span className="typo-ui text-xs text-secondary">danger</span>
           </div>
+        </div>
+      </section>
+
+      {/* ═══ LIST CARD ═══ */}
+      <section id="list-card" className="mb-16">
+        <SectionLabel>ListCard</SectionLabel>
+
+        <div className="flex flex-wrap items-start gap-6">
+          {/* sm */}
+          <div className="flex flex-col items-start gap-2">
+            <ListCard
+              image="/images/events/camp.webp"
+              imageAlt="野營私廚示意圖"
+              size="sm"
+            >
+              <p className="typo-ui truncate text-sm text-primary">
+                野營私廚｜阿里山秘境
+              </p>
+              <p className="truncate text-xs text-secondary">
+                阿里山・2026.05.18 — 05.19
+              </p>
+              <p className="truncate text-xs text-accent">NT$ 4,800 起</p>
+            </ListCard>
+            <span className="typo-ui text-xs text-secondary">sm</span>
+          </div>
+
+          {/* md */}
+          <div className="flex flex-col items-start gap-2">
+            <ListCard
+              image="/images/events/camp.webp"
+              imageAlt="野營私廚示意圖"
+              size="md"
+            >
+              <p className="typo-ui truncate text-sm text-primary">
+                野營私廚｜阿里山秘境
+              </p>
+              <p className="truncate text-xs text-secondary">
+                阿里山・2026.05.18 — 05.19
+              </p>
+              <p className="truncate text-xs text-accent">NT$ 4,800 起</p>
+            </ListCard>
+            <span className="typo-ui text-xs text-secondary">md（預設）</span>
+          </div>
+
+          {/* lg */}
+          <div className="flex flex-col items-start gap-2">
+            <ListCard
+              image="/images/events/camp.webp"
+              imageAlt="野營私廚示意圖"
+              size="lg"
+            >
+              <p className="typo-ui truncate text-sm text-primary">
+                野營私廚｜阿里山秘境
+              </p>
+              <p className="truncate text-xs text-secondary">
+                阿里山・2026.05.18 — 05.19
+              </p>
+              <p className="truncate text-xs text-accent">NT$ 4,800 起</p>
+            </ListCard>
+            <span className="typo-ui text-xs text-secondary">lg</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ TAG ═══ */}
+      <section id="tag" className="mb-16">
+        <SectionLabel>Tag</SectionLabel>
+        <div className="flex flex-wrap gap-3">
+          <Tag>野營私廚</Tag>
+          <Tag>野溪溫泉</Tag>
+          <Tag>SUP 立槳</Tag>
+          <Tag>阿里山秘境</Tag>
+          <Tag>花蓮清水斷崖</Tag>
+          <Tag>Outdoor Adventure</Tag>
         </div>
       </section>
 
@@ -589,57 +745,46 @@ const PalettePreviewPage: React.FC = () => {
         </div>
       </section>
 
-      {/* ═══ SELECTOR ═══ */}
-      <section id="selector" className="mb-16">
-        <SectionLabel>Selector</SectionLabel>
+      {/* ═══ TEXTAREA ═══ */}
+      <section id="text-area" className="mb-16">
+        <SectionLabel>TextArea</SectionLabel>
 
         <div className="mb-10">
-          <h3 className="typo-ui mb-4 text-sm text-primary">Basic</h3>
-          <div className="flex max-w-md flex-col gap-4">
-            <Selector
-              label="可載人數"
-              placeholder="選擇人數"
-              options={[
-                { value: "3", label: "3 人" },
-                { value: "4", label: "4 人" },
-                { value: "5", label: "5 人" },
-              ]}
+          <h3 className="typo-ui mb-4 text-sm text-primary">Normal</h3>
+          <div className="max-w-md">
+            <TextArea
+              label="備註事項"
+              placeholder="請輸入任何特殊需求或備註..."
             />
           </div>
         </div>
 
         <div className="mb-10">
           <h3 className="typo-ui mb-4 text-sm text-primary">Error</h3>
-          <div className="flex max-w-md flex-col gap-4">
-            <Selector
-              label="可載人數"
-              placeholder="選擇人數"
-              options={[
-                { value: "3", label: "3 人" },
-                { value: "4", label: "4 人" },
-                { value: "5", label: "5 人" },
-              ]}
-              error="必填欄位"
+          <div className="max-w-md">
+            <TextArea
+              label="備註事項"
+              placeholder="請輸入任何特殊需求或備註..."
+              defaultValue="x"
+              error="備註內容至少需要 10 個字元"
             />
           </div>
         </div>
 
         <div className="mb-10">
           <h3 className="typo-ui mb-4 text-sm text-primary">Disabled</h3>
-          <div className="flex max-w-md flex-col gap-4">
-            <Selector
-              label="可載人數"
-              placeholder="選擇人數"
-              options={[
-                { value: "3", label: "3 人" },
-                { value: "4", label: "4 人" },
-                { value: "5", label: "5 人" },
-              ]}
+          <div className="max-w-md">
+            <TextArea
+              label="備註事項"
+              defaultValue="此欄位目前無法編輯。"
               disabled
             />
           </div>
         </div>
       </section>
+
+      {/* ═══ SELECTOR ═══ */}
+      <SelectorDemoSection />
 
       {/* ═══ SLOT-BASED COMPONENTS (Dialog / ModalCard) ═══ */}
       <section id="slot-components" className="mb-16">
@@ -872,20 +1017,6 @@ const PalettePreviewPage: React.FC = () => {
                 <Calendar.Grid type="month" />
               </Calendar>
             </div>
-            <div className="space-y-2">
-              <p className="typo-ui text-xs text-secondary">
-                biweek + expandLabel
-              </p>
-              <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)}>
-                <Calendar.Grid type="biweek" expandLabel="展開完整月份" />
-              </Calendar>
-            </div>
-            <div className="space-y-2">
-              <p className="typo-ui text-xs text-secondary">week</p>
-              <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)}>
-                <Calendar.Grid type="week" expandLabel="展開完整月份" />
-              </Calendar>
-            </div>
           </div>
 
           {/* Markers (EventCalendar) */}
@@ -902,20 +1033,6 @@ const PalettePreviewPage: React.FC = () => {
                   new Date(2026, 4, 25),
                   new Date(2026, 5, 8),
                 ]}
-                defaultMonth={new Date(2026, 4, 1)}
-              />
-            </div>
-            <div className="space-y-2">
-              <p className="typo-ui text-xs text-secondary">biweek + markers</p>
-              <EventCalendar
-                size="lg"
-                availableDates={[
-                  new Date(2026, 4, 18),
-                  new Date(2026, 4, 25),
-                  new Date(2026, 5, 8),
-                ]}
-                gridType="biweek"
-                expandLabel="查看更多日期"
                 defaultMonth={new Date(2026, 4, 1)}
               />
             </div>
@@ -975,6 +1092,156 @@ const PalettePreviewPage: React.FC = () => {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* ═══ SWITCH ═══ */}
+      <section id="switch" className="mb-16">
+        <SectionLabel>Switch</SectionLabel>
+        <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-4">
+            <h3 className="typo-ui text-sm text-primary">
+              On / Off（controlled）
+            </h3>
+            <div className="flex items-center gap-6">
+              <div className="flex flex-col items-center gap-2">
+                <Switch
+                  checked={switchOn}
+                  onChange={(e) => setSwitchOn(e.currentTarget.checked)}
+                />
+                <span className="typo-ui text-xs text-secondary">
+                  {switchOn ? "On" : "Off"}
+                </span>
+              </div>
+              <Button theme="ghost" onClick={() => setSwitchOn((v) => !v)}>
+                Toggle
+              </Button>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <h3 className="typo-ui text-sm text-primary">
+              Uncontrolled defaults
+            </h3>
+            <div className="flex items-center gap-6">
+              <div className="flex flex-col items-center gap-2">
+                <Switch defaultChecked={false} />
+                <span className="typo-ui text-xs text-secondary">Off</span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Switch defaultChecked={true} />
+                <span className="typo-ui text-xs text-secondary">On</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <h3 className="typo-ui text-sm text-primary">Disabled</h3>
+            <div className="flex items-center gap-6">
+              <div className="flex flex-col items-center gap-2">
+                <Switch disabled defaultChecked={false} />
+                <span className="typo-ui text-xs text-secondary">
+                  Disabled Off
+                </span>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <Switch disabled defaultChecked={true} />
+                <span className="typo-ui text-xs text-secondary">
+                  Disabled On
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ PROGRESS BAR ═══ */}
+      <section id="progress-bar" className="mb-16">
+        <SectionLabel>ProgressBar</SectionLabel>
+        <div className="max-w-md space-y-6">
+          <div className="space-y-2">
+            <p className="typo-ui text-xs text-secondary">Step 1 / 4（25%）</p>
+            <ProgressBar totalSteps={4} currentStep={0} showPercentage />
+          </div>
+          <div className="space-y-2">
+            <p className="typo-ui text-xs text-secondary">Step 2 / 4（50%）</p>
+            <ProgressBar totalSteps={4} currentStep={1} showPercentage />
+          </div>
+          <div className="space-y-2">
+            <p className="typo-ui text-xs text-secondary">Step 3 / 4（75%）</p>
+            <ProgressBar totalSteps={4} currentStep={2} showPercentage />
+          </div>
+          <div className="space-y-2">
+            <p className="typo-ui text-xs text-secondary">Step 4 / 4（100%）</p>
+            <ProgressBar totalSteps={4} currentStep={3} showPercentage />
+          </div>
+          <div className="space-y-2">
+            <p className="typo-ui text-xs text-secondary">
+              No percentage label
+            </p>
+            <ProgressBar totalSteps={3} currentStep={1} />
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ DRAWER ═══ */}
+      <section id="drawer" className="mb-16">
+        <SectionLabel>Drawer</SectionLabel>
+        <p className="typo-ui mb-6 text-xs text-neutral-400">
+          從底部滑出的面板，由 Base UI Drawer primitive 驅動。包含
+          Root、Trigger、Content 三個子元件，Content 內建 Portal + Backdrop +
+          drag handle。
+        </p>
+
+        <div className="flex items-center gap-4">
+          <Button theme="outline" onClick={() => setDrawerOpen(true)}>
+            開啟 Drawer
+          </Button>
+          <span className="typo-ui text-xs text-secondary">
+            狀態：{drawerOpen ? "Open" : "Closed"}
+          </span>
+        </div>
+
+        <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+          <Drawer.Content className="max-h-[80vh]">
+            <div className="px-6 pb-6 pt-2">
+              <h3 className="typo-sub-heading mb-2 text-xl text-primary">
+                野營私廚選項
+              </h3>
+              <p className="typo-body mb-6 text-sm text-secondary">
+                請選擇你的偏好方案，我們將依此為你安排行程。
+              </p>
+              <div className="space-y-3">
+                {["素食方案", "葷食方案", "海鮮方案"].map((option) => (
+                  <div
+                    key={option}
+                    className="flex items-center gap-3 rounded-lg border border-stroke-default p-4"
+                  >
+                    <div className="size-4 rounded-full border-2 border-stroke-strong" />
+                    <span className="typo-ui text-sm text-primary">
+                      {option}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 flex gap-3">
+                <Button
+                  theme="outline"
+                  className="flex-1"
+                  onClick={() => setDrawerOpen(false)}
+                >
+                  取消
+                </Button>
+                <Button
+                  theme="solid"
+                  className="flex-1"
+                  onClick={() => setDrawerOpen(false)}
+                >
+                  確認
+                </Button>
+              </div>
+            </div>
+          </Drawer.Content>
+        </Drawer>
       </section>
 
       {/* ═══ SECTION RHYTHM ═══ */}
@@ -1421,7 +1688,7 @@ const PalettePreviewPage: React.FC = () => {
       {/* ═══ TOKEN MAP ═══ */}
       <section id="token-map" className="mb-16">
         <SectionLabel>Proposed globals.css Token Map</SectionLabel>
-        <pre className="overflow-x-auto rounded-lg bg-surface-brand p-6 font-mono text-xs leading-relaxed text-neutral-300">
+        <pre className="overflow-x-auto rounded-lg bg-surface-deep p-6 font-mono text-xs leading-relaxed text-neutral-300">
           {`@theme {
   /* ─── Brand（暖砂橘 #DE954E）─── */
   --color-brand-50:  ${brand[50]};
@@ -1537,3 +1804,63 @@ const PalettePreviewPage: React.FC = () => {
 
 PalettePreviewPage.displayName = "PalettePreviewPage";
 export default PalettePreviewPage;
+
+const SEAT_OPTIONS = [
+  { value: "3", label: "3 人" },
+  { value: "4", label: "4 人" },
+  { value: "5", label: "5 人" },
+];
+
+const SelectorDemoSection = () => {
+  const [basicValue, setBasicValue] = useState("");
+  const [errorValue, setErrorValue] = useState("");
+
+  return (
+    <section id="selector" className="mb-16">
+      <SectionLabel>Selector</SectionLabel>
+
+      <div className="mb-10">
+        <h3 className="typo-ui mb-4 text-sm text-primary">Basic</h3>
+        <div className="flex max-w-md flex-col gap-4">
+          <Selector
+            label="可載人數"
+            placeholder="選擇人數"
+            options={SEAT_OPTIONS}
+            value={basicValue}
+            onChange={setBasicValue}
+          />
+        </div>
+      </div>
+
+      <div className="mb-10">
+        <h3 className="typo-ui mb-4 text-sm text-primary">Error</h3>
+        <div className="flex max-w-md flex-col gap-4">
+          <Selector
+            label="可載人數"
+            placeholder="選擇人數"
+            options={SEAT_OPTIONS}
+            value={errorValue}
+            onChange={setErrorValue}
+            error="必填欄位"
+          />
+        </div>
+      </div>
+
+      <div className="mb-10">
+        <h3 className="typo-ui mb-4 text-sm text-primary">Disabled</h3>
+        <div className="flex max-w-md flex-col gap-4">
+          <Selector
+            label="可載人數"
+            placeholder="選擇人數"
+            options={SEAT_OPTIONS}
+            value="3"
+            onChange={() => {}}
+            disabled
+          />
+        </div>
+      </div>
+    </section>
+  );
+};
+
+SelectorDemoSection.displayName = "SelectorDemoSection";
