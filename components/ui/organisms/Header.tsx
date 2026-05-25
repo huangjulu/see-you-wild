@@ -28,6 +28,7 @@ const Header = (props: HeaderProps) => {
   const t = useTranslations("common");
   const scrolled = useScrolled(50);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [eventTypes, setEventTypes] = useState<string[]>([]);
 
   const isHome = props.variant === "home";
 
@@ -37,6 +38,13 @@ const Header = (props: HeaderProps) => {
   ];
 
   const ctaLabel = t("nav.exploreCta");
+
+  useEffect(function fetchEventTypes() {
+    fetch("/api/event-types")
+      .then((r) => r.json())
+      .then((types: string[]) => setEventTypes(types))
+      .catch(() => {});
+  }, []);
 
   const headerBg = isHome
     ? scrolled
@@ -95,6 +103,7 @@ const Header = (props: HeaderProps) => {
         onOpenChange={setMenuOpen}
         navLinks={navLinks}
         ctaLabel={ctaLabel}
+        eventTypes={eventTypes}
       />
     </>
   );
@@ -167,6 +176,7 @@ interface MobileDrawerProps {
   onOpenChange: (open: boolean) => void;
   navLinks: NavLink[];
   ctaLabel: string;
+  eventTypes: string[];
 }
 
 function MobileDrawer(props: MobileDrawerProps) {
@@ -216,39 +226,61 @@ function MobileDrawer(props: MobileDrawerProps) {
           </button>
         </div>
 
-        <div className="flex-1 flex flex-col justify-center px-8 gap-2">
-          {props.navLinks.map((link) => {
-            const isExternal = link.href.startsWith("http");
-            const isHash = link.href.startsWith("#");
+        <div className="flex-1 flex flex-col px-8 gap-2 overflow-y-auto">
+          {props.eventTypes.length > 0 && (
+            <div className="py-4 border-b border-on-surface-deep/10">
+              <p className="typo-overline text-xs text-on-surface-deep/50 mb-3 tracking-widest">
+                活動類型
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {props.eventTypes.map((type) => (
+                  <Link
+                    key={type}
+                    href={`/events?type=${encodeURIComponent(type)}`}
+                    onClick={() => props.onOpenChange(false)}
+                    className="rounded-full border border-on-surface-deep/20 px-4 py-1.5 text-sm text-on-surface-deep hover:bg-on-surface-deep/5 transition-colors"
+                  >
+                    {type}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
 
-            if (isExternal || isHash) {
+          <div className="flex-1 flex flex-col justify-center gap-2">
+            {props.navLinks.map((link) => {
+              const isExternal = link.href.startsWith("http");
+              const isHash = link.href.startsWith("#");
+
+              if (isExternal || isHash) {
+                return (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    {...(isExternal && {
+                      target: "_blank",
+                      rel: "noopener noreferrer",
+                    })}
+                    onClick={() => props.onOpenChange(false)}
+                    className="font-serif text-2xl font-medium tracking-wide text-on-surface-deep py-4 block"
+                  >
+                    {link.label}
+                  </a>
+                );
+              }
+
               return (
-                <a
+                <Link
                   key={link.href}
                   href={link.href}
-                  {...(isExternal && {
-                    target: "_blank",
-                    rel: "noopener noreferrer",
-                  })}
                   onClick={() => props.onOpenChange(false)}
                   className="font-serif text-2xl font-medium tracking-wide text-on-surface-deep py-4 block"
                 >
                   {link.label}
-                </a>
+                </Link>
               );
-            }
-
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => props.onOpenChange(false)}
-                className="font-serif text-2xl font-medium tracking-wide text-on-surface-deep py-4 block"
-              >
-                {link.label}
-              </Link>
-            );
-          })}
+            })}
+          </div>
         </div>
 
         <div className="px-8 pb-8 space-y-6">

@@ -4,13 +4,12 @@ import {
   ChevronLeft as IconChevronLeft,
   ChevronRight as IconChevronRight,
 } from "lucide-react";
-import { useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import JourneyCard from "@/components/pages/home/JourneyCard";
 import Button from "@/components/ui/atoms/Button";
 import Heading from "@/components/ui/atoms/Heading";
 import { ScrollTrigger, useTimeline, useTween } from "@/lib/gsap";
-import { useJourneyNav } from "@/lib/gsap/useJourneyNav";
 import { useTranslations } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 
@@ -18,6 +17,10 @@ const JourneysSection = () => {
   const t = useTranslations("home.journeys");
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+
+  const [atStart, setAtStart] = useState(true);
+  const [atEnd, setAtEnd] = useState(false);
+  const navTriggerRef = useRef<ScrollTrigger | null>(null);
 
   useTween(trackRef, {
     selector: ".journey-card",
@@ -45,7 +48,7 @@ const JourneysSection = () => {
       duration: 1,
     }).to({}, { duration: 0.5, ease: "power2.out" });
 
-    ScrollTrigger.create({
+    const st = ScrollTrigger.create({
       trigger: el,
       start: "top top",
       end: () => `+=${(track.scrollWidth - window.innerWidth) * 1.5}`,
@@ -54,11 +57,26 @@ const JourneysSection = () => {
       anticipatePin: 1,
       invalidateOnRefresh: true,
       animation: tl,
+      onUpdate: (self) => {
+        setAtStart(self.progress < 0.05);
+        setAtEnd(self.progress > 0.95);
+      },
     });
+
+    navTriggerRef.current = st;
   });
 
-  const { isVisible, atEnd, scrollToStart, scrollToEnd } =
-    useJourneyNav(sectionRef);
+  const scrollToStart = useCallback(() => {
+    const st = navTriggerRef.current;
+    if (!st) return;
+    window.scrollTo({ top: st.start, behavior: "smooth" });
+  }, []);
+
+  const scrollToEnd = useCallback(() => {
+    const st = navTriggerRef.current;
+    if (!st) return;
+    window.scrollTo({ top: st.end, behavior: "smooth" });
+  }, []);
 
   return (
     <section
@@ -101,12 +119,7 @@ const JourneysSection = () => {
           ))}
         </div>
       </div>
-      <div
-        className={cn(
-          "absolute inset-0 z-10 pointer-events-none transition-opacity duration-300",
-          isVisible ? "opacity-100" : "opacity-0"
-        )}
-      >
+      <div className="absolute inset-0 z-10 pointer-events-none">
         <button
           type="button"
           onClick={scrollToStart}
@@ -116,8 +129,8 @@ const JourneysSection = () => {
             "w-10 h-10 md:w-12 md:h-12 rounded-full",
             "bg-surface-deep/50 backdrop-blur-sm text-white",
             "hover:bg-surface-deep/70 transition-colors duration-300",
-            "flex items-center justify-center",
-            atEnd ? "opacity-100" : "opacity-0 pointer-events-none"
+            "flex items-center justify-center transition-opacity duration-300",
+            atStart ? "opacity-0 pointer-events-none" : "opacity-100"
           )}
         >
           <IconChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
@@ -131,7 +144,7 @@ const JourneysSection = () => {
             "w-10 h-10 md:w-12 md:h-12 rounded-full",
             "bg-surface-deep/50 backdrop-blur-sm text-white",
             "hover:bg-surface-deep/70 transition-colors duration-300",
-            "flex items-center justify-center",
+            "flex items-center justify-center transition-opacity duration-300",
             atEnd ? "opacity-0 pointer-events-none" : "opacity-100"
           )}
         >
