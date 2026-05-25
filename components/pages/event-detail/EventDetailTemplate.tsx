@@ -84,7 +84,6 @@ const EventDetailTemplate = (props: EventDetailTemplateProps) => {
 
           <PackageOptions
             availableDates={event.availableDates}
-            pickupLocations={event.pickupLocations}
             carpoolSurcharge={event.carpoolSurcharge}
             onSelectionChange={setSelection}
           />
@@ -155,7 +154,6 @@ const EventDetailTemplate = (props: EventDetailTemplateProps) => {
         isSelfArrival={selection.transport === "self"}
         carpoolRole={selection.carpoolRole}
         seatCount={selection.seatCount}
-        pickupLocations={event.pickupLocations}
         paymentDays={event.paymentDays}
       />
     </main>

@@ -24,6 +24,7 @@ import ModalCard from "@/components/ui/molecules/ModalCard";
 import PhoneInput from "@/components/ui/molecules/PhoneInput";
 import Selector from "@/components/ui/molecules/Selector";
 import { registrationApi } from "@/lib/api/registration.api";
+import { PICKUP_LOCATIONS } from "@/lib/constants";
 import {
   calculateAge,
   type CountryRule,
@@ -53,7 +54,6 @@ interface RegistrationModalProps {
   isSelfArrival: boolean;
   carpoolRole: "driver" | "passenger" | null;
   seatCount: number | null;
-  pickupLocations: string[];
   paymentDays: number;
 }
 
@@ -194,7 +194,6 @@ const RegistrationModal = (props: RegistrationModalProps) => {
                 currentStep={currentStep}
                 basePrice={props.basePrice}
                 carpoolSurcharge={props.carpoolSurcharge}
-                pickupLocations={props.pickupLocations}
                 onSubmit={methods.handleSubmit(handleRegistrationSubmit)}
               />
             )}
@@ -351,7 +350,7 @@ interface FormMainContentProps {
   currentStep: number;
   basePrice: number;
   carpoolSurcharge: number;
-  pickupLocations: string[];
+
   onSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
 }
 
@@ -365,7 +364,6 @@ const FormMainContent = (props: FormMainContentProps) => {
           step={props.currentStep}
           basePrice={props.basePrice}
           carpoolSurcharge={props.carpoolSurcharge}
-          pickupLocations={props.pickupLocations}
         />
       </form>
       {formState.errors.root && (
@@ -383,7 +381,6 @@ interface FormRegistrationProps {
   step: number;
   basePrice: number;
   carpoolSurcharge: number;
-  pickupLocations: string[];
 }
 
 const FormRegistration = (props: FormRegistrationProps) => {
@@ -397,7 +394,6 @@ const FormRegistration = (props: FormRegistrationProps) => {
         <FormStepTransport
           basePrice={props.basePrice}
           carpoolSurcharge={props.carpoolSurcharge}
-          pickupLocations={props.pickupLocations}
         />
       )}
     </div>
@@ -693,7 +689,6 @@ FormStepActivity.displayName = "FormStepActivity";
 interface FormStepTransportProps {
   basePrice: number;
   carpoolSurcharge: number;
-  pickupLocations: string[];
 }
 
 const FormStepTransport = (props: FormStepTransportProps) => {
@@ -754,7 +749,7 @@ const FormStepTransport = (props: FormStepTransportProps) => {
                 {t("pickupLocation")}
               </span>
               <div className="flex flex-wrap gap-2">
-                {props.pickupLocations.map((loc) => (
+                {PICKUP_LOCATIONS.map((loc) => (
                   <RadioOption
                     variant="outlined"
                     key={loc}

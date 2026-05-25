@@ -116,7 +116,6 @@ export interface EventDetailDto {
   refundPolicy: string;
   images: Array<{ src: string; alt: string }>;
   availableDates: string[];
-  pickupLocations: string[];
   paymentDays: number;
 }
 
@@ -137,7 +136,6 @@ export function toEventDetail(row: EventRow): EventDetailDto {
     refundPolicy: row.refund_policy,
     images: row.images,
     availableDates: row.available_dates,
-    pickupLocations: row.pickup_locations,
     paymentDays: row.payment_days,
   };
 }

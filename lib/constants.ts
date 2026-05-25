@@ -33,6 +33,14 @@ export const EVENTS_CONFIG: EventConfig[] = [
   },
 ];
 
+export const PICKUP_LOCATIONS = [
+  "大坪林捷運站",
+  "南港捷運站",
+  "台北車站",
+  "板橋捷運站",
+  "三重捷運站",
+] as const;
+
 export const NAV_LINKS = {
   about: "/#about",
 };

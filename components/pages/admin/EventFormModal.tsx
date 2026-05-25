@@ -19,6 +19,7 @@ import TextArea from "@/components/ui/atoms/TextArea";
 import ModalCard from "@/components/ui/molecules/ModalCard";
 import Selector from "@/components/ui/molecules/Selector";
 import { adminApi } from "@/lib/api/admin.api";
+import { PICKUP_LOCATIONS } from "@/lib/constants";
 import { useToast } from "@/lib/hooks/useToast";
 import type { EventListDto } from "@/lib/types/database";
 import { cn } from "@/lib/utils";
@@ -35,7 +36,6 @@ const eventFormSchema = z.object({
   carpool_cutoff_days: z.number().int().min(0, "不可為負數"),
   min_participants: z.number().int().min(1, "至少 1 人"),
   description: z.string(),
-  pickup_locations: z.array(z.string()),
   safety_policy: z.string(),
   preparation_notes: z.string().max(500),
   faq: z.string().max(1000),
@@ -80,7 +80,6 @@ const EventFormModal = (props: EventFormModalProps) => {
     carpool_cutoff_days: 3,
     min_participants: 3,
     description: "",
-    pickup_locations: [],
     safety_policy: "",
     preparation_notes: "",
     faq: "",
@@ -102,7 +101,6 @@ const EventFormModal = (props: EventFormModalProps) => {
       carpool_cutoff_days: event.carpool_cutoff_days,
       min_participants: event.min_participants,
       description: event.description,
-      pickup_locations: event.pickup_locations,
       safety_policy: event.safety_policy,
       preparation_notes: event.preparation_notes,
       faq: event.faq,
@@ -141,6 +139,7 @@ const EventFormModal = (props: EventFormModalProps) => {
       images: allImages,
       start_date: startDate,
       end_date: endDate,
+      pickup_locations: [...PICKUP_LOCATIONS],
     };
 
     if (props.event != null) {
@@ -391,20 +390,6 @@ const EventFormFields = (props: EventFormFieldsProps) => {
               minDate={minDate}
               lockedDates={lockedDates}
               error={errors.available_dates?.message}
-            />
-          )}
-        />
-      </fieldset>
-
-      <fieldset className="space-y-3">
-        <legend className="typo-ui text-sm text-primary">上車地點</legend>
-        <Controller
-          name="pickup_locations"
-          control={control}
-          render={({ field }) => (
-            <PickupLocationsInput
-              value={field.value}
-              onChange={field.onChange}
             />
           )}
         />
@@ -677,67 +662,6 @@ const AvailableDatesPicker = (props: AvailableDatesPickerProps) => {
 };
 
 AvailableDatesPicker.displayName = "AvailableDatesPicker";
-
-// ---------------------------------------------------------------------------
-// PickupLocationsInput — tag-style multi-entry for pickup locations
-// ---------------------------------------------------------------------------
-
-interface PickupLocationsInputProps {
-  value: string[];
-  onChange: (locations: string[]) => void;
-}
-
-const PickupLocationsInput = (props: PickupLocationsInputProps) => {
-  const [inputValue, setInputValue] = useState("");
-
-  function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key !== "Enter") return;
-    e.preventDefault();
-    const trimmed = inputValue.trim();
-    if (trimmed === "" || props.value.includes(trimmed)) return;
-    props.onChange([...props.value, trimmed]);
-    setInputValue("");
-  }
-
-  function onRemove(index: number) {
-    props.onChange(props.value.filter((_, i) => i !== index));
-  }
-
-  return (
-    <div className="flex flex-col gap-2">
-      <Input
-        placeholder="輸入地點名稱後按 Enter 新增"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        onKeyDown={onKeyDown}
-      />
-      {props.value.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {props.value.map((loc, index) => (
-            <span
-              key={loc}
-              className={cn(
-                "inline-flex items-center gap-1.5 rounded-full px-3 py-1 typo-ui text-xs border",
-                "bg-brand-50 text-accent border-brand-200/60"
-              )}
-            >
-              {loc}
-              <button
-                type="button"
-                onClick={() => onRemove(index)}
-                className="flex size-4 items-center justify-center rounded-full hover:bg-brand-100 transition-colors"
-              >
-                <IconX className="size-3" />
-              </button>
-            </span>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
-
-PickupLocationsInput.displayName = "PickupLocationsInput";
 
 // ---------------------------------------------------------------------------
 // Helpers

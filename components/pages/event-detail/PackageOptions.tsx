@@ -7,6 +7,7 @@ import RadioOption from "@/components/ui/atoms/RadioOption";
 import EventCalendar from "@/components/ui/molecules/EventCalendar";
 import ModalCard from "@/components/ui/molecules/ModalCard";
 import Selector from "@/components/ui/molecules/Selector";
+import { PICKUP_LOCATIONS } from "@/lib/constants";
 import { useTranslations } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 
@@ -14,7 +15,6 @@ import type { PackageSelection } from "./packageOptions.types";
 
 interface PackageOptionsProps {
   availableDates: string[];
-  pickupLocations: string[];
   carpoolSurcharge: number;
   onSelectionChange: (selection: PackageSelection) => void;
 }
@@ -102,8 +102,7 @@ const PackageOptions = (props: PackageOptionsProps) => {
     const raw = e.target.value;
     if (raw !== "self" && raw !== "carpool") return;
     const mode: TransportMode = raw;
-    const pickup =
-      mode === "carpool" ? (props.pickupLocations[0] ?? null) : null;
+    const pickup = mode === "carpool" ? (PICKUP_LOCATIONS[0] ?? null) : null;
 
     setTransportMode(mode);
     setSelectedPickup(pickup);
@@ -256,7 +255,7 @@ const PackageOptions = (props: PackageOptionsProps) => {
             <div className="space-y-2">
               <Heading.H3 variant="ui">{t("pickupPlace")}</Heading.H3>
               <div className="flex flex-wrap gap-2.5">
-                {props.pickupLocations.map((loc) => (
+                {PICKUP_LOCATIONS.map((loc) => (
                   <RadioOption
                     variant="outlined"
                     key={loc}
