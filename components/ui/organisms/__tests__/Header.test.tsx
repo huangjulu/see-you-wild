@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import { describe, expect, it } from "vitest";
@@ -10,7 +11,9 @@ const messages = {
     nav: {
       about: "關於我們",
       contact: "聯絡我們",
-      exploreCta: "開始探索",
+      exploreCta: "查看所有旅程",
+      customConsult: "專屬客製諮詢",
+      eventTypes: "活動類型",
     },
     footer: {
       rights: "All rights reserved.",
@@ -29,10 +32,15 @@ const messages = {
 };
 
 function renderHeader(variant: "home" | "page" = "home") {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
   return render(
-    <NextIntlClientProvider locale="zh-TW" messages={messages}>
-      <Header variant={variant} />
-    </NextIntlClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <NextIntlClientProvider locale="zh-TW" messages={messages}>
+        <Header variant={variant} />
+      </NextIntlClientProvider>
+    </QueryClientProvider>
   );
 }
 

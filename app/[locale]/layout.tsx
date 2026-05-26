@@ -33,12 +33,12 @@ const LocaleLayout = async (props: LocaleLayoutProps) => {
 
   return (
     <html lang={locale} className={cn(fontVariable)}>
-      <body className="antialiased min-h-screen flex flex-col">
+      <body className="antialiased min-h-screen flex flex-col bg-surface-deep">
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
             <GsapProvider>
               <HeaderSlot />
-              <div className="flex-1">{props.children}</div>
+              <div className="flex-1 bg-background">{props.children}</div>
               <FooterSlot>
                 <Footer />
               </FooterSlot>
@@ -150,5 +150,9 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
     icons: {
       icon: "/icons/icon-192.png",
     },
+    themeColor: [
+      { media: "(prefers-color-scheme: light)", color: "#1a2226" },
+      { media: "(prefers-color-scheme: dark)", color: "#1a2226" },
+    ],
   };
 }

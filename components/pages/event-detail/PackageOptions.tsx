@@ -151,7 +151,7 @@ const PackageOptions = (props: PackageOptionsProps) => {
     selectedDate != null ? new Date(selectedDate + "T00:00:00") : undefined;
 
   return (
-    <ModalCard>
+    <ModalCard className="max-h-none">
       <ModalCard.Header title={t("packageOptions")} />
       <ModalCard.Main className="space-y-6">
         {/* Event Date */}

@@ -33,6 +33,7 @@ const baseEvent: EventRow = {
   refund_policy: "",
   status: "open",
   first_created_at: "2026-04-01T00:00:00Z",
+  reminder_sent_at: null,
 };
 
 function makeReg(overrides: Partial<RegistrationRow>): RegistrationRow {

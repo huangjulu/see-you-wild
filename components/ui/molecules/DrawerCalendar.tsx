@@ -2,6 +2,7 @@
 
 import DatePickerDrawer from "@/components/ui/molecules/DatePickerDrawer";
 import DatePickerInput from "@/components/ui/molecules/DatePickerInput";
+import { maxWidth } from "@/lib/breakpoints";
 import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 
 interface DrawerCalendarProps {
@@ -19,7 +20,7 @@ interface DrawerCalendarProps {
 }
 
 const DrawerCalendar = (props: DrawerCalendarProps) => {
-  const isSmallScreen = useMediaQuery("(max-width: 767px)");
+  const isSmallScreen = useMediaQuery(maxWidth("sm"));
 
   if (isSmallScreen) {
     return <DatePickerDrawer {...props} />;

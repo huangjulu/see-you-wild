@@ -4,7 +4,9 @@
     "nav": {
       "about": "About",
       "contact": "Contact",
-      "exploreCta": "Explore"
+      "customConsult": "Custom Trip Consultation",
+      "exploreCta": "See All Journeys",
+      "eventTypes": "Event Types"
     },
     "footer": {
       "rights": "All rights reserved.",
@@ -29,6 +31,9 @@
   "home": {
     "hero": {
       "tagline": "Between Mountains & Sea — Set Your Soul Free",
+      "subtitle": "Between mountains and sea",
+      "subtitleEn": "Where wild meets grace",
+      "exploreCta": "Explore Journeys",
       "heroImageAlt": "Outdoor river valley camping scene surrounded by mountains and water"
     },
     "philosophy": {
@@ -41,7 +46,7 @@
     "journeys": {
       "overline": "Journeys",
       "title": "Explore Journeys",
-      "exploreMore": "See All →",
+      "exploreMore": "See All",
       "items": {
         "hot-spring": {
           "title": "Hidden Hot Springs",
@@ -236,7 +241,9 @@
     "faq": "FAQ",
     "refundPolicy": "Cancellation & Refund Policy",
     "viewFaq": "View FAQ",
-    "viewRefundPolicy": "View Policy"
+    "viewRefundPolicy": "View Policy",
+    "calendarFull": "Full",
+    "calendarAvailable": "Available"
   },
   "registration": {
     "title": "Registration Form",

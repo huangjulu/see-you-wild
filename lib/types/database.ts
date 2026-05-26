@@ -33,6 +33,7 @@ export interface EventRow {
   refund_policy: string;
   status: EventStatus;
   first_created_at: string;
+  reminder_sent_at: string | null;
 }
 
 export interface RegistrationRow {
@@ -74,7 +75,6 @@ export interface CarpoolAssignmentRow {
   final_role: FinalRole;
   refund_amount: number;
   created_at: string;
-  notified_at: string | null;
 }
 
 // ============================================

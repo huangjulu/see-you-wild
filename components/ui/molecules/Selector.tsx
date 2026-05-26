@@ -12,6 +12,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { maxWidth } from "@/lib/breakpoints";
 import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 import { cn } from "@/lib/utils";
 
@@ -35,7 +36,7 @@ interface SelectorProps {
 
 const Selector = (props: SelectorProps) => {
   const [open, setOpen] = useState(false);
-  const isSmallScreen = useMediaQuery("(max-width: 767px)");
+  const isSmallScreen = useMediaQuery(maxWidth("md"));
   const Icon = open ? IconChevronUp : IconChevronDown;
 
   const selectedOption = props.options.find((o) => o.value === props.value);

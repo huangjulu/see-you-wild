@@ -32,12 +32,9 @@ const AdminDashboardSkeleton = () => {
           {/* Invisible nav button spacer */}
           <div className="size-8 shrink-0" />
 
-          <div className="flex flex-1 gap-3.5 overflow-hidden">
+          <div className="flex flex-1 gap-3.5 overflow-hidden [&>div]:flex [&>div]:min-w-0 [&>div]:flex-1 [&>div]:gap-3 [&>div]:rounded-xl [&>div]:border [&>div]:border-stroke-default [&>div]:bg-white [&>div]:p-3 [&>div]:shadow-2xs">
             {Array.from({ length: 3 }, (_, i) => (
-              <div
-                key={i}
-                className="flex min-w-0 flex-1 gap-3 rounded-xl border border-stroke-default bg-white p-3 shadow-2xs"
-              >
+              <div key={i}>
                 <Skeleton className="size-14 shrink-0 rounded-lg" />
                 <div className="flex min-w-0 flex-1 flex-col justify-center gap-2">
                   <Skeleton className="h-3.5 w-3/4" />

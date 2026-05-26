@@ -40,18 +40,18 @@ const PaymentReviewDialog = (props: PaymentReviewDialogProps) => {
     <Overlay open={props.open} onBackdropClick={props.onClose}>
       <Dialog title="確認收款" className="max-w-sm w-full mx-4">
         {reg != null && (
-          <div className="mt-3 flex flex-col gap-3">
-            <div className="flex flex-col gap-0.5">
+          <div className="mt-3 flex flex-col gap-3 [&>div]:flex [&>div]:flex-col [&>div]:gap-0.5">
+            <div>
               <span className="typo-overline text-xs text-secondary">姓名</span>
               <span className="typo-body text-sm text-primary">{reg.name}</span>
             </div>
-            <div className="flex flex-col gap-0.5">
+            <div>
               <span className="typo-overline text-xs text-secondary">活動</span>
               <span className="typo-body text-sm text-primary">
                 {reg.eventTitle}
               </span>
             </div>
-            <div className="flex flex-col gap-0.5">
+            <div>
               <span className="typo-overline text-xs text-secondary">
                 末五碼
               </span>
@@ -59,7 +59,7 @@ const PaymentReviewDialog = (props: PaymentReviewDialogProps) => {
                 {reg.payment_ref ?? "—"}
               </span>
             </div>
-            <div className="flex flex-col gap-0.5">
+            <div>
               <span className="typo-overline text-xs text-secondary">金額</span>
               <span className="typo-ui text-sm text-accent">
                 NT$ {reg.amount_due.toLocaleString("zh-TW")}

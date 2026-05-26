@@ -19,7 +19,8 @@ interface ButtonProps {
 
 // 所有 box-shaped theme 的共用 layout。
 // link 不套用（link 是 inline text，沒有 box）；base 是首頁 Hero 的大 CTA，自成一格。
-const BOX_LAYOUT = "items-center justify-center gap-2 px-4 py-2 rounded-md";
+const BOX_LAYOUT =
+  "inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md";
 
 const Button = (props: ButtonProps) => {
   let themeClass: string;

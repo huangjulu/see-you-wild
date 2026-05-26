@@ -4,7 +4,9 @@
     "nav": {
       "about": "關於我們",
       "contact": "聯絡我們",
-      "exploreCta": "開始探索"
+      "customConsult": "專屬客製諮詢",
+      "exploreCta": "開始探索",
+      "eventTypes": "活動類型"
     },
     "footer": {
       "rights": "All rights reserved.",
@@ -29,6 +31,9 @@
   "home": {
     "hero": {
       "tagline": "山海之間・野放靈魂",
+      "subtitle": "在山與海之間",
+      "subtitleEn": "Where wild meets grace",
+      "exploreCta": "探索旅程",
       "heroImageAlt": "戶外溪谷露營場景，青山綠水環繞"
     },
     "philosophy": {
@@ -41,7 +46,7 @@
     "journeys": {
       "overline": "Journeys",
       "title": "探索旅程",
-      "exploreMore": "探索更多 →",
+      "exploreMore": "探索更多",
       "items": {
         "hot-spring": { "title": "野溪溫泉秘境", "subtitle": "Hot Spring" },
         "camping": { "title": "星空野營私廚", "subtitle": "Wild Camping" },
@@ -227,7 +232,9 @@
     "faq": "常見 Q&A",
     "refundPolicy": "退改事項",
     "viewFaq": "展開 Q&A",
-    "viewRefundPolicy": "展開退改事項"
+    "viewRefundPolicy": "展開退改事項",
+    "calendarFull": "客滿",
+    "calendarAvailable": "可選擇"
   },
   "registration": {
     "title": "報名表單",

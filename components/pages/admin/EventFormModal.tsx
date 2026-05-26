@@ -472,8 +472,8 @@ const EventFormFields = (props: EventFormFieldsProps) => {
         <legend className="typo-sub-heading text-sm text-brand-500">
           報名規則
         </legend>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="flex flex-col gap-1">
+        <div className="grid grid-cols-2 gap-3 [&>div]:flex [&>div]:flex-col [&>div]:gap-1">
+          <div>
             <Input
               label="報名後付款期限（天）"
               type="number"
@@ -485,7 +485,7 @@ const EventFormFields = (props: EventFormFieldsProps) => {
               報名後 N 天內未完成匯款，報名自動失效
             </p>
           </div>
-          <div className="flex flex-col gap-1">
+          <div>
             <Input
               label="共乘報名截止（活動前幾天）"
               type="number"

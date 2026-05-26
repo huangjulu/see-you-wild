@@ -3,6 +3,7 @@
 import React, { useMemo } from "react";
 
 import Calendar from "@/components/ui/atoms/Calendar";
+import { useTranslations } from "@/lib/i18n/client";
 
 type BaseCalendarProps = React.ComponentProps<typeof Calendar>;
 
@@ -15,6 +16,7 @@ interface EventCalendarProps extends Pick<
 }
 
 const EventCalendar = (props: EventCalendarProps) => {
+  const t = useTranslations("eventDetail");
   const minDate = useMemo(() => {
     if (props.minAdvanceDays == null) return startOfDay(new Date());
     return addDays(new Date(), props.minAdvanceDays);
@@ -47,12 +49,12 @@ const EventCalendar = (props: EventCalendarProps) => {
     return {
       full: {
         match: fullMatcher,
-        label: "客滿",
+        label: t("calendarFull"),
         style: "pointer-events-none cursor-default text-neutral-400/40",
       },
       available: {
         match: availableMatcher,
-        label: "可選擇",
+        label: t("calendarAvailable"),
         style: "text-primary",
       },
     };
