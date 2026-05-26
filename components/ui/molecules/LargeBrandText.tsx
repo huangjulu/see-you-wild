@@ -25,7 +25,7 @@ const LargeBrandText = () => {
   return (
     <h1
       ref={textRef}
-      className="absolute -bottom-16 tracking-tighter inset-x-0 mx-auto w-max font-playfair text-[18vw] text-background whitespace-nowrap pointer-events-none opacity-0 leading-none"
+      className="absolute -bottom-[4vw] tracking-tighter inset-x-0 mx-auto w-max font-playfair text-[18vw] text-background whitespace-nowrap pointer-events-none opacity-0 leading-none"
     >
       See You Wild
     </h1>

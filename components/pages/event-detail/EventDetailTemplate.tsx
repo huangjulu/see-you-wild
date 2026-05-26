@@ -53,7 +53,7 @@ const EventDetailTemplate = (props: EventDetailTemplateProps) => {
             onClick={function onBackClick() {
               router.back();
             }}
-            className="typo-ui text-sm text-brand-500 hover:underline inline-flex items-center gap-1 mb-3"
+            className="typo-ui text-sm md:text-base text-brand-500 hover:underline inline-flex items-center gap-1 mb-3"
           >
             <IconArrowLeft className="size-4" />
             {t("backToEvents")}
@@ -98,7 +98,7 @@ const EventDetailTemplate = (props: EventDetailTemplateProps) => {
           )}
 
           {event.preparationNotes !== "" && (
-            <ModalCard>
+            <ModalCard className="max-h-none">
               <ModalCard.Header title={t("preparationNotes")} />
               <ModalCard.Main>
                 <div className="typo-body text-sm leading-relaxed text-secondary whitespace-pre-line">

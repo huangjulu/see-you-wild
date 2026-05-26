@@ -16,7 +16,7 @@
  * Placeholder values — edit before production traffic.
  */
 export const paymentAccount = {
-  bankName: "台灣銀行",
-  bankAccount: "000-000-000000",
-  accountHolder: "See You Wild",
+  bankName: "822 中國信託",
+  bankAccount: "0605 4032 0248",
+  accountHolder: "江宜臻",
 } as const;

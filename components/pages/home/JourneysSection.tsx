@@ -59,24 +59,28 @@ const JourneysSection = () => {
       invalidateOnRefresh: true,
       animation: tl,
       onUpdate: (self) => {
-        setAtStart(self.progress < 0.05);
-        setAtEnd(self.progress > 0.95);
+        const horizontalEnd = 1 / 1.5;
+        setAtStart(self.progress < 0.03);
+        setAtEnd(self.progress >= horizontalEnd - 0.02);
       },
     });
 
     navTriggerRef.current = st;
   });
 
-  const scrollToStart = useCallback(() => {
+  const scrollByCard = useCallback((direction: 1 | -1) => {
     const st = navTriggerRef.current;
-    if (!st) return;
-    window.scrollTo({ top: st.start, behavior: "smooth" });
-  }, []);
+    const track = trackRef.current;
+    if (!st || !track) return;
 
-  const scrollToEnd = useCallback(() => {
-    const st = navTriggerRef.current;
-    if (!st) return;
-    window.scrollTo({ top: st.end, behavior: "smooth" });
+    const isMobile = window.innerWidth < 768;
+    const cardStep = isMobile ? 264 : 444;
+    const totalHorizontal = track.scrollWidth - window.innerWidth;
+    const totalVertical = st.end - st.start;
+    const delta = (cardStep / totalHorizontal) * totalVertical * direction;
+
+    const target = Math.max(st.start, Math.min(st.end, window.scrollY + delta));
+    window.scrollTo({ top: target, behavior: "smooth" });
   }, []);
 
   return (
@@ -85,7 +89,7 @@ const JourneysSection = () => {
       id="journeys"
       className="relative overflow-hidden bg-surface-brand bg-linear-180 from-journeys-gradient-from to-surface-brand from-[-15%] to-105%"
     >
-      <div className="h-screen flex flex-col justify-center py-8">
+      <div className="flex flex-col pt-28 pb-24 md:pt-40 md:pb-32">
         <div className="max-w-7xl mx-auto w-full px-8 md:px-16 mb-7 flex items-end justify-between">
           <div>
             <Heading.H2
@@ -124,7 +128,7 @@ const JourneysSection = () => {
       <div className="absolute inset-0 z-10 pointer-events-none">
         <button
           type="button"
-          onClick={scrollToStart}
+          onClick={() => scrollByCard(-1)}
           aria-label="Scroll to first activity"
           className={cn(
             "pointer-events-auto absolute top-1/2 -translate-y-1/2 left-4 md:left-8",
@@ -139,7 +143,7 @@ const JourneysSection = () => {
         </button>
         <button
           type="button"
-          onClick={scrollToEnd}
+          onClick={() => scrollByCard(1)}
           aria-label="Scroll to last activity"
           className={cn(
             "pointer-events-auto absolute top-1/2 -translate-y-1/2 right-4 md:right-8",

@@ -77,7 +77,7 @@ const Header = (props: HeaderProps) => {
             className="font-serif text-lg font-semibold [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-primary)_50%,transparent)]"
             aria-label={t("siteName")}
           >
-            {t("siteName")}
+            See You Wild <span className="tracking-wider">西揪團</span>
           </Link>
 
           <DesktopMenu
@@ -215,7 +215,7 @@ function MobileDrawer(props: MobileDrawerProps) {
       >
         <div className="flex items-center justify-between h-16 px-6">
           <span className="font-serif text-lg font-semibold text-on-surface-deep">
-            {props.siteName}
+            See You Wild <span className="tracking-wider">西揪團</span>
           </span>
           <button
             onClick={() => props.onOpenChange(false)}

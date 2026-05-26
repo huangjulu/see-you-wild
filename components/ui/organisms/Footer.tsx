@@ -12,8 +12,8 @@ const Footer = async () => {
     <footer className="pt-12 py-12 px-8 md:px-16 text-center border-t border-on-surface-deep/10 relative z-0 bg-surface-deep overflow-clip">
       <div className="max-w-6xl mx-auto space-y-4">
         <div className="flex items-center justify-center gap-3">
-          <p className="font-serif text-lg font-semibold text-on-surface-brand">
-            {t("siteName")}
+          <p className="font-serif text-lg font-semibold text-on-surface-brand/70">
+            See You Wild <span className="tracking-wider">西揪團</span>
           </p>
           <span
             aria-hidden="true"
@@ -31,23 +31,13 @@ const Footer = async () => {
             href={LINE_OA_URL}
             className="min-w-0 min-h-0 text-on-surface-brand/70 hover:text-on-surface-brand"
           />
-          <span
-            aria-hidden="true"
-            className="text-on-surface-brand/40 font-light"
-          >
-            |
-          </span>
-          <SocialIcon
-            platform="mail"
-            href={`mailto:${CONTACT_EMAIL}`}
-            className="min-w-0 min-h-0 text-on-surface-brand/70 hover:text-on-surface-brand"
-          />
         </div>
         <hr
           className="border-on-surface-deep/20 max-w-xs mx-auto"
           aria-hidden="true"
         />
         <div className="flex flex-col items-center justify-center gap-2 text-sm text-on-surface-brand/60 [&>a]:hover:text-on-surface-brand [&>a]:transition-colors [&>a]:duration-300">
+          <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
           <a href="/service-policy">{t("footer.servicePolicy")}</a>
         </div>
         <p className="text-sm text-on-surface-brand/50">

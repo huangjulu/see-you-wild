@@ -10,6 +10,7 @@ export const INSTAGRAM_HANDLE = "@c_you_wild";
 
 export const LINE_OA_URL = "https://line.me/R/ti/p/@427qyovq";
 export const CONTACT_EMAIL = "seeyouwild.tw@gmail.com";
+export const TEST_EMAIL = "huangjulu123@gmail.com";
 
 interface EventConfig {
   id: string;

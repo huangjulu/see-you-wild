@@ -52,15 +52,13 @@ const icons = {
     </svg>
   ),
   line: (
-    <div className="w-6 h-6 overflow-hidden" aria-hidden="true">
-      <img
-        src="/icons/line-logo.svg"
-        alt=""
-        width={88}
-        height={24}
-        className="h-6 max-w-none"
-      />
-    </div>
+    <img
+      src="/icons/line.png"
+      alt=""
+      width={24}
+      height={24}
+      aria-hidden="true"
+    />
   ),
   mail: (
     <svg

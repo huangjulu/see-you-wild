@@ -10,6 +10,22 @@ const PhilosophySection = () => {
   const t = useTranslations("home.philosophy");
   const sectionRef = useRef<HTMLElement>(null);
   const revealTriggerRef = useRef<HTMLDivElement>(null);
+  const logoBadgeRef = useRef<HTMLDivElement>(null);
+
+  useTween(logoBadgeRef, {
+    from: { opacity: 0, y: 40 },
+    to: {
+      opacity: 1,
+      y: 0,
+      duration: 0.5,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: revealTriggerRef,
+        start: "top 60%",
+        toggleActions: "play reverse play reverse",
+      },
+    },
+  });
 
   useTween(sectionRef, {
     selector: ".reveal-up",
@@ -50,6 +66,17 @@ const PhilosophySection = () => {
       ref={sectionRef}
       className="py-24 md:py-32 px-8 md:px-16 bg-background"
     >
+      <div
+        ref={logoBadgeRef}
+        className="md:hidden flex justify-end -mt-40 mb-8 relative z-10"
+      >
+        <img
+          src="/icons/logo.png"
+          alt="See You Wild logo"
+          width={128}
+          className="rounded-md shadow-md bg-white"
+        />
+      </div>
       <div
         ref={revealTriggerRef}
         className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center"

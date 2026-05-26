@@ -13,43 +13,28 @@ const HeroSection = () => {
   const subtitlesRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  useTimeline(sectionRef, (tl) => {
+    const subtitles = subtitlesRef.current?.children;
+    const cta = ctaRef.current;
+    const scroll = scrollRef.current;
+    if (!subtitles || !cta || !scroll) return;
 
-  useTimeline(
-    sectionRef,
-    (tl) => {
-      const cta = ctaRef.current;
-      const scroll = scrollRef.current;
-      const subtitles = subtitlesRef.current?.children;
-      if (!subtitles || !cta || !scroll) return;
+    tl.fromTo(
+      subtitles,
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 0.9, ease: "power3.out", stagger: 0.2 }
+    );
+    tl.fromTo(
+      cta,
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
+      "-=0.4"
+    );
+    tl.fromTo(scroll, { opacity: 0 }, { opacity: 1, duration: 0.8 }, "-=0.3");
+  });
 
-      tl.fromTo(
-        subtitles,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.9,
-          ease: "power3.out",
-          stagger: 0.2,
-        }
-      );
-
-      tl.fromTo(
-        cta,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
-        "-=0.4"
-      );
-
-      tl.fromTo(scroll, { opacity: 0 }, { opacity: 1, duration: 0.8 }, "-=0.3");
-    },
-    { paused: true },
-    "opening-done"
-  );
-
-  const OFFSET_TOP = 0.4; // 要跟 OpeningAnimation video 的 translate-y-[40vh] 同步
-  const PARALLEX_ANIMATE = 0.3; // offset + 0.3 ≤ video h-180% 的 buffer (0.8) 才不會露出空白
+  const OFFSET_TOP = 0.4;
+  const PARALLEX_ANIMATE = 0.3;
 
   useTween(sectionRef, {
     selector: "video",
@@ -92,7 +77,6 @@ const HeroSection = () => {
       aria-label="Hero"
     >
       <video
-        ref={videoRef}
         autoPlay
         muted
         loop
@@ -112,16 +96,16 @@ const HeroSection = () => {
       <div className="relative z-10 flex flex-col items-center max-w-4xl">
         <h1
           ref={h1Ref}
-          className="typo-display text-6xl md:text-6xl lg:text-7xl text-white leading-tight [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-primary)_50%,transparent)]"
+          className="typo-display text-5xl md:text-6xl lg:text-7xl text-white leading-tight [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-primary)_50%,transparent)]"
         >
           See You Wild
         </h1>
         <div className="absolute top-full mt-6 flex flex-col items-center gap-4">
           <div ref={subtitlesRef} className="flex flex-col items-center">
-            <p className="typo-body text-lg md:text-xl text-white/80 opacity-0 text-shadow-md">
+            <p className="typo-body text-base md:text-lg text-white/80 opacity-0 text-shadow-md">
               {t("subtitle")}
             </p>
-            <p className="text-3xl md:text-lg text-white/60 italic opacity-0 tracking-widest text-shadow-md">
+            <p className="text-base text-white/60 italic tracking-widest opacity-0 text-shadow-md">
               {t("subtitleEn")}
             </p>
           </div>
