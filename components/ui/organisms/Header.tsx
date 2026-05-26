@@ -4,6 +4,7 @@ import { Menu as IconMenu, X as IconX } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import Button from "@/components/ui/atoms/Button";
+import { eventTypesApi } from "@/lib/api/event-types.api";
 import {
   INSTAGRAM_HANDLE,
   INSTAGRAM_URL,
@@ -28,7 +29,7 @@ const Header = (props: HeaderProps) => {
   const t = useTranslations("common");
   const scrolled = useScrolled(50);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [eventTypes, setEventTypes] = useState<string[]>([]);
+  const { data: eventTypes = [] } = eventTypesApi.useOpenTypes();
 
   const isHome = props.variant === "home";
 
@@ -38,13 +39,6 @@ const Header = (props: HeaderProps) => {
   ];
 
   const ctaLabel = t("nav.exploreCta");
-
-  useEffect(function fetchEventTypes() {
-    fetch("/api/event-types")
-      .then((r) => r.json())
-      .then((types: string[]) => setEventTypes(types))
-      .catch(() => {});
-  }, []);
 
   const headerBg = isHome
     ? scrolled
@@ -102,7 +96,10 @@ const Header = (props: HeaderProps) => {
         open={menuOpen}
         onOpenChange={setMenuOpen}
         navLinks={navLinks}
+        siteName={t("siteName")}
         ctaLabel={ctaLabel}
+        customConsultLabel={t("nav.customConsult")}
+        eventTypesLabel={t("nav.eventTypes")}
         eventTypes={eventTypes}
       />
     </>
@@ -175,7 +172,10 @@ interface MobileDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   navLinks: NavLink[];
+  siteName: string;
   ctaLabel: string;
+  customConsultLabel: string;
+  eventTypesLabel: string;
   eventTypes: string[];
 }
 
@@ -215,7 +215,7 @@ function MobileDrawer(props: MobileDrawerProps) {
       >
         <div className="flex items-center justify-between h-16 px-6">
           <span className="font-serif text-lg font-semibold text-on-surface-deep">
-            See You Wild 西揪團
+            {props.siteName}
           </span>
           <button
             onClick={() => props.onOpenChange(false)}
@@ -230,24 +230,32 @@ function MobileDrawer(props: MobileDrawerProps) {
           {props.eventTypes.length > 0 && (
             <div className="py-4 border-b border-on-surface-deep/10">
               <p className="typo-overline text-xs text-on-surface-deep/50 mb-3 tracking-widest">
-                活動類型
+                {props.eventTypesLabel}
               </p>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 [&>a]:rounded-full [&>a]:border [&>a]:border-on-surface-deep/20 [&>a]:px-4 [&>a]:py-1.5 [&>a]:text-sm [&>a]:text-on-surface-deep [&>a]:hover:bg-on-surface-deep/5 [&>a]:transition-colors">
                 {props.eventTypes.map((type) => (
                   <Link
                     key={type}
                     href={`/events?type=${encodeURIComponent(type)}`}
                     onClick={() => props.onOpenChange(false)}
-                    className="rounded-full border border-on-surface-deep/20 px-4 py-1.5 text-sm text-on-surface-deep hover:bg-on-surface-deep/5 transition-colors"
                   >
                     {type}
                   </Link>
                 ))}
               </div>
+              <a
+                href={LINE_OA_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => props.onOpenChange(false)}
+                className="mt-2 text-sm text-on-surface-deep/70 hover:text-on-surface-deep transition-colors"
+              >
+                {props.customConsultLabel}
+              </a>
             </div>
           )}
 
-          <div className="flex-1 flex flex-col justify-center gap-2">
+          <div className="flex-1 flex flex-col justify-center gap-2 [&>a]:font-serif [&>a]:text-2xl [&>a]:font-medium [&>a]:tracking-wide [&>a]:text-on-surface-deep [&>a]:py-4 [&>a]:block">
             {props.navLinks.map((link) => {
               const isExternal = link.href.startsWith("http");
               const isHash = link.href.startsWith("#");
@@ -262,7 +270,6 @@ function MobileDrawer(props: MobileDrawerProps) {
                       rel: "noopener noreferrer",
                     })}
                     onClick={() => props.onOpenChange(false)}
-                    className="font-serif text-2xl font-medium tracking-wide text-on-surface-deep py-4 block"
                   >
                     {link.label}
                   </a>
@@ -274,7 +281,6 @@ function MobileDrawer(props: MobileDrawerProps) {
                   key={link.href}
                   href={link.href}
                   onClick={() => props.onOpenChange(false)}
-                  className="font-serif text-2xl font-medium tracking-wide text-on-surface-deep py-4 block"
                 >
                   {link.label}
                 </Link>
@@ -287,7 +293,7 @@ function MobileDrawer(props: MobileDrawerProps) {
           <Link
             href="/events"
             onClick={() => props.onOpenChange(false)}
-            className="block text-center rounded-full bg-fill-brand px-8 py-3 text-sm tracking-widest text-on-fill-brand typo-ui"
+            className="block text-center rounded-full bg-fill-brand px-8 py-3 text-base tracking-widest text-on-fill-brand typo-ui"
           >
             {props.ctaLabel}
           </Link>

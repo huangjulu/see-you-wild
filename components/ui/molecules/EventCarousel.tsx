@@ -51,17 +51,16 @@ const EventCarousel = (props: EventCarouselProps) => {
         </Button>
       </div>
 
-      <div className="flex flex-1 items-center gap-2.5 overflow-hidden px-4">
+      <div className="flex flex-1 items-center gap-2.5 overflow-hidden px-4 [&>button]:flex [&>button]:size-8 [&>button]:shrink-0 [&>button]:items-center [&>button]:justify-center [&>button]:rounded-full [&>button]:border [&>button]:border-stroke-default [&>button]:bg-white [&>button]:shadow-sm [&>button]:transition-colors">
         <button
           type="button"
           onClick={() => setPage((p) => p - 1)}
           disabled={isFirstPage}
-          className={cn(
-            "flex size-8 shrink-0 items-center justify-center rounded-full border border-stroke-default bg-white shadow-sm transition-colors",
+          className={
             isFirstPage
               ? "invisible"
               : "text-secondary hover:border-stroke-strong"
-          )}
+          }
         >
           <IconChevronLeft className="size-4" />
         </button>
@@ -177,25 +176,21 @@ const EventCarousel = (props: EventCarouselProps) => {
           type="button"
           onClick={() => setPage((p) => p + 1)}
           disabled={isLastPage}
-          className={cn(
-            "flex size-8 shrink-0 items-center justify-center rounded-full border border-stroke-default bg-white shadow-sm transition-colors",
+          className={
             isLastPage
               ? "invisible"
               : "text-secondary hover:border-stroke-strong"
-          )}
+          }
         >
           <IconChevronRight className="size-4" />
         </button>
       </div>
 
-      <div className="flex shrink-0 justify-center gap-1.5 py-2">
+      <div className="flex shrink-0 justify-center gap-1.5 py-2 [&>div]:size-[7px] [&>div]:rounded-full">
         {Array.from({ length: totalPages }, (_, i) => (
           <div
             key={i}
-            className={cn(
-              "size-[7px] rounded-full",
-              i === page ? "bg-brand-400" : "bg-neutral-200"
-            )}
+            className={i === page ? "bg-brand-400" : "bg-neutral-200"}
           />
         ))}
       </div>
