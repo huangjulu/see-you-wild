@@ -4,9 +4,9 @@ import { Menu as IconMenu, X as IconX } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import Button from "@/components/ui/atoms/Button";
-import { eventTypesApi } from "@/lib/api/event-types.api";
+import SocialIcon from "@/components/ui/atoms/SocialIcon";
 import {
-  INSTAGRAM_HANDLE,
+  CONTACT_EMAIL,
   INSTAGRAM_URL,
   LINE_OA_URL,
   NAV_LINKS,
@@ -29,7 +29,6 @@ const Header = (props: HeaderProps) => {
   const t = useTranslations("common");
   const scrolled = useScrolled(50);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { data: eventTypes = [] } = eventTypesApi.useOpenTypes();
 
   const isHome = props.variant === "home";
 
@@ -100,7 +99,6 @@ const Header = (props: HeaderProps) => {
         ctaLabel={ctaLabel}
         customConsultLabel={t("nav.customConsult")}
         eventTypesLabel={t("nav.eventTypes")}
-        eventTypes={eventTypes}
       />
     </>
   );
@@ -176,7 +174,6 @@ interface MobileDrawerProps {
   ctaLabel: string;
   customConsultLabel: string;
   eventTypesLabel: string;
-  eventTypes: string[];
 }
 
 function MobileDrawer(props: MobileDrawerProps) {
@@ -226,36 +223,30 @@ function MobileDrawer(props: MobileDrawerProps) {
           </button>
         </div>
 
-        <div className="flex-1 flex flex-col px-8 gap-2 overflow-y-auto">
-          {props.eventTypes.length > 0 && (
-            <div className="py-4 border-b border-on-surface-deep/10">
-              <p className="typo-overline text-xs text-on-surface-deep/50 mb-3 tracking-widest">
-                {props.eventTypesLabel}
-              </p>
-              <div className="flex flex-wrap gap-2 [&>a]:rounded-full [&>a]:border [&>a]:border-on-surface-deep/20 [&>a]:px-4 [&>a]:py-1.5 [&>a]:text-sm [&>a]:text-on-surface-deep [&>a]:hover:bg-on-surface-deep/5 [&>a]:transition-colors">
-                {props.eventTypes.map((type) => (
-                  <Link
-                    key={type}
-                    href={`/events?type=${encodeURIComponent(type)}`}
-                    onClick={() => props.onOpenChange(false)}
-                  >
-                    {type}
-                  </Link>
-                ))}
-              </div>
-              <a
-                href={LINE_OA_URL}
-                target="_blank"
-                rel="noopener noreferrer"
+        <div className="flex-1 flex flex-col justify-between px-8 py-6 overflow-y-auto">
+          <div className="flex flex-col gap-3">
+            {JOURNEY_TYPES.map((jt) => (
+              <Link
+                key={jt.key}
+                href={`/events?type=${jt.key}`}
                 onClick={() => props.onOpenChange(false)}
-                className="mt-2 text-sm text-on-surface-deep/70 hover:text-on-surface-deep transition-colors"
+                className={DRAWER_LINK_CLASS}
               >
-                {props.customConsultLabel}
-              </a>
-            </div>
-          )}
+                {jt.label}
+              </Link>
+            ))}
+            <a
+              href={LINE_OA_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => props.onOpenChange(false)}
+              className={DRAWER_LINK_CLASS}
+            >
+              {props.customConsultLabel}
+            </a>
 
-          <div className="flex-1 flex flex-col justify-center gap-2 [&>a]:font-serif [&>a]:text-2xl [&>a]:font-medium [&>a]:tracking-wide [&>a]:text-on-surface-deep [&>a]:py-4 [&>a]:block">
+            <hr className="border-on-surface-deep/10" />
+
             {props.navLinks.map((link) => {
               const isExternal = link.href.startsWith("http");
               const isHash = link.href.startsWith("#");
@@ -270,6 +261,7 @@ function MobileDrawer(props: MobileDrawerProps) {
                       rel: "noopener noreferrer",
                     })}
                     onClick={() => props.onOpenChange(false)}
+                    className={DRAWER_LINK_CLASS}
                   >
                     {link.label}
                   </a>
@@ -281,33 +273,55 @@ function MobileDrawer(props: MobileDrawerProps) {
                   key={link.href}
                   href={link.href}
                   onClick={() => props.onOpenChange(false)}
+                  className={DRAWER_LINK_CLASS}
                 >
                   {link.label}
                 </Link>
               );
             })}
           </div>
-        </div>
 
-        <div className="px-8 pb-8 space-y-6">
-          <Link
-            href="/events"
-            onClick={() => props.onOpenChange(false)}
-            className="block text-center rounded-full bg-fill-brand px-8 py-3 text-base tracking-widest text-on-fill-brand typo-ui"
-          >
-            {props.ctaLabel}
-          </Link>
+          <div className="space-y-4 pt-6">
+            <Link
+              href="/events"
+              onClick={() => props.onOpenChange(false)}
+              className="block text-center rounded-full bg-fill-brand px-8 py-3 text-base tracking-widest text-on-fill-brand typo-ui"
+            >
+              {props.ctaLabel}
+            </Link>
 
-          <a
-            href={INSTAGRAM_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block text-center text-sm text-on-surface-deep/60"
-          >
-            {INSTAGRAM_HANDLE}
-          </a>
+            <div className="flex items-center justify-center gap-4">
+              <SocialIcon
+                platform="instagram"
+                href={INSTAGRAM_URL}
+                className="text-on-surface-deep/60 hover:text-on-surface-deep"
+              />
+              <SocialIcon
+                platform="line"
+                href={LINE_OA_URL}
+                className="text-on-surface-deep/60 hover:text-on-surface-deep"
+              />
+              <SocialIcon
+                platform="mail"
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="text-on-surface-deep/60 hover:text-on-surface-deep"
+              />
+            </div>
+          </div>
         </div>
       </nav>
     </>
   );
 }
+
+const DRAWER_LINK_CLASS =
+  "block font-serif text-xl font-medium tracking-wide text-on-surface-deep";
+
+const JOURNEY_TYPES = [
+  { key: "river-tracing", label: "秘境溯溪" },
+  { key: "sup", label: "SUP 立槳日出團" },
+  { key: "yacht", label: "遊艇旅遊" },
+  { key: "camping", label: "星空野營私廚" },
+  { key: "tree-climbing", label: "攀樹森林浴" },
+  { key: "rafting", label: "背包艇泛舟" },
+];

@@ -13,7 +13,7 @@ const PhilosophySection = () => {
   const logoBadgeRef = useRef<HTMLDivElement>(null);
 
   useTween(logoBadgeRef, {
-    from: { opacity: 0, y: 40 },
+    from: { opacity: 0, y: 60 },
     to: {
       opacity: 1,
       y: 0,
@@ -68,7 +68,7 @@ const PhilosophySection = () => {
     >
       <div
         ref={logoBadgeRef}
-        className="md:hidden flex justify-end -mt-40 mb-8 relative z-10"
+        className="md:hidden flex justify-end -mt-36 mb-8 relative z-10"
       >
         <img
           src="/icons/logo.png"

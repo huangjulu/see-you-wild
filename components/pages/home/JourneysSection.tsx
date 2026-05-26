@@ -87,7 +87,7 @@ const JourneysSection = () => {
     <section
       ref={sectionRef}
       id="journeys"
-      className="relative overflow-hidden bg-surface-brand bg-linear-180 from-journeys-gradient-from to-surface-brand from-[-15%] to-105%"
+      className="relative bg-surface-brand bg-linear-180 from-journeys-gradient-from to-surface-brand from-[-15%] to-105%"
     >
       <div className="flex flex-col pt-28 pb-24 md:pt-40 md:pb-32">
         <div className="max-w-7xl mx-auto w-full px-8 md:px-16 mb-7 flex items-end justify-between">
@@ -157,6 +157,34 @@ const JourneysSection = () => {
           <IconChevronRight className="w-5 h-5 md:w-6 md:h-6" />
         </button>
       </div>
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 1440 48"
+        preserveAspectRatio="none"
+        className="block w-full h-[32px] md:h-[48px] -mb-[32px] md:-mb-[48px] relative z-10"
+      >
+        <path
+          d="M0,26 C60,22 140,32 240,28 S400,18 520,24 S700,38 840,30 S1020,12 1140,22 S1320,36 1440,28"
+          fill="none"
+          stroke="white"
+          strokeWidth="2"
+          strokeOpacity="0.35"
+          strokeLinecap="round"
+        />
+        <path
+          d="M0,22 C80,18 180,28 300,24 S460,14 600,20 S780,34 920,26 S1080,10 1200,18 S1360,30 1440,24"
+          fill="none"
+          stroke="white"
+          strokeWidth="1.2"
+          strokeOpacity="0.2"
+          strokeLinecap="round"
+          strokeDasharray="8 12"
+        />
+        <path
+          d="M0,30 C120,34 200,18 320,22 S520,40 660,30 S860,10 980,20 S1160,38 1280,28 S1400,18 1440,24 L1440,48 L0,48 Z"
+          className="fill-background"
+        />
+      </svg>
     </section>
   );
 };
