@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ArrowRight as IconArrowRight,
   ChevronLeft as IconChevronLeft,
   ChevronRight as IconChevronRight,
 } from "lucide-react";
@@ -97,11 +98,12 @@ const JourneysSection = () => {
             </Heading.H2>
           </div>
           <Button
-            theme="link"
+            theme="text"
             href="/events"
-            className="text-white/70 hover:text-white"
+            className="text-white/70 hover:text-white hover:opacity-100"
           >
             {t("exploreMore")}
+            <IconArrowRight size={16} />
           </Button>
         </div>
         <div

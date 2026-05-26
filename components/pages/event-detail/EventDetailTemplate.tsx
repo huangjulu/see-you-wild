@@ -130,6 +130,7 @@ const EventDetailTemplate = (props: EventDetailTemplateProps) => {
         {/* Right column: Price Sidebar */}
         <div className="col-span-4 md:col-span-3 lg:col-span-4">
           <EventPriceSidebar
+            title={event.title}
             basePrice={event.basePrice}
             carpoolSurcharge={event.carpoolSurcharge}
             isSelfArrival={selection.transport === "self"}

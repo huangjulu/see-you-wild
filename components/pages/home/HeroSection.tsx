@@ -4,8 +4,10 @@ import { useRef } from "react";
 
 import Button from "@/components/ui/atoms/Button";
 import { useTimeline, useTween } from "@/lib/gsap";
+import { useTranslations } from "@/lib/i18n/client";
 
 const HeroSection = () => {
+  const t = useTranslations("home.hero");
   const sectionRef = useRef<HTMLElement>(null);
   const h1Ref = useRef<HTMLHeadingElement>(null);
   const subtitlesRef = useRef<HTMLDivElement>(null);
@@ -117,15 +119,15 @@ const HeroSection = () => {
         <div className="absolute top-full mt-6 flex flex-col items-center gap-4">
           <div ref={subtitlesRef} className="flex flex-col items-center">
             <p className="typo-body text-lg md:text-xl text-white/80 opacity-0 text-shadow-md">
-              在山與海之間
+              {t("subtitle")}
             </p>
             <p className="text-3xl md:text-lg text-white/60 italic opacity-0 tracking-widest text-shadow-md">
-              Where wild meets grace
+              {t("subtitleEn")}
             </p>
           </div>
           <div ref={ctaRef} className="mt-2 opacity-0">
             <Button theme="ghost" href="#journeys">
-              探索旅程
+              {t("exploreCta")}
             </Button>
           </div>
         </div>

@@ -38,7 +38,7 @@ const EventsTemplate = (props: EventsTemplateProps) => {
   }, [locationOptions, t]);
 
   return (
-    <main className="bg-page-gradient">
+    <main className="bg-page-gradient min-h-screen">
       <div className="sticky z-40 top-0 pt-24 pb-6 sticky-shrink-bg sticky-shrink-header">
         <Section as="div">
           <div className="col-span-full sticky-shrink-gap">
