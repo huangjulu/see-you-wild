@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import Button from "@/components/ui/atoms/Button";
 import SocialIcon from "@/components/ui/atoms/SocialIcon";
+import { eventTypesApi } from "@/lib/api/event-types.api";
 import {
   CONTACT_EMAIL,
   INSTAGRAM_URL,
@@ -12,7 +13,7 @@ import {
   NAV_LINKS,
 } from "@/lib/constants";
 import { useScrolled } from "@/lib/hooks/useScrolled";
-import { useTranslations } from "@/lib/i18n/client";
+import { useLocale, useTranslations } from "@/lib/i18n/client";
 import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -27,8 +28,10 @@ interface NavLink {
 
 const Header = (props: HeaderProps) => {
   const t = useTranslations("common");
+  const locale = useLocale();
   const scrolled = useScrolled(50);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { data: eventTypes = [] } = eventTypesApi.useAll();
 
   const isHome = props.variant === "home";
 
@@ -99,6 +102,10 @@ const Header = (props: HeaderProps) => {
         ctaLabel={ctaLabel}
         customConsultLabel={t("nav.customConsult")}
         eventTypesLabel={t("nav.eventTypes")}
+        eventTypes={eventTypes.map((et) => ({
+          key: et.slug,
+          label: locale === "en" ? et.name_en : et.name_zh,
+        }))}
       />
     </>
   );
@@ -174,6 +181,7 @@ interface MobileDrawerProps {
   ctaLabel: string;
   customConsultLabel: string;
   eventTypesLabel: string;
+  eventTypes: Array<{ key: string; label: string }>;
 }
 
 function MobileDrawer(props: MobileDrawerProps) {
@@ -225,7 +233,7 @@ function MobileDrawer(props: MobileDrawerProps) {
 
         <div className="flex-1 flex flex-col justify-between px-8 py-6 overflow-y-auto">
           <div className="flex flex-col gap-3">
-            {JOURNEY_TYPES.map((jt) => (
+            {props.eventTypes.map((jt) => (
               <Link
                 key={jt.key}
                 href={`/events?type=${jt.key}`}
@@ -316,12 +324,3 @@ function MobileDrawer(props: MobileDrawerProps) {
 
 const DRAWER_LINK_CLASS =
   "block font-serif text-xl font-medium tracking-wide text-on-surface-deep";
-
-const JOURNEY_TYPES = [
-  { key: "river-tracing", label: "秘境溯溪" },
-  { key: "sup", label: "SUP 立槳日出團" },
-  { key: "yacht", label: "遊艇旅遊" },
-  { key: "camping", label: "星空野營私廚" },
-  { key: "tree-climbing", label: "攀樹森林浴" },
-  { key: "rafting", label: "背包艇泛舟" },
-];

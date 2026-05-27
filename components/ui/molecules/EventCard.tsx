@@ -14,7 +14,7 @@ interface EventCardProps {
   endDate: string;
   basePrice: number;
   status: "open" | "closed";
-  image: string;
+  image: string | null;
   imageAlt: string;
 }
 
@@ -29,13 +29,17 @@ const EventCard = (props: EventCardProps) => {
         )}
       >
         <div className="relative aspect-4/3 overflow-hidden shrink-0">
-          <img
-            src={props.image}
-            alt={props.imageAlt}
-            loading="lazy"
-            decoding="async"
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
+          {props.image != null ? (
+            <img
+              src={props.image}
+              alt={props.imageAlt}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+          ) : (
+            <div className="h-full w-full bg-neutral-200" />
+          )}
           <div
             className="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent to-50% pointer-events-none"
             aria-hidden="true"

@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 interface ListCardProps {
-  image?: string;
+  image?: string | null;
   imageAlt?: string;
   size?: "sm" | "md" | "lg";
   className?: string;
