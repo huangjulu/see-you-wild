@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { X as IconX } from "lucide-react";
+import { Settings as IconSettings, X as IconX } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { DayPicker } from "react-day-picker";
 import { zhTW } from "react-day-picker/locale";
@@ -13,12 +13,14 @@ import {
 } from "react-hook-form";
 import { z } from "zod";
 
+import EventTypeManageDialog from "@/components/pages/admin/EventTypeManageDialog";
 import Input from "@/components/ui/atoms/Input";
 import Overlay from "@/components/ui/atoms/Overlay";
 import TextArea from "@/components/ui/atoms/TextArea";
 import ModalCard from "@/components/ui/molecules/ModalCard";
 import Selector from "@/components/ui/molecules/Selector";
 import { adminApi } from "@/lib/api/admin.api";
+import { eventTypesApi } from "@/lib/api/event-types.api";
 import { PICKUP_LOCATIONS } from "@/lib/constants";
 import { useToast } from "@/lib/hooks/useToast";
 import type { EventListDto } from "@/lib/types/database";
@@ -40,7 +42,9 @@ const eventFormSchema = z.object({
   preparation_notes: z.string().max(500),
   faq: z.string().max(1000),
   refund_policy: z.string().max(1000),
-  images: z.array(z.object({ src: z.string().url(), alt: z.string() })),
+  images: z
+    .array(z.object({ src: z.string().url(), alt: z.string() }))
+    .min(3, "請上傳至少三張圖片"),
   status: z.enum(["open", "closed"]),
 });
 
@@ -342,6 +346,13 @@ const EventFormFields = (props: EventFormFieldsProps) => {
     control,
     formState: { errors },
   } = useFormContext<EventFormValues>();
+  const { data: eventTypes = [] } = eventTypesApi.useAll();
+  const [typeManageOpen, setTypeManageOpen] = useState(false);
+
+  const typeOptions = eventTypes.map((t) => ({
+    value: t.slug,
+    label: t.name_zh,
+  }));
 
   const minDate = new Date();
   minDate.setDate(minDate.getDate() + 3);
@@ -359,11 +370,35 @@ const EventFormFields = (props: EventFormFieldsProps) => {
           {...register("title")}
           error={errors.title?.message}
         />
-        <Input
-          label="活動類型"
-          placeholder="例：camping, hiking, SUP"
-          {...register("type")}
-          error={errors.type?.message}
+        <div className="flex items-end gap-2">
+          <Controller
+            name="type"
+            control={control}
+            render={({ field }) => (
+              <Selector
+                className="flex-1"
+                label="活動類型"
+                placeholder="選擇類型"
+                options={typeOptions}
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                error={errors.type?.message}
+              />
+            )}
+          />
+          <button
+            type="button"
+            onClick={() => setTypeManageOpen(true)}
+            className="mb-1 p-2 rounded hover:bg-neutral-100 text-secondary hover:text-primary transition-colors"
+            aria-label="管理活動類型"
+          >
+            <IconSettings className="size-4" />
+          </button>
+        </div>
+        <EventTypeManageDialog
+          open={typeManageOpen}
+          onClose={() => setTypeManageOpen(false)}
         />
         <Input
           label="活動地點"

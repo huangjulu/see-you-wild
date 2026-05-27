@@ -1,0 +1,46 @@
+import { handleError } from "@/lib/api/handle-error";
+import { apiOk } from "@/lib/api-response";
+import { getSupabase } from "@/lib/supabase/client";
+import type { EventTypeRow } from "@/lib/types/database";
+
+interface RouteParams {
+  params: Promise<{ id: string }>;
+}
+
+export async function PUT(request: Request, props: RouteParams) {
+  try {
+    const { id } = await props.params;
+    const body = await request.json();
+    const { slug, name_zh, name_en } = body;
+
+    const { data, error } = await getSupabase()
+      .from("event_types")
+      .update({ slug, name_zh, name_en })
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return apiOk(data as EventTypeRow);
+  } catch (err) {
+    return handleError(err);
+  }
+}
+
+export async function DELETE(_request: Request, props: RouteParams) {
+  try {
+    const { id } = await props.params;
+
+    const { error } = await getSupabase()
+      .from("event_types")
+      .delete()
+      .eq("id", id);
+
+    if (error) throw error;
+
+    return apiOk({ deleted: true });
+  } catch (err) {
+    return handleError(err);
+  }
+}

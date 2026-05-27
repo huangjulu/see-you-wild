@@ -10,6 +10,14 @@ export type CarpoolRole = "passenger" | "driver";
 export type RegistrationStatus = "pending" | "paid" | "failed";
 export type FinalRole = "driver" | "passenger";
 
+export interface EventTypeRow {
+  id: string;
+  slug: string;
+  name_zh: string;
+  name_en: string;
+  created_at: string;
+}
+
 export interface EventRow {
   id: string;
   type: string;
@@ -150,7 +158,7 @@ export interface EventListingItem {
   endDate: string;
   basePrice: number;
   status: EventStatus;
-  image: string;
+  image: string | null;
   imageAlt: string;
 }
 
@@ -165,7 +173,7 @@ export function toEventListingItem(row: EventRow): EventListingItem {
     endDate: row.end_date,
     basePrice: row.base_price,
     status: row.status,
-    image: firstImage?.src ?? "",
+    image: firstImage?.src ?? null,
     imageAlt: firstImage?.alt ?? "",
   };
 }
