@@ -281,7 +281,7 @@ const MultiImageUploadField = (props: MultiImageUploadFieldProps) => {
                 onClick={() => props.onRemoveExisting(index)}
                 className={cn(
                   "absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full",
-                  "bg-fill-critical text-on-fill-brand transition-colors hover:bg-critical"
+                  "bg-fill-critical text-on-fill-neutral transition-colors hover:opacity-90"
                 )}
               >
                 <IconX className="size-3" />
@@ -308,7 +308,7 @@ const MultiImageUploadField = (props: MultiImageUploadFieldProps) => {
               onClick={() => onRemovePending(index)}
               className={cn(
                 "absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full",
-                "bg-fill-critical text-on-fill-brand transition-colors hover:bg-critical"
+                "bg-fill-critical text-on-fill-neutral transition-colors hover:opacity-90"
               )}
             >
               <IconX className="size-3" />
@@ -390,7 +390,7 @@ const EventFormFields = (props: EventFormFieldsProps) => {
           <button
             type="button"
             onClick={() => setTypeManageOpen(true)}
-            className="mb-1 p-2 rounded hover:bg-neutral-100 text-secondary hover:text-primary transition-colors"
+            className="mb-1 p-2 rounded hover:bg-surface text-secondary hover:text-primary transition-colors"
             aria-label="管理活動類型"
           >
             <IconSettings className="size-4" />

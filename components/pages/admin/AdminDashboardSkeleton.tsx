@@ -6,7 +6,7 @@ import Skeleton from "@/components/ui/atoms/Skeleton";
 import { cn } from "@/lib/utils";
 
 const TABLE_GRID =
-  "grid grid-cols-[1.2fr_1fr_1.4fr_0.8fr_0.7fr_0.5fr_0.7fr_0.6fr_1fr] items-center gap-2 px-3";
+  "grid grid-cols-[1.1fr_0.8fr_0.9fr_1.3fr_0.7fr_0.6fr_0.5fr_0.6fr_0.5fr_1fr] items-center gap-2 px-3";
 
 const AdminDashboardSkeleton = () => {
   return (
@@ -55,7 +55,7 @@ const AdminDashboardSkeleton = () => {
               key={i}
               className={cn(
                 "size-[7px] rounded-full",
-                i === 0 ? "bg-brand-400" : "bg-neutral-200"
+                i === 0 ? "bg-brand-400" : "bg-stroke-default"
               )}
             />
           ))}
@@ -68,11 +68,11 @@ const AdminDashboardSkeleton = () => {
           <h2 className="typo-heading text-xl text-primary">報名管理</h2>
           <div className="flex items-center gap-2.5">
             <div className="relative">
-              <IconSearch className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-neutral-300" />
+              <IconSearch className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-secondary" />
               <input
                 disabled
                 placeholder="搜尋姓名 / 末五碼..."
-                className="w-[200px] rounded-lg border border-stroke-default bg-background py-1.5 pl-8 pr-3 text-xs text-primary placeholder:text-neutral-300 opacity-50 cursor-not-allowed"
+                className="w-[200px] rounded-lg border border-stroke-default bg-background py-1.5 pl-8 pr-3 text-xs text-primary placeholder:text-disabled opacity-50 cursor-not-allowed"
               />
             </div>
             <button
@@ -107,7 +107,10 @@ const AdminDashboardSkeleton = () => {
           {Array.from({ length: 5 }, (_, i) => (
             <div
               key={i}
-              className={cn(TABLE_GRID, "border-b border-neutral-100 py-2.5")}
+              className={cn(
+                TABLE_GRID,
+                "border-b border-stroke-default py-2.5"
+              )}
             >
               <Skeleton className="h-3 w-4/5" />
               <Skeleton className="h-3 w-3/4" />

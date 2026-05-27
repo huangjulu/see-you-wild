@@ -5,4 +5,5 @@ export type ButtonTheme =
   | "link"
   | "text"
   | "outline"
-  | "danger";
+  | "danger"
+  | "success";

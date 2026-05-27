@@ -186,8 +186,8 @@ const AdminHistory = (props: AdminHistoryProps) => {
                 }}
                 className={cn(
                   TABLE_GRID,
-                  "cursor-pointer py-3 text-sm transition-colors border-b border-neutral-100",
-                  isHighlighted ? "bg-surface-warm" : "hover:bg-neutral-50"
+                  "cursor-pointer py-3 text-sm transition-colors border-b border-stroke-default",
+                  isHighlighted ? "bg-surface-warm" : "hover:bg-surface"
                 )}
               >
                 <span className="typo-ui truncate text-primary">

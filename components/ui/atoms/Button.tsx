@@ -34,7 +34,13 @@ const Button = (props: ButtonProps) => {
     case "danger":
       themeClass = cn(
         BOX_LAYOUT,
-        "bg-red-500 text-white border-transparent hover:bg-red-600 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-red-500/30"
+        "bg-fill-critical text-on-fill-neutral border-transparent hover:opacity-90 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-critical/30"
+      );
+      break;
+    case "success":
+      themeClass = cn(
+        BOX_LAYOUT,
+        "bg-fill-success text-on-fill-neutral border-transparent hover:opacity-90"
       );
       break;
     case "ghost":

@@ -107,7 +107,7 @@ const AdminDashboard = () => {
             </div>
             <div className="flex items-center gap-2.5">
               <div className="relative">
-                <IconSearch className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-neutral-300" />
+                <IconSearch className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-secondary" />
                 <input
                   type="text"
                   placeholder="搜尋姓名 / 末五碼..."
@@ -117,8 +117,8 @@ const AdminDashboard = () => {
                   }
                   className={cn(
                     "w-[200px] rounded-lg border border-stroke-default bg-background py-1.5 pl-8 pr-3 text-xs text-primary",
-                    "placeholder:text-neutral-300",
-                    "focus:border-brand-200 focus:ring-2 focus:ring-brand-200/30 focus:outline-none"
+                    "placeholder:text-disabled",
+                    "focus:border-accent focus:ring-2 focus:ring-accent/30 focus:outline-none"
                   )}
                 />
               </div>
@@ -170,7 +170,7 @@ const AdminDashboard = () => {
                     "typo-body py-2.5 text-[13px] transition-colors",
                     pendingReview
                       ? "cursor-pointer rounded border-l-[3px] border-brand-400 bg-surface-warm hover:bg-brand-100"
-                      : "border-b border-neutral-100 hover:bg-neutral-50"
+                      : "border-b border-stroke-default hover:bg-surface"
                   )}
                 >
                   <span className="typo-body truncate text-xs text-secondary">
@@ -191,7 +191,7 @@ const AdminDashboard = () => {
                       reg.status === "paid" && "text-success",
                       reg.status === "pending" &&
                         reg.payment_ref == null &&
-                        "text-neutral-300"
+                        "text-disabled"
                     )}
                   >
                     {pendingReview
@@ -204,7 +204,7 @@ const AdminDashboard = () => {
                   <span
                     className={cn(
                       "typo-body font-bold",
-                      reg.payment_ref == null && "text-neutral-200"
+                      reg.payment_ref == null && "text-disabled"
                     )}
                   >
                     {reg.payment_ref ?? "—"}
@@ -234,8 +234,8 @@ const AdminDashboard = () => {
                     )}
                     {pendingReview && (
                       <Button
-                        theme="solid"
-                        className="px-1.5 py-0.5 text-[11px] bg-fill-success text-on-fill-neutral hover:opacity-90"
+                        theme="success"
+                        className="px-1.5 py-0.5 text-[11px]"
                         onClick={(e) => {
                           e.stopPropagation();
                           dispatch({
