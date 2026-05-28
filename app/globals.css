@@ -251,6 +251,7 @@ body {
   color: var(--color-primary);
   font-family: var(--font-serif);
   overflow-x: clip; /* clip 比 hidden 好：不建立 scroll container、不破壞 position:sticky */
+  overscroll-behavior-y: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Settings as IconSettings, X as IconX } from "lucide-react";
+import { Plus as IconPlus, X as IconX } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { DayPicker } from "react-day-picker";
 import { zhTW } from "react-day-picker/locale";
@@ -13,7 +13,7 @@ import {
 } from "react-hook-form";
 import { z } from "zod";
 
-import EventTypeManageDialog from "@/components/pages/admin/EventTypeManageDialog";
+import CloseEventDialog from "@/components/pages/admin/CloseEventDialog";
 import Input from "@/components/ui/atoms/Input";
 import Overlay from "@/components/ui/atoms/Overlay";
 import TextArea from "@/components/ui/atoms/TextArea";
@@ -63,6 +63,7 @@ const EventFormModal = (props: EventFormModalProps) => {
   const updateMutation = adminApi.events.useUpdate();
   const uploadMutation = adminApi.uploadImage();
   const [pendingFiles, setPendingFiles] = useState<File[]>([]);
+  const [closeDialogOpen, setCloseDialogOpen] = useState(false);
 
   const lockedDates = useMemo(() => {
     if (!props.event) return [];
@@ -125,13 +126,17 @@ const EventFormModal = (props: EventFormModalProps) => {
     uploadMutation.isPending;
 
   async function handleFormSubmit(values: EventFormValues) {
-    const uploadedUrls: string[] = [];
-    for (const file of pendingFiles) {
-      const result = await uploadMutation.mutateAsync(file);
-      uploadedUrls.push(result.url);
-    }
+    const pLimit = (await import("p-limit")).default;
+    const limit = pLimit(3);
+    const uploadResults = await Promise.all(
+      pendingFiles.map((file) => limit(() => uploadMutation.mutateAsync(file)))
+    );
+    const uploadedUrls = uploadResults.map((r) => r.url);
 
-    const uploadedImages = uploadedUrls.map((url) => ({ src: url, alt: "" }));
+    const uploadedImages = uploadedUrls.map((url, i) => ({
+      src: url,
+      alt: pendingFiles[i].name.replace(/\.[^.]+$/, ""),
+    }));
     const allImages = [...values.images, ...uploadedImages];
 
     const sortedDates = [...values.available_dates].sort();
@@ -198,15 +203,11 @@ const EventFormModal = (props: EventFormModalProps) => {
                     current.filter((_, i) => i !== index)
                   );
                 }}
-                onUpdateAlt={(index, alt) => {
-                  const current = methods.getValues("images");
-                  const updated = current.map((img, i) =>
-                    i === index ? { ...img, alt } : img
-                  );
-                  methods.setValue("images", updated);
-                }}
               />
-              <EventFormFields lockedDates={lockedDates} />
+              <EventFormFields
+                lockedDates={lockedDates}
+                onRequestClose={() => setCloseDialogOpen(true)}
+              />
             </form>
           </FormProvider>
         </ModalCard.Main>
@@ -222,6 +223,16 @@ const EventFormModal = (props: EventFormModalProps) => {
           </ModalCard.Footer.ConfirmButton>
         </ModalCard.Footer>
       </ModalCard>
+
+      <CloseEventDialog
+        open={closeDialogOpen}
+        onClose={() => setCloseDialogOpen(false)}
+        onConfirmed={() => {
+          setCloseDialogOpen(false);
+          props.onClose();
+        }}
+        event={props.event}
+      />
     </Overlay>
   );
 };
@@ -238,7 +249,6 @@ interface MultiImageUploadFieldProps {
   pendingFiles: File[];
   onPendingFilesChange: (files: File[]) => void;
   onRemoveExisting: (index: number) => void;
-  onUpdateAlt: (index: number, alt: string) => void;
 }
 
 const MultiImageUploadField = (props: MultiImageUploadFieldProps) => {
@@ -250,8 +260,18 @@ const MultiImageUploadField = (props: MultiImageUploadFieldProps) => {
     if (!files || files.length === 0) return;
     const remaining = 3 - totalCount;
     if (remaining <= 0) return;
-    const newFiles = Array.from(files).slice(0, remaining);
-    props.onPendingFilesChange([...props.pendingFiles, ...newFiles]);
+    const candidates = Array.from(files).slice(0, remaining);
+    const maxSize = 4 * 1024 * 1024;
+    const oversized = candidates.filter((f) => f.size > maxSize);
+    if (oversized.length > 0) {
+      alert(
+        `以下檔案超過 4MB 上限：${oversized.map((f) => f.name).join(", ")}`
+      );
+    }
+    const valid = candidates.filter((f) => f.size <= maxSize);
+    if (valid.length > 0) {
+      props.onPendingFilesChange([...props.pendingFiles, ...valid]);
+    }
     e.target.value = "";
   }
 
@@ -266,34 +286,22 @@ const MultiImageUploadField = (props: MultiImageUploadFieldProps) => {
       <span className="typo-ui text-sm text-primary">封面照片</span>
       <div className="flex gap-4">
         {props.existingImages.map((img, index) => (
-          <div
-            key={img.src}
-            className="relative flex flex-col items-center gap-1 shrink-0"
-          >
-            <div className="relative size-14">
-              <img
-                src={img.src}
-                alt={img.alt || `活動圖片 ${index + 1}`}
-                className="size-14 rounded-lg object-cover border border-stroke-default"
-              />
-              <button
-                type="button"
-                onClick={() => props.onRemoveExisting(index)}
-                className={cn(
-                  "absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full",
-                  "bg-fill-critical text-on-fill-neutral transition-colors hover:opacity-90"
-                )}
-              >
-                <IconX className="size-3" />
-              </button>
-            </div>
-            <input
-              type="text"
-              value={img.alt}
-              onChange={(e) => props.onUpdateAlt(index, e.target.value)}
-              placeholder="圖片描述（alt text）"
-              className="w-14 text-[10px] text-secondary border-b border-stroke-default bg-transparent outline-none text-center"
+          <div key={img.src} className="relative size-14 shrink-0">
+            <img
+              src={img.src}
+              alt={img.alt || `活動圖片 ${index + 1}`}
+              className="size-14 rounded-lg object-cover border border-stroke-default"
             />
+            <button
+              type="button"
+              onClick={() => props.onRemoveExisting(index)}
+              className={cn(
+                "absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full",
+                "bg-fill-critical text-on-fill-neutral transition-colors hover:opacity-90"
+              )}
+            >
+              <IconX className="size-3" />
+            </button>
           </div>
         ))}
         {props.pendingFiles.map((file, index) => (
@@ -337,6 +345,7 @@ MultiImageUploadField.displayName = "MultiImageUploadField";
 
 interface EventFormFieldsProps {
   lockedDates: string[];
+  onRequestClose: () => void;
 }
 
 const EventFormFields = (props: EventFormFieldsProps) => {
@@ -347,12 +356,42 @@ const EventFormFields = (props: EventFormFieldsProps) => {
     formState: { errors },
   } = useFormContext<EventFormValues>();
   const { data: eventTypes = [] } = eventTypesApi.useAll();
-  const [typeManageOpen, setTypeManageOpen] = useState(false);
-
+  const createTypeMutation = eventTypesApi.useCreate();
+  const [newTypeZh, setNewTypeZh] = useState("");
+  const [newTypeEn, setNewTypeEn] = useState("");
+  const [showNewTypeForm, setShowNewTypeForm] = useState(false);
   const typeOptions = eventTypes.map((t) => ({
     value: t.slug,
     label: t.name_zh,
   }));
+
+  function toSlug(nameEn: string): string {
+    return nameEn
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-");
+  }
+
+  function handleCreateType() {
+    if (!newTypeZh.trim() || !newTypeEn.trim()) return;
+    const slug = toSlug(newTypeEn);
+    const duplicate = eventTypes.find((t) => t.slug === slug);
+    if (duplicate) {
+      alert(`英文名稱與「${duplicate.name_en}」重複`);
+      return;
+    }
+    createTypeMutation.mutate(
+      { slug, name_zh: newTypeZh.trim(), name_en: newTypeEn.trim() },
+      {
+        onSuccess: () => {
+          setNewTypeZh("");
+          setNewTypeEn("");
+          setShowNewTypeForm(false);
+        },
+      }
+    );
+  }
 
   const minDate = new Date();
   minDate.setDate(minDate.getDate() + 3);
@@ -370,35 +409,72 @@ const EventFormFields = (props: EventFormFieldsProps) => {
           {...register("title")}
           error={errors.title?.message}
         />
-        <div className="flex items-end gap-2">
-          <Controller
-            name="type"
-            control={control}
-            render={({ field }) => (
-              <Selector
-                className="flex-1"
-                label="活動類型"
-                placeholder="選擇類型"
-                options={typeOptions}
-                value={field.value}
-                onChange={field.onChange}
-                onBlur={field.onBlur}
-                error={errors.type?.message}
-              />
-            )}
-          />
-          <button
-            type="button"
-            onClick={() => setTypeManageOpen(true)}
-            className="mb-1 p-2 rounded hover:bg-surface text-secondary hover:text-primary transition-colors"
-            aria-label="管理活動類型"
-          >
-            <IconSettings className="size-4" />
-          </button>
-        </div>
-        <EventTypeManageDialog
-          open={typeManageOpen}
-          onClose={() => setTypeManageOpen(false)}
+        <Controller
+          name="type"
+          control={control}
+          render={({ field }) => (
+            <Selector
+              label="活動類型"
+              placeholder="選擇類型"
+              options={typeOptions}
+              value={field.value}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              error={errors.type?.message}
+              headerAction={
+                showNewTypeForm ? (
+                  <div
+                    className="flex flex-col gap-1.5 p-2"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <input
+                      type="text"
+                      placeholder="中文名稱"
+                      value={newTypeZh}
+                      onChange={(e) => setNewTypeZh(e.target.value)}
+                      className="w-full rounded border border-stroke-default px-2 py-1 text-xs text-primary focus:border-accent focus:outline-none"
+                    />
+                    <input
+                      type="text"
+                      placeholder="英文名稱（自動產生 slug）"
+                      value={newTypeEn}
+                      onChange={(e) => setNewTypeEn(e.target.value)}
+                      className="w-full rounded border border-stroke-default px-2 py-1 text-xs text-primary focus:border-accent focus:outline-none"
+                    />
+                    <div className="flex gap-1.5 justify-end">
+                      <button
+                        type="button"
+                        onClick={() => setShowNewTypeForm(false)}
+                        className="typo-ui text-xs text-secondary hover:text-primary"
+                      >
+                        取消
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleCreateType}
+                        disabled={createTypeMutation.isPending}
+                        className="typo-ui text-xs text-brand-500 hover:text-brand-600 disabled:opacity-50"
+                      >
+                        {createTypeMutation.isPending ? "新增中..." : "確認"}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowNewTypeForm(true);
+                    }}
+                    className="flex w-full items-center gap-1.5 px-3 py-2 typo-ui text-sm text-brand-500 hover:text-brand-600 transition-colors"
+                  >
+                    <IconPlus className="size-3.5" />
+                    新增活動類型
+                  </button>
+                )
+              }
+            />
+          )}
         />
         <Input
           label="活動地點"
@@ -553,14 +629,27 @@ const EventFormFields = (props: EventFormFieldsProps) => {
           name="status"
           control={control}
           render={({ field }) => (
-            <Selector
-              label="報名開放"
-              options={STATUS_OPTIONS}
-              value={field.value}
-              onChange={field.onChange}
-              onBlur={field.onBlur}
-              error={errors.status?.message}
-            />
+            <>
+              <Selector
+                label="報名開放"
+                options={STATUS_OPTIONS}
+                value={field.value}
+                onChange={(value) => {
+                  if (value === "closed" && field.value === "open") {
+                    props.onRequestClose();
+                    return;
+                  }
+                  field.onChange(value);
+                }}
+                onBlur={field.onBlur}
+                error={errors.status?.message}
+              />
+              {field.value === "closed" && (
+                <p className="text-[11px] text-critical">
+                  關閉活動後，已報名的參加者將收到活動關閉的信件通知。
+                </p>
+              )}
+            </>
           )}
         />
       </fieldset>

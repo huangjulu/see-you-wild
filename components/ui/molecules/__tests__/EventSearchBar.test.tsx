@@ -21,7 +21,11 @@ function renderWithIntl(ui: React.ReactElement) {
   );
 }
 
-const typeOptions = ["野營私廚", "野溪溫泉", "SUP 立槳"];
+const typeOptions = [
+  { value: "camping", label: "野營私廚" },
+  { value: "hot-spring", label: "野溪溫泉" },
+  { value: "sup", label: "SUP 立槳" },
+];
 const locationOptions = [
   { value: "", label: "所有地點" },
   { value: "阿里山", label: "阿里山" },
@@ -45,14 +49,14 @@ describe("EventSearchBar", () => {
     expect(screen.getAllByText("所有類型").length).toBeGreaterThan(0);
   });
 
-  it("type options 直接顯示原始值", () => {
+  it("type options 顯示翻譯後的 label", () => {
     renderWithIntl(<EventSearchBar {...baseProps} />);
     expect(screen.getAllByText("野營私廚").length).toBeGreaterThan(0);
     expect(screen.getAllByText("野溪溫泉").length).toBeGreaterThan(0);
     expect(screen.getAllByText("SUP 立槳").length).toBeGreaterThan(0);
   });
 
-  it("選擇活動類型觸發 onTypeChange（pill）", async () => {
+  it("選擇活動類型觸發 onTypeChange（pill），回傳 value 而非 label", async () => {
     const user = userEvent.setup();
     const onTypeChange = vi.fn();
     renderWithIntl(
@@ -60,6 +64,6 @@ describe("EventSearchBar", () => {
     );
     const pills = screen.getAllByText("野營私廚");
     await user.click(pills[0]);
-    expect(onTypeChange).toHaveBeenCalledWith("野營私廚");
+    expect(onTypeChange).toHaveBeenCalledWith("camping");
   });
 });

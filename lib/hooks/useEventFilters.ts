@@ -18,10 +18,15 @@ function useEventFilters(events: EventListingItem[]) {
   const [selectedType, setSelectedType] = useState(initialType);
   const [selectedLocation, setSelectedLocation] = useState(initialLocation);
 
-  const typeOptions = useMemo(
-    () => getUniqueValues(events, (e) => e.type),
-    [events]
-  );
+  const typeOptions = useMemo(() => {
+    const seen = new Map<string, string>();
+    for (const e of events) {
+      if (!seen.has(e.type)) {
+        seen.set(e.type, e.typeLabel);
+      }
+    }
+    return Array.from(seen, ([value, label]) => ({ value, label }));
+  }, [events]);
 
   const locationOptions = useMemo(
     () => getUniqueValues(events, (e) => e.location),

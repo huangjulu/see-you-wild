@@ -152,6 +152,7 @@ export function toEventDetail(row: EventRow): EventDetailDto {
 export interface EventListingItem {
   id: string;
   type: string;
+  typeLabel: string;
   location: string;
   title: string;
   startDate: string;
@@ -162,11 +163,16 @@ export interface EventListingItem {
   imageAlt: string;
 }
 
-export function toEventListingItem(row: EventRow): EventListingItem {
+export function toEventListingItem(
+  row: EventRow,
+  typeMap?: Map<string, { name_zh: string; name_en: string }>
+): EventListingItem {
   const firstImage = row.images[0];
+  const typeEntry = typeMap?.get(row.type);
   return {
     id: row.id,
     type: row.type,
+    typeLabel: typeEntry?.name_zh ?? row.type,
     location: row.location,
     title: row.title,
     startDate: row.start_date,

@@ -32,6 +32,7 @@ interface SelectorProps {
   disabled?: boolean;
   name?: string;
   className?: string;
+  headerAction?: React.ReactNode;
 }
 
 const Selector = (props: SelectorProps) => {
@@ -107,6 +108,11 @@ const Selector = (props: SelectorProps) => {
               data-selector-list
               className="max-h-[60vh] overflow-y-auto px-4 pb-6 pt-2"
             >
+              {props.headerAction != null && (
+                <div className="sticky top-0 z-[1] bg-white border-b border-stroke-default pb-1 mb-1">
+                  {props.headerAction}
+                </div>
+              )}
               {optionList}
             </div>
           </Drawer.Content>
@@ -124,8 +130,13 @@ const Selector = (props: SelectorProps) => {
           </PopoverTrigger>
           <PopoverContent
             data-selector-list
-            className="w-(--anchor-width) rounded-md border border-neutral-200 p-1 ring-0 bg-white max-h-[9.6rem] overflow-auto"
+            className="w-(--anchor-width) rounded-md border border-stroke-default p-1 ring-0 bg-white max-h-[12rem] overflow-auto"
           >
+            {props.headerAction != null && (
+              <div className="sticky top-0 z-[1] bg-white border-b border-stroke-default pb-1 mb-1">
+                {props.headerAction}
+              </div>
+            )}
             {optionList}
           </PopoverContent>
         </Popover>

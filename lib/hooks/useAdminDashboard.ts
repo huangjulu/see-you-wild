@@ -21,6 +21,8 @@ export interface AdminDashboardState {
   selectedEventId: string | null;
   searchQuery: string;
   modal: ModalState;
+  statusFilter: "all" | "open" | "closed";
+  typeFilter: string | null;
 }
 
 export type AdminDashboardAction =
@@ -33,12 +35,16 @@ export type AdminDashboardAction =
   | { type: "OPEN_EDIT_REGISTRATION"; registration: RegistrationAdminDto }
   | { type: "OPEN_DELETE_REGISTRATION"; registration: FlatRegistration }
   | { type: "OPEN_REVIEW_PAYMENT"; registration: FlatRegistration }
-  | { type: "CLOSE_MODAL" };
+  | { type: "CLOSE_MODAL" }
+  | { type: "SET_STATUS_FILTER"; status: "all" | "open" | "closed" }
+  | { type: "SET_TYPE_FILTER"; typeSlug: string | null };
 
 const initialState: AdminDashboardState = {
   selectedEventId: null,
   searchQuery: "",
   modal: { type: "none" },
+  statusFilter: "all",
+  typeFilter: null,
 };
 
 function reducer(
@@ -81,6 +87,10 @@ function reducer(
       };
     case "CLOSE_MODAL":
       return { ...state, modal: { type: "none" } };
+    case "SET_STATUS_FILTER":
+      return { ...state, statusFilter: action.status };
+    case "SET_TYPE_FILTER":
+      return { ...state, typeFilter: action.typeSlug };
   }
 }
 
