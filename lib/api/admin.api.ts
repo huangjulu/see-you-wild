@@ -1,6 +1,7 @@
 // lib/api/admin.api.ts
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { type ApiError, apiFetch } from "@/lib/api/api-fetch";
 import type {
   EventListDto,
   EventRow,
@@ -16,29 +17,11 @@ import type {
   UpdateRegistrationInput,
 } from "@/lib/validations/registrations";
 
-interface ApiError {
-  error: string;
-}
-
 interface ReviewInfo {
   customerName: string;
   eventTitle: string;
   paymentRef: string | null;
   status: string;
-}
-
-async function apiFetch<T>(url: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(url, {
-    headers: { "Content-Type": "application/json" },
-    ...init,
-  });
-
-  if (response.ok) {
-    return response.json();
-  }
-
-  const body: ApiError | null = await response.json().catch(() => null);
-  throw new Error(body?.error ?? `Request failed: ${response.status}`);
 }
 
 export const adminApi = {

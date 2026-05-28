@@ -18,6 +18,11 @@ import { eventTypesApi } from "@/lib/api/event-types.api";
 import type { FlatRegistration } from "@/lib/hooks/useAdminDashboard";
 import useAdminDashboard from "@/lib/hooks/useAdminDashboard";
 import { useToast } from "@/lib/hooks/useToast";
+import {
+  isPendingReview,
+  matchesSearchQuery,
+  sortPendingReviewFirst,
+} from "@/lib/utils/registration";
 
 const AdminDashboard = () => {
   const { toast } = useToast();
@@ -31,7 +36,6 @@ const AdminDashboard = () => {
     return events.flatMap((event) =>
       event.registrations.map((reg) => ({
         ...reg,
-        eventId: event.id,
         eventTitle: event.title,
       }))
     );
@@ -40,17 +44,11 @@ const AdminDashboard = () => {
   const filteredRegistrations = useMemo(() => {
     let list =
       state.selectedEventId != null
-        ? allRegistrations.filter((r) => r.eventId === state.selectedEventId)
+        ? allRegistrations.filter((r) => r.event_id === state.selectedEventId)
         : allRegistrations;
 
     if (state.searchQuery.trim() !== "") {
-      const q = state.searchQuery.toLowerCase();
-      list = list.filter(
-        (r) =>
-          r.name.toLowerCase().includes(q) ||
-          r.email.toLowerCase().includes(q) ||
-          r.payment_ref?.toLowerCase().includes(q)
-      );
+      list = list.filter((r) => matchesSearchQuery(r, state.searchQuery));
     }
 
     return list.sort(sortPendingReviewFirst);
@@ -198,18 +196,3 @@ const AdminDashboard = () => {
 
 AdminDashboard.displayName = "AdminDashboard";
 export default AdminDashboard;
-
-function isPendingReview(reg: FlatRegistration): boolean {
-  return reg.status === "pending" && reg.payment_ref != null;
-}
-
-function sortPendingReviewFirst(
-  a: FlatRegistration,
-  b: FlatRegistration
-): number {
-  const aPending = isPendingReview(a);
-  const bPending = isPendingReview(b);
-  if (aPending && !bPending) return -1;
-  if (!aPending && bPending) return 1;
-  return 0;
-}
