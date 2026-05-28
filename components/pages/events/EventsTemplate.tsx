@@ -99,6 +99,7 @@ const EventsTemplate = (props: EventsTemplateProps) => {
                   key={event.id}
                   id={event.id}
                   type={event.type}
+                  typeLabel={event.typeLabel}
                   location={event.location}
                   title={event.title}
                   startDate={event.startDate}

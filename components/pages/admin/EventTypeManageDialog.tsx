@@ -180,7 +180,7 @@ const EventTypeManageDialog = (props: EventTypeManageDialogProps) => {
                       onClick={() =>
                         setMenuOpenId(menuOpenId === row.id ? null : row.id)
                       }
-                      className="p-1 rounded hover:bg-neutral-100"
+                      className="p-1 rounded hover:bg-surface"
                     >
                       <IconMoreVertical className="size-4 text-secondary" />
                     </button>
@@ -188,14 +188,14 @@ const EventTypeManageDialog = (props: EventTypeManageDialogProps) => {
                       <div className="absolute right-0 top-full mt-1 bg-white border border-stroke-default rounded-md shadow-md z-10 min-w-24">
                         <button
                           type="button"
-                          className="block w-full text-left px-3 py-1.5 text-sm hover:bg-neutral-50"
+                          className="block w-full text-left px-3 py-1.5 text-sm hover:bg-surface"
                           onClick={() => onStartEdit(row)}
                         >
                           編輯
                         </button>
                         <button
                           type="button"
-                          className="block w-full text-left px-3 py-1.5 text-sm text-red-500 hover:bg-red-50"
+                          className="block w-full text-left px-3 py-1.5 text-sm text-critical hover:bg-red-50"
                           onClick={() => onDelete(row.id)}
                         >
                           刪除

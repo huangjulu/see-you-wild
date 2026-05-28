@@ -5,7 +5,7 @@ import EventsTemplate from "@/components/pages/events/EventsTemplate";
 import type { PageProps } from "@/lib/i18n";
 import { isValidLocale } from "@/lib/i18n";
 import { getSupabase } from "@/lib/supabase/client";
-import type { EventRow } from "@/lib/types/database";
+import type { EventRow, EventTypeRow } from "@/lib/types/database";
 import { toEventListingItem } from "@/lib/types/database";
 
 const EventsPage = async (props: PageProps) => {
@@ -15,13 +15,26 @@ const EventsPage = async (props: PageProps) => {
     notFound();
   }
 
-  const { data } = await getSupabase()
-    .from("events")
-    .select("*")
-    .eq("status", "open")
-    .order("start_date", { ascending: true });
+  const [eventsResult, typesResult] = await Promise.all([
+    getSupabase()
+      .from("events")
+      .select("*")
+      .eq("status", "open")
+      .order("start_date", { ascending: true }),
+    getSupabase().from("event_types").select("*"),
+  ]);
 
-  const events = (data as EventRow[] | null)?.map(toEventListingItem) ?? [];
+  const typeMap = new Map(
+    ((typesResult.data ?? []) as EventTypeRow[]).map((t) => [
+      t.slug,
+      { name_zh: t.name_zh, name_en: t.name_en },
+    ])
+  );
+
+  const events =
+    (eventsResult.data as EventRow[] | null)?.map((row) =>
+      toEventListingItem(row, typeMap)
+    ) ?? [];
 
   return (
     <Suspense>

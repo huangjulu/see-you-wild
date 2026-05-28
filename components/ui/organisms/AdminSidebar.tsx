@@ -3,6 +3,8 @@
 import {
   Archive as IconArchive,
   LayoutDashboard as IconLayoutDashboard,
+  Tags as IconTags,
+  Users as IconUsers,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 
@@ -11,6 +13,8 @@ import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { href: "/admin", icon: IconLayoutDashboard, label: "首頁" },
+  { href: "/admin/registrations", icon: IconUsers, label: "報名" },
+  { href: "/admin/event-types", icon: IconTags, label: "類型" },
   { href: "/admin/history", icon: IconArchive, label: "歷史" },
 ] as const;
 
@@ -19,8 +23,12 @@ const AdminSidebar = () => {
 
   return (
     <nav className="flex w-[72px] shrink-0 flex-col items-center justify-between border-r border-neutral-800 bg-surface-deep py-5">
-      <div className="flex size-10 items-center justify-center rounded-[10px] bg-fill-brand">
-        <span className="typo-heading text-sm text-neutral-950">SYW</span>
+      <div className="flex size-10 items-center justify-center rounded-[10px] overflow-hidden">
+        <img
+          src="/icons/logo.png"
+          alt="See You Wild"
+          className="size-full object-cover"
+        />
       </div>
 
       <div className="flex flex-col items-center gap-2">

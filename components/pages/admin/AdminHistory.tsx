@@ -129,24 +129,24 @@ const AdminHistory = (props: AdminHistoryProps) => {
   return (
     <>
       <AdminSidebar />
-      <main className="flex flex-1 flex-col overflow-hidden">
-        {/* Section header */}
-        <div className="flex shrink-0 items-center justify-between gap-4 border-b border-stroke-default bg-white px-6 py-3.5">
-          <h1 className="typo-heading text-xl text-primary">歷史資料</h1>
-          <div className="flex items-center gap-3">
-            <Selector
-              className="w-36"
-              options={TIME_RANGE_OPTIONS}
-              value={timeRange}
-              onChange={(v) => setTimeRange(v as TimeRange)}
-            />
-            <Selector
-              className="w-52"
-              options={eventFilterOptions}
-              value={selectedEventId}
-              onChange={setSelectedEventId}
-            />
-          </div>
+      <main className="flex flex-1 flex-col overflow-clip bg-background">
+        <div className="border-b border-stroke-default bg-white px-6 py-4">
+          <h1 className="text-xl font-semibold text-primary">歷史資料</h1>
+        </div>
+
+        <div className="flex items-center gap-3 border-b border-stroke-default bg-white px-6 py-3">
+          <Selector
+            className="w-36"
+            options={TIME_RANGE_OPTIONS}
+            value={timeRange}
+            onChange={(v) => setTimeRange(v as TimeRange)}
+          />
+          <Selector
+            className="w-52"
+            options={eventFilterOptions}
+            value={selectedEventId}
+            onChange={setSelectedEventId}
+          />
         </div>
 
         {/* Table container */}
@@ -186,8 +186,8 @@ const AdminHistory = (props: AdminHistoryProps) => {
                 }}
                 className={cn(
                   TABLE_GRID,
-                  "cursor-pointer py-3 text-sm transition-colors border-b border-neutral-100",
-                  isHighlighted ? "bg-surface-warm" : "hover:bg-neutral-50"
+                  "cursor-pointer py-3 text-sm transition-colors border-b border-stroke-default",
+                  isHighlighted ? "bg-surface-warm" : "hover:bg-surface"
                 )}
               >
                 <span className="typo-ui truncate text-primary">

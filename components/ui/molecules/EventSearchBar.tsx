@@ -8,7 +8,7 @@ import Selector from "@/components/ui/molecules/Selector";
 import { useTranslations } from "@/lib/i18n/client";
 
 interface EventSearchBarProps {
-  typeOptions: string[];
+  typeOptions: Array<{ value: string; label: string }>;
   locationOptions: { value: string; label: string }[];
   selectedType: string;
   selectedLocation: string;
@@ -22,10 +22,7 @@ const EventSearchBar = (props: EventSearchBarProps) => {
   const t = useTranslations("events");
   const typeSelectOptions = [
     { value: "", label: t("allTypes") },
-    ...props.typeOptions.map((type) => ({
-      value: type,
-      label: type,
-    })),
+    ...props.typeOptions,
   ];
 
   return (

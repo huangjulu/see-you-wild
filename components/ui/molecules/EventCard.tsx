@@ -16,6 +16,7 @@ interface EventCardProps {
   status: "open" | "closed";
   image: string | null;
   imageAlt: string;
+  typeLabel?: string;
 }
 
 const EventCard = (props: EventCardProps) => {
@@ -45,7 +46,7 @@ const EventCard = (props: EventCardProps) => {
             aria-hidden="true"
           />
           <Tag className="absolute top-3 left-3 z-10 border-white text-white">
-            {props.type}
+            {props.typeLabel ?? props.type}
           </Tag>
         </div>
         <div className="p-4 min-h-0">
