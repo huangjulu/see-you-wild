@@ -1,3 +1,4 @@
+import { LINE_OA_URL } from "@/lib/constants";
 import { getEnv } from "@/lib/env";
 
 import { getResend } from "./client";
@@ -209,7 +210,7 @@ export async function sendRegistrationSuccessEmail(
                       <!-- LINE CTA -->
                       <tr>
                         <td align="center">
-                          <a href="https://line.me/ti/p/PLACEHOLDER" target="_blank" style="display: inline-block; background-color: #06c755; color: #ffffff; font-size: 15px; font-weight: 700; text-decoration: none; padding: 12px 32px; border-radius: 8px; letter-spacing: 0.5px;">
+                          <a href="${LINE_OA_URL}" target="_blank" style="display: inline-block; background-color: #06c755; color: #ffffff; font-size: 15px; font-weight: 700; text-decoration: none; padding: 12px 32px; border-radius: 8px; letter-spacing: 0.5px;">
                             加入 LINE 好友
                           </a>
                         </td>

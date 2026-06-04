@@ -25,6 +25,7 @@ import { PICKUP_LOCATIONS } from "@/lib/constants";
 import { useToast } from "@/lib/hooks/useToast";
 import type { EventListDto } from "@/lib/types/database";
 import { cn } from "@/lib/utils";
+import { toSlug } from "@/lib/utils/slug";
 
 const eventFormSchema = z.object({
   title: z.string().min(1, "請輸入活動標題"),
@@ -364,14 +365,6 @@ const EventFormFields = (props: EventFormFieldsProps) => {
     value: t.slug,
     label: t.name_zh,
   }));
-
-  function toSlug(nameEn: string): string {
-    return nameEn
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9\s-]/g, "")
-      .replace(/\s+/g, "-");
-  }
 
   function handleCreateType() {
     if (!newTypeZh.trim() || !newTypeEn.trim()) return;

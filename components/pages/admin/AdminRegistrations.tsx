@@ -7,12 +7,10 @@ import Button from "@/components/ui/atoms/Button";
 import Selector from "@/components/ui/molecules/Selector";
 import AdminSidebar from "@/components/ui/organisms/AdminSidebar";
 import { adminApi } from "@/lib/api/admin.api";
+import type { FlatRegistration } from "@/lib/hooks/useAdminDashboard";
 import type { EventListDto, RegistrationAdminDto } from "@/lib/types/database";
 import { cn } from "@/lib/utils";
-
-interface FlatRegistration extends RegistrationAdminDto {
-  eventTitle: string;
-}
+import { matchesSearchQuery } from "@/lib/utils/registration";
 
 const TABLE_GRID =
   "grid grid-cols-[1.1fr_0.8fr_0.9fr_1.3fr_0.7fr_0.6fr_0.5fr_0.6fr_0.5fr_1fr] items-center gap-2 px-3";
@@ -96,13 +94,7 @@ const AdminRegistrations: React.FC = () => {
     }
 
     if (searchQuery.trim() !== "") {
-      const q = searchQuery.toLowerCase();
-      list = list.filter(
-        (r) =>
-          r.name.toLowerCase().includes(q) ||
-          r.email.toLowerCase().includes(q) ||
-          r.payment_ref?.toLowerCase().includes(q)
-      );
+      list = list.filter((r) => matchesSearchQuery(r, searchQuery));
     }
 
     return list;

@@ -16,15 +16,10 @@ import {
 } from "react-day-picker";
 import { zhTW } from "react-day-picker/locale";
 
-import type { SlottableComponent } from "@/components/ui/atoms/slot.types";
 import { useOutsideClick } from "@/lib/hooks/useOutsideClick";
 import { cn } from "@/lib/utils";
 
-type CalendarSlot = "chevrons" | "caption" | "grid" | "navi";
-
 type CalendarSize = "sm" | "md" | "lg";
-
-type GridType = "month";
 
 type CaptionLayout = "label" | "dropdown";
 
@@ -32,6 +27,22 @@ interface MarkerDef {
   match: Matcher;
   label?: string;
   style?: string;
+}
+
+interface CalendarProps {
+  mode: "single";
+  size?: CalendarSize;
+  value?: Date;
+  onChange?: (date: Date | undefined) => void;
+  defaultMonth?: Date;
+  className?: string;
+  disabled?: Matcher | Matcher[];
+  markers?: Record<string, MarkerDef>;
+  startMonth?: Date;
+  endMonth?: Date;
+  captionLayout?: CaptionLayout;
+  fixedWeeks?: boolean;
+  showChevrons?: boolean;
 }
 
 const CELL_SIZE: Record<CalendarSize, string> = {
@@ -52,49 +63,129 @@ const LABEL_SIZE: Record<CalendarSize, string> = {
   lg: "text-xs",
 } as const;
 
-interface CalendarChevronsProps {
-  className?: string;
-  children?: React.ReactNode;
-}
+const Calendar = (props: CalendarProps) => {
+  const size = props.size ?? "md";
+  const captionLayout = props.captionLayout ?? "label";
+  const fixedWeeks = props.fixedWeeks ?? true;
+  const showChevrons = props.showChevrons ?? true;
 
-const CalendarChevrons: SlottableComponent<CalendarChevronsProps> =
-  Object.assign((_props: CalendarChevronsProps) => null, {
-    slotName: "chevrons" as const,
-    displayName: "CalendarChevrons",
-  });
+  const dpModifiers = props.markers
+    ? Object.fromEntries(
+        Object.entries(props.markers).map(([name, def]) => [name, def.match])
+      )
+    : undefined;
 
-interface CalendarCaptionProps {
-  layout?: CaptionLayout;
-  className?: string;
-  children?: React.ReactNode;
-}
+  function CalendarChevronInternal(chevronProps: {
+    className?: string;
+    orientation?: string;
+  }) {
+    if (chevronProps.orientation === "left") {
+      return (
+        <IconChevronLeft className={cn("size-4", chevronProps.className)} />
+      );
+    }
+    return (
+      <IconChevronRight className={cn("size-4", chevronProps.className)} />
+    );
+  }
 
-const CalendarCaption: SlottableComponent<CalendarCaptionProps> = Object.assign(
-  (_props: CalendarCaptionProps) => null,
-  { slotName: "caption" as const, displayName: "CalendarCaption" }
-);
+  function EmptyNav(navProps: NavProps) {
+    const {
+      onPreviousClick: _op,
+      onNextClick: _on,
+      previousMonth: _pm,
+      nextMonth: _nm,
+      ...divProps
+    } = navProps;
+    return <nav {...divProps} />;
+  }
 
-interface CalendarGridProps {
-  type?: GridType;
-  fixedWeeks?: boolean;
-  className?: string;
-  children?: React.ReactNode;
-}
+  const classNames = {
+    root: "w-full",
+    months: "relative flex flex-col",
+    month: "flex w-full flex-col gap-4",
+    nav: "absolute inset-x-0 top-0 flex w-full items-center justify-between gap-2",
+    button_previous: cn(
+      "flex items-center justify-center size-(--cell-size) rounded-(--cell-radius)",
+      "border border-transparent text-primary hover:bg-brand-50 transition-colors",
+      "aria-disabled:opacity-50"
+    ),
+    button_next: cn(
+      "flex items-center justify-center size-(--cell-size) rounded-(--cell-radius)",
+      "border border-transparent text-primary hover:bg-brand-50 transition-colors",
+      "aria-disabled:opacity-50"
+    ),
+    month_caption:
+      "flex h-(--cell-size) w-full items-center justify-center px-(--cell-size)",
+    dropdowns: "flex flex-row gap-1 px-2",
+    caption_label: "typo-ui text-sm font-medium select-none",
+    month_grid: "w-full table-fixed",
+    weekdays: "flex",
+    weekday:
+      "flex-1 rounded-(--cell-radius) text-[0.8rem] font-normal text-muted-foreground select-none",
+    week: "mt-2 flex w-full",
+    day: "group/day relative aspect-square h-full w-full rounded-(--cell-radius) p-0 text-center select-none",
+    outside: "text-muted-foreground opacity-50",
+    disabled: "text-muted-foreground opacity-50",
+    hidden: "invisible",
+  } as const satisfies Partial<ClassNames>;
 
-const CalendarGrid: SlottableComponent<CalendarGridProps> = Object.assign(
-  (_props: CalendarGridProps) => null,
-  { slotName: "grid" as const, displayName: "CalendarGrid" }
-);
+  type DayPickerRootProps = {
+    className?: string;
+    rootRef?: React.Ref<HTMLDivElement>;
+  } & React.HTMLAttributes<HTMLDivElement>;
 
-interface CalendarNaviProps {
-  className?: string;
-  children?: React.ReactNode;
-}
+  const rdpComponents: Record<string, unknown> = {
+    Root: (rootProps: DayPickerRootProps) => {
+      const { rootRef, ...rest } = rootProps;
+      return <div data-slot="calendar" ref={rootRef} {...rest} />;
+    },
+    Chevron: CalendarChevronInternal,
+    DayButton: (dayProps: React.ComponentProps<typeof DayButtonType>) => (
+      <CalendarDayButton markerDefs={props.markers} size={size} {...dayProps} />
+    ),
+    Weekday: WeekendAwareWeekday,
+  };
 
-const CalendarNavi: SlottableComponent<CalendarNaviProps> = Object.assign(
-  (_props: CalendarNaviProps) => null,
-  { slotName: "navi" as const, displayName: "CalendarNavi" }
-);
+  if (!showChevrons) {
+    rdpComponents["Nav"] = EmptyNav;
+  }
+
+  if (captionLayout === "dropdown") {
+    rdpComponents["Dropdown"] = CalendarSelectDropdown;
+  }
+
+  return (
+    <DayPicker
+      mode="single"
+      selected={props.value}
+      onSelect={props.onChange}
+      showOutsideDays
+      fixedWeeks={fixedWeeks}
+      locale={zhTW}
+      defaultMonth={props.defaultMonth}
+      disabled={props.disabled}
+      captionLayout={captionLayout}
+      startMonth={props.startMonth}
+      endMonth={props.endMonth}
+      modifiers={dpModifiers}
+      className={cn(
+        "bg-neutral-50/80 p-4 [--cell-radius:var(--radius-md)]",
+        CELL_SIZE[size],
+        FONT_SIZE[size],
+        "rounded-xl border border-neutral-200/50",
+        props.className
+      )}
+      classNames={classNames}
+      components={rdpComponents}
+    />
+  );
+};
+
+Calendar.displayName = "Calendar";
+export default Calendar;
+
+/* ─── Internal components ─── */
 
 interface CalendarDayButtonProps extends React.ComponentProps<
   typeof DayButtonType
@@ -242,257 +333,3 @@ function WeekendAwareWeekday(
     />
   );
 }
-
-// React element props are opaque — bridge cast to read declarative slot config
-function slotProp(el: React.ReactElement, key: string): string | undefined {
-  const val: unknown = (el.props as Record<string, unknown>)[key];
-  return typeof val === "string" ? val : undefined;
-}
-
-function getSlotName(child: React.ReactElement): CalendarSlot | undefined {
-  return (child.type as { slotName?: CalendarSlot }).slotName;
-}
-
-interface ResolvedCalendarConfig {
-  hasChevrons: boolean;
-  captionLayout: CaptionLayout;
-  gridType: GridType;
-  fixedWeeks: boolean | undefined;
-  chevronsClassName?: string;
-  captionClassName?: string;
-  gridClassName?: string;
-  naviClassName?: string;
-}
-
-function resolveCalendarConfig(
-  children: React.ReactNode
-): ResolvedCalendarConfig {
-  const slots: Partial<Record<CalendarSlot, React.ReactElement>> = {};
-  let hasChildren = false;
-
-  React.Children.forEach(children, (child) => {
-    if (!React.isValidElement(child)) return;
-    hasChildren = true;
-    const name = getSlotName(child);
-    if (name != null) slots[name] = child;
-  });
-
-  let hasChevrons = true;
-  let captionLayout: CaptionLayout = "label";
-  let chevronsClassName: string | undefined;
-  let captionClassName: string | undefined;
-  let naviClassName: string | undefined;
-
-  const naviEl = slots["navi"];
-  if (naviEl) {
-    naviClassName = slotProp(naviEl, "className");
-    // React element props are opaque — bridge cast to read navi children
-    const naviChildren = (naviEl.props as Record<string, unknown>)[
-      "children"
-    ] as React.ReactNode;
-    let innerChevrons: React.ReactElement | undefined;
-    let innerCaption: React.ReactElement | undefined;
-    React.Children.forEach(naviChildren, (child) => {
-      if (!React.isValidElement(child)) return;
-      const name = getSlotName(child);
-      if (name === "chevrons") innerChevrons = child;
-      else if (name === "caption") innerCaption = child;
-    });
-    hasChevrons = !!innerChevrons;
-    if (innerChevrons) {
-      chevronsClassName = slotProp(innerChevrons, "className");
-    }
-    if (innerCaption) {
-      captionLayout =
-        (slotProp(innerCaption, "layout") as CaptionLayout | undefined) ??
-        "label";
-      captionClassName = slotProp(innerCaption, "className");
-    }
-  } else {
-    hasChevrons = !!slots["chevrons"] || !hasChildren;
-    if (slots["chevrons"]) {
-      chevronsClassName = slotProp(slots["chevrons"], "className");
-    }
-    if (slots["caption"]) {
-      captionLayout =
-        (slotProp(slots["caption"], "layout") as CaptionLayout | undefined) ??
-        "label";
-      captionClassName = slotProp(slots["caption"], "className");
-    }
-  }
-
-  let gridType: GridType = "month";
-  let fixedWeeks: boolean | undefined;
-  let gridClassName: string | undefined;
-  const gridEl = slots["grid"];
-  if (gridEl) {
-    gridType = (slotProp(gridEl, "type") as GridType | undefined) ?? "month";
-    const fixedWeeksRaw = (gridEl.props as Record<string, unknown>)[
-      "fixedWeeks"
-    ];
-    if (typeof fixedWeeksRaw === "boolean") fixedWeeks = fixedWeeksRaw;
-    gridClassName = slotProp(gridEl, "className");
-  }
-
-  return {
-    hasChevrons,
-    captionLayout,
-    gridType,
-    fixedWeeks,
-    chevronsClassName,
-    captionClassName,
-    gridClassName,
-    naviClassName,
-  };
-}
-
-interface CalendarProps {
-  mode: "single";
-  size?: CalendarSize;
-  value?: Date;
-  onChange?: (date: Date | undefined) => void;
-  defaultMonth?: Date;
-  className?: string;
-  disabled?: Matcher | Matcher[];
-  markers?: Record<string, MarkerDef>;
-  startMonth?: Date;
-  endMonth?: Date;
-  children?: React.ReactNode;
-}
-
-const _Calendar = (props: CalendarProps) => {
-  const size = props.size ?? "md";
-  const config = resolveCalendarConfig(props.children);
-
-  const dpModifiers = props.markers
-    ? Object.fromEntries(
-        Object.entries(props.markers).map(([name, def]) => [name, def.match])
-      )
-    : undefined;
-
-  const rdpCaptionLayout: "label" | "dropdown" =
-    config.captionLayout === "dropdown" ? "dropdown" : "label";
-
-  function CalendarChevronInternal(chevronProps: {
-    className?: string;
-    orientation?: string;
-  }) {
-    if (chevronProps.orientation === "left") {
-      return (
-        <IconChevronLeft className={cn("size-4", chevronProps.className)} />
-      );
-    }
-    return (
-      <IconChevronRight className={cn("size-4", chevronProps.className)} />
-    );
-  }
-
-  function EmptyNav(navProps: NavProps) {
-    const {
-      onPreviousClick: _op,
-      onNextClick: _on,
-      previousMonth: _pm,
-      nextMonth: _nm,
-      ...divProps
-    } = navProps;
-    return <nav {...divProps} />;
-  }
-
-  const classNames = {
-    root: "w-full",
-    months: "relative flex flex-col",
-    month: cn("flex w-full flex-col gap-4", config.gridClassName),
-    nav: cn(
-      "absolute inset-x-0 top-0 flex w-full items-center justify-between gap-2",
-      config.naviClassName
-    ),
-    button_previous: cn(
-      "flex items-center justify-center size-(--cell-size) rounded-(--cell-radius)",
-      "border border-transparent text-primary hover:bg-brand-50 transition-colors",
-      "aria-disabled:opacity-50",
-      config.chevronsClassName
-    ),
-    button_next: cn(
-      "flex items-center justify-center size-(--cell-size) rounded-(--cell-radius)",
-      "border border-transparent text-primary hover:bg-brand-50 transition-colors",
-      "aria-disabled:opacity-50",
-      config.chevronsClassName
-    ),
-    month_caption: cn(
-      "flex h-(--cell-size) w-full items-center justify-center px-(--cell-size)",
-      config.captionClassName
-    ),
-    dropdowns: "flex flex-row gap-1 px-2",
-    caption_label: "typo-ui text-sm font-medium select-none",
-    month_grid: "w-full table-fixed",
-    weekdays: "flex",
-    weekday:
-      "flex-1 rounded-(--cell-radius) text-[0.8rem] font-normal text-muted-foreground select-none",
-    week: "mt-2 flex w-full",
-    day: "group/day relative aspect-square h-full w-full rounded-(--cell-radius) p-0 text-center select-none",
-    outside: "text-muted-foreground opacity-50",
-    disabled: "text-muted-foreground opacity-50",
-    hidden: "invisible",
-  } as const satisfies Partial<ClassNames>;
-
-  type DayPickerRootProps = {
-    className?: string;
-    rootRef?: React.Ref<HTMLDivElement>;
-  } & React.HTMLAttributes<HTMLDivElement>;
-
-  const rdpComponents: Record<string, unknown> = {
-    Root: (rootProps: DayPickerRootProps) => {
-      const { rootRef, ...rest } = rootProps;
-      return <div data-slot="calendar" ref={rootRef} {...rest} />;
-    },
-    Chevron: CalendarChevronInternal,
-    DayButton: (dayProps: React.ComponentProps<typeof DayButtonType>) => (
-      <CalendarDayButton markerDefs={props.markers} size={size} {...dayProps} />
-    ),
-    Weekday: WeekendAwareWeekday,
-  };
-
-  if (!config.hasChevrons) {
-    rdpComponents["Nav"] = EmptyNav;
-  }
-
-  if (config.captionLayout === "dropdown") {
-    rdpComponents["Dropdown"] = CalendarSelectDropdown;
-  }
-
-  return (
-    <DayPicker
-      mode="single"
-      selected={props.value}
-      onSelect={props.onChange}
-      showOutsideDays
-      fixedWeeks={config.fixedWeeks ?? true}
-      locale={zhTW}
-      defaultMonth={props.defaultMonth}
-      disabled={props.disabled}
-      captionLayout={rdpCaptionLayout}
-      startMonth={props.startMonth}
-      endMonth={props.endMonth}
-      modifiers={dpModifiers}
-      className={cn(
-        "bg-neutral-50/80 p-4 [--cell-radius:var(--radius-md)]",
-        CELL_SIZE[size],
-        FONT_SIZE[size],
-        "rounded-xl border border-neutral-200/50",
-        props.className
-      )}
-      classNames={classNames}
-      components={rdpComponents}
-    />
-  );
-};
-
-const Calendar = Object.assign(_Calendar, {
-  Navi: CalendarNavi,
-  Chevrons: CalendarChevrons,
-  Caption: CalendarCaption,
-  Grid: CalendarGrid,
-});
-
-_Calendar.displayName = "Calendar";
-export default Calendar;

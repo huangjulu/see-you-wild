@@ -81,13 +81,7 @@ const EventCalendar = (props: EventCalendarProps) => {
       defaultMonth={props.defaultMonth}
       className={props.className}
       markers={markers}
-    >
-      <Calendar.Navi>
-        <Calendar.Chevrons />
-        <Calendar.Caption layout="label" />
-      </Calendar.Navi>
-      <Calendar.Grid />
-    </Calendar>
+    />
   );
 };
 

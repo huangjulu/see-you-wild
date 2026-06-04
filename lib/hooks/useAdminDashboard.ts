@@ -3,7 +3,6 @@ import { useReducer } from "react";
 import type { EventListDto, RegistrationAdminDto } from "@/lib/types/database";
 
 export interface FlatRegistration extends RegistrationAdminDto {
-  eventId: string;
   eventTitle: string;
 }
 

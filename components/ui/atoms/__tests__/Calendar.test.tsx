@@ -3,9 +3,9 @@ import { describe, expect, it } from "vitest";
 
 import Calendar from "../Calendar";
 
-/* ─── 1. Default (no children) ─── */
+/* ─── 1. Default ─── */
 
-describe("Calendar（無 children = default）", () => {
+describe("Calendar（預設）", () => {
   it("渲染月曆並顯示星期標頭", () => {
     render(<Calendar mode="single" defaultMonth={new Date(2026, 4, 1)} />);
     expect(screen.getByText("一")).toBeInTheDocument();
@@ -21,7 +21,6 @@ describe("Calendar（無 children = default）", () => {
         defaultMonth={new Date(2026, 4, 1)}
       />
     );
-    // CalendarDayButton sets data-selected-single="true" on the button
     const selectedBtn = container.querySelector(
       "[data-selected-single='true']"
     ) as HTMLElement | null;
@@ -37,7 +36,6 @@ describe("Calendar（無 children = default）", () => {
         disabled={(date: Date) => date.getDate() === 15}
       />
     );
-    // rdp sets disabled on the button inside the td, not the td itself
     const day15Td = container.querySelector(
       "td[data-day='2026-05-15']"
     ) as HTMLElement | null;
@@ -47,32 +45,25 @@ describe("Calendar（無 children = default）", () => {
   });
 });
 
-/* ─── 2. Slot API ─── */
+/* ─── 2. Props API ─── */
 
-describe("Calendar slot API", () => {
-  it("Navi + Chevrons + Caption(label) + Grid(month) 完整組合渲染", () => {
+describe("Calendar props API", () => {
+  it("captionLayout='label' 顯示月份文字標題", () => {
     const { container } = render(
-      <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)}>
-        <Calendar.Navi>
-          <Calendar.Chevrons />
-          <Calendar.Caption layout="label" />
-        </Calendar.Navi>
-        <Calendar.Grid type="month" />
-      </Calendar>
+      <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)} />
     );
     expect(screen.getByText("2026年5月")).toBeInTheDocument();
     const weekdayHeaders = container.querySelectorAll("th[scope='col']");
     expect(weekdayHeaders.length).toBe(7);
   });
 
-  it("不傳 Chevrons 時 navi 不顯示切換按鈕", () => {
+  it("showChevrons={false} 時 navi 不顯示切換按鈕", () => {
     const { container } = render(
-      <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)}>
-        <Calendar.Navi>
-          <Calendar.Caption layout="label" />
-        </Calendar.Navi>
-        <Calendar.Grid type="month" />
-      </Calendar>
+      <Calendar
+        mode="single"
+        defaultMonth={new Date(2026, 4, 1)}
+        showChevrons={false}
+      />
     );
     const navBtns = container.querySelectorAll("nav button");
     expect(navBtns.length).toBe(0);
@@ -80,29 +71,20 @@ describe("Calendar slot API", () => {
 
   it("非本月日期有 outside data attribute", () => {
     const { container } = render(
-      <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)}>
-        <Calendar.Navi>
-          <Calendar.Chevrons />
-          <Calendar.Caption layout="label" />
-        </Calendar.Navi>
-        <Calendar.Grid type="month" />
-      </Calendar>
+      <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)} />
     );
     const outsideTds = container.querySelectorAll("td[data-outside]");
     expect(outsideTds.length).toBeGreaterThan(0);
   });
 });
 
-/* ─── 3. Calendar Grid type ─── */
+/* ─── 3. fixedWeeks ─── */
 
-describe("Calendar Grid type", () => {
-  it("type='month' 時 fixedWeeks 固定 6 週", () => {
+describe("Calendar fixedWeeks", () => {
+  it("fixedWeeks={true}（預設）固定 6 週", () => {
     const { container } = render(
-      <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)}>
-        <Calendar.Grid type="month" />
-      </Calendar>
+      <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)} />
     );
-    // fixedWeeks=true when gridType === "month" → always 6 tbody week rows
     const tbody = container.querySelector("tbody");
     const weekRows = tbody?.querySelectorAll("tr");
     expect(weekRows?.length).toBe(6);

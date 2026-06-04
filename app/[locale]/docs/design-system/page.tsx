@@ -925,26 +925,18 @@ const PalettePreviewPage = () => {
         <div className="mt-10">
           <h3 className="typo-ui mb-4 text-sm text-primary">Calendar</h3>
 
-          {/* Slot 組合 */}
-          <p className="typo-ui mb-3 text-xs text-neutral-400">
-            Slot 組合（Navi + Grid）
-          </p>
+          {/* Caption 變化 */}
+          <p className="typo-ui mb-3 text-xs text-neutral-400">Caption 變化</p>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 mb-8">
             <div className="space-y-2">
               <p className="typo-ui text-xs text-secondary">
-                完整組合（Chevrons + Caption label）
+                captionLayout=&quot;label&quot;（預設）
               </p>
-              <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)}>
-                <Calendar.Navi>
-                  <Calendar.Chevrons />
-                  <Calendar.Caption layout="label" />
-                </Calendar.Navi>
-                <Calendar.Grid type="month" />
-              </Calendar>
+              <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)} />
             </div>
             <div className="space-y-2">
               <p className="typo-ui text-xs text-secondary">
-                Caption dropdown（無 Chevrons）
+                captionLayout=&quot;dropdown&quot; + showChevrons=false
               </p>
               <Calendar
                 mode="single"
@@ -952,16 +944,13 @@ const PalettePreviewPage = () => {
                 defaultMonth={new Date(2026, 4, 1)}
                 startMonth={new Date(2024, 0)}
                 endMonth={new Date(2028, 11)}
-              >
-                <Calendar.Navi>
-                  <Calendar.Caption layout="dropdown" />
-                </Calendar.Navi>
-                <Calendar.Grid type="month" />
-              </Calendar>
+                captionLayout="dropdown"
+                showChevrons={false}
+              />
             </div>
             <div className="space-y-2">
               <p className="typo-ui text-xs text-secondary">
-                無 children（default）
+                預設（無額外 props）
               </p>
               <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)} />
             </div>
@@ -978,9 +967,7 @@ const PalettePreviewPage = () => {
                 mode="single"
                 size="sm"
                 defaultMonth={new Date(2026, 4, 1)}
-              >
-                <Calendar.Grid type="month" />
-              </Calendar>
+              />
             </div>
             <div className="space-y-2">
               <p className="typo-ui text-xs text-secondary">md</p>
@@ -988,9 +975,7 @@ const PalettePreviewPage = () => {
                 mode="single"
                 size="md"
                 defaultMonth={new Date(2026, 4, 1)}
-              >
-                <Calendar.Grid type="month" />
-              </Calendar>
+              />
             </div>
             <div className="space-y-2">
               <p className="typo-ui text-xs text-secondary">lg</p>
@@ -998,9 +983,7 @@ const PalettePreviewPage = () => {
                 mode="single"
                 size="lg"
                 defaultMonth={new Date(2026, 4, 1)}
-              >
-                <Calendar.Grid type="month" />
-              </Calendar>
+              />
             </div>
           </div>
 
@@ -1013,9 +996,7 @@ const PalettePreviewPage = () => {
               <p className="typo-ui text-xs text-secondary">
                 month（fixedWeeks）
               </p>
-              <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)}>
-                <Calendar.Grid type="month" />
-              </Calendar>
+              <Calendar mode="single" defaultMonth={new Date(2026, 4, 1)} />
             </div>
           </div>
 

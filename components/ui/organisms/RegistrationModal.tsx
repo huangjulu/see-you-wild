@@ -491,11 +491,22 @@ FormStepBasic.displayName = "FormStepBasic";
 
 const FormStepIdentity = () => {
   const t = useTranslations("registration");
-  const { control, formState } = useFormContext<RegistrationFormInput>();
+  const { control, formState, setValue, getValues } =
+    useFormContext<RegistrationFormInput>();
   const errors = formState.errors;
 
   const country = useWatch({ control, name: "country" });
   const countryRule = getCountryByIso(country) ?? FALLBACK_COUNTRY;
+
+  useEffect(
+    function prefillDialCode() {
+      const currentPhone = getValues("phone");
+      if (currentPhone === "" || currentPhone === "+") {
+        setValue("phone", countryRule.dialCode);
+      }
+    },
+    [countryRule.dialCode]
+  );
 
   return (
     <fieldset className="space-y-3">
@@ -694,12 +705,22 @@ interface FormStepTransportProps {
 const FormStepTransport = (props: FormStepTransportProps) => {
   const t = useTranslations("registration");
   const format = useFormatter();
-  const { register, watch, control, formState } =
+  const { register, watch, control, formState, setValue } =
     useFormContext<RegistrationFormInput>();
   const errors = formState.errors;
 
   const transport = watch("transport");
   const carpoolRole = watch("carpool_role");
+
+  useEffect(
+    function resetCarpoolFieldsOnSelf() {
+      if (transport !== "self") return;
+      setValue("pickup_location", null);
+      setValue("carpool_role", null);
+      setValue("seat_count", null);
+    },
+    [transport]
+  );
 
   const totalPrice =
     transport === "carpool"

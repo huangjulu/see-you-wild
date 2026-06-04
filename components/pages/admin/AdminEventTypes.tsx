@@ -12,6 +12,7 @@ import Input from "@/components/ui/atoms/Input";
 import AdminSidebar from "@/components/ui/organisms/AdminSidebar";
 import { eventTypesApi } from "@/lib/api/event-types.api";
 import type { EventTypeRow } from "@/lib/types/database";
+import { toSlug } from "@/lib/utils/slug";
 
 interface EditingState {
   id: string | null;
@@ -23,14 +24,6 @@ const EMPTY_FORM: EditingState = { id: null, name_zh: "", name_en: "" };
 
 const TABLE_GRID =
   "grid grid-cols-[1.6fr_2fr_1.2fr_auto] items-center gap-4 px-5";
-
-function toSlug(nameEn: string): string {
-  return nameEn
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-");
-}
 
 interface AdminEventTypesProps {}
 
