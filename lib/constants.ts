@@ -42,6 +42,9 @@ export const PICKUP_LOCATIONS = [
   "三重捷運站",
 ] as const;
 
+export const CLOTHING_SIZES = ["XS", "S", "M", "L", "XL"] as const;
+export const SHOE_SIZES = [23, 24, 25, 26, 27, 28, 29, 30, 31, 32] as const;
+
 export const NAV_LINKS = {
   about: "/#about",
 };

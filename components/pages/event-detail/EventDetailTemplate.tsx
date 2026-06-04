@@ -85,6 +85,7 @@ const EventDetailTemplate = (props: EventDetailTemplateProps) => {
           <PackageOptions
             availableDates={event.availableDates}
             carpoolSurcharge={event.carpoolSurcharge}
+            carpoolEnabled={event.carpoolEnabled}
             onSelectionChange={setSelection}
           />
 
@@ -152,10 +153,14 @@ const EventDetailTemplate = (props: EventDetailTemplateProps) => {
         carpoolSurcharge={event.carpoolSurcharge}
         selectedDate={selection.selectedDate}
         selectedPickup={selection.selectedPickup}
-        isSelfArrival={selection.transport === "self"}
+        isSelfArrival={
+          event.carpoolEnabled ? selection.transport === "self" : true
+        }
         carpoolRole={selection.carpoolRole}
         seatCount={selection.seatCount}
         paymentDays={event.paymentDays}
+        carpoolEnabled={event.carpoolEnabled}
+        rentalEnabled={event.rentalEnabled}
       />
     </main>
   );

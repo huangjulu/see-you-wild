@@ -64,12 +64,37 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 
     const { data: eventForGuard } = await getSupabase()
       .from("events")
-      .select("status")
+      .select("status, carpool_enabled, rental_enabled")
       .eq("id", reg.event_id)
       .single();
 
-    if (eventForGuard?.status !== "open") {
+    if (!eventForGuard) {
+      return NextResponse.json({ error: "Event not found" }, { status: 404 });
+    }
+
+    if (eventForGuard.status !== "open") {
       throw new EventClosedError();
+    }
+
+    if (
+      parsed.transport !== undefined &&
+      parsed.transport !== "self" &&
+      eventForGuard.carpool_enabled === false
+    ) {
+      return NextResponse.json(
+        { error: "Carpool is not available for this event" },
+        { status: 400 }
+      );
+    }
+
+    if (
+      parsed.rental_details != null &&
+      eventForGuard.rental_enabled === false
+    ) {
+      return NextResponse.json(
+        { error: "Equipment rental is not available for this event" },
+        { status: 400 }
+      );
     }
 
     // Guard 1: carpool → self is not allowed once carpool is set

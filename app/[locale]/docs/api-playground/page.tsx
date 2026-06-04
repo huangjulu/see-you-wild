@@ -19,7 +19,7 @@ const VARIANTS: Record<string, string> = {
   "emergency_contact_name": "王大明",
   "emergency_contact_phone": "0987654321",
   "dietary": "omnivore",
-  "wants_rental": true,
+  "rental_details": { "clothing_size": "M", "shoe_size": 27 },
   "transport": "self"
 }`,
   "reg-passenger": `{
@@ -349,7 +349,11 @@ const DTO_CARDS: DtoCardProps[] = [
             type: "enum",
             desc: "omnivore 葷食 · no_beef 不吃牛 · vegetarian 方便素 · vegan 全素",
           },
-          { field: "wants_rental", type: "boolean", desc: "是否需要租借裝備" },
+          {
+            field: "rental_details",
+            type: "{ clothing_size, shoe_size } | null",
+            desc: "租借裝備資訊，不需租借 = null",
+          },
           { field: "notes", type: "string | null", desc: "備註，選填" },
           { field: "交通與共乘", type: "", desc: "", isGroup: true },
           {
@@ -434,7 +438,11 @@ const DTO_CARDS: DtoCardProps[] = [
             type: "enum",
             desc: "omnivore · no_beef · vegetarian · vegan",
           },
-          { field: "wants_rental", type: "boolean", desc: "是否需要租借裝備" },
+          {
+            field: "rental_details",
+            type: "{ clothing_size, shoe_size } | null",
+            desc: "租借裝備資訊，不需租借 = null",
+          },
           { field: "notes", type: "string | null", desc: "備註，選填" },
           { field: "transport", type: "enum", desc: "self · carpool" },
           {

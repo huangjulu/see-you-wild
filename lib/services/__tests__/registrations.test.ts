@@ -64,6 +64,8 @@ const baseEvent: EventRow = {
   preparation_notes: "",
   faq: "",
   refund_policy: "",
+  carpool_enabled: true,
+  rental_enabled: false,
   status: "open",
   first_created_at: "2026-04-01T00:00:00Z",
   reminder_sent_at: null,
@@ -124,7 +126,7 @@ const baseRegistrationInput: CreateRegistrationInput = {
   emergency_contact_name: "Em",
   emergency_contact_phone: "0911111111",
   dietary: "omnivore",
-  wants_rental: false,
+  rental_details: null,
   notes: null,
   transport: "self",
   pickup_location: null,
@@ -557,9 +559,17 @@ describe("approveOrRejectPayment", () => {
     email: "test@example.com",
     event_id: "evt-1",
     status: "pending",
+    amount_due: 1500,
+    transport: "self" as const,
+    dietary: "omnivore" as const,
+    rental_details: null,
   };
 
-  const baseEvent = { title: "Test event" };
+  const baseEvent = {
+    title: "Test event",
+    start_date: "2026-08-01",
+    location: "台北",
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -654,6 +664,12 @@ describe("approveOrRejectPayment", () => {
       to: baseRegistration.email,
       customerName: baseRegistration.name,
       eventTitle: baseEvent.title,
+      eventDate: baseEvent.start_date,
+      eventLocation: baseEvent.location,
+      amountDue: baseRegistration.amount_due,
+      transport: baseRegistration.transport,
+      dietary: baseRegistration.dietary,
+      wantsRental: false,
     });
   });
 

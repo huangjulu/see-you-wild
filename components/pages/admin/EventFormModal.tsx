@@ -10,18 +10,19 @@ import {
   FormProvider,
   useForm,
   useFormContext,
+  useWatch,
 } from "react-hook-form";
 import { z } from "zod";
 
 import CloseEventDialog from "@/components/pages/admin/CloseEventDialog";
 import Input from "@/components/ui/atoms/Input";
 import Overlay from "@/components/ui/atoms/Overlay";
+import Switch from "@/components/ui/atoms/Switch";
 import TextArea from "@/components/ui/atoms/TextArea";
 import ModalCard from "@/components/ui/molecules/ModalCard";
 import Selector from "@/components/ui/molecules/Selector";
 import { adminApi } from "@/lib/api/admin.api";
 import { eventTypesApi } from "@/lib/api/event-types.api";
-import { PICKUP_LOCATIONS } from "@/lib/constants";
 import { useToast } from "@/lib/hooks/useToast";
 import type { EventListDto } from "@/lib/types/database";
 import { cn } from "@/lib/utils";
@@ -42,6 +43,8 @@ const eventFormSchema = z.object({
   safety_policy: z.string(),
   preparation_notes: z.string().max(500),
   faq: z.string().max(1000),
+  carpool_enabled: z.boolean(),
+  rental_enabled: z.boolean(),
   refund_policy: z.string().max(1000),
   images: z
     .array(z.object({ src: z.string().url(), alt: z.string() }))
@@ -85,6 +88,8 @@ const EventFormModal = (props: EventFormModalProps) => {
     payment_days: 3,
     carpool_cutoff_days: 3,
     min_participants: 3,
+    carpool_enabled: true,
+    rental_enabled: false,
     description: "",
     safety_policy: "",
     preparation_notes: "",
@@ -106,6 +111,8 @@ const EventFormModal = (props: EventFormModalProps) => {
       payment_days: event.payment_days,
       carpool_cutoff_days: event.carpool_cutoff_days,
       min_participants: event.min_participants,
+      carpool_enabled: event.carpool_enabled,
+      rental_enabled: event.rental_enabled,
       description: event.description,
       safety_policy: event.safety_policy,
       preparation_notes: event.preparation_notes,
@@ -149,7 +156,6 @@ const EventFormModal = (props: EventFormModalProps) => {
       images: allImages,
       start_date: startDate,
       end_date: endDate,
-      pickup_locations: [...PICKUP_LOCATIONS],
     };
 
     if (props.event != null) {
@@ -356,6 +362,7 @@ const EventFormFields = (props: EventFormFieldsProps) => {
     control,
     formState: { errors },
   } = useFormContext<EventFormValues>();
+  const carpoolEnabled = useWatch({ control, name: "carpool_enabled" });
   const { data: eventTypes = [] } = eventTypesApi.useAll();
   const createTypeMutation = eventTypesApi.useCreate();
   const [newTypeZh, setNewTypeZh] = useState("");
@@ -469,6 +476,16 @@ const EventFormFields = (props: EventFormFieldsProps) => {
             />
           )}
         />
+        <div className="flex gap-x-6">
+          <label className="flex items-center gap-2 typo-ui text-sm text-primary">
+            <Switch {...register("carpool_enabled")} />
+            提供共乘
+          </label>
+          <label className="flex items-center gap-2 typo-ui text-sm text-primary">
+            <Switch {...register("rental_enabled")} />
+            提供裝備租借
+          </label>
+        </div>
         <Input
           label="活動地點"
           {...register("location")}
@@ -539,37 +556,39 @@ const EventFormFields = (props: EventFormFieldsProps) => {
         <legend className="typo-sub-heading text-sm text-brand-500">
           費用設定
         </legend>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1">
+          <Input
+            label="每人費用（元）"
+            type="number"
+            icon={<span className="opacity-50">$</span>}
+            {...register("base_price", { valueAsNumber: true })}
+            error={errors.base_price?.message}
+          />
+          <p className="text-[11px] text-secondary">
+            不含共乘加價，為報名者的基本費用
+          </p>
+        </div>
+        {carpoolEnabled && (
+          <>
             <Input
-              label="每人費用（元）"
+              label="共乘交通加價（元）"
+              type="number"
+              placeholder="例：500"
+              icon={<span className="opacity-50">$</span>}
+              {...register("carpool_surcharge", { valueAsNumber: true })}
+              error={errors.carpool_surcharge?.message}
+            />
+            <Input
+              label="司機退款/人"
               type="number"
               icon={<span className="opacity-50">$</span>}
-              {...register("base_price", { valueAsNumber: true })}
-              error={errors.base_price?.message}
+              {...register("driver_refund_per_passenger", {
+                valueAsNumber: true,
+              })}
+              error={errors.driver_refund_per_passenger?.message}
             />
-            <p className="text-[11px] text-secondary">
-              不含共乘加價，為報名者的基本費用
-            </p>
-          </div>
-          <Input
-            label="共乘交通加價（元）"
-            type="number"
-            placeholder="例：500"
-            icon={<span className="opacity-50">$</span>}
-            {...register("carpool_surcharge", { valueAsNumber: true })}
-            error={errors.carpool_surcharge?.message}
-          />
-        </div>
-        <Input
-          label="司機退款/人"
-          type="number"
-          icon={<span className="opacity-50">$</span>}
-          {...register("driver_refund_per_passenger", {
-            valueAsNumber: true,
-          })}
-          error={errors.driver_refund_per_passenger?.message}
-        />
+          </>
+        )}
       </fieldset>
 
       <fieldset className="space-y-3">
@@ -589,18 +608,20 @@ const EventFormFields = (props: EventFormFieldsProps) => {
               報名後 N 天內未完成匯款，報名自動失效
             </p>
           </div>
-          <div>
-            <Input
-              label="共乘報名截止（活動前幾天）"
-              type="number"
-              placeholder="例：5"
-              {...register("carpool_cutoff_days", { valueAsNumber: true })}
-              error={errors.carpool_cutoff_days?.message}
-            />
-            <p className="text-[11px] text-secondary">
-              活動前 N 天停止受理共乘登記
-            </p>
-          </div>
+          {carpoolEnabled && (
+            <div>
+              <Input
+                label="共乘報名截止（活動前幾天）"
+                type="number"
+                placeholder="例：5"
+                {...register("carpool_cutoff_days", { valueAsNumber: true })}
+                error={errors.carpool_cutoff_days?.message}
+              />
+              <p className="text-[11px] text-secondary">
+                活動前 N 天停止受理共乘登記
+              </p>
+            </div>
+          )}
         </div>
         <div className="flex flex-col gap-1">
           <Input

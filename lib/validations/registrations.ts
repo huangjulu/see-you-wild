@@ -51,7 +51,13 @@ const baseRegistrationSchema = z.object({
     .max(MAX_LENGTHS.emergency_contact_name),
   emergency_contact_phone: z.string().trim().regex(E164_REGEX),
   dietary: z.enum(["omnivore", "no_beef", "vegetarian", "vegan"]),
-  wants_rental: z.boolean().default(false),
+  rental_details: z
+    .object({
+      clothing_size: z.enum(["XS", "S", "M", "L", "XL"]),
+      shoe_size: z.number().int().min(23).max(32),
+    })
+    .nullable()
+    .default(null),
   notes: z
     .string()
     .trim()

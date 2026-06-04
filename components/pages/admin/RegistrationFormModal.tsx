@@ -22,6 +22,7 @@ import ModalCard from "@/components/ui/molecules/ModalCard";
 import PhoneInput from "@/components/ui/molecules/PhoneInput";
 import Selector from "@/components/ui/molecules/Selector";
 import { adminApi } from "@/lib/api/admin.api";
+import { CLOTHING_SIZES, PICKUP_LOCATIONS } from "@/lib/constants";
 import {
   calculateAge,
   type CountryRule,
@@ -29,6 +30,7 @@ import {
   normalizePhone,
   toLocalPhone,
 } from "@/lib/form-rules";
+import { useRentalDetailsForm } from "@/lib/hooks/useRentalDetailsForm";
 import { useToast } from "@/lib/hooks/useToast";
 import { useTranslations } from "@/lib/i18n/client";
 import type { EventListDto, RegistrationAdminDto } from "@/lib/types/database";
@@ -79,9 +81,13 @@ const RegistrationFormModal = (props: RegistrationFormModalProps) => {
       return DEFUALT_VALUE;
     }
 
-    const pickupLocation = isValidPickupSlug(detailQuery.data.pickup_location)
-      ? detailQuery.data.pickup_location
-      : null;
+    const pickupLocation =
+      detailQuery.data.pickup_location != null &&
+      (PICKUP_LOCATIONS as readonly string[]).includes(
+        detailQuery.data.pickup_location
+      )
+        ? detailQuery.data.pickup_location
+        : null;
 
     const editCountry =
       getCountryByIso(detailQuery.data.country) ?? FALLBACK_COUNTRY;
@@ -102,7 +108,7 @@ const RegistrationFormModal = (props: RegistrationFormModalProps) => {
         FALLBACK_COUNTRY
       ),
       dietary: detailQuery.data.dietary,
-      wants_rental: detailQuery.data.wants_rental,
+      rental_details: toFormRentalDetails(detailQuery.data.rental_details),
       notes: detailQuery.data.notes,
       transport: detailQuery.data.transport,
       pickup_location: pickupLocation,
@@ -227,8 +233,12 @@ const RegistrationFormModal = (props: RegistrationFormModalProps) => {
               <FieldsetBasic />
               <FieldsetIdentity />
               <FieldsetEmergency />
-              <FieldsetActivity />
-              <FieldsetTransport />
+              <FieldsetActivity
+                rentalEnabled={selectedEvent?.rental_enabled ?? false}
+              />
+              <FieldsetTransport
+                carpoolEnabled={selectedEvent?.carpool_enabled ?? true}
+              />
             </form>
             {methods.formState.errors.root && (
               <p className="typo-ui text-sm text-critical mt-2">
@@ -554,10 +564,25 @@ FieldsetEmergency.displayName = "FieldsetEmergency";
 // Fieldset: Activity
 // ---------------------------------------------------------------------------
 
-const FieldsetActivity = () => {
+interface FieldsetActivityProps {
+  rentalEnabled: boolean;
+}
+
+const FieldsetActivity = (props: FieldsetActivityProps) => {
   const t = useTranslations("registration");
   const { register, formState } = useFormContext<RegistrationFormInput>();
   const errors = formState.errors;
+
+  const {
+    wantsRental,
+    clothingSize,
+    shoeSize,
+    onRentalToggle,
+    onClothingSizeChange,
+    onShoeSizeChange,
+    clothingSizeOptions,
+    shoeSizeOptions,
+  } = useRentalDetailsForm();
 
   return (
     <fieldset className="space-y-3">
@@ -596,10 +621,35 @@ const FieldsetActivity = () => {
         )}
       </div>
 
-      <div className="flex items-center justify-between">
-        <span className="typo-ui text-sm text-primary">{t("wantsRental")}</span>
-        <Switch {...register("wants_rental")} />
-      </div>
+      {props.rentalEnabled && (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="typo-ui text-sm text-primary">需要租借裝備</span>
+            <Switch
+              checked={wantsRental}
+              onChange={(e) => onRentalToggle(e.target.checked)}
+            />
+          </div>
+          {wantsRental && (
+            <div className="grid grid-cols-2 gap-3">
+              <Selector
+                label="衣服尺寸"
+                placeholder="選擇尺寸"
+                options={clothingSizeOptions}
+                value={clothingSize}
+                onChange={onClothingSizeChange}
+              />
+              <Selector
+                label="鞋子尺寸"
+                placeholder="選擇尺寸"
+                options={shoeSizeOptions}
+                value={shoeSize}
+                onChange={onShoeSizeChange}
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       <Input
         label={t("notes")}
@@ -617,19 +667,39 @@ FieldsetActivity.displayName = "FieldsetActivity";
 // Fieldset: Transport
 // ---------------------------------------------------------------------------
 
-const FieldsetTransport = () => {
+interface FieldsetTransportProps {
+  carpoolEnabled: boolean;
+}
+
+const FieldsetTransport = (props: FieldsetTransportProps) => {
   const t = useTranslations("registration");
-  const { register, watch, control, formState } =
+  const { register, watch, control, setValue, formState } =
     useFormContext<RegistrationFormInput>();
   const errors = formState.errors;
 
   const transport = watch("transport");
   const carpoolRole = watch("carpool_role");
 
+  useEffect(
+    function resetTransportOnCarpoolDisabled() {
+      if (!props.carpoolEnabled) {
+        setValue("transport", "self");
+        setValue("pickup_location", null);
+        setValue("carpool_role", null);
+        setValue("seat_count", null);
+      }
+    },
+    [props.carpoolEnabled, setValue]
+  );
+
   const seatCountOptions = SEAT_COUNT_VALUES.map((value) => ({
     value: String(value),
     label: t("seatCountOption", { count: value }),
   }));
+
+  if (!props.carpoolEnabled) {
+    return null;
+  }
 
   return (
     <fieldset className="space-y-3">
@@ -668,12 +738,12 @@ const FieldsetTransport = () => {
               {t("pickupLocation")}
             </span>
             <div className="flex flex-wrap gap-2">
-              {PICKUP_SLUGS.map((slug) => (
+              {PICKUP_LOCATIONS.map((location) => (
                 <RadioOption
                   variant="outlined"
-                  key={slug}
-                  label={t(`pickupSlug.${slug}`)}
-                  value={slug}
+                  key={location}
+                  label={location}
+                  value={location}
                   {...register("pickup_location")}
                 />
               ))}
@@ -748,14 +818,6 @@ FieldsetTransport.displayName = "FieldsetTransport";
 
 const FORM_ID = "admin-registration-form";
 
-const PICKUP_SLUGS = [
-  "taipei",
-  "nangang",
-  "dapinglin",
-  "sanchong",
-  "banqiao",
-] as const;
-
 const SEAT_COUNT_VALUES = [3, 4, 5] as const;
 
 const FALLBACK_COUNTRY: CountryRule = {
@@ -769,11 +831,28 @@ const FALLBACK_COUNTRY: CountryRule = {
 
 const EMERGENCY_DEFAULT_COUNTRY: CountryRule = FALLBACK_COUNTRY;
 
-type PickupSlug = (typeof PICKUP_SLUGS)[number];
+type ClothingSize = (typeof CLOTHING_SIZES)[number];
 
-function isValidPickupSlug(value: string | null): value is PickupSlug {
-  if (value == null) return false;
-  return PICKUP_SLUGS.some((slug) => slug === value);
+function isValidClothingSize(value: string): value is ClothingSize {
+  return (CLOTHING_SIZES as readonly string[]).includes(value);
+}
+
+function toFormRentalDetails(
+  raw: { clothing_size: string; shoe_size: number } | null
+): { clothing_size: ClothingSize; shoe_size: number } | null {
+  if (raw == null) return null;
+  // Legacy empty object {} — sizes incomplete, treat as no rental to avoid
+  // pre-filling invalid values; user must re-select sizes on save.
+  if (!raw.clothing_size && raw.shoe_size == null) {
+    return null;
+  }
+  if (!isValidClothingSize(raw.clothing_size)) {
+    return null;
+  }
+  return {
+    clothing_size: raw.clothing_size,
+    shoe_size: raw.shoe_size,
+  };
 }
 
 const DEFUALT_VALUE = {
@@ -789,7 +868,7 @@ const DEFUALT_VALUE = {
   emergency_contact_name: "",
   emergency_contact_phone: "",
   dietary: "omnivore" as const,
-  wants_rental: false,
+  rental_details: null,
   notes: null,
   transport: "self" as const,
   pickup_location: null,
