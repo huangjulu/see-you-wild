@@ -75,7 +75,7 @@ const DatePickerInput = (props: DatePickerInputProps) => {
           <span>{displayValue || props.placeholder}</span>
           <IconCalendar className="size-4 text-secondary" />
         </PopoverTrigger>
-        <PopoverContent className="w-auto rounded-xl p-0 ring-0">
+        <PopoverContent className="rounded-xl p-0 ring-0">
           <Calendar
             mode="single"
             size="sm"
@@ -85,13 +85,9 @@ const DatePickerInput = (props: DatePickerInputProps) => {
             defaultMonth={selectedDate ?? props.minDate ?? new Date(2000, 0)}
             startMonth={new Date(startYear, 0)}
             endMonth={new Date(endYear, 11)}
-          >
-            <Calendar.Navi>
-              <Calendar.Chevrons />
-              <Calendar.Caption layout="dropdown" />
-            </Calendar.Navi>
-            <Calendar.Grid type="month" fixedWeeks={false} />
-          </Calendar>
+            captionLayout="dropdown"
+            fixedWeeks={false}
+          />
         </PopoverContent>
       </Popover>
       {props.error != null && (

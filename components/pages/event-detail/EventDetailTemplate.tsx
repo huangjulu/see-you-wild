@@ -44,7 +44,7 @@ const EventDetailTemplate = (props: EventDetailTemplateProps) => {
   }
 
   return (
-    <main className="bg-page-gradient pb-24 md:pb-16">
+    <main className="bg-page-gradient min-h-screen pb-24 md:pb-16">
       {/* Title + description */}
       <Section as="div" className="pt-24 md:pt-28">
         <div className="col-span-full">

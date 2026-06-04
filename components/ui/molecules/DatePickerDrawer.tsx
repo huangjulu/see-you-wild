@@ -82,13 +82,9 @@ const DatePickerDrawer = (props: DatePickerDrawerProps) => {
               defaultMonth={selectedDate ?? props.minDate ?? new Date(2000, 0)}
               startMonth={new Date(startYear, 0)}
               endMonth={new Date(endYear, 11)}
-            >
-              <Calendar.Navi>
-                <Calendar.Chevrons />
-                <Calendar.Caption layout="dropdown" />
-              </Calendar.Navi>
-              <Calendar.Grid type="month" fixedWeeks={false} />
-            </Calendar>
+              captionLayout="dropdown"
+              fixedWeeks={false}
+            />
           </div>
         </Drawer.Content>
       </Drawer>
