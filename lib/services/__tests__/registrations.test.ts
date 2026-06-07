@@ -39,79 +39,18 @@ import {
   submitPaymentRef,
 } from "@/lib/services/registrations";
 import { getSupabase } from "@/lib/supabase/client";
+import { makeEvent } from "@/lib/test-utils/fixtures";
+import {
+  makeInsertSingleChain,
+  makeOptimisticUpdateChain,
+  makeSingleChain,
+  makeUpdateChain,
+  setupSupabaseMock,
+} from "@/lib/test-utils/supabase-mock";
 import { getPaymentToken } from "@/lib/token";
-import type { EventRow } from "@/lib/types/database";
 import type { CreateRegistrationInput } from "@/lib/validations/registrations";
 
-const baseEvent: EventRow = {
-  id: "evt-1",
-  type: "trip",
-  location: "宜蘭",
-  title: "Test event",
-  start_date: "2026-05-01",
-  end_date: "2026-05-02",
-  base_price: 1000,
-  carpool_surcharge: 100,
-  driver_refund_per_passenger: 200,
-  payment_days: 7,
-  carpool_cutoff_days: 3,
-  min_participants: 4,
-  description: "",
-  pickup_locations: [],
-  images: [],
-  available_dates: ["2026-05-01", "2026-05-02"],
-  safety_policy: "",
-  preparation_notes: "",
-  faq: "",
-  refund_policy: "",
-  carpool_enabled: true,
-  rental_enabled: false,
-  status: "open",
-  first_created_at: "2026-04-01T00:00:00Z",
-  reminder_sent_at: null,
-};
-
-function makeSingleChain(result: { data: unknown; error: unknown }) {
-  return {
-    select: () => ({
-      eq: () => ({
-        single: vi.fn().mockResolvedValue(result),
-      }),
-    }),
-  };
-}
-
-function makeUpdateChain(result: { error: unknown }) {
-  return {
-    update: () => ({
-      eq: vi.fn().mockResolvedValue(result),
-    }),
-  };
-}
-
-function makeOptimisticUpdateChain(result: { data: unknown; error: unknown }) {
-  return {
-    update: () => ({
-      eq: () => ({
-        eq: () => ({
-          select: () => ({
-            single: vi.fn().mockResolvedValue(result),
-          }),
-        }),
-      }),
-    }),
-  };
-}
-
-function makeInsertSingleChain(result: { data: unknown; error: unknown }) {
-  return {
-    insert: () => ({
-      select: () => ({
-        single: vi.fn().mockResolvedValue(result),
-      }),
-    }),
-  };
-}
+const baseEvent = makeEvent();
 
 const baseRegistrationInput: CreateRegistrationInput = {
   event_id: "evt-1",
@@ -135,18 +74,6 @@ const baseRegistrationInput: CreateRegistrationInput = {
   guardian_consent: null,
   selected_date: null,
 };
-
-function setupSupabaseMock(chains: unknown[]) {
-  const fromMock = vi.fn();
-  for (const chain of chains) {
-    fromMock.mockReturnValueOnce(chain);
-  }
-  // SupabaseClient is opaque 3rd-party type; building a full mock is impractical.
-  // submitPaymentRef only uses .from(), so we narrow via unknown to the partial shape we control.
-  vi.mocked(getSupabase).mockReturnValue({
-    from: fromMock,
-  } as unknown as SupabaseClient);
-}
 
 function setupPaymentToken(verifyResult: boolean) {
   // PaymentToken returned by getPaymentToken() exposes more methods than tests use;
