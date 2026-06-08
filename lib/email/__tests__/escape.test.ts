@@ -3,37 +3,44 @@ import { describe, expect, it } from "vitest";
 import { escapeHtml } from "@/lib/email/escape";
 
 describe("escapeHtml", () => {
-  it("將 & 轉義為 &amp;", () => {
-    expect(escapeHtml("a & b")).toBe("a &amp; b");
+  it("& 轉為 &amp;", () => {
+    expect(escapeHtml("A & B")).toBe("A &amp; B");
   });
 
-  it("將 < 轉義為 &lt;", () => {
-    expect(escapeHtml("a < b")).toBe("a &lt; b");
+  it("< 轉為 &lt;", () => {
+    expect(escapeHtml("<div>")).toBe("&lt;div&gt;");
   });
 
-  it("將 > 轉義為 &gt;", () => {
-    expect(escapeHtml("div>")).toBe("div&gt;");
+  it("> 轉為 &gt;", () => {
+    expect(escapeHtml("a > b")).toBe("a &gt; b");
   });
 
-  it('將 " 轉義為 &quot;', () => {
+  it("雙引號轉為 &quot;", () => {
     expect(escapeHtml('say "hello"')).toBe("say &quot;hello&quot;");
   });
 
-  it("將 ' 轉義為 &#x27;", () => {
+  it("單引號轉為 &#x27;", () => {
     expect(escapeHtml("it's")).toBe("it&#x27;s");
   });
 
-  it("同時處理多個特殊字元", () => {
-    expect(escapeHtml('<a href="url">O\'Brien & Co</a>')).toBe(
-      "&lt;a href=&quot;url&quot;&gt;O&#x27;Brien &amp; Co&lt;/a&gt;"
-    );
+  it("script tag 完全 escape", () => {
+    const input = '<script>alert("xss")</script>';
+    const result = escapeHtml(input);
+    expect(result).not.toContain("<script>");
+    expect(result).toBe("&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;");
   });
 
-  it("空字串原樣回傳", () => {
+  it("中文字元不受影響", () => {
+    expect(escapeHtml("宜蘭野溪溫泉")).toBe("宜蘭野溪溫泉");
+  });
+
+  it("空字串回傳空字串", () => {
     expect(escapeHtml("")).toBe("");
   });
 
-  it("不含特殊字元的字串原樣回傳", () => {
-    expect(escapeHtml("Hello World 123")).toBe("Hello World 123");
+  it("混合場景", () => {
+    expect(escapeHtml("Tom & Jerry's <fun>")).toBe(
+      "Tom &amp; Jerry&#x27;s &lt;fun&gt;"
+    );
   });
 });

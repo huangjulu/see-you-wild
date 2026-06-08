@@ -14,7 +14,7 @@ export const createEventSchema = z.object({
   carpool_cutoff_days: z.number().int().min(0).default(3),
   min_participants: z.number().int().min(1).default(3),
   description: z.string().default(""),
-  pickup_locations: z.array(z.string()).default([]),
+  pickup_locations: z.array(z.string()).optional(),
   images: z
     .array(z.object({ src: z.string().url(), alt: z.string() }))
     .default([]),
@@ -24,9 +24,11 @@ export const createEventSchema = z.object({
   faq: z.string().max(1000).default(""),
   refund_policy: z.string().max(1000).default(""),
   status: z.enum(["open", "closed"]).default("open"),
+  carpool_enabled: z.boolean().default(true),
+  rental_enabled: z.boolean().default(false),
 });
 
-export type CreateEventInput = z.infer<typeof createEventSchema>;
+export type CreateEventInput = z.input<typeof createEventSchema>;
 
 export const updateEventSchema = z.object({
   type: z.string().min(1).optional(),
@@ -51,6 +53,8 @@ export const updateEventSchema = z.object({
   faq: z.string().max(1000).optional(),
   refund_policy: z.string().max(1000).optional(),
   status: z.enum(["open", "closed"]).optional(),
+  carpool_enabled: z.boolean().optional(),
+  rental_enabled: z.boolean().optional(),
 });
 
 export type UpdateEventInput = z.infer<typeof updateEventSchema>;

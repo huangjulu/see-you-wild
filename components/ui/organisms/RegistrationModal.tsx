@@ -31,6 +31,7 @@ import {
   getCountryByIso,
   normalizePhone,
 } from "@/lib/form-rules";
+import { useRentalDetailsForm } from "@/lib/hooks/useRentalDetailsForm";
 import { useFormatter, useTranslations } from "@/lib/i18n/client";
 import { paymentAccount } from "@/lib/payment";
 import { cn } from "@/lib/utils";
@@ -55,6 +56,8 @@ interface RegistrationModalProps {
   carpoolRole: "driver" | "passenger" | null;
   seatCount: number | null;
   paymentDays: number;
+  carpoolEnabled: boolean;
+  rentalEnabled: boolean;
 }
 
 const RegistrationModal = (props: RegistrationModalProps) => {
@@ -84,7 +87,7 @@ const RegistrationModal = (props: RegistrationModalProps) => {
       emergency_contact_name: "",
       emergency_contact_phone: "",
       dietary: "omnivore",
-      wants_rental: false,
+      rental_details: null,
       notes: null,
       transport: props.isSelfArrival ? "self" : "carpool",
       pickup_location: null,
@@ -119,7 +122,7 @@ const RegistrationModal = (props: RegistrationModalProps) => {
         emergency_contact_phone:
           normalizedEmergencyPhone ?? data.emergency_contact_phone,
         event_id: props.eventId,
-        selected_date: null,
+        selected_date: props.selectedDate,
       },
       {
         onSuccess: (registration) => {
@@ -194,6 +197,8 @@ const RegistrationModal = (props: RegistrationModalProps) => {
                 currentStep={currentStep}
                 basePrice={props.basePrice}
                 carpoolSurcharge={props.carpoolSurcharge}
+                carpoolEnabled={props.carpoolEnabled}
+                rentalEnabled={props.rentalEnabled}
                 onSubmit={methods.handleSubmit(handleRegistrationSubmit)}
               />
             )}
@@ -350,7 +355,8 @@ interface FormMainContentProps {
   currentStep: number;
   basePrice: number;
   carpoolSurcharge: number;
-
+  carpoolEnabled: boolean;
+  rentalEnabled: boolean;
   onSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
 }
 
@@ -364,6 +370,8 @@ const FormMainContent = (props: FormMainContentProps) => {
           step={props.currentStep}
           basePrice={props.basePrice}
           carpoolSurcharge={props.carpoolSurcharge}
+          carpoolEnabled={props.carpoolEnabled}
+          rentalEnabled={props.rentalEnabled}
         />
       </form>
       {formState.errors.root && (
@@ -381,6 +389,8 @@ interface FormRegistrationProps {
   step: number;
   basePrice: number;
   carpoolSurcharge: number;
+  carpoolEnabled: boolean;
+  rentalEnabled: boolean;
 }
 
 const FormRegistration = (props: FormRegistrationProps) => {
@@ -389,11 +399,14 @@ const FormRegistration = (props: FormRegistrationProps) => {
       {props.step === 0 && <FormStepBasic />}
       {props.step === 1 && <FormStepIdentity />}
       {props.step === 2 && <FormStepEmergency />}
-      {props.step === 3 && <FormStepActivity />}
+      {props.step === 3 && (
+        <FormStepActivity rentalEnabled={props.rentalEnabled} />
+      )}
       {props.step === 4 && (
         <FormStepTransport
           basePrice={props.basePrice}
           carpoolSurcharge={props.carpoolSurcharge}
+          carpoolEnabled={props.carpoolEnabled}
         />
       )}
     </div>
@@ -638,10 +651,25 @@ const FormStepEmergency = () => {
 
 FormStepEmergency.displayName = "FormStepEmergency";
 
-const FormStepActivity = () => {
+interface FormStepActivityProps {
+  rentalEnabled: boolean;
+}
+
+const FormStepActivity = (props: FormStepActivityProps) => {
   const t = useTranslations("registration");
   const { register, formState } = useFormContext<RegistrationFormInput>();
   const errors = formState.errors;
+
+  const {
+    wantsRental,
+    clothingSize,
+    shoeSize,
+    onRentalToggle,
+    onClothingSizeChange,
+    onShoeSizeChange,
+    clothingSizeOptions,
+    shoeSizeOptions,
+  } = useRentalDetailsForm();
 
   return (
     <fieldset className="space-y-3">
@@ -680,10 +708,43 @@ const FormStepActivity = () => {
         )}
       </div>
 
-      <div className="flex items-center justify-between">
-        <span className="typo-ui text-sm text-primary">{t("wantsRental")}</span>
-        <Switch {...register("wants_rental")} />
-      </div>
+      {props.rentalEnabled && (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="typo-ui text-sm text-primary">
+              {t("wantsRental")}
+            </span>
+            <Switch
+              checked={wantsRental}
+              onChange={(e) => onRentalToggle(e.target.checked)}
+            />
+          </div>
+
+          <div
+            className={cn(
+              "grid transition-[grid-template-rows] duration-300",
+              wantsRental ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+            )}
+          >
+            <div className="overflow-hidden space-y-3">
+              <Selector
+                label={t("clothingSize")}
+                placeholder={t("selectClothingSize")}
+                options={clothingSizeOptions}
+                value={clothingSize}
+                onChange={onClothingSizeChange}
+              />
+              <Selector
+                label={t("shoeSize")}
+                placeholder={t("selectShoeSize")}
+                options={shoeSizeOptions}
+                value={shoeSize}
+                onChange={onShoeSizeChange}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       <Input
         label={t("notes")}
@@ -700,6 +761,7 @@ FormStepActivity.displayName = "FormStepActivity";
 interface FormStepTransportProps {
   basePrice: number;
   carpoolSurcharge: number;
+  carpoolEnabled: boolean;
 }
 
 const FormStepTransport = (props: FormStepTransportProps) => {
@@ -711,6 +773,18 @@ const FormStepTransport = (props: FormStepTransportProps) => {
 
   const transport = watch("transport");
   const carpoolRole = watch("carpool_role");
+
+  useEffect(
+    function lockTransportOnDisabled() {
+      if (!props.carpoolEnabled) {
+        setValue("transport", "self");
+        setValue("pickup_location", null);
+        setValue("carpool_role", null);
+        setValue("seat_count", null);
+      }
+    },
+    [props.carpoolEnabled]
+  );
 
   useEffect(
     function resetCarpoolFieldsOnSelf() {
@@ -737,107 +811,119 @@ const FormStepTransport = (props: FormStepTransportProps) => {
       <fieldset className="space-y-3">
         <div className="space-y-1">
           <span className="typo-ui text-sm text-primary">{t("transport")}</span>
-          <div className="flex flex-wrap gap-2">
-            <RadioOption
-              variant="outlined"
-              label={t("transportSelf")}
-              value="self"
-              {...register("transport")}
-            />
-            <RadioOption
-              variant="outlined"
-              label={`${t("transportCarpool")}  +NT$ ${format.number(props.carpoolSurcharge)}`}
-              value="carpool"
-              {...register("transport")}
-            />
-          </div>
-          {errors.transport && (
-            <p className="typo-ui text-xs text-critical">
-              {errors.transport.message}
+          {props.carpoolEnabled ? (
+            <>
+              <div className="flex flex-wrap gap-2">
+                <RadioOption
+                  variant="outlined"
+                  label={t("transportSelf")}
+                  value="self"
+                  {...register("transport")}
+                />
+                <RadioOption
+                  variant="outlined"
+                  label={`${t("transportCarpool")}  +NT$ ${format.number(props.carpoolSurcharge)}`}
+                  value="carpool"
+                  {...register("transport")}
+                />
+              </div>
+              {errors.transport && (
+                <p className="typo-ui text-xs text-critical">
+                  {errors.transport.message}
+                </p>
+              )}
+            </>
+          ) : (
+            <p className="typo-ui text-sm text-secondary">
+              {t("transportSelf")}
             </p>
           )}
         </div>
 
-        <div
-          className={cn(
-            "grid transition-[grid-template-rows] duration-300",
-            transport === "carpool" ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-          )}
-        >
-          <div className="overflow-hidden space-y-3">
-            <div className="space-y-1">
-              <span className="typo-ui text-sm text-primary">
-                {t("pickupLocation")}
-              </span>
-              <div className="flex flex-wrap gap-2">
-                {PICKUP_LOCATIONS.map((loc) => (
+        {props.carpoolEnabled && (
+          <div
+            className={cn(
+              "grid transition-[grid-template-rows] duration-300",
+              transport === "carpool" ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+            )}
+          >
+            <div className="overflow-hidden space-y-3">
+              <div className="space-y-1">
+                <span className="typo-ui text-sm text-primary">
+                  {t("pickupLocation")}
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {PICKUP_LOCATIONS.map((loc) => (
+                    <RadioOption
+                      variant="outlined"
+                      key={loc}
+                      label={loc}
+                      value={loc}
+                      {...register("pickup_location")}
+                    />
+                  ))}
+                </div>
+                {errors.pickup_location && (
+                  <p className="typo-ui text-xs text-critical">
+                    {errors.pickup_location.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-1">
+                <span className="typo-ui text-sm text-primary">
+                  {t("carpoolRole")}
+                </span>
+                <div className="flex flex-wrap gap-2">
                   <RadioOption
                     variant="outlined"
-                    key={loc}
-                    label={loc}
-                    value={loc}
-                    {...register("pickup_location")}
+                    label={t("carpoolPassenger")}
+                    value="passenger"
+                    {...register("carpool_role")}
                   />
-                ))}
+                  <RadioOption
+                    variant="outlined"
+                    label={t("carpoolDriver")}
+                    value="driver"
+                    {...register("carpool_role")}
+                  />
+                </div>
+                {errors.carpool_role && (
+                  <p className="typo-ui text-xs text-critical">
+                    {errors.carpool_role.message}
+                  </p>
+                )}
               </div>
-              {errors.pickup_location && (
-                <p className="typo-ui text-xs text-critical">
-                  {errors.pickup_location.message}
-                </p>
-              )}
-            </div>
 
-            <div className="space-y-1">
-              <span className="typo-ui text-sm text-primary">
-                {t("carpoolRole")}
-              </span>
-              <div className="flex flex-wrap gap-2">
-                <RadioOption
-                  variant="outlined"
-                  label={t("carpoolPassenger")}
-                  value="passenger"
-                  {...register("carpool_role")}
-                />
-                <RadioOption
-                  variant="outlined"
-                  label={t("carpoolDriver")}
-                  value="driver"
-                  {...register("carpool_role")}
-                />
-              </div>
-              {errors.carpool_role && (
-                <p className="typo-ui text-xs text-critical">
-                  {errors.carpool_role.message}
-                </p>
-              )}
-            </div>
-
-            <div
-              className={cn(
-                "grid transition-[grid-template-rows] duration-300",
-                carpoolRole === "driver" ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-              )}
-            >
-              <div className="overflow-hidden">
-                <Controller
-                  name="seat_count"
-                  control={control}
-                  render={({ field }) => (
-                    <Selector
-                      label={t("seatCount")}
-                      placeholder={t("selectSeatCount")}
-                      options={seatCountOptions}
-                      value={field.value != null ? String(field.value) : ""}
-                      onChange={(v) => field.onChange(parseInt(v, 10))}
-                      onBlur={field.onBlur}
-                      error={errors.seat_count?.message}
-                    />
-                  )}
-                />
+              <div
+                className={cn(
+                  "grid transition-[grid-template-rows] duration-300",
+                  carpoolRole === "driver"
+                    ? "grid-rows-[1fr]"
+                    : "grid-rows-[0fr]"
+                )}
+              >
+                <div className="overflow-hidden">
+                  <Controller
+                    name="seat_count"
+                    control={control}
+                    render={({ field }) => (
+                      <Selector
+                        label={t("seatCount")}
+                        placeholder={t("selectSeatCount")}
+                        options={seatCountOptions}
+                        value={field.value != null ? String(field.value) : ""}
+                        onChange={(v) => field.onChange(parseInt(v, 10))}
+                        onBlur={field.onBlur}
+                        error={errors.seat_count?.message}
+                      />
+                    )}
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </fieldset>
 
       <div className="flex items-center justify-between rounded-lg border border-stroke-default p-4">
@@ -873,6 +959,6 @@ const STEP_FIELDS: Record<number, (keyof RegistrationFormInput)[]> = {
   0: ["name", "email", "gender", "birthday", "country"],
   1: ["phone", "id_number", "line_id"],
   2: ["guardian_consent", "emergency_contact_name", "emergency_contact_phone"],
-  3: ["dietary", "wants_rental", "notes"],
+  3: ["dietary", "notes"],
   4: ["transport", "pickup_location", "carpool_role", "seat_count"],
 };

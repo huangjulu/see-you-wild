@@ -49,29 +49,29 @@
       "exploreMore": "探索更多",
       "items": {
         "hot-spring": { "title": "野溪溫泉秘境", "subtitle": "Hot Spring" },
-        "camping": { "title": "星空野營私廚", "subtitle": "Wild Camping" },
-        "sup": { "title": "SUP 立槳日出團", "subtitle": "Paddleboarding" },
-        "tree-climbing": { "title": "攀樹森林浴", "subtitle": "Tree Climbing" },
+        "camping": { "title": "野營私廚", "subtitle": "Wild Camping" },
+        "sup": { "title": "SUP 立槳", "subtitle": "Paddleboarding" },
+        "tree-climbing": { "title": "攀樹體驗", "subtitle": "Tree Climbing" },
         "river-tracing": { "title": "秘境溯溪", "subtitle": "River Tracing" },
         "yacht": { "title": "遊艇旅遊", "subtitle": "Yacht Tour" },
         "rafting": { "title": "背包艇泛舟", "subtitle": "Rafting" }
       }
     },
     "whyChooseUs": {
-      "overline": "Why Choose Us",
-      "title": "為什麼選擇我們",
+      "overline": "GIRLS' TOP CHOICE",
+      "title": "女孩友善第一選擇",
       "items": {
-        "safety": {
-          "title": "安全至上",
-          "desc": "每位嚮導均持有專業證照，定期訓練與裝備檢修，讓妳安心享受每一刻。"
+        "joy": {
+          "title": "捕捉最真實的快樂瞬間",
+          "desc": "每一趟旅程，都值得被好好收藏。在妳專注挑戰自我與放鬆享受時，我們將以自然不過度干預的方式，為妳們留下生動的活動花絮。不用擔心錯過任何精彩畫面，帶回滿滿的歡樂回憶。"
         },
-        "experience": {
-          "title": "深度體驗",
-          "desc": "我們不走觀光路線，每條路線都經過實地探勘，帶妳看見台灣最原始的美。"
+        "vacation": {
+          "title": "放鬆休閒的微度假",
+          "desc": "誰說去大自然一定要弄得灰頭土臉？告別傳統戶外的疲憊與克難，從專屬的野營私廚到遊艇旅遊，我們一手包辦所有繁瑣細節，帶您以優雅的姿態，走進台灣最原始的秘境。"
         },
-        "quality": {
-          "title": "質感細節",
-          "desc": "從行前準備到活動後的照片紀錄，每個環節都為妳精心打磨，留下值得珍藏的記憶。"
+        "guidance": {
+          "title": "溫柔引導，無壓力的安全感",
+          "desc": "由資深戶外教練領軍，具備完整水域救援與急救證照。以最細膩的耐心帶領妳適應水性。加上高標準的防護裝備與乾淨整潔的器材，讓妳踏的每一步都充滿安全感。"
         }
       }
     },
@@ -87,17 +87,17 @@
         "james": {
           "quote": "私廚的料理在大自然裡吃起來特別不同，每一口都是幸福。團隊把每個細節都照顧得很好，完全不用擔心。",
           "author": "James K.",
-          "trip": "星空野營私廚"
+          "trip": "野營私廚"
         },
         "mei": {
           "quote": "SUP 在日出時分划出去，海面像鏡子一樣。這是我體驗過最平靜的時刻。",
           "author": "Mei W.",
-          "trip": "SUP 立槳日出團"
+          "trip": "SUP 立槳"
         },
         "chris": {
           "quote": "攀樹讓我用全新的視角看森林，樹冠層的世界太令人驚嘆了。",
           "author": "Chris T.",
-          "trip": "攀樹森林浴"
+          "trip": "攀樹體驗"
         },
         "sophie": {
           "quote": "原本以為只是普通的露營，結果是一場完整的五感體驗。已經預約下一團了！",
@@ -112,10 +112,10 @@
       }
     },
     "cta": {
-      "title": "begin your journey",
-      "description": "探索我們精心策劃的旅程，找到最能提升你野外經驗的那一路。",
-      "button": "探索更多",
-      "imageAlt": "帳篷內望向森林的露營場景"
+      "title": "Ready for the Wild?",
+      "description": "準備好開啟一場放鬆愉快的假期了嗎？現在就聯繫專屬管家，為您推薦最完美的秘境路線。",
+      "button": "聯絡專屬管家",
+      "imageAlt": "西揪團夥伴們的開心合照"
     },
     "events": {
       "sectionLabel": "活動行程",
@@ -284,6 +284,10 @@
     "dietaryVegetarian": "素食",
     "dietaryVegan": "全素",
     "wantsRental": "需要租借裝備",
+    "clothingSize": "衣服尺寸",
+    "selectClothingSize": "選擇尺寸",
+    "shoeSize": "鞋子尺寸",
+    "selectShoeSize": "選擇尺寸",
     "notes": "備註（選填）",
     "notesPlaceholder": "其他需求或注意事項（選填）",
     "transport": "交通方式",

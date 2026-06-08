@@ -1,7 +1,6 @@
 import { handleError } from "@/lib/api/handle-error";
 import { apiOk } from "@/lib/api-response";
 import { sendRegistrationEmail } from "@/lib/email/send-registration-email";
-import { getEnv } from "@/lib/env";
 import { RegistrationNotFoundError } from "@/lib/errors/domain";
 import { getSupabase } from "@/lib/supabase/client";
 import type { EventRow, RegistrationRow } from "@/lib/types/database";
@@ -39,13 +38,11 @@ export async function POST(_request: Request, { params }: RouteParams) {
     const typedEvent: EventRow = event;
 
     await sendRegistrationEmail({
-      registrationId: typedRegistration.id,
       to: typedRegistration.email,
       customerName: typedRegistration.name,
       eventTitle: typedEvent.title,
       amountDue: typedRegistration.amount_due,
       expiresAt: typedRegistration.expires_at,
-      baseUrl: getEnv().canonicalUrl,
       transport: typedRegistration.transport,
     });
 

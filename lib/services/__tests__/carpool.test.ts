@@ -1,4 +1,3 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/lib/supabase/client", () => ({
@@ -7,77 +6,13 @@ vi.mock("@/lib/supabase/client", () => ({
 
 import { EventNotFoundError, InternalError } from "@/lib/errors/domain";
 import { assignCarpool, buildAssignments } from "@/lib/services/carpool";
-import { getSupabase } from "@/lib/supabase/client";
-import type { EventRow, RegistrationRow } from "@/lib/types/database";
+import { makeEvent, makeRegistration } from "@/lib/test-utils/fixtures";
+import {
+  makeSingleChain,
+  setupSupabaseMock,
+} from "@/lib/test-utils/supabase-mock";
 
-const baseEvent: EventRow = {
-  id: "evt-1",
-  type: "trip",
-  location: "宜蘭",
-  title: "Test event",
-  start_date: "2026-05-01",
-  end_date: "2026-05-02",
-  base_price: 1000,
-  carpool_surcharge: 100,
-  driver_refund_per_passenger: 200,
-  payment_days: 7,
-  carpool_cutoff_days: 3,
-  min_participants: 4,
-  description: "",
-  pickup_locations: [],
-  images: [],
-  available_dates: ["2026-05-01", "2026-05-02"],
-  safety_policy: "",
-  preparation_notes: "",
-  faq: "",
-  refund_policy: "",
-  status: "open",
-  first_created_at: "2026-04-01T00:00:00Z",
-  reminder_sent_at: null,
-};
-
-function makeReg(overrides: Partial<RegistrationRow>): RegistrationRow {
-  return {
-    id: "reg-default",
-    event_id: "evt-1",
-    country: "TW",
-    name: "Test User",
-    email: "test@example.com",
-    phone: "0900000000",
-    line_id: null,
-    gender: "other",
-    id_number: "A123456789",
-    birthday: "1990-01-01",
-    emergency_contact_name: "Em",
-    emergency_contact_phone: "0911111111",
-    dietary: "omnivore",
-    wants_rental: false,
-    notes: null,
-    transport: "carpool",
-    pickup_location: "台北",
-    carpool_role: "passenger",
-    seat_count: null,
-    guardian_consent: null,
-    amount_due: 1100,
-    payment_ref: null,
-    status: "paid",
-    selected_date: null,
-    created_at: "2026-04-01T00:00:00Z",
-    confirmed_at: "2026-04-02T00:00:00Z",
-    expires_at: "2026-04-08T00:00:00Z",
-    ...overrides,
-  };
-}
-
-function makeEventChain(result: { data: unknown; error: unknown }) {
-  return {
-    select: () => ({
-      eq: () => ({
-        single: vi.fn().mockResolvedValue(result),
-      }),
-    }),
-  };
-}
+const baseEvent = makeEvent();
 
 function makeRegsChain(result: { data: unknown; error: unknown }) {
   return {
@@ -91,30 +26,17 @@ function makeRegsChain(result: { data: unknown; error: unknown }) {
   };
 }
 
-function setupSupabaseMock(chains: unknown[], rpcResult?: { error: unknown }) {
-  const fromMock = vi.fn();
-  for (const chain of chains) {
-    fromMock.mockReturnValueOnce(chain);
-  }
-  // SupabaseClient is opaque 3rd-party type; building a full mock is impractical.
-  // assignCarpool uses .from() and .rpc(), so we narrow via unknown to the partial shape we control.
-  vi.mocked(getSupabase).mockReturnValue({
-    from: fromMock,
-    rpc: vi.fn().mockResolvedValue(rpcResult ?? { error: null }),
-  } as unknown as SupabaseClient);
-}
-
 describe("buildAssignments", () => {
   it("一位司機帶滿三位乘客，分成同一組", () => {
-    const driver = makeReg({
+    const driver = makeRegistration({
       id: "drv-1",
       carpool_role: "driver",
       seat_count: 3,
     });
     const passengers = [
-      makeReg({ id: "p-1" }),
-      makeReg({ id: "p-2" }),
-      makeReg({ id: "p-3" }),
+      makeRegistration({ id: "p-1" }),
+      makeRegistration({ id: "p-2" }),
+      makeRegistration({ id: "p-3" }),
     ];
 
     const result = buildAssignments("evt-1", baseEvent, [
@@ -142,12 +64,15 @@ describe("buildAssignments", () => {
   });
 
   it("司機座位有剩，乘客不足只填部分位子", () => {
-    const driver = makeReg({
+    const driver = makeRegistration({
       id: "drv-1",
       carpool_role: "driver",
       seat_count: 3,
     });
-    const passengers = [makeReg({ id: "p-1" }), makeReg({ id: "p-2" })];
+    const passengers = [
+      makeRegistration({ id: "p-1" }),
+      makeRegistration({ id: "p-2" }),
+    ];
 
     const result = buildAssignments("evt-1", baseEvent, [
       driver,
@@ -168,17 +93,17 @@ describe("buildAssignments", () => {
   });
 
   it("乘客超過座位數，多餘乘客進無司機組", () => {
-    const driver = makeReg({
+    const driver = makeRegistration({
       id: "drv-1",
       carpool_role: "driver",
       seat_count: 3,
     });
     const passengers = [
-      makeReg({ id: "p-1" }),
-      makeReg({ id: "p-2" }),
-      makeReg({ id: "p-3" }),
-      makeReg({ id: "p-4" }),
-      makeReg({ id: "p-5" }),
+      makeRegistration({ id: "p-1" }),
+      makeRegistration({ id: "p-2" }),
+      makeRegistration({ id: "p-3" }),
+      makeRegistration({ id: "p-4" }),
+      makeRegistration({ id: "p-5" }),
     ];
 
     const result = buildAssignments("evt-1", baseEvent, [
@@ -207,12 +132,12 @@ describe("buildAssignments", () => {
   });
 
   it("同地點多位司機，最大座位的當 lead，其餘降為 passenger", () => {
-    const drvA = makeReg({
+    const drvA = makeRegistration({
       id: "drv-A",
       carpool_role: "driver",
       seat_count: 4,
     });
-    const drvB = makeReg({
+    const drvB = makeRegistration({
       id: "drv-B",
       carpool_role: "driver",
       seat_count: 2,
@@ -237,9 +162,9 @@ describe("buildAssignments", () => {
 
   it("地點只有乘客沒有司機，全員進無司機組", () => {
     const passengers = [
-      makeReg({ id: "p-1" }),
-      makeReg({ id: "p-2" }),
-      makeReg({ id: "p-3" }),
+      makeRegistration({ id: "p-1" }),
+      makeRegistration({ id: "p-2" }),
+      makeRegistration({ id: "p-3" }),
     ];
 
     const result = buildAssignments("evt-1", baseEvent, passengers);
@@ -252,13 +177,16 @@ describe("buildAssignments", () => {
   });
 
   it("pickup_location 為 null 的報名被排除", () => {
-    const driver = makeReg({
+    const driver = makeRegistration({
       id: "drv-1",
       carpool_role: "driver",
       seat_count: 3,
     });
-    const validPassenger = makeReg({ id: "p-1" });
-    const nullLocPassenger = makeReg({ id: "p-null", pickup_location: null });
+    const validPassenger = makeRegistration({ id: "p-1" });
+    const nullLocPassenger = makeRegistration({
+      id: "p-null",
+      pickup_location: null,
+    });
 
     const result = buildAssignments("evt-1", baseEvent, [
       driver,
@@ -280,16 +208,16 @@ describe("buildAssignments", () => {
   // defaults missing driver capacity to 3 silently. Spec source unclear; revisit
   // if business defines this rule explicitly.
   it("司機 seat_count 為 null 時 fallback 走 3 座", () => {
-    const driver = makeReg({
+    const driver = makeRegistration({
       id: "drv-1",
       carpool_role: "driver",
       seat_count: null,
     });
     const passengers = [
-      makeReg({ id: "p-1" }),
-      makeReg({ id: "p-2" }),
-      makeReg({ id: "p-3" }),
-      makeReg({ id: "p-4" }),
+      makeRegistration({ id: "p-1" }),
+      makeRegistration({ id: "p-2" }),
+      makeRegistration({ id: "p-3" }),
+      makeRegistration({ id: "p-4" }),
     ];
 
     const result = buildAssignments("evt-1", baseEvent, [
@@ -311,20 +239,26 @@ describe("buildAssignments", () => {
   });
 
   it("多地點各自獨立分組，car_group 編號連續", () => {
-    const taipeiDriver = makeReg({
+    const taipeiDriver = makeRegistration({
       id: "tp-drv",
       carpool_role: "driver",
       seat_count: 3,
       pickup_location: "台北",
     });
-    const taipeiPassenger = makeReg({ id: "tp-p", pickup_location: "台北" });
-    const ksDriver = makeReg({
+    const taipeiPassenger = makeRegistration({
+      id: "tp-p",
+      pickup_location: "台北",
+    });
+    const ksDriver = makeRegistration({
       id: "ks-drv",
       carpool_role: "driver",
       seat_count: 3,
       pickup_location: "高雄",
     });
-    const ksPassenger = makeReg({ id: "ks-p", pickup_location: "高雄" });
+    const ksPassenger = makeRegistration({
+      id: "ks-p",
+      pickup_location: "高雄",
+    });
 
     const result = buildAssignments("evt-1", baseEvent, [
       taipeiDriver,
@@ -349,7 +283,7 @@ describe("assignCarpool", () => {
 
   it("event 不存在時 throw EventNotFoundError", async () => {
     setupSupabaseMock([
-      makeEventChain({ data: null, error: { message: "not found" } }),
+      makeSingleChain({ data: null, error: { message: "not found" } }),
     ]);
 
     await expect(assignCarpool("evt-not-exist")).rejects.toThrow(
@@ -359,7 +293,7 @@ describe("assignCarpool", () => {
 
   it("registrations 讀取失敗時 throw InternalError", async () => {
     setupSupabaseMock([
-      makeEventChain({ data: baseEvent, error: null }),
+      makeSingleChain({ data: baseEvent, error: null }),
       makeRegsChain({ data: null, error: { message: "DB connection lost" } }),
     ]);
 
@@ -367,7 +301,7 @@ describe("assignCarpool", () => {
   });
 
   it("RPC replace 失敗時 throw InternalError", async () => {
-    const driver = makeReg({
+    const driver = makeRegistration({
       id: "drv-1",
       carpool_role: "driver",
       seat_count: 3,
@@ -375,10 +309,10 @@ describe("assignCarpool", () => {
 
     setupSupabaseMock(
       [
-        makeEventChain({ data: baseEvent, error: null }),
+        makeSingleChain({ data: baseEvent, error: null }),
         makeRegsChain({ data: [driver], error: null }),
       ],
-      { error: { message: "rpc failed" } }
+      { rpcResult: { error: { message: "rpc failed" } } }
     );
 
     await expect(assignCarpool("evt-1")).rejects.toThrow(InternalError);

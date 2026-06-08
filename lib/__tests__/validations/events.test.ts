@@ -51,10 +51,10 @@ describe("createEventSchema", () => {
     }
   });
 
-  it("defaults pickup_locations to empty array", () => {
+  it("pickup_locations 未提供時為 undefined", () => {
     const result = createEventSchema.safeParse(validEvent);
     if (result.success) {
-      expect(result.data.pickup_locations).toEqual([]);
+      expect(result.data.pickup_locations).toBeUndefined();
     }
   });
 

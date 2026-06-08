@@ -1,3 +1,5 @@
+import { NextResponse } from "next/server";
+
 import { handleError } from "@/lib/api/handle-error";
 import { apiOk } from "@/lib/api-response";
 import { getEnv } from "@/lib/env";
@@ -11,6 +13,31 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const parsed = createRegistrationSchema.parse(body);
+
+    const { data: eventGuard, error: eventGuardError } = await getSupabase()
+      .from("events")
+      .select("carpool_enabled, rental_enabled")
+      .eq("id", parsed.event_id)
+      .single();
+
+    if (eventGuardError || !eventGuard) {
+      return NextResponse.json({ error: "Event not found" }, { status: 404 });
+    }
+
+    if (!eventGuard.carpool_enabled && parsed.transport !== "self") {
+      return NextResponse.json(
+        { error: "Carpool is not available for this event" },
+        { status: 400 }
+      );
+    }
+
+    if (!eventGuard.rental_enabled && parsed.rental_details != null) {
+      return NextResponse.json(
+        { error: "Equipment rental is not available for this event" },
+        { status: 400 }
+      );
+    }
+
     const registration = await createRegistration(parsed);
 
     // Notifier reloads event so the service signature stays narrow (RegistrationRow only).

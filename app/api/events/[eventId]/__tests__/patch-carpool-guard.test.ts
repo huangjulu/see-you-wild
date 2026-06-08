@@ -51,6 +51,26 @@ function makeEventSelectChain(
   };
 }
 
+function makeEventSelectAndUpdateChain(
+  row: { start_date: string; carpool_cutoff_days: number },
+  updateResult: { data: unknown; error: unknown }
+) {
+  return {
+    select: () => ({
+      eq: () => ({
+        single: () => Promise.resolve({ data: row, error: null }),
+      }),
+    }),
+    update: () => ({
+      eq: () => ({
+        select: () => ({
+          single: () => Promise.resolve(updateResult),
+        }),
+      }),
+    }),
+  };
+}
+
 function makeUpdateChain(result: { data: unknown; error: unknown }) {
   return {
     update: () => ({
@@ -71,8 +91,14 @@ describe("PATCH /api/events/[eventId] — carpool guard", () => {
   });
 
   describe("Guard 1：已有 carpool assignments 時禁止改 start_date / carpool_cutoff_days", () => {
-    it("改 start_date 且 assignments 存在 → 400 CarpoolDatesLockedError", async () => {
+    it("改 start_date（值確實不同）且 assignments 存在 → 400 CarpoolDatesLockedError", async () => {
+      // Route fetches existing first; payload differs from existing to trigger guard.
       mockSupabase((table) => {
+        if (table === "events")
+          return makeEventSelectChain({
+            start_date: "2099-06-01",
+            carpool_cutoff_days: 3,
+          });
         if (table === "carpool_assignments")
           return makeAssignmentsChain([{ id: "ca-1" }]);
         return {};
@@ -88,8 +114,13 @@ describe("PATCH /api/events/[eventId] — carpool guard", () => {
       expect(json.error).toMatch(/carpool assignments/i);
     });
 
-    it("改 carpool_cutoff_days 且 assignments 存在 → 400 CarpoolDatesLockedError", async () => {
+    it("改 carpool_cutoff_days（值確實不同）且 assignments 存在 → 400 CarpoolDatesLockedError", async () => {
       mockSupabase((table) => {
+        if (table === "events")
+          return makeEventSelectChain({
+            start_date: "2099-06-01",
+            carpool_cutoff_days: 3,
+          });
         if (table === "carpool_assignments")
           return makeAssignmentsChain([{ id: "ca-1" }]);
         return {};
@@ -105,44 +136,29 @@ describe("PATCH /api/events/[eventId] — carpool guard", () => {
       expect(json.error).toMatch(/carpool assignments/i);
     });
 
-    it("assignments 為空 → 不觸發 Guard 1，繼續往下", async () => {
-      // 今天 + 30 天當 start_date，cutoff 3 天不會在過去
-      const futureDate = new Date();
-      futureDate.setDate(futureDate.getDate() + 30);
-      const startDate = futureDate.toISOString().slice(0, 10);
+    it("assignments 為空且 start_date 真的變動 → 不觸發 Guard 1，繼續往下", async () => {
+      // 今天 + 30 天當新 start_date，existing 是 +60 天，cutoff 3 天不會在過去
+      const existing = new Date();
+      existing.setDate(existing.getDate() + 60);
+      const existingDate = existing.toISOString().slice(0, 10);
+
+      const incoming = new Date();
+      incoming.setDate(incoming.getDate() + 30);
+      const incomingDate = incoming.toISOString().slice(0, 10);
 
       mockSupabase((table) => {
         if (table === "carpool_assignments") return makeAssignmentsChain([]);
         if (table === "events") {
-          // 先回 select（Guard 2 用），再回 update
-          return {
-            select: () => ({
-              eq: () => ({
-                single: () =>
-                  Promise.resolve({
-                    data: { start_date: startDate, carpool_cutoff_days: 3 },
-                    error: null,
-                  }),
-              }),
-            }),
-            update: () => ({
-              eq: () => ({
-                select: () => ({
-                  single: () =>
-                    Promise.resolve({
-                      data: { id: "evt-1", start_date: startDate },
-                      error: null,
-                    }),
-                }),
-              }),
-            }),
-          };
+          return makeEventSelectAndUpdateChain(
+            { start_date: existingDate, carpool_cutoff_days: 3 },
+            { data: { id: "evt-1", start_date: incomingDate }, error: null }
+          );
         }
         return {};
       });
 
       const res = await PATCH(
-        makeRequest({ start_date: startDate }),
+        makeRequest({ start_date: incomingDate }),
         makeParams()
       );
       expect(res.status).toBe(200);
@@ -150,16 +166,15 @@ describe("PATCH /api/events/[eventId] — carpool guard", () => {
   });
 
   describe("Guard 2：新 cutoffDate 不可在今天之前", () => {
-    it("cutoffDate 在過去 → 400 CarpoolCutoffInPastError", async () => {
-      // start_date 設在過去，cutoff_days = 3 → cutoffDate 更早
+    it("真的把 start_date 改到過去（新 cutoff < today）→ 400 CarpoolCutoffInPastError", async () => {
+      // Existing start_date is far future; payload changes it to the past so value-diff fires.
       mockSupabase((table) => {
-        if (table === "carpool_assignments") return makeAssignmentsChain([]);
-        if (table === "events") {
+        if (table === "events")
           return makeEventSelectChain({
-            start_date: "2020-01-10",
+            start_date: "2099-06-01",
             carpool_cutoff_days: 3,
           });
-        }
+        if (table === "carpool_assignments") return makeAssignmentsChain([]);
         return {};
       });
 
@@ -177,9 +192,6 @@ describe("PATCH /api/events/[eventId] — carpool guard", () => {
       // cutoffDate = today → not < today
       // Use local-date formatting to avoid UTC-vs-local midnight mismatch in UTC+8.
       const todayLocal = new Date();
-      const y = todayLocal.getFullYear();
-      const m = String(todayLocal.getMonth() + 1).padStart(2, "0");
-      const d = String(todayLocal.getDate()).padStart(2, "0");
       // cutoff_days = 3 → start_date must be today + 3 so cutoffDate lands on today
       const startLocal = new Date(
         todayLocal.getFullYear(),
@@ -190,33 +202,15 @@ describe("PATCH /api/events/[eventId] — carpool guard", () => {
       const sm = String(startLocal.getMonth() + 1).padStart(2, "0");
       const sd = String(startLocal.getDate()).padStart(2, "0");
       const startDateStr = `${sy}-${sm}-${sd}`;
-      void `${y}-${m}-${d}`; // today string used only for documentation
 
+      // Existing has a different (earlier) start_date so value-diff triggers the guard.
       mockSupabase((table) => {
         if (table === "carpool_assignments") return makeAssignmentsChain([]);
         if (table === "events") {
-          return {
-            select: () => ({
-              eq: () => ({
-                single: () =>
-                  Promise.resolve({
-                    data: { start_date: startDateStr, carpool_cutoff_days: 3 },
-                    error: null,
-                  }),
-              }),
-            }),
-            update: () => ({
-              eq: () => ({
-                select: () => ({
-                  single: () =>
-                    Promise.resolve({
-                      data: { id: "evt-1", start_date: startDateStr },
-                      error: null,
-                    }),
-                }),
-              }),
-            }),
-          };
+          return makeEventSelectAndUpdateChain(
+            { start_date: "2099-01-01", carpool_cutoff_days: 3 },
+            { data: { id: "evt-1", start_date: startDateStr }, error: null }
+          );
         }
         return {};
       });
@@ -233,31 +227,14 @@ describe("PATCH /api/events/[eventId] — carpool guard", () => {
       futureDate.setDate(futureDate.getDate() + 30);
       const startDate = futureDate.toISOString().slice(0, 10);
 
+      // Existing has a different start_date so value-diff fires and guard is exercised.
       mockSupabase((table) => {
         if (table === "carpool_assignments") return makeAssignmentsChain([]);
         if (table === "events") {
-          return {
-            select: () => ({
-              eq: () => ({
-                single: () =>
-                  Promise.resolve({
-                    data: { start_date: startDate, carpool_cutoff_days: 3 },
-                    error: null,
-                  }),
-              }),
-            }),
-            update: () => ({
-              eq: () => ({
-                select: () => ({
-                  single: () =>
-                    Promise.resolve({
-                      data: { id: "evt-1", start_date: startDate },
-                      error: null,
-                    }),
-                }),
-              }),
-            }),
-          };
+          return makeEventSelectAndUpdateChain(
+            { start_date: "2099-01-01", carpool_cutoff_days: 3 },
+            { data: { id: "evt-1", start_date: startDate }, error: null }
+          );
         }
         return {};
       });
@@ -284,9 +261,8 @@ describe("PATCH /api/events/[eventId] — carpool guard", () => {
       expect(res.status).toBe(200);
     });
 
-    it("existing event 不存在（Guard 2 查詢回 null）→ 404", async () => {
+    it("existing event 不存在（fetch existing 查詢回 null）→ 404", async () => {
       mockSupabase((table) => {
-        if (table === "carpool_assignments") return makeAssignmentsChain([]);
         if (table === "events") return makeEventSelectChain(null);
         return {};
       });
@@ -299,6 +275,80 @@ describe("PATCH /api/events/[eventId] — carpool guard", () => {
 
       expect(res.status).toBe(404);
       expect(json.error).toMatch(/not found/i);
+    });
+  });
+
+  describe("Guard：只有值真的改變時才觸發（SYW-070 修復）", () => {
+    it("cutoff 已過的活動，payload 帶相同 start_date + description → 200 成功儲存", async () => {
+      // start_date 在過去，cutoff 必然在過去；但因 start_date 值沒變，guard 不應觸發
+      mockSupabase((table) => {
+        if (table === "events") {
+          return makeEventSelectAndUpdateChain(
+            { start_date: "2020-01-10", carpool_cutoff_days: 3 },
+            {
+              data: {
+                id: "evt-1",
+                start_date: "2020-01-10",
+                description: "新說明",
+              },
+              error: null,
+            }
+          );
+        }
+        return {};
+      });
+
+      const res = await PATCH(
+        makeRequest({ start_date: "2020-01-10", description: "新說明" }),
+        makeParams()
+      );
+      expect(res.status).toBe(200);
+    });
+
+    it("真的把 start_date 改到過去（新 cutoff < today）→ 400 CarpoolCutoffInPastError", async () => {
+      // existing start_date 在未來，但 payload 改成過去的日期
+      mockSupabase((table) => {
+        if (table === "carpool_assignments") return makeAssignmentsChain([]);
+        if (table === "events") {
+          return makeEventSelectChain({
+            start_date: "2099-06-01",
+            carpool_cutoff_days: 3,
+          });
+        }
+        return {};
+      });
+
+      const res = await PATCH(
+        makeRequest({ start_date: "2020-01-10" }),
+        makeParams()
+      );
+      const json = await res.json();
+
+      expect(res.status).toBe(400);
+      expect(json.error).toMatch(/past/i);
+    });
+
+    it("已存在 carpool_assignments 且 payload 真的改 start_date → 400 CarpoolDatesLockedError", async () => {
+      // existing start_date 是 2099-06-01，payload 改成不同日期
+      mockSupabase((table) => {
+        if (table === "events")
+          return makeEventSelectChain({
+            start_date: "2099-06-01",
+            carpool_cutoff_days: 3,
+          });
+        if (table === "carpool_assignments")
+          return makeAssignmentsChain([{ id: "ca-1" }]);
+        return {};
+      });
+
+      const res = await PATCH(
+        makeRequest({ start_date: "2099-07-01" }),
+        makeParams()
+      );
+      const json = await res.json();
+
+      expect(res.status).toBe(400);
+      expect(json.error).toMatch(/carpool assignments/i);
     });
   });
 });

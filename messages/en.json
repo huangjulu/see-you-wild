@@ -67,20 +67,20 @@
       }
     },
     "whyChooseUs": {
-      "overline": "Why Choose Us",
-      "title": "Why Choose Us",
+      "overline": "GIRLS' TOP CHOICE",
+      "title": "Girls' Top Choice",
       "items": {
-        "safety": {
-          "title": "Safety First",
-          "desc": "Every guide holds professional certifications with regular training and equipment maintenance, so you can enjoy every moment with peace of mind."
+        "joy": {
+          "title": "Capturing Genuine Joy",
+          "desc": "Every journey deserves to be treasured. While you focus on challenging yourself and unwinding, we document your adventure naturally and unobtrusively — so you carry home a wealth of joyful memories without missing a single moment."
         },
-        "experience": {
-          "title": "Deep Experiences",
-          "desc": "We don't follow tourist routes. Every trail is scouted firsthand to show you Taiwan's most pristine beauty."
+        "vacation": {
+          "title": "Relaxed Micro-Getaways",
+          "desc": "Who says nature means roughing it? Leaving behind the fatigue of traditional outdoor trips, we handle every tedious detail — from private wild-camp dining to yacht tours — so you step into Taiwan's most pristine hideaways with grace and ease."
         },
-        "quality": {
-          "title": "Quality in Details",
-          "desc": "From pre-trip preparation to post-adventure photo records, every detail is polished to leave you with memories worth treasuring."
+        "guidance": {
+          "title": "Gentle Guidance, Effortless Safety",
+          "desc": "Led by seasoned outdoor coaches with full water-rescue and first-aid certifications, we patiently help you find your rhythm in the water. High-standard protective gear and spotless equipment make every step feel secure."
         }
       }
     },
@@ -121,10 +121,10 @@
       }
     },
     "cta": {
-      "title": "begin your journey",
-      "description": "Discover our curated expeditions and find the journey that best elevates your wild experience.",
-      "button": "Explore More",
-      "imageAlt": "Wilderness camp scene looking out from tent into forest"
+      "title": "Ready for the Wild?",
+      "description": "Ready to begin a relaxing, joyful getaway? Reach out to your personal concierge now for the most perfect hidden-gem itinerary.",
+      "button": "Contact Concierge",
+      "imageAlt": "Happy group photo of the See You Wild crew"
     },
     "events": {
       "sectionLabel": "Events",
@@ -293,6 +293,10 @@
     "dietaryVegetarian": "Vegetarian",
     "dietaryVegan": "Vegan",
     "wantsRental": "Need Equipment Rental",
+    "clothingSize": "Clothing Size",
+    "selectClothingSize": "Select size",
+    "shoeSize": "Shoe Size",
+    "selectShoeSize": "Select size",
     "notes": "Notes (optional)",
     "notesPlaceholder": "Other needs or notes (optional)",
     "transport": "Transport",

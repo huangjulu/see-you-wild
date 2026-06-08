@@ -39,6 +39,8 @@ export interface EventRow {
   preparation_notes: string;
   faq: string;
   refund_policy: string;
+  carpool_enabled: boolean;
+  rental_enabled: boolean;
   status: EventStatus;
   first_created_at: string;
   reminder_sent_at: string | null;
@@ -58,7 +60,7 @@ export interface RegistrationRow {
   emergency_contact_name: string;
   emergency_contact_phone: string;
   dietary: Dietary;
-  wants_rental: boolean;
+  rental_details: { clothing_size: string; shoe_size: number } | null;
   notes: string | null;
   transport: Transport;
   pickup_location: string | null;
@@ -125,6 +127,8 @@ export interface EventDetailDto {
   images: Array<{ src: string; alt: string }>;
   availableDates: string[];
   paymentDays: number;
+  carpoolEnabled: boolean;
+  rentalEnabled: boolean;
 }
 
 export function toEventDetail(row: EventRow): EventDetailDto {
@@ -145,6 +149,8 @@ export function toEventDetail(row: EventRow): EventDetailDto {
     images: row.images,
     availableDates: row.available_dates,
     paymentDays: row.payment_days,
+    carpoolEnabled: row.carpool_enabled,
+    rentalEnabled: row.rental_enabled,
   };
 }
 

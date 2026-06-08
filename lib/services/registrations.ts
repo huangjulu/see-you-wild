@@ -229,7 +229,7 @@ export async function approveOrRejectPayment(
   const { data: registration, error: regError } = await getSupabase()
     .from("registrations")
     .select(
-      "id, name, email, event_id, status, amount_due, transport, dietary, wants_rental"
+      "id, name, email, event_id, status, amount_due, transport, dietary, rental_details"
     )
     .eq("id", input.registrationId)
     .single();
@@ -249,7 +249,7 @@ export async function approveOrRejectPayment(
     | "amount_due"
     | "transport"
     | "dietary"
-    | "wants_rental"
+    | "rental_details"
   >;
 
   if (reg.status === "paid" || reg.status === "failed") {
@@ -290,7 +290,7 @@ export async function approveOrRejectPayment(
       amountDue: reg.amount_due,
       transport: reg.transport,
       dietary: reg.dietary,
-      wantsRental: reg.wants_rental,
+      wantsRental: reg.rental_details != null,
     }).catch((err) =>
       console.error("[notifier] registration success email failed", err)
     );

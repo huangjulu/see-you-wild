@@ -71,9 +71,9 @@ const PhilosophySection = () => {
         className="md:hidden flex justify-end -mt-36 mb-8 relative z-10"
       >
         <img
-          src="/icons/logo.png"
-          alt="See You Wild logo"
-          width={128}
+          src="/icons/logo-color.png"
+          alt="See You Wild 西揪團 logo"
+          width={160}
           className="rounded-md shadow-md bg-white"
         />
       </div>
@@ -108,7 +108,7 @@ const PhilosophySection = () => {
         <div className="reveal-up gsap-reveal">
           <div className="relative rounded-2xl overflow-hidden aspect-[3/4]">
             <img
-              src="https://pub-4f074e0ebf814197a45996298c88925f.r2.dev/home-philosophy.webp"
+              src="/images/founder-xiaoxi.webp"
               alt={t("imageAlt")}
               loading="lazy"
               decoding="async"

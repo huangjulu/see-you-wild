@@ -79,7 +79,7 @@ const CTACard = (props: CTACardProps) => {
         <div className="md:w-1/2 flex flex-col justify-center items-center md:items-start p-8 md:p-20 text-center md:text-left">
           <Heading.H2
             variant="display"
-            className="text-5xl md:text-6xl mb-6 leading-tight lowercase"
+            className="text-5xl md:text-6xl mb-6 leading-tight"
           >
             {props.title}
           </Heading.H2>

@@ -16,6 +16,7 @@ import type { PackageSelection } from "./packageOptions.types";
 interface PackageOptionsProps {
   availableDates: string[];
   carpoolSurcharge: number;
+  carpoolEnabled: boolean;
   onSelectionChange: (selection: PackageSelection) => void;
 }
 
@@ -169,107 +170,115 @@ const PackageOptions = (props: PackageOptionsProps) => {
         </div>
 
         {/* Transport */}
-        <div className="space-y-2">
-          <Heading.H4 variant="ui">{t("transport")}</Heading.H4>
-          <div className="flex flex-wrap gap-2.5">
-            <RadioOption
-              variant="outlined"
-              name="transportMode"
-              value="self"
-              label={t("selfArrival")}
-              checked={transportMode === "self"}
-              onChange={handleTransportModeChange}
-            />
-            <RadioOption
-              variant="outlined"
-              name="transportMode"
-              value="carpool"
-              label={t("carpool")}
-              checked={transportMode === "carpool"}
-              onChange={handleTransportModeChange}
-            />
-          </div>
-        </div>
-
-        {/* Carpool sub-group */}
-        <div
-          className={cn(
-            "grid transition-[grid-template-rows] duration-300",
-            transportMode === "carpool" ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-          )}
-        >
-          <div className="overflow-hidden space-y-4">
-            <p className="typo-ui text-sm text-accent">
-              {t("carpoolLockWarning")}
-            </p>
-            {/* Carpool role */}
+        {props.carpoolEnabled && (
+          <>
             <div className="space-y-2">
-              <Heading.H4 variant="ui">{t("carpoolRole")}</Heading.H4>
+              <Heading.H4 variant="ui">{t("transport")}</Heading.H4>
               <div className="flex flex-wrap gap-2.5">
                 <RadioOption
                   variant="outlined"
-                  name="carpoolRole"
-                  value="passenger"
-                  label={t("needRide")}
-                  checked={carpoolRole === "passenger"}
-                  onChange={handleCarpoolRoleChange}
+                  name="transportMode"
+                  value="self"
+                  label={t("selfArrival")}
+                  checked={transportMode === "self"}
+                  onChange={handleTransportModeChange}
                 />
                 <RadioOption
                   variant="outlined"
-                  name="carpoolRole"
-                  value="driver"
-                  label={t("canDrive")}
-                  subtitle={t("carpoolSubtitle")}
-                  checked={carpoolRole === "driver"}
-                  onChange={handleCarpoolRoleChange}
+                  name="transportMode"
+                  value="carpool"
+                  label={t("carpool")}
+                  checked={transportMode === "carpool"}
+                  onChange={handleTransportModeChange}
                 />
               </div>
-              {carpoolRole === "driver" && (
-                <p className="typo-body text-xs text-secondary">
-                  {t("driverNote")}
-                  <br />
-                  {t("driverOverflowNote")}
-                </p>
-              )}
             </div>
 
-            {/* Seat count (driver only) */}
+            {/* Carpool sub-group */}
             <div
               className={cn(
                 "grid transition-[grid-template-rows] duration-300",
-                carpoolRole === "driver" ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                transportMode === "carpool"
+                  ? "grid-rows-[1fr]"
+                  : "grid-rows-[0fr]"
               )}
             >
-              <div className="overflow-hidden">
-                <Selector
-                  label={t("seatCount")}
-                  placeholder={t("selectSeatCount")}
-                  options={seatCountOptions}
-                  value={String(seatCount)}
-                  onChange={handleSeatCountChange}
-                />
-              </div>
-            </div>
+              <div className="overflow-hidden space-y-4">
+                <p className="typo-ui text-sm text-accent">
+                  {t("carpoolLockWarning")}
+                </p>
+                {/* Carpool role */}
+                <div className="space-y-2">
+                  <Heading.H4 variant="ui">{t("carpoolRole")}</Heading.H4>
+                  <div className="flex flex-wrap gap-2.5">
+                    <RadioOption
+                      variant="outlined"
+                      name="carpoolRole"
+                      value="passenger"
+                      label={t("needRide")}
+                      checked={carpoolRole === "passenger"}
+                      onChange={handleCarpoolRoleChange}
+                    />
+                    <RadioOption
+                      variant="outlined"
+                      name="carpoolRole"
+                      value="driver"
+                      label={t("canDrive")}
+                      subtitle={t("carpoolSubtitle")}
+                      checked={carpoolRole === "driver"}
+                      onChange={handleCarpoolRoleChange}
+                    />
+                  </div>
+                  {carpoolRole === "driver" && (
+                    <p className="typo-body text-xs text-secondary">
+                      {t("driverNote")}
+                      <br />
+                      {t("driverOverflowNote")}
+                    </p>
+                  )}
+                </div>
 
-            {/* Pickup place */}
-            <div className="space-y-2">
-              <Heading.H3 variant="ui">{t("pickupPlace")}</Heading.H3>
-              <div className="flex flex-wrap gap-2.5">
-                {PICKUP_LOCATIONS.map((loc) => (
-                  <RadioOption
-                    variant="outlined"
-                    key={loc}
-                    name="pickup"
-                    value={loc}
-                    label={loc}
-                    checked={selectedPickup === loc}
-                    onChange={handlePickupChange}
-                  />
-                ))}
+                {/* Seat count (driver only) */}
+                <div
+                  className={cn(
+                    "grid transition-[grid-template-rows] duration-300",
+                    carpoolRole === "driver"
+                      ? "grid-rows-[1fr]"
+                      : "grid-rows-[0fr]"
+                  )}
+                >
+                  <div className="overflow-hidden">
+                    <Selector
+                      label={t("seatCount")}
+                      placeholder={t("selectSeatCount")}
+                      options={seatCountOptions}
+                      value={String(seatCount)}
+                      onChange={handleSeatCountChange}
+                    />
+                  </div>
+                </div>
+
+                {/* Pickup place */}
+                <div className="space-y-2">
+                  <Heading.H3 variant="ui">{t("pickupPlace")}</Heading.H3>
+                  <div className="flex flex-wrap gap-2.5">
+                    {PICKUP_LOCATIONS.map((loc) => (
+                      <RadioOption
+                        variant="outlined"
+                        key={loc}
+                        name="pickup"
+                        value={loc}
+                        label={loc}
+                        checked={selectedPickup === loc}
+                        onChange={handlePickupChange}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </ModalCard.Main>
     </ModalCard>
   );
