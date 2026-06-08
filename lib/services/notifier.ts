@@ -22,13 +22,11 @@ export function createRegistrationNotifier(context: NotifierContext) {
 
   function notifyCustomer(): Promise<void> {
     return sendRegistrationEmail({
-      registrationId: registration.id,
       to: registration.email,
       customerName: registration.name,
       eventTitle: event.title,
       amountDue: registration.amount_due,
       expiresAt: registration.expires_at,
-      baseUrl,
       transport: registration.transport === "carpool" ? "carpool" : "self",
     });
   }

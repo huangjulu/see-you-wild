@@ -150,17 +150,27 @@ describe("sendRegistrationFailedEmail", () => {
     const subject = mockSend.mock.calls[0][0].subject as string;
     expect(subject).toContain("宜蘭野溪溫泉");
   });
+
+  it("包含 LINE OA 聯繫連結", async () => {
+    await sendRegistrationFailedEmail(params);
+    const html = mockSend.mock.calls[0][0].html as string;
+    expect(html).toContain("line.me/R/ti/p/@427qyovq");
+  });
+
+  it("包含官網連結", async () => {
+    await sendRegistrationFailedEmail(params);
+    const html = mockSend.mock.calls[0][0].html as string;
+    expect(html).toContain("seeyouwild.com");
+  });
 });
 
 describe("sendRegistrationEmail", () => {
   const params = {
-    registrationId: "reg-1",
     to: "user@example.com",
     customerName: "張小明",
     eventTitle: "宜蘭野溪溫泉",
     amountDue: 4800,
     expiresAt: "2026-08-15T00:00:00Z",
-    baseUrl: "https://seeyouwild.com",
     transport: "carpool" as const,
   };
 
@@ -171,10 +181,11 @@ describe("sendRegistrationEmail", () => {
     expect(html).toContain("4,800");
   });
 
-  it("HTML 包含付款連結（含 registrationId 和 token）", async () => {
+  it("包含 LINE OA 回報繳費 CTA（已取代舊 paymentRef 按鈕）", async () => {
     await sendRegistrationEmail(params);
     const html = mockSend.mock.calls[0][0].html as string;
-    expect(html).toContain("payment-ref?id=reg-1&token=mock-hmac-token");
+    expect(html).toContain("line.me/R/ti/p/@427qyovq");
+    expect(html).toContain("加 LINE OA 回報繳費");
   });
 
   it("transport=carpool 時包含共乘通知", async () => {
@@ -199,7 +210,32 @@ describe("sendRegistrationEmail", () => {
     await sendRegistrationEmail(params);
     const html = mockSend.mock.calls[0][0].html as string;
     expect(html).toContain("匯款資訊");
-    expect(html).toContain("匯款完成，回報繳費");
+  });
+
+  it("包含 LINE OA 回報繳費 CTA", async () => {
+    await sendRegistrationEmail(params);
+    const html = mockSend.mock.calls[0][0].html as string;
+    expect(html).toContain("加 LINE OA 回報繳費");
+    expect(html).toContain("line.me/R/ti/p/@427qyovq");
+  });
+
+  it("包含官網連結", async () => {
+    await sendRegistrationEmail(params);
+    const html = mockSend.mock.calls[0][0].html as string;
+    expect(html).toContain("seeyouwild.com");
+  });
+
+  it("HTML escape 防 XSS（名稱含 < >）", async () => {
+    await sendRegistrationEmail({
+      ...params,
+      customerName: "<script>alert(1)</script>",
+      eventTitle: "<img src=x onerror=alert(1)>",
+    });
+    const html = mockSend.mock.calls[0][0].html as string;
+    expect(html).not.toContain("<script>");
+    expect(html).toContain("&lt;script&gt;");
+    expect(html).not.toContain("<img src=x");
+    expect(html).toContain("&lt;img");
   });
 });
 

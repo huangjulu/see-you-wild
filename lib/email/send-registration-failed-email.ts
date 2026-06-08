@@ -1,7 +1,9 @@
-import { getResend } from "./client";
-import { escapeHtml } from "./escape";
+import { LINE_OA_URL, SITE_URL } from "@/lib/constants";
 import { getEnv } from "@/lib/env";
 import { paymentAccount } from "@/lib/payment";
+
+import { getResend } from "./client";
+import { escapeHtml } from "./escape";
 
 interface SendRegistrationFailedEmailParams {
   to: string;
@@ -152,7 +154,8 @@ export async function sendRegistrationFailedEmail(
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr>
                   <td style="color: #9eb3c2; font-size: 13px; line-height: 1.6; text-align: center; padding-top: 16px;">
-                    如有疑問，請直接回覆此信聯繫我們。
+                    如有疑問，請透過 <a href="${LINE_OA_URL}" target="_blank" style="color: #9eb3c2;">LINE OA</a> 聯繫我們。<br>
+                    更多活動資訊請至 <a href="${SITE_URL}" target="_blank" style="color: #9eb3c2;">${SITE_URL}</a>
                   </td>
                 </tr>
               </table>
@@ -166,7 +169,7 @@ export async function sendRegistrationFailedEmail(
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr>
                   <td style="color: #9eb3c2; font-size: 12px; line-height: 1.7;">
-                    有任何問題歡迎直接回覆此信。<br>
+                    有任何問題請透過 <a href="${LINE_OA_URL}" target="_blank" style="color: #9eb3c2;">LINE OA</a> 聯繫我們。<br>
                     &copy; See You Wild
                   </td>
                 </tr>

@@ -1,25 +1,25 @@
+import { LINE_OA_URL, SITE_URL } from "@/lib/constants";
 import { getEnv } from "@/lib/env";
 import { paymentAccount } from "@/lib/payment";
-import { getPaymentToken } from "@/lib/token";
 
 import { getResend } from "./client";
+import { escapeHtml } from "./escape";
 
 interface SendRegistrationEmailParams {
-  registrationId: string;
   to: string;
   customerName: string;
   eventTitle: string;
   amountDue: number;
   expiresAt: string;
-  baseUrl: string;
   transport?: "self" | "carpool";
 }
 
 export async function sendRegistrationEmail(
   params: SendRegistrationEmailParams
 ) {
-  const token = getPaymentToken().generate(params.registrationId);
-  const paymentRefUrl = `${params.baseUrl}/payment-ref?id=${params.registrationId}&token=${token}`;
+  const safeName = escapeHtml(params.customerName);
+  const safeTitle = escapeHtml(params.eventTitle);
+
   const formattedAmount = params.amountDue.toLocaleString("zh-TW");
   const formattedExpiry = new Date(params.expiresAt).toLocaleDateString(
     "zh-TW",
@@ -44,7 +44,7 @@ export async function sendRegistrationEmail(
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="x-apple-disable-message-reformatting">
-  <title>你的報名已收到！— ${params.eventTitle}</title>
+  <title>你的報名已收到！— ${safeTitle}</title>
   <!--[if mso]>
   <noscript>
     <xml>
@@ -73,7 +73,7 @@ export async function sendRegistrationEmail(
 
   <!-- Preheader (hidden preview text) -->
   <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;">
-    ${params.customerName}，你的 ${params.eventTitle} 報名已收到，請於 ${formattedExpiry} 前完成繳費以確認名額。
+    ${safeName}，你的 ${safeTitle} 報名已收到，請於 ${formattedExpiry} 前完成繳費以確認名額。
   </div>
 
   <!-- Outer wrapper -->
@@ -105,7 +105,7 @@ export async function sendRegistrationEmail(
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr>
                   <td style="color: #2d3a40; font-size: 22px; font-weight: 700; line-height: 1.4; padding-bottom: 8px;">
-                    Hi ${params.customerName}
+                    Hi ${safeName}
                   </td>
                 </tr>
                 <tr>
@@ -128,7 +128,7 @@ export async function sendRegistrationEmail(
                       </tr>
                       <tr>
                         <td style="color: #2d3a40; font-size: 16px; font-weight: 600; line-height: 1.5; padding-bottom: 20px;">
-                          ${params.eventTitle}
+                          ${safeTitle}
                         </td>
                       </tr>
                       <!-- Amount -->
@@ -207,19 +207,19 @@ export async function sendRegistrationEmail(
               <!-- Carpool notice (conditional) -->
               ${carpoolNotice}
 
-              <!-- CTA: Payment confirmation -->
+              <!-- CTA: LINE OA payment report -->
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr>
                   <td align="center">
                     <!--[if mso]>
-                    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${paymentRefUrl}" style="height:48px;v-text-anchor:middle;width:280px;" arcsize="17%" stroke="f" fillcolor="#d4a373">
+                    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${LINE_OA_URL}" style="height:48px;v-text-anchor:middle;width:280px;" arcsize="17%" stroke="f" fillcolor="#06c755">
                       <w:anchorlock/>
-                      <center style="color:#ffffff;font-family:sans-serif;font-size:15px;font-weight:bold;">匯款完成，回報繳費</center>
+                      <center style="color:#ffffff;font-family:sans-serif;font-size:15px;font-weight:bold;">加 LINE OA 回報繳費</center>
                     </v:roundrect>
                     <![endif]-->
                     <!--[if !mso]><!-->
-                    <a href="${paymentRefUrl}" target="_blank" style="display: inline-block; background-color: #d4a373; color: #ffffff; font-size: 15px; font-weight: 700; text-decoration: none; padding: 14px 40px; border-radius: 8px; line-height: 1.2; mso-hide: all;">
-                      匯款完成，回報繳費
+                    <a href="${LINE_OA_URL}" target="_blank" style="display: inline-block; background-color: #06c755; color: #ffffff; font-size: 15px; font-weight: 700; text-decoration: none; padding: 14px 40px; border-radius: 8px; line-height: 1.2; mso-hide: all;">
+                      加 LINE OA 回報繳費
                     </a>
                     <!--<![endif]-->
                   </td>
@@ -230,7 +230,8 @@ export async function sendRegistrationEmail(
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr>
                   <td style="color: #9eb3c2; font-size: 13px; line-height: 1.6; text-align: center; padding-top: 16px;">
-                    匯款後點擊上方按鈕回報，我們確認後會再通知你。
+                    匯款後請加入 LINE OA 並傳送末五碼，我們確認後會再通知你。<br>
+                    更多活動資訊請至 <a href="${SITE_URL}" target="_blank" style="color: #9eb3c2;">${SITE_URL}</a>
                   </td>
                 </tr>
               </table>
@@ -244,7 +245,7 @@ export async function sendRegistrationEmail(
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr>
                   <td style="color: #9eb3c2; font-size: 12px; line-height: 1.7;">
-                    有任何問題歡迎直接回覆此信。<br>
+                    有任何問題請透過 <a href="${LINE_OA_URL}" target="_blank" style="color: #9eb3c2;">LINE OA</a> 聯繫我們。<br>
                     &copy; See You Wild
                   </td>
                 </tr>
@@ -265,7 +266,7 @@ export async function sendRegistrationEmail(
   await getResend().emails.send({
     from: getEnv().RESEND_FROM,
     to: params.to,
-    subject: `你的報名已收到！— ${params.eventTitle}`,
+    subject: `你的報名已收到！— ${safeTitle}`,
     html,
   });
 }
