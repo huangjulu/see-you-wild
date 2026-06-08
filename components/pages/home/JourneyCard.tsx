@@ -18,9 +18,12 @@ const JourneyCard = (props: JourneyCardProps) => {
         decoding="async"
         className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
       />
-      <div className="absolute inset-0 bg-linear-sto-t from-black/70 via-black/20 to-transparent" />
+      <div className="absolute inset-0 bg-linear-sto-t from-black/85 via-black/30 to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 p-6">
-        <Heading.H3 overline={props.subtitle} className="text-2xl text-white">
+        <Heading.H3
+          overline={props.subtitle}
+          className="text-2xl text-white text-shadow-md"
+        >
           {props.title}
         </Heading.H3>
       </div>
@@ -31,7 +34,7 @@ const JourneyCard = (props: JourneyCardProps) => {
     return (
       <Link
         href={props.href}
-        className="journey-card shrink-0 w-60 md:w-105 group"
+        className="journey-card shrink-0 w-60 md:w-105 group snap-start"
       >
         {content}
       </Link>
@@ -39,7 +42,9 @@ const JourneyCard = (props: JourneyCardProps) => {
   }
 
   return (
-    <div className="journey-card shrink-0 w-60 md:w-105 group">{content}</div>
+    <div className="journey-card shrink-0 w-60 md:w-105 group snap-start">
+      {content}
+    </div>
   );
 };
 
