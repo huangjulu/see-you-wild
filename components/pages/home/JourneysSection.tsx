@@ -137,7 +137,7 @@ const JourneysSection = () => {
     <section
       ref={sectionRef}
       id="journeys"
-      className="relative overflow-x-hidden bg-surface-brand bg-linear-180 from-journeys-gradient-from to-surface-brand from-[-15%] to-105%"
+      className="relative overflow-x-clip bg-surface-brand bg-linear-180 from-journeys-gradient-from to-surface-brand from-[-15%] to-105%"
     >
       <div className="flex flex-col pt-28 pb-24 md:pt-40 md:pb-32">
         <div className="max-w-7xl mx-auto w-full px-8 md:px-16 mb-7 flex items-end justify-between">
@@ -207,40 +207,46 @@ const JourneysSection = () => {
           <IconChevronRight className="w-6 h-6" />
         </button>
       </div>
-      <svg
-        aria-hidden="true"
-        viewBox="0 0 1440 48"
-        preserveAspectRatio="none"
-        className="block w-full h-[32px] md:h-[48px] -mb-[32px] md:-mb-[48px] relative z-10"
-      >
-        <path
-          d="M0,26 C60,22 140,32 240,28 S400,18 520,24 S700,38 840,30 S1020,12 1140,22 S1320,36 1440,28"
-          fill="none"
-          stroke="white"
-          strokeWidth="2"
-          strokeOpacity="0.35"
-          strokeLinecap="round"
-        />
-        <path
-          d="M0,22 C80,18 180,28 300,24 S460,14 600,20 S780,34 920,26 S1080,10 1200,18 S1360,30 1440,24"
-          fill="none"
-          stroke="white"
-          strokeWidth="1.2"
-          strokeOpacity="0.2"
-          strokeLinecap="round"
-          strokeDasharray="8 12"
-        />
-        <path
-          d="M0,30 C120,34 200,18 320,22 S520,40 660,30 S860,10 980,20 S1160,38 1280,28 S1400,18 1440,24 L1440,48 L0,48 Z"
-          className="fill-background"
-        />
-      </svg>
+      <WaveSVG />
     </section>
   );
 };
 
 JourneysSection.displayName = "JourneysSection";
 export default JourneysSection;
+
+const WaveSVG = () => {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 1440 120"
+      preserveAspectRatio="none"
+      className="absolute bottom-0 left-0 w-full h-12 md:h-18 translate-y-1/2 z-10"
+    >
+      <path
+        d="M0,72 C55,56 111,24 166,28 C222,32 277,68 332,76 C388,84 443,64 498,48 C554,32 609,20 665,28 C720,36 775,64 831,72 C886,80 942,68 997,52 C1052,36 1108,16 1163,20 C1218,24 1274,52 1329,64 C1385,76 1412,72 1440,68"
+        fill="none"
+        stroke="white"
+        strokeWidth="2"
+        strokeOpacity="0.35"
+        strokeLinecap="round"
+      />
+      <path
+        d="M0,80 C72,64 144,28 222,24 C300,20 388,48 480,56 C554,62 609,44 720,36 C831,28 886,56 997,64 C1108,72 1163,40 1274,32 C1348,27 1400,44 1440,52"
+        fill="none"
+        stroke="white"
+        strokeWidth="1.2"
+        strokeOpacity="0.2"
+        strokeLinecap="round"
+        strokeDasharray="8 12"
+      />
+      <path
+        d="M0,84 C55,68 111,32 166,24 C222,16 277,40 332,52 C388,64 443,72 498,60 C554,48 609,16 665,12 C720,8 775,32 831,48 C886,64 942,76 997,68 C1052,60 1108,28 1163,20 C1218,12 1274,28 1329,44 C1385,60 1412,72 1440,76 L1440,120 L0,120 Z"
+        className="fill-background"
+      />
+    </svg>
+  );
+};
 
 const JOURNEY_KEYS = [
   "river-tracing",
