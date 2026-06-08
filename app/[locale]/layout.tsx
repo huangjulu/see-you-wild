@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
@@ -150,6 +150,13 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
     icons: {
       icon: "/icons/icon-192.png",
     },
+  };
+}
+
+/* ─── Viewport ─── */
+
+export function generateViewport(): Viewport {
+  return {
     themeColor: [
       { media: "(prefers-color-scheme: light)", color: "#1a2226" },
       { media: "(prefers-color-scheme: dark)", color: "#1a2226" },

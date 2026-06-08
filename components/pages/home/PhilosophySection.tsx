@@ -46,10 +46,11 @@ const PhilosophySection = () => {
 
   useTween(sectionRef, {
     selector: ".philosophy-image",
-    from: { yPercent: -20, scale: 1.4 },
+    from: { x: 110, y: -200, scale: 2.5 },
     to: {
-      yPercent: 20,
-      scale: 1.4,
+      x: 110,
+      y: -128,
+      scale: 2.5,
       ease: "power3.out",
       scrollTrigger: {
         start: "top bottom",
@@ -68,13 +69,13 @@ const PhilosophySection = () => {
     >
       <div
         ref={logoBadgeRef}
-        className="md:hidden flex justify-end -mt-36 mb-8 relative z-10"
+        className="md:hidden flex justify-center -mt-36 mb-8 relative z-10"
       >
         <img
           src="/icons/logo-color.png"
           alt="See You Wild 西揪團 logo"
           width={160}
-          className="rounded-md shadow-md bg-white"
+          className="rounded-full bg-background  p-4"
         />
       </div>
       <div
