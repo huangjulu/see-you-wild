@@ -46,9 +46,7 @@ const eventFormSchema = z.object({
   carpool_enabled: z.boolean(),
   rental_enabled: z.boolean(),
   refund_policy: z.string().max(1000),
-  images: z
-    .array(z.object({ src: z.string().url(), alt: z.string() }))
-    .min(3, "請上傳至少三張圖片"),
+  images: z.array(z.object({ src: z.string().url(), alt: z.string() })),
   status: z.enum(["open", "closed"]),
 });
 
@@ -134,11 +132,28 @@ const EventFormModal = (props: EventFormModalProps) => {
     uploadMutation.isPending;
 
   async function handleFormSubmit(values: EventFormValues) {
+    const totalImages = values.images.length + pendingFiles.length;
+    if (totalImages < 3) {
+      methods.setError("images", { message: "請上傳至少三張圖片" });
+      return;
+    }
+    methods.clearErrors("images");
+
     const pLimit = (await import("p-limit")).default;
     const limit = pLimit(3);
-    const uploadResults = await Promise.all(
-      pendingFiles.map((file) => limit(() => uploadMutation.mutateAsync(file)))
-    );
+    let uploadResults: Array<{ url: string }>;
+    try {
+      uploadResults = await Promise.all(
+        pendingFiles.map((file) =>
+          limit(() => uploadMutation.mutateAsync(file))
+        )
+      );
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "圖片上傳失敗，請稍後再試";
+      toast.error("圖片上傳失敗", { description: message });
+      return;
+    }
     const uploadedUrls = uploadResults.map((r) => r.url);
 
     const uploadedImages = uploadedUrls.map((url, i) => ({
@@ -210,6 +225,7 @@ const EventFormModal = (props: EventFormModalProps) => {
                     current.filter((_, i) => i !== index)
                   );
                 }}
+                error={methods.formState.errors.images?.message}
               />
               <EventFormFields
                 lockedDates={lockedDates}
@@ -256,11 +272,13 @@ interface MultiImageUploadFieldProps {
   pendingFiles: File[];
   onPendingFilesChange: (files: File[]) => void;
   onRemoveExisting: (index: number) => void;
+  error?: string;
 }
 
 const MultiImageUploadField = (props: MultiImageUploadFieldProps) => {
   const totalCount = props.existingImages.length + props.pendingFiles.length;
   const maxReached = totalCount >= 3;
+  const [sizeError, setSizeError] = useState<string | null>(null);
 
   function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
@@ -271,9 +289,11 @@ const MultiImageUploadField = (props: MultiImageUploadFieldProps) => {
     const maxSize = 4 * 1024 * 1024;
     const oversized = candidates.filter((f) => f.size > maxSize);
     if (oversized.length > 0) {
-      alert(
+      setSizeError(
         `以下檔案超過 4MB 上限：${oversized.map((f) => f.name).join(", ")}`
       );
+    } else {
+      setSizeError(null);
     }
     const valid = candidates.filter((f) => f.size <= maxSize);
     if (valid.length > 0) {
@@ -343,6 +363,12 @@ const MultiImageUploadField = (props: MultiImageUploadFieldProps) => {
             "file:cursor-pointer file:transition-colors file:hover:border-stroke-strong"
           )}
         />
+      )}
+      {sizeError != null && (
+        <p className="typo-ui text-xs text-critical">{sizeError}</p>
+      )}
+      {props.error != null && (
+        <p className="typo-ui text-xs text-critical">{props.error}</p>
       )}
     </div>
   );
@@ -517,15 +543,6 @@ const EventFormFields = (props: EventFormFieldsProps) => {
       </fieldset>
 
       <div className="space-y-2">
-        <span className="typo-ui text-sm text-primary">安全須知</span>
-        <TextArea
-          placeholder="請輸入活動安全須知..."
-          rows={4}
-          {...register("safety_policy")}
-        />
-      </div>
-
-      <div className="space-y-2">
         <span className="typo-ui text-sm text-primary">行前準備與穿著建議</span>
         <TextArea
           placeholder="行前準備注意事項..."
@@ -540,6 +557,15 @@ const EventFormFields = (props: EventFormFieldsProps) => {
           placeholder="常見問題與解答..."
           rows={6}
           {...register("faq")}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <span className="typo-ui text-sm text-primary">安全須知</span>
+        <TextArea
+          placeholder="請輸入活動安全須知..."
+          rows={4}
+          {...register("safety_policy")}
         />
       </div>
 

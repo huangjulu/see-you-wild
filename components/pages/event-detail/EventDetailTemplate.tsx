@@ -89,15 +89,6 @@ const EventDetailTemplate = (props: EventDetailTemplateProps) => {
             onSelectionChange={setSelection}
           />
 
-          {event.safetyPolicy !== "" && (
-            <EventDetailSection
-              title={t("safetyPolicy")}
-              content={event.safetyPolicy}
-              expandLabel={t("viewPolicy")}
-              collapseLabel={t("collapse")}
-            />
-          )}
-
           {event.preparationNotes !== "" && (
             <ModalCard className="max-h-none">
               <ModalCard.Header title={t("preparationNotes")} />
@@ -114,6 +105,15 @@ const EventDetailTemplate = (props: EventDetailTemplateProps) => {
               title={t("faq")}
               content={event.faq}
               expandLabel={t("viewFaq")}
+              collapseLabel={t("collapse")}
+            />
+          )}
+
+          {event.safetyPolicy !== "" && (
+            <EventDetailSection
+              title={t("safetyPolicy")}
+              content={event.safetyPolicy}
+              expandLabel={t("viewPolicy")}
               collapseLabel={t("collapse")}
             />
           )}
