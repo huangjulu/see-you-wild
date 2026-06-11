@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { handleError } from "@/lib/api/handle-error";
 import { apiOk } from "@/lib/api-response";
+import { requireAdmin } from "@/lib/auth/require-admin";
 import { sendRegistrationCancelledEmail } from "@/lib/email/send-registration-cancelled-email";
 import {
   AlreadyRegisteredError,
@@ -45,6 +46,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
 
 export async function PATCH(request: Request, { params }: RouteParams) {
   try {
+    await requireAdmin();
     const { id } = await params;
     const body = (await request.json()) as Record<string, unknown>;
     const parsed = updateRegistrationSchema.parse(body);
@@ -142,6 +144,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 
 export async function DELETE(_request: Request, { params }: RouteParams) {
   try {
+    await requireAdmin();
     const { id } = await params;
 
     const { data: regData, error: regError } = await getSupabase()

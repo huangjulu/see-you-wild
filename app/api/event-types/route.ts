@@ -1,5 +1,6 @@
 import { handleError } from "@/lib/api/handle-error";
 import { apiOk } from "@/lib/api-response";
+import { requireAdmin } from "@/lib/auth/require-admin";
 import { getSupabase } from "@/lib/supabase/client";
 import type { EventTypeRow } from "@/lib/types/database";
 
@@ -20,6 +21,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    await requireAdmin();
     const body = await request.json();
     const { slug, name_zh, name_en } = body;
 

@@ -5,6 +5,10 @@ vi.mock("@/lib/supabase/client", () => ({
   getSupabase: vi.fn(),
 }));
 
+vi.mock("@/lib/auth/require-admin", () => ({
+  requireAdmin: vi.fn(),
+}));
+
 import { getSupabase } from "@/lib/supabase/client";
 
 import { PATCH } from "../route";

@@ -1,5 +1,6 @@
 import { handleError } from "@/lib/api/handle-error";
 import { apiOk } from "@/lib/api-response";
+import { requireAdmin } from "@/lib/auth/require-admin";
 import { InternalError } from "@/lib/errors/domain";
 import { assignCarpool } from "@/lib/services/carpool";
 import { getSupabase } from "@/lib/supabase/client";
@@ -30,6 +31,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
 
 export async function POST(_request: Request, { params }: RouteParams) {
   try {
+    await requireAdmin();
     const { eventId } = await params;
     const assignments = await assignCarpool(eventId);
     return apiOk(assignments, 201);

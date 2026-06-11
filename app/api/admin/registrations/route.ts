@@ -1,5 +1,6 @@
 import { handleError } from "@/lib/api/handle-error";
 import { apiOk } from "@/lib/api-response";
+import { requireAdmin } from "@/lib/auth/require-admin";
 import { getEnv } from "@/lib/env";
 import { createRegistrationNotifier } from "@/lib/services/notifier";
 import { createRegistration } from "@/lib/services/registrations";
@@ -9,6 +10,7 @@ import { createRegistrationSchema } from "@/lib/validations/registrations";
 
 export async function POST(request: Request) {
   try {
+    await requireAdmin();
     const body = await request.json();
     const parsed = createRegistrationSchema.parse(body);
     const registration = await createRegistration(parsed);

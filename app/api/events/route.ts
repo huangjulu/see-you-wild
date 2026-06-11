@@ -1,5 +1,6 @@
 import { handleError } from "@/lib/api/handle-error";
 import { apiOk } from "@/lib/api-response";
+import { requireAdmin } from "@/lib/auth/require-admin";
 import { InternalError } from "@/lib/errors/domain";
 import { getSupabase } from "@/lib/supabase/client";
 import type {
@@ -50,6 +51,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    await requireAdmin();
     const body = await request.json();
     const parsed = createEventSchema.parse(body);
 

@@ -2,6 +2,7 @@ import { fileTypeFromBuffer } from "file-type";
 
 import { handleError } from "@/lib/api/handle-error";
 import { apiOk } from "@/lib/api-response";
+import { requireAdmin } from "@/lib/auth/require-admin";
 import { uploadEventImage } from "@/lib/r2/storage";
 
 const MAX_FILE_SIZE = 4 * 1024 * 1024;
@@ -9,6 +10,7 @@ const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export async function POST(request: Request) {
   try {
+    await requireAdmin();
     const formData = await request.formData();
     const file = formData.get("file");
 

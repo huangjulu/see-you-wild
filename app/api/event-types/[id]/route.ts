@@ -1,5 +1,6 @@
 import { handleError } from "@/lib/api/handle-error";
 import { apiOk } from "@/lib/api-response";
+import { requireAdmin } from "@/lib/auth/require-admin";
 import { getSupabase } from "@/lib/supabase/client";
 import type { EventTypeRow } from "@/lib/types/database";
 
@@ -9,6 +10,7 @@ interface RouteParams {
 
 export async function PUT(request: Request, props: RouteParams) {
   try {
+    await requireAdmin();
     const { id } = await props.params;
     const body = await request.json();
     const { slug, name_zh, name_en } = body;
@@ -30,6 +32,7 @@ export async function PUT(request: Request, props: RouteParams) {
 
 export async function DELETE(_request: Request, props: RouteParams) {
   try {
+    await requireAdmin();
     const { id } = await props.params;
 
     const { error } = await getSupabase()

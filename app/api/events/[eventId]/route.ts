@@ -1,5 +1,6 @@
 import { handleError } from "@/lib/api/handle-error";
 import { apiOk } from "@/lib/api-response";
+import { requireAdmin } from "@/lib/auth/require-admin";
 import {
   CarpoolCutoffInPastError,
   CarpoolDatesLockedError,
@@ -37,6 +38,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
 
 export async function PATCH(request: Request, { params }: RouteParams) {
   try {
+    await requireAdmin();
     const { eventId } = await params;
     const body = await request.json();
     const parsed = updateEventSchema.parse(body);
@@ -119,6 +121,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 
 export async function DELETE(request: Request, { params }: RouteParams) {
   try {
+    await requireAdmin();
     const { eventId } = await params;
     const body = await request.json();
     const { cancellation_reason } = deleteEventSchema.parse(body);

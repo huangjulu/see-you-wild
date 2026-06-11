@@ -1,5 +1,6 @@
 import { handleError } from "@/lib/api/handle-error";
 import { apiOk } from "@/lib/api-response";
+import { requireAdmin } from "@/lib/auth/require-admin";
 import { sendRegistrationEmail } from "@/lib/email/send-registration-email";
 import { RegistrationNotFoundError } from "@/lib/errors/domain";
 import { getSupabase } from "@/lib/supabase/client";
@@ -11,6 +12,7 @@ interface RouteParams {
 
 export async function POST(_request: Request, { params }: RouteParams) {
   try {
+    await requireAdmin();
     const { id } = await params;
 
     const { data: registration, error: regError } = await getSupabase()
