@@ -4,7 +4,6 @@ import {
   Archive as IconArchive,
   LayoutDashboard as IconLayoutDashboard,
   Tags as IconTags,
-  Users as IconUsers,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 
@@ -13,7 +12,6 @@ import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { href: "/admin", icon: IconLayoutDashboard, label: "首頁" },
-  { href: "/admin/registrations", icon: IconUsers, label: "報名" },
   { href: "/admin/event-types", icon: IconTags, label: "類型" },
   { href: "/admin/history", icon: IconArchive, label: "歷史" },
 ] as const;
