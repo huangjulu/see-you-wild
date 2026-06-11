@@ -84,7 +84,7 @@ const HeroSection = () => {
         className="absolute bottom-0 left-0 w-full h-[180%] object-cover will-change-transform pointer-events-none"
       >
         <source
-          src="https://pub-4f074e0ebf814197a45996298c88925f.r2.dev/hero/syw-hero.mp4"
+          src="https://pub-4f074e0ebf814197a45996298c88925f.r2.dev/hero/syw-hero-v2.mp4"
           type="video/mp4"
         />
       </video>
