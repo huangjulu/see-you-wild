@@ -44,23 +44,6 @@ const PhilosophySection = () => {
     },
   });
 
-  useTween(sectionRef, {
-    selector: ".philosophy-image",
-    from: { x: 110, y: -200, scale: 2.5 },
-    to: {
-      x: 110,
-      y: -128,
-      scale: 2.5,
-      ease: "power3.out",
-      scrollTrigger: {
-        start: "top bottom",
-        end: "bottom top",
-        scrub: true,
-        invalidateOnRefresh: true,
-      },
-    },
-  });
-
   return (
     <section
       id="about"
@@ -113,7 +96,7 @@ const PhilosophySection = () => {
               alt={t("imageAlt")}
               loading="lazy"
               decoding="async"
-              className="philosophy-image absolute inset-0 w-full h-full object-cover will-change-transform"
+              className="absolute inset-0 w-full h-full object-cover"
             />
           </div>
         </div>
