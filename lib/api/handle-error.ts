@@ -18,12 +18,19 @@ export function handleError(err: unknown): NextResponse {
     if (err instanceof InternalError && err.cause !== undefined) {
       console.error("[api] internal error", err.cause);
     }
-    return NextResponse.json({ error: err.message }, { status: err.status });
+    return NextResponse.json(
+      { error: err.message, code: err.code },
+      { status: err.status }
+    );
   }
 
   if (err instanceof ZodError) {
     return NextResponse.json(
-      { error: "Validation failed", details: err.flatten() },
+      {
+        error: "Validation failed",
+        code: "VALIDATION_FAILED",
+        details: err.flatten(),
+      },
       { status: 400 }
     );
   }

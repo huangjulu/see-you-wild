@@ -357,6 +357,19 @@
     "notesTooLong": "備註超過 500 字",
     "invalidBirthday": "生日格式錯誤"
   },
+  "apiError": {
+    "ALREADY_REGISTERED": "此 Email 已報名過此活動",
+    "DUPLICATE_ID_NUMBER": "此證件號碼已報名過此活動",
+    "EVENT_NOT_FOUND": "找不到此活動",
+    "EVENT_CLOSED": "此活動報名已截止",
+    "REGISTRATION_NOT_FOUND": "找不到此報名紀錄",
+    "REGISTRATION_PAID": "此報名已完成付款",
+    "REGISTRATION_ALREADY_REVIEWED": "此報名已審核過",
+    "REGISTRATION_EXPIRED": "此報名已過期",
+    "INVALID_TOKEN": "驗證碼無效",
+    "VALIDATION_FAILED": "資料格式不正確，請檢查後重新送出",
+    "UNKNOWN": "發生未知錯誤，請稍後再試"
+  },
   "adminLogin": {
     "title": "管理者登入",
     "email": "Email",

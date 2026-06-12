@@ -1,7 +1,7 @@
 // lib/api/admin.api.ts
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { type ApiError, apiFetch } from "@/lib/api/api-fetch";
+import { type ApiErrorBody, apiFetch } from "@/lib/api/api-fetch";
 import type {
   EventListDto,
   EventRow,
@@ -97,7 +97,9 @@ export const adminApi = {
         if (response.ok) {
           return response.json();
         }
-        const body: ApiError | null = await response.json().catch(() => null);
+        const body: ApiErrorBody | null = await response
+          .json()
+          .catch(() => null);
         throw new Error(body?.error ?? "Upload failed");
       },
     });
