@@ -2,6 +2,7 @@ import { sendRegistrationFailedEmail } from "@/lib/email/send-registration-faile
 import { sendRegistrationSuccessEmail } from "@/lib/email/send-registration-success-email";
 import {
   AlreadyRegisteredError,
+  DuplicateIdNumberError,
   EventClosedError,
   EventNotFoundError,
   HasCarpoolAssignmentError,
@@ -20,7 +21,7 @@ import type {
   RegistrationStatus,
   Transport,
 } from "@/lib/types/database";
-import type { CreateRegistrationInput } from "@/lib/validations/registrations";
+import type { CreateRegistrationData } from "@/lib/validations/registrations";
 
 /**
  * Amount calculation strategies keyed by transport mode.
@@ -70,7 +71,7 @@ export function createRegistrationService(event: EventRow) {
  * to avoid mis-attributing them as "already registered".
  */
 export async function createRegistration(
-  input: CreateRegistrationInput
+  input: CreateRegistrationData
 ): Promise<RegistrationRow> {
   const { data: eventData, error: eventError } = await getSupabase()
     .from("events")
@@ -102,11 +103,13 @@ export async function createRegistration(
     .single();
 
   if (insertError) {
-    if (
-      insertError.code === "23505" &&
-      insertError.message?.includes("registrations_event_email")
-    ) {
-      throw new AlreadyRegisteredError();
+    if (insertError.code === "23505") {
+      if (insertError.message?.includes("registrations_event_email")) {
+        throw new AlreadyRegisteredError();
+      }
+      if (insertError.message?.includes("registrations_event_id_number")) {
+        throw new DuplicateIdNumberError();
+      }
     }
     throw new InternalError(insertError.message, insertError);
   }
@@ -197,13 +200,21 @@ export async function submitPaymentRef(
     throw new EventClosedError();
   }
 
-  const { error: updateError } = await getSupabase()
+  // 樂觀鎖：排除讀取與更新間 admin 已審核通過（paid）的競態；
+  // failed 狀態允許重新回報（對齊上方 status guard 只擋 paid）
+  const { data: updated, error: updateError } = await getSupabase()
     .from("registrations")
     .update({ payment_ref: input.paymentRef })
-    .eq("id", input.registrationId);
+    .eq("id", input.registrationId)
+    .neq("status", "paid")
+    .select("id");
 
   if (updateError) {
     throw new InternalError(updateError.message, updateError);
+  }
+
+  if (!updated || updated.length === 0) {
+    throw new RegistrationPaidError();
   }
 
   return {

@@ -194,7 +194,10 @@ export const paymentRefSchema = z.object({
   token: z.string().min(1),
 });
 
-export type CreateRegistrationInput = z.infer<typeof baseRegistrationSchema>;
+// mutation caller 送出的是 parse 前的 shape：defaulted 欄位可省略、transform 未套用
+export type CreateRegistrationInput = z.input<typeof baseRegistrationSchema>;
+// service 層收到的是 schema.parse 後的 output：defaults 已填、transforms 已套用
+export type CreateRegistrationData = z.infer<typeof baseRegistrationSchema>;
 export type RegistrationFormInput = z.infer<typeof registrationFormSchema>;
 export type UpdateRegistrationInput = z.infer<typeof updateRegistrationSchema>;
 export type PaymentRefInput = z.infer<typeof paymentRefSchema>;

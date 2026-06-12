@@ -57,6 +57,26 @@ export async function POST(request: Request) {
           throw new InternalError(regError.message, regError);
         }
 
+        // 先佔位標記再寄信：.is(null) 守衛防止併發 cron 重複處理同一活動，
+        // 也避免單封 email 失敗導致下次執行整批重寄（已寄成功的人收到第二封）。
+        // 代價：標記後的 email 失敗不會自動重試，逐筆記錄於 results 供人工補寄。
+        const { data: claimed, error: claimError } = await getSupabase()
+          .from("events")
+          .update({ reminder_sent_at: new Date().toISOString() })
+          .eq("id", event.id)
+          .is("reminder_sent_at", null)
+          .select("id");
+
+        if (claimError) {
+          throw new InternalError(claimError.message, claimError);
+        }
+
+        if (!claimed || claimed.length === 0) {
+          results.push({ eventId: event.id, status: "ok" });
+          continue;
+        }
+
+        const failedRecipients: string[] = [];
         const eventUrl = `${getEnv().canonicalUrl}/zh-TW/events/${event.id}`;
         const eventDate = event.start_date;
 
@@ -83,21 +103,25 @@ export async function POST(request: Request) {
             ? group.some((a) => a.final_role === "driver")
             : undefined;
 
-          await sendEventReminderEmail({
-            to: reg.email,
-            customerName: reg.name,
-            eventTitle: event.title,
-            eventDate,
-            eventLocation: event.location,
-            eventUrl,
-            transport: reg.transport === "carpool" ? "carpool" : "self",
-            finalRole,
-            pickupLocation: assignment?.pickup_location,
-            carGroup: assignment?.car_group,
-            passengerCount,
-            refundAmount: assignment?.refund_amount,
-            hasDriver,
-          });
+          try {
+            await sendEventReminderEmail({
+              to: reg.email,
+              customerName: reg.name,
+              eventTitle: event.title,
+              eventDate,
+              eventLocation: event.location,
+              eventUrl,
+              transport: reg.transport === "carpool" ? "carpool" : "self",
+              finalRole,
+              pickupLocation: assignment?.pickup_location,
+              carGroup: assignment?.car_group,
+              passengerCount,
+              refundAmount: assignment?.refund_amount,
+              hasDriver,
+            });
+          } catch {
+            failedRecipients.push(reg.email);
+          }
         }
 
         if (assignments.length > 0) {
@@ -135,25 +159,28 @@ export async function POST(request: Request) {
 
           const adminEmail = process.env.ADMIN_EMAIL ?? "admin@seeyouwild.com";
 
-          await sendAdminCarpoolSummaryEmail({
-            to: adminEmail,
-            eventTitle: event.title,
-            eventDate,
-            eventUrl,
-            groups,
+          try {
+            await sendAdminCarpoolSummaryEmail({
+              to: adminEmail,
+              eventTitle: event.title,
+              eventDate,
+              eventUrl,
+              groups,
+            });
+          } catch {
+            failedRecipients.push(adminEmail);
+          }
+        }
+
+        if (failedRecipients.length > 0) {
+          results.push({
+            eventId: event.id,
+            status: "error",
+            error: `emails failed: ${failedRecipients.join(", ")}`,
           });
+        } else {
+          results.push({ eventId: event.id, status: "ok" });
         }
-
-        const { error: updateError } = await getSupabase()
-          .from("events")
-          .update({ reminder_sent_at: new Date().toISOString() })
-          .eq("id", event.id);
-
-        if (updateError) {
-          throw new InternalError(updateError.message, updateError);
-        }
-
-        results.push({ eventId: event.id, status: "ok" });
       } catch (err) {
         results.push({
           eventId: event.id,

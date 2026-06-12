@@ -13,10 +13,17 @@ export function makeSingleChain(result: { data: unknown; error: unknown }) {
   };
 }
 
-export function makeUpdateChain(result: { error: unknown }) {
+export function makeFilteredUpdateChain(result: {
+  data: unknown;
+  error: unknown;
+}) {
   return {
     update: () => ({
-      eq: vi.fn().mockResolvedValue(result),
+      eq: () => ({
+        neq: () => ({
+          select: vi.fn().mockResolvedValue(result),
+        }),
+      }),
     }),
   };
 }

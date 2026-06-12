@@ -142,8 +142,13 @@ describe("POST /api/cron/event-reminder", () => {
 
     vi.mocked(assignCarpool).mockResolvedValue(assignments);
 
-    const updateChain = {
-      eq: vi.fn().mockResolvedValue({ error: null }),
+    // claim-first：update().eq().is().select() 回已搶占的列
+    const claimChain = {
+      eq: vi.fn().mockReturnThis(),
+      is: vi.fn().mockReturnThis(),
+      select: vi
+        .fn()
+        .mockResolvedValue({ data: [{ id: "evt-1" }], error: null }),
     };
 
     let callCount = 0;
@@ -153,7 +158,7 @@ describe("POST /api/cron/event-reminder", () => {
         if (callCount === 1) {
           return makeChain({ data: [eligibleEvent], error: null });
         }
-        return { update: vi.fn().mockReturnValue(updateChain) };
+        return { update: vi.fn().mockReturnValue(claimChain) };
       }
       if (table === "registrations") {
         const regChain = {
@@ -225,8 +230,12 @@ describe("POST /api/cron/event-reminder", () => {
       return Promise.resolve([]);
     });
 
-    const updateChain = {
-      eq: vi.fn().mockResolvedValue({ error: null }),
+    const claimChain = {
+      eq: vi.fn().mockReturnThis(),
+      is: vi.fn().mockReturnThis(),
+      select: vi
+        .fn()
+        .mockResolvedValue({ data: [{ id: "evt-ok" }], error: null }),
     };
 
     let eventsCallCount = 0;
@@ -236,7 +245,7 @@ describe("POST /api/cron/event-reminder", () => {
         if (eventsCallCount === 1) {
           return makeChain({ data: [event1, event2], error: null });
         }
-        return { update: vi.fn().mockReturnValue(updateChain) };
+        return { update: vi.fn().mockReturnValue(claimChain) };
       }
       if (table === "registrations") {
         const regChain = {
