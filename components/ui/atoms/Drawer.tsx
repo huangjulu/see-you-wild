@@ -43,11 +43,12 @@ interface DrawerContentProps {
 const DrawerContent = (props: DrawerContentProps) => {
   return (
     <DrawerPrimitive.Portal>
-      <DrawerPrimitive.Backdrop className="fixed inset-0 z-110 bg-black/40" />
+      <DrawerPrimitive.Backdrop className="fixed inset-0 z-110 bg-black/40 transition-opacity duration-300 data-[starting-style]:opacity-0 data-[ending-style]:opacity-0" />
       <DrawerPrimitive.Viewport className="fixed inset-0 z-110 flex items-end">
         <DrawerPrimitive.Popup
           className={cn(
             "flex w-full flex-col rounded-t-2xl bg-white pb-[env(safe-area-inset-bottom)] outline-none",
+            "transition-transform duration-300 ease-out data-[starting-style]:translate-y-full data-[ending-style]:translate-y-full",
             props.className
           )}
         >

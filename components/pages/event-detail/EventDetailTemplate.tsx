@@ -138,6 +138,7 @@ const EventDetailTemplate = (props: EventDetailTemplateProps) => {
             allOptionsSelected={allOptionsSelected}
             selectedDate={selection.selectedDate}
             onBook={onBookClick}
+            eventId={event.id}
           />
         </div>
       </Section>

@@ -130,6 +130,9 @@ const RegistrationModal = (props: RegistrationModalProps) => {
         onSuccess: (registration) => {
           setSubmittedAmount(registration.amount_due);
           setSubmittedEmail(data.email);
+          try {
+            localStorage.setItem(`syw:reg:${props.eventId}:${data.email}`, "1");
+          } catch {}
         },
         onError: (err) => {
           const code =
