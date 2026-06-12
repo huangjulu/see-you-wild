@@ -4,6 +4,7 @@ import { paymentAccount } from "@/lib/payment";
 
 import { getResend } from "./client";
 import { escapeHtml } from "./escape";
+import { renderEmailLayout } from "./layout";
 
 interface SendRegistrationEmailParams {
   to: string;
@@ -37,71 +38,22 @@ export async function sendRegistrationEmail(
     </td></tr>`
       : "";
 
-  const html = `<!DOCTYPE html>
-<html lang="zh-Hant" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="x-apple-disable-message-reformatting">
-  <title>你的報名已收到！— ${safeTitle}</title>
-  <!--[if mso]>
-  <noscript>
-    <xml>
-      <o:OfficeDocumentSettings>
-        <o:AllowPNG/>
-        <o:PixelsPerInch>96</o:PixelsPerInch>
-      </o:OfficeDocumentSettings>
-    </xml>
-  </noscript>
-  <![endif]-->
-  <style type="text/css">
-    /* Reset */
-    body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-    img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
-    body { margin: 0; padding: 0; width: 100% !important; height: 100% !important; }
-    a[x-apple-data-detectors] { color: inherit !important; text-decoration: none !important; font-size: inherit !important; font-family: inherit !important; font-weight: inherit !important; line-height: inherit !important; }
-    /* Dark mode overrides */
-    @media (prefers-color-scheme: dark) {
+  const html = renderEmailLayout({
+    title: `你的報名已收到！— ${safeTitle}`,
+    preheaderHtml: `${safeName}，你的 ${safeTitle} 報名已收到，請於 ${formattedExpiry} 前完成繳費以確認名額。`,
+    headerBg: "#d4a373",
+    headerTextColor: "#ffffff",
+    footerBg: "#f4f6f5",
+    footerHtml: `有任何問題請透過 <a href="${LINE_OA_URL}" target="_blank" style="color: #9eb3c2;">LINE OA</a> 聯繫我們。<br>
+                    &copy; See You Wild`,
+    containerWidth: 560,
+    extraStyles: `@media (prefers-color-scheme: dark) {
       .email-bg { background-color: #1a1a1a !important; }
       .card-bg { background-color: #2a2a2a !important; }
-    }
-  </style>
-</head>
-<body style="margin: 0; padding: 0; background-color: #f4f6f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans TC', sans-serif;">
-
-  <!-- Preheader (hidden preview text) -->
-  <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;">
-    ${safeName}，你的 ${safeTitle} 報名已收到，請於 ${formattedExpiry} 前完成繳費以確認名額。
-  </div>
-
-  <!-- Outer wrapper -->
-  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f4f6f5;" class="email-bg">
-    <tr>
-      <td align="center" style="padding: 32px 16px;">
-
-        <!-- Email container (max 560px) -->
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="560" style="max-width: 560px; width: 100%;">
-
-          <!-- Header: Brand bar -->
-          <tr>
-            <td style="background-color: #d4a373; border-radius: 12px 12px 0 0; padding: 24px 32px; text-align: center;">
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-                <tr>
-                  <td style="color: #ffffff; font-size: 20px; font-weight: 700; letter-spacing: 1px; text-align: center; line-height: 1.4;">
-                    SEE YOU WILD
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-          <!-- Main card -->
-          <tr>
-            <td style="background-color: #ffffff; padding: 40px 32px 32px;" class="card-bg">
-
-              <!-- Greeting -->
+    }`,
+    outerTableClass: "email-bg",
+    mainCardClass: "card-bg",
+    bodyHtml: `<!-- Greeting -->
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr>
                   <td style="color: #2d3a40; font-size: 22px; font-weight: 700; line-height: 1.4; padding-bottom: 8px;">
@@ -234,34 +186,8 @@ export async function sendRegistrationEmail(
                     更多活動資訊請至 <a href="${SITE_URL}" target="_blank" style="color: #9eb3c2;">${SITE_URL}</a>
                   </td>
                 </tr>
-              </table>
-
-            </td>
-          </tr>
-
-          <!-- Footer -->
-          <tr>
-            <td style="background-color: #f4f6f5; border-radius: 0 0 12px 12px; padding: 24px 32px; text-align: center;">
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-                <tr>
-                  <td style="color: #9eb3c2; font-size: 12px; line-height: 1.7;">
-                    有任何問題請透過 <a href="${LINE_OA_URL}" target="_blank" style="color: #9eb3c2;">LINE OA</a> 聯繫我們。<br>
-                    &copy; See You Wild
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-        </table>
-        <!-- /Email container -->
-
-      </td>
-    </tr>
-  </table>
-
-</body>
-</html>`;
+              </table>`,
+  });
 
   await getResend().emails.send({
     from: getEnv().RESEND_FROM,
