@@ -80,7 +80,7 @@ async function sendAdminReviewNotification(
       eventTitle: evt.title,
       amountDue: reg.amount_due,
       expiresAt: reg.expires_at,
-      adminUrl: `${origin}/admin/registrations/${registrationId}`,
+      adminUrl: `${origin}/admin`,
       adminEmail: process.env.ADMIN_EMAIL ?? "admin@seeyouwild.com",
       paymentRef,
       reviewUrl,

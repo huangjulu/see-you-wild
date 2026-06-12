@@ -3,6 +3,7 @@ import { apiOk } from "@/lib/api-response";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { getSupabase } from "@/lib/supabase/client";
 import type { EventTypeRow } from "@/lib/types/database";
+import { eventTypeSchema } from "@/lib/validations/event-types";
 
 export async function GET() {
   try {
@@ -23,15 +24,11 @@ export async function POST(request: Request) {
   try {
     await requireAdmin();
     const body = await request.json();
-    const { slug, name_zh, name_en } = body;
-
-    if (!slug || !name_zh || !name_en) {
-      return apiOk({ error: "slug, name_zh, name_en are required" }, 400);
-    }
+    const parsed = eventTypeSchema.parse(body);
 
     const { data, error } = await getSupabase()
       .from("event_types")
-      .insert({ slug, name_zh, name_en })
+      .insert(parsed)
       .select()
       .single();
 

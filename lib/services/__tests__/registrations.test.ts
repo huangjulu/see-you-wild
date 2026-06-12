@@ -41,18 +41,18 @@ import {
 import { getSupabase } from "@/lib/supabase/client";
 import { makeEvent } from "@/lib/test-utils/fixtures";
 import {
+  makeFilteredUpdateChain,
   makeInsertSingleChain,
   makeOptimisticUpdateChain,
   makeSingleChain,
-  makeUpdateChain,
   setupSupabaseMock,
 } from "@/lib/test-utils/supabase-mock";
 import { getPaymentToken } from "@/lib/token";
-import type { CreateRegistrationInput } from "@/lib/validations/registrations";
+import type { CreateRegistrationData } from "@/lib/validations/registrations";
 
 const baseEvent = makeEvent();
 
-const baseRegistrationInput: CreateRegistrationInput = {
+const baseRegistrationInput: CreateRegistrationData = {
   event_id: "evt-1",
   country: "TW",
   name: "Test User",
@@ -227,7 +227,7 @@ describe("createRegistration", () => {
   });
 
   it("transport='carpool' → amount_due 為 base_price + carpool_surcharge", async () => {
-    const carpoolInput: CreateRegistrationInput = {
+    const carpoolInput: CreateRegistrationData = {
       ...baseRegistrationInput,
       transport: "carpool",
       pickup_location: "taipei",
@@ -282,7 +282,7 @@ describe("submitPaymentRef", () => {
         data: { status: "open" },
         error: null,
       }),
-      makeUpdateChain({ error: null }),
+      makeFilteredUpdateChain({ data: [{ id: "reg-1" }], error: null }),
     ]);
 
     const result = await submitPaymentRef({
@@ -295,6 +295,29 @@ describe("submitPaymentRef", () => {
       registrationId: "reg-1",
       paymentRef: "12345",
     });
+  });
+
+  it("update 影響 0 列（讀取後被 admin 改為 paid 的競態）→ throw RegistrationPaidError", async () => {
+    setupPaymentToken(true);
+
+    const futureDate = new Date(Date.now() + 7 * 86400_000).toISOString();
+
+    setupSupabaseMock([
+      makeSingleChain({
+        data: { status: "pending", expires_at: futureDate, event_id: "evt-1" },
+        error: null,
+      }),
+      makeSingleChain({ data: { status: "open" }, error: null }),
+      makeFilteredUpdateChain({ data: [], error: null }),
+    ]);
+
+    await expect(
+      submitPaymentRef({
+        registrationId: "reg-1",
+        token: "valid-token",
+        paymentRef: "12345",
+      })
+    ).rejects.toThrow(RegistrationPaidError);
   });
 
   it("HMAC token 無效時 throw InvalidTokenError 不查 DB", async () => {
@@ -421,7 +444,10 @@ describe("submitPaymentRef", () => {
         error: null,
       }),
       makeSingleChain({ data: { status: "open" }, error: null }),
-      makeUpdateChain({ error: { message: "update failed" } }),
+      makeFilteredUpdateChain({
+        data: null,
+        error: { message: "update failed" },
+      }),
     ]);
 
     await expect(

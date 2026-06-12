@@ -366,6 +366,19 @@
     "notesTooLong": "Notes too long (max 500)",
     "invalidBirthday": "Invalid birthday"
   },
+  "apiError": {
+    "ALREADY_REGISTERED": "This email is already registered for this event",
+    "DUPLICATE_ID_NUMBER": "This ID number is already registered for this event",
+    "EVENT_NOT_FOUND": "Event not found",
+    "EVENT_CLOSED": "Registration for this event is closed",
+    "REGISTRATION_NOT_FOUND": "Registration not found",
+    "REGISTRATION_PAID": "This registration has already been paid",
+    "REGISTRATION_ALREADY_REVIEWED": "This registration has already been reviewed",
+    "REGISTRATION_EXPIRED": "This registration has expired",
+    "INVALID_TOKEN": "Invalid token",
+    "VALIDATION_FAILED": "Invalid data format, please check and resubmit",
+    "UNKNOWN": "An unknown error occurred, please try again later"
+  },
   "adminLogin": {
     "title": "Admin Login",
     "email": "Email",

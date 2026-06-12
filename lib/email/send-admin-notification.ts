@@ -1,6 +1,8 @@
+import { getEnv } from "@/lib/env";
+
 import { getResend } from "./client";
 import { escapeHtml } from "./escape";
-import { getEnv } from "@/lib/env";
+import { renderEmailLayout } from "./layout";
 
 interface SendAdminNotificationParams {
   customerName: string;
@@ -38,67 +40,20 @@ export async function sendAdminNotification(
     day: "numeric",
   });
 
-  const html = `<!DOCTYPE html>
-<html lang="zh-Hant" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="x-apple-disable-message-reformatting">
-  <title>${paymentRef ? `付款審核 — ${safeName}｜末五碼 ${safeRef}` : `新報名 — ${safeName}｜${safeTitle}`}</title>
-  <!--[if mso]>
-  <noscript>
-    <xml>
-      <o:OfficeDocumentSettings>
-        <o:AllowPNG/>
-        <o:PixelsPerInch>96</o:PixelsPerInch>
-      </o:OfficeDocumentSettings>
-    </xml>
-  </noscript>
-  <![endif]-->
-  <style type="text/css">
-    body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-    table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-    img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
-    body { margin: 0; padding: 0; width: 100% !important; height: 100% !important; }
-    a[x-apple-data-detectors] { color: inherit !important; text-decoration: none !important; font-size: inherit !important; font-family: inherit !important; font-weight: inherit !important; line-height: inherit !important; }
-  </style>
-</head>
-<body style="margin: 0; padding: 0; background-color: #f4f6f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans TC', sans-serif;">
-
-  <!-- Preheader -->
-  <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;">
-    ${paymentRef
+  const html = renderEmailLayout({
+    title: paymentRef
+      ? `付款審核 — ${safeName}｜末五碼 ${safeRef}`
+      : `新報名 — ${safeName}｜${safeTitle}`,
+    preheaderHtml: paymentRef
       ? `${safeTitle} — ${safeName} — 末五碼 ${safeRef}，請前往審核。`
-      : `${safeName} 報名了 ${safeTitle}，待繳 NT$ ${formattedAmount}，期限 ${formattedExpiry}。`}
-  </div>
-
-  <!-- Outer wrapper -->
-  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f4f6f5;">
-    <tr>
-      <td align="center" style="padding: 32px 16px;">
-
-        <!-- Email container -->
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="560" style="max-width: 560px; width: 100%;">
-
-          <!-- Header: Brand bar -->
-          <tr>
-            <td style="background-color: #2d3a40; border-radius: 12px 12px 0 0; padding: 24px 32px; text-align: center;">
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-                <tr>
-                  <td style="color: #f4f6f5; font-size: 20px; font-weight: 700; letter-spacing: 1px; text-align: center; line-height: 1.4;">
-                    SEE YOU WILD
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-          <!-- Main card -->
-          <tr>
-            <td style="background-color: #ffffff; padding: 40px 32px 32px;">
-
-              <!-- Greeting -->
+      : `${safeName} 報名了 ${safeTitle}，待繳 NT$ ${formattedAmount}，期限 ${formattedExpiry}。`,
+    headerBg: "#2d3a40",
+    headerTextColor: "#f4f6f5",
+    footerBg: "#2d3a40",
+    footerHtml: `此為系統自動通知，無需回覆。<br>
+                    &copy; See You Wild`,
+    containerWidth: 560,
+    bodyHtml: `<!-- Greeting -->
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr>
                   <td style="color: #2d3a40; font-size: 22px; font-weight: 700; line-height: 1.4; padding-bottom: 8px;">
@@ -107,9 +62,11 @@ export async function sendAdminNotification(
                 </tr>
                 <tr>
                   <td style="color: #2d3a40; font-size: 15px; line-height: 1.7; padding-bottom: 28px;">
-                    ${paymentRef
-                      ? `<strong>${safeName}</strong> 已回報 <strong>${safeTitle}</strong> 的匯款末五碼：<strong>${safeRef}</strong>，請前往審核。`
-                      : `<strong>${safeName}</strong> 已報名 <strong>${safeTitle}</strong>。`}
+                    ${
+                      paymentRef
+                        ? `<strong>${safeName}</strong> 已回報 <strong>${safeTitle}</strong> 的匯款末五碼：<strong>${safeRef}</strong>，請前往審核。`
+                        : `<strong>${safeName}</strong> 已報名 <strong>${safeTitle}</strong>。`
+                    }
                   </td>
                 </tr>
               </table>
@@ -169,9 +126,11 @@ export async function sendAdminNotification(
                     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                       <tr>
                         <td style="color: #2d3a40; font-size: 15px; line-height: 1.7; text-align: center; padding-bottom: 16px;">
-                          ${reviewUrl
-                            ? "請點選下方按鈕前往審核這筆付款。"
-                            : "請點選下方按鈕前往後台查看這筆報名紀錄，以便我們團隊作業。"}
+                          ${
+                            reviewUrl
+                              ? "請點選下方按鈕前往審核這筆付款。"
+                              : "請點選下方按鈕前往後台查看這筆報名紀錄，以便我們團隊作業。"
+                          }
                         </td>
                       </tr>
                     </table>
@@ -188,34 +147,8 @@ export async function sendAdminNotification(
                     <!--<![endif]-->
                   </td>
                 </tr>
-              </table>
-
-            </td>
-          </tr>
-
-          <!-- Footer -->
-          <tr>
-            <td style="background-color: #2d3a40; border-radius: 0 0 12px 12px; padding: 24px 32px; text-align: center;">
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-                <tr>
-                  <td style="color: #9eb3c2; font-size: 12px; line-height: 1.7;">
-                    此為系統自動通知，無需回覆。<br>
-                    &copy; See You Wild
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-        </table>
-        <!-- /Email container -->
-
-      </td>
-    </tr>
-  </table>
-
-</body>
-</html>`;
+              </table>`,
+  });
 
   await getResend().emails.send({
     from: getEnv().RESEND_FROM,

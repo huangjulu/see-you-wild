@@ -23,6 +23,7 @@ import IdNumberInput from "@/components/ui/molecules/IdNumberInput";
 import ModalCard from "@/components/ui/molecules/ModalCard";
 import PhoneInput from "@/components/ui/molecules/PhoneInput";
 import Selector from "@/components/ui/molecules/Selector";
+import { ApiError } from "@/lib/api/api-fetch";
 import { registrationApi } from "@/lib/api/registration.api";
 import { PICKUP_LOCATIONS } from "@/lib/constants";
 import {
@@ -62,6 +63,7 @@ interface RegistrationModalProps {
 
 const RegistrationModal = (props: RegistrationModalProps) => {
   const t = useTranslations("registration");
+  const tApiError = useTranslations("apiError");
   const tValidation = useTranslations("validation");
   const formRef = useRef<HTMLFormElement>(null);
   const [currentStep, setCurrentStep] = useState(0);
@@ -130,7 +132,15 @@ const RegistrationModal = (props: RegistrationModalProps) => {
           setSubmittedEmail(data.email);
         },
         onError: (err) => {
-          const message = err instanceof Error ? err.message : t("submitError");
+          const code =
+            err instanceof ApiError ? (err.code ?? "UNKNOWN") : "UNKNOWN";
+          const translated = tApiError(code);
+          const message =
+            translated !== code
+              ? translated
+              : err instanceof Error
+                ? err.message
+                : tApiError("UNKNOWN");
           methods.setError("root", { message });
         },
       }

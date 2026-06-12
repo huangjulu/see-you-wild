@@ -6,6 +6,7 @@ import { requireAdmin } from "@/lib/auth/require-admin";
 import { sendRegistrationCancelledEmail } from "@/lib/email/send-registration-cancelled-email";
 import {
   AlreadyRegisteredError,
+  DuplicateIdNumberError,
   InternalError,
   RegistrationNotFoundError,
 } from "@/lib/errors/domain";
@@ -127,11 +128,13 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       .single();
 
     if (error) {
-      if (
-        error.code === "23505" &&
-        error.message?.includes("registrations_event_email")
-      ) {
-        throw new AlreadyRegisteredError();
+      if (error.code === "23505") {
+        if (error.message?.includes("registrations_event_email")) {
+          throw new AlreadyRegisteredError();
+        }
+        if (error.message?.includes("registrations_event_id_number")) {
+          throw new DuplicateIdNumberError();
+        }
       }
       throw new InternalError(error.message, error);
     }

@@ -15,27 +15,6 @@ interface RouteParams {
   params: Promise<{ eventId: string }>;
 }
 
-export async function GET(_request: Request, { params }: RouteParams) {
-  try {
-    const { eventId } = await params;
-
-    const { data, error } = await getSupabase()
-      .from("events")
-      .select("*")
-      .eq("id", eventId)
-      .single();
-
-    if (error || !data) {
-      throw new EventNotFoundError();
-    }
-
-    const typedEvent: EventRow = data;
-    return apiOk(typedEvent);
-  } catch (err) {
-    return handleError(err);
-  }
-}
-
 export async function PATCH(request: Request, { params }: RouteParams) {
   try {
     await requireAdmin();

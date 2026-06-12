@@ -3,6 +3,7 @@ import { apiOk } from "@/lib/api-response";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { getSupabase } from "@/lib/supabase/client";
 import type { EventTypeRow } from "@/lib/types/database";
+import { eventTypeSchema } from "@/lib/validations/event-types";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -13,11 +14,11 @@ export async function PUT(request: Request, props: RouteParams) {
     await requireAdmin();
     const { id } = await props.params;
     const body = await request.json();
-    const { slug, name_zh, name_en } = body;
+    const parsed = eventTypeSchema.parse(body);
 
     const { data, error } = await getSupabase()
       .from("event_types")
-      .update({ slug, name_zh, name_en })
+      .update(parsed)
       .eq("id", id)
       .select()
       .single();

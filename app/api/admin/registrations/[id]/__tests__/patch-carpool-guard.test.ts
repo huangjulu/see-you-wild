@@ -5,6 +5,10 @@ vi.mock("@/lib/supabase/client", () => ({
   getSupabase: vi.fn(),
 }));
 
+vi.mock("@/lib/auth/require-admin", () => ({
+  requireAdmin: vi.fn(),
+}));
+
 vi.mock("@/lib/email/send-registration-cancelled-email", () => ({
   sendRegistrationCancelledEmail: vi.fn(),
 }));
@@ -13,11 +17,14 @@ vi.mock("@/lib/services/registrations", () => ({
   deleteRegistration: vi.fn(),
 }));
 
-import { PATCH } from "@/app/api/registrations/[id]/route";
+import { requireAdmin } from "@/lib/auth/require-admin";
+import { UnauthorizedError } from "@/lib/errors/domain";
 import { getSupabase } from "@/lib/supabase/client";
 
-// SupabaseClient is opaque 3rd-party type; building a full mock is impractical.
-// PATCH only uses .from(), so we narrow via unknown to the partial shape we control.
+import { PATCH } from "../route";
+
+// SupabaseClient is opaque 3rd-party type; PATCH only uses .from(),
+// so we narrow via unknown to the partial shape we control.
 function setupSupabaseMock(chains: unknown[]) {
   const fromMock = vi.fn();
   for (const chain of chains) {
@@ -26,6 +33,7 @@ function setupSupabaseMock(chains: unknown[]) {
   vi.mocked(getSupabase).mockReturnValue({
     from: fromMock,
   } as unknown as SupabaseClient);
+  return fromMock;
 }
 
 function makeSelectSingleChain(result: { data: unknown; error: unknown }) {
@@ -53,8 +61,26 @@ function makeUpdateSelectSingleChain(result: {
   };
 }
 
+function makeCapturingUpdateChain(
+  capture: (row: Record<string, unknown>) => void,
+  result: { data: unknown; error: unknown }
+) {
+  return {
+    update: (row: Record<string, unknown>) => {
+      capture(row);
+      return {
+        eq: () => ({
+          select: () => ({
+            single: vi.fn().mockResolvedValue(result),
+          }),
+        }),
+      };
+    },
+  };
+}
+
 function makeRequest(body: Record<string, unknown>): Request {
-  return new Request("http://localhost/api/registrations/reg-1", {
+  return new Request("http://localhost/api/admin/registrations/reg-1", {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
@@ -63,16 +89,21 @@ function makeRequest(body: Record<string, unknown>): Request {
 
 const params = Promise.resolve({ id: "reg-1" });
 
-const OPEN_EVENT_CHAIN = makeSelectSingleChain({
-  data: { status: "open" },
-  error: null,
-});
-
 beforeEach(() => {
   vi.clearAllMocks();
 });
 
-describe("PATCH /api/registrations/[id] — carpool guard", () => {
+describe("PATCH /api/admin/registrations/[id] — carpool guard", () => {
+  it("requireAdmin 失敗 → 401，不碰 DB", async () => {
+    vi.mocked(requireAdmin).mockRejectedValueOnce(new UnauthorizedError());
+    const fromMock = setupSupabaseMock([]);
+
+    const res = await PATCH(makeRequest({ notes: "hi" }), { params });
+
+    expect(res.status).toBe(401);
+    expect(fromMock).not.toHaveBeenCalled();
+  });
+
   describe("Guard 1: carpool → self 禁止", () => {
     it("現有 transport=carpool，嘗試改成 self → 400", async () => {
       setupSupabaseMock([
@@ -80,13 +111,12 @@ describe("PATCH /api/registrations/[id] — carpool guard", () => {
           data: { transport: "carpool", event_id: "evt-1" },
           error: null,
         }),
-        OPEN_EVENT_CHAIN,
       ]);
 
       const res = await PATCH(makeRequest({ transport: "self" }), { params });
 
       expect(res.status).toBe(400);
-      const json = (await res.json()) as { error: string };
+      const json = await res.json();
       expect(json.error).toMatch(/carpool/i);
     });
 
@@ -96,7 +126,6 @@ describe("PATCH /api/registrations/[id] — carpool guard", () => {
           data: { transport: "self", event_id: "evt-1" },
           error: null,
         }),
-        OPEN_EVENT_CHAIN,
         makeUpdateSelectSingleChain({
           data: { id: "reg-1", transport: "self" },
           error: null,
@@ -116,7 +145,6 @@ describe("PATCH /api/registrations/[id] — carpool guard", () => {
           data: { transport: "self", event_id: "evt-1" },
           error: null,
         }),
-        OPEN_EVENT_CHAIN,
       ]);
 
       const res = await PATCH(
@@ -125,7 +153,7 @@ describe("PATCH /api/registrations/[id] — carpool guard", () => {
       );
 
       expect(res.status).toBe(400);
-      const json = (await res.json()) as { error: string };
+      const json = await res.json();
       expect(json.error).toMatch(/carpool_role/i);
     });
 
@@ -135,7 +163,6 @@ describe("PATCH /api/registrations/[id] — carpool guard", () => {
           data: { transport: "self", event_id: "evt-1" },
           error: null,
         }),
-        OPEN_EVENT_CHAIN,
       ]);
 
       const res = await PATCH(
@@ -144,17 +171,16 @@ describe("PATCH /api/registrations/[id] — carpool guard", () => {
       );
 
       expect(res.status).toBe(400);
-      const json = (await res.json()) as { error: string };
+      const json = await res.json();
       expect(json.error).toMatch(/pickup_location/i);
     });
 
-    it("self → carpool 且 carpool_role + pickup_location 都有 → 成功", async () => {
+    it("self → carpool 且必填齊全 → 成功", async () => {
       setupSupabaseMock([
         makeSelectSingleChain({
           data: { transport: "self", event_id: "evt-1" },
           error: null,
         }),
-        OPEN_EVENT_CHAIN,
         makeUpdateSelectSingleChain({
           data: { id: "reg-1", transport: "carpool" },
           error: null,
@@ -176,7 +202,6 @@ describe("PATCH /api/registrations/[id] — carpool guard", () => {
 
   describe("Guard 3: carpool 偏好欄位受 cutoff 限制", () => {
     it("今天 >= cutoff 日期，修改 carpool_role → 400", async () => {
-      // start_date 明天，cutoff_days=10 → cutoff 是 10 天前，today >= cutoff → 鎖定
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       const startDate = tomorrow.toISOString().slice(0, 10);
@@ -186,17 +211,10 @@ describe("PATCH /api/registrations/[id] — carpool guard", () => {
           data: { transport: "carpool", event_id: "evt-1" },
           error: null,
         }),
-        OPEN_EVENT_CHAIN,
-        {
-          select: () => ({
-            eq: () => ({
-              single: vi.fn().mockResolvedValue({
-                data: { start_date: startDate, carpool_cutoff_days: 10 },
-                error: null,
-              }),
-            }),
-          }),
-        },
+        makeSelectSingleChain({
+          data: { start_date: startDate, carpool_cutoff_days: 10 },
+          error: null,
+        }),
       ]);
 
       const res = await PATCH(makeRequest({ carpool_role: "driver" }), {
@@ -204,12 +222,11 @@ describe("PATCH /api/registrations/[id] — carpool guard", () => {
       });
 
       expect(res.status).toBe(400);
-      const json = (await res.json()) as { error: string };
+      const json = await res.json();
       expect(json.error).toMatch(/cutoff/i);
     });
 
     it("today < cutoff 日期，修改 pickup_location → 成功", async () => {
-      // start_date 60 天後，cutoff_days=3 → cutoff 是 57 天後，today < cutoff → 允許
       const future = new Date();
       future.setDate(future.getDate() + 60);
       const startDate = future.toISOString().slice(0, 10);
@@ -219,49 +236,20 @@ describe("PATCH /api/registrations/[id] — carpool guard", () => {
           data: { transport: "carpool", event_id: "evt-1" },
           error: null,
         }),
-        OPEN_EVENT_CHAIN,
-        {
-          select: () => ({
-            eq: () => ({
-              single: vi.fn().mockResolvedValue({
-                data: { start_date: startDate, carpool_cutoff_days: 3 },
-                error: null,
-              }),
-            }),
-          }),
-        },
-        makeUpdateSelectSingleChain({
-          data: { id: "reg-1", pickup_location: "板橋站" },
-          error: null,
-        }),
-      ]);
-
-      const res = await PATCH(makeRequest({ pickup_location: "板橋站" }), {
-        params,
-      });
-
-      expect(res.status).toBe(200);
-    });
-
-    it("transport=self 修改 carpool 偏好欄位 → 不觸發 cutoff guard", async () => {
-      // transport=self：guard 3 不啟動（只對 existing carpool 生效）
-      setupSupabaseMock([
         makeSelectSingleChain({
-          data: { transport: "self", event_id: "evt-1" },
+          data: { start_date: startDate, carpool_cutoff_days: 3 },
           error: null,
         }),
-        OPEN_EVENT_CHAIN,
         makeUpdateSelectSingleChain({
-          data: { id: "reg-1", carpool_role: null },
+          data: { id: "reg-1", pickup_location: "板橋捷運站" },
           error: null,
         }),
       ]);
 
-      const res = await PATCH(makeRequest({ carpool_role: "passenger" }), {
+      const res = await PATCH(makeRequest({ pickup_location: "板橋捷運站" }), {
         params,
       });
 
-      // 不觸發 guard，但 self→carpool 的 guard 2 也不觸發（parsed.transport 是 undefined）
       expect(res.status).toBe(200);
     });
 
@@ -271,7 +259,6 @@ describe("PATCH /api/registrations/[id] — carpool guard", () => {
           data: { transport: "carpool", event_id: "evt-1" },
           error: null,
         }),
-        OPEN_EVENT_CHAIN,
         makeUpdateSelectSingleChain({
           data: { id: "reg-1", notes: "備注" },
           error: null,
@@ -284,13 +271,57 @@ describe("PATCH /api/registrations/[id] — carpool guard", () => {
     });
   });
 
+  describe("status 審核副作用", () => {
+    it("status='paid' 時 update payload 寫入 confirmed_at", async () => {
+      let captured: Record<string, unknown> = {};
+
+      setupSupabaseMock([
+        makeSelectSingleChain({
+          data: { transport: "self", event_id: "evt-1" },
+          error: null,
+        }),
+        makeCapturingUpdateChain(
+          (row) => {
+            captured = row;
+          },
+          { data: { id: "reg-1", status: "paid" }, error: null }
+        ),
+      ]);
+
+      const res = await PATCH(makeRequest({ status: "paid" }), { params });
+
+      expect(res.status).toBe(200);
+      expect(captured.status).toBe("paid");
+      expect(captured.confirmed_at).toBeTypeOf("string");
+    });
+
+    it("status='pending' 時不寫 confirmed_at", async () => {
+      let captured: Record<string, unknown> = {};
+
+      setupSupabaseMock([
+        makeSelectSingleChain({
+          data: { transport: "self", event_id: "evt-1" },
+          error: null,
+        }),
+        makeCapturingUpdateChain(
+          (row) => {
+            captured = row;
+          },
+          { data: { id: "reg-1", status: "pending" }, error: null }
+        ),
+      ]);
+
+      const res = await PATCH(makeRequest({ status: "pending" }), { params });
+
+      expect(res.status).toBe(200);
+      expect(captured.confirmed_at).toBeUndefined();
+    });
+  });
+
   describe("registration 不存在", () => {
     it("SELECT 回 error → 404", async () => {
       setupSupabaseMock([
-        makeSelectSingleChain({
-          data: null,
-          error: { message: "not found" },
-        }),
+        makeSelectSingleChain({ data: null, error: { message: "not found" } }),
       ]);
 
       const res = await PATCH(makeRequest({ notes: "hi" }), { params });
