@@ -10,6 +10,7 @@ const HeroSection = () => {
   const t = useTranslations("home.hero");
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const mobileVideoRef = useRef<HTMLVideoElement>(null);
   const h1Ref = useRef<HTMLHeadingElement>(null);
   const subtitlesRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
@@ -73,6 +74,7 @@ const HeroSection = () => {
 
   useEffect(function startVideoAfterMount() {
     videoRef.current?.play().catch(() => {});
+    mobileVideoRef.current?.play().catch(() => {});
   }, []);
 
   return (
@@ -83,17 +85,25 @@ const HeroSection = () => {
     >
       <video
         ref={videoRef}
-        poster="https://pub-4f074e0ebf814197a45996298c88925f.r2.dev/hero/syw-hero-v3-poster.webp"
+        poster={HERO_DESKTOP_POSTER}
         preload="none"
         muted
         loop
         playsInline
-        className="absolute bottom-0 left-0 w-full h-[180%] object-cover will-change-transform pointer-events-none"
+        className="absolute bottom-0 left-0 w-full h-[180%] object-cover will-change-transform pointer-events-none hidden md:block"
       >
-        <source
-          src="https://pub-4f074e0ebf814197a45996298c88925f.r2.dev/hero/syw-hero-v3.mp4"
-          type="video/mp4"
-        />
+        <source src={HERO_DESKTOP_VIDEO} type="video/mp4" />
+      </video>
+      <video
+        ref={mobileVideoRef}
+        poster={HERO_MOBILE_POSTER}
+        preload="none"
+        muted
+        loop
+        playsInline
+        className="absolute bottom-0 left-0 w-full h-[180%] object-cover will-change-transform pointer-events-none md:hidden"
+      >
+        <source src={HERO_MOBILE_VIDEO} type="video/mp4" />
       </video>
       <div
         className="absolute inset-0 bg-neutral-950/40 pointer-events-none"
@@ -137,3 +147,9 @@ const HeroSection = () => {
 
 HeroSection.displayName = "HeroSection";
 export default HeroSection;
+
+const R2_BASE = "https://pub-4f074e0ebf814197a45996298c88925f.r2.dev/hero";
+const HERO_DESKTOP_VIDEO = `${R2_BASE}/syw-hero-v3.mp4`;
+const HERO_DESKTOP_POSTER = `${R2_BASE}/syw-hero-v3-poster.webp`;
+const HERO_MOBILE_VIDEO = `${R2_BASE}/syw-hero-v3-mobile.mp4`;
+const HERO_MOBILE_POSTER = `${R2_BASE}/syw-hero-v3-mobile-poster.webp`;
