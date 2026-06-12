@@ -50,7 +50,7 @@ const EventCalendar = (props: EventCalendarProps) => {
       full: {
         match: fullMatcher,
         label: t("calendarFull"),
-        style: "pointer-events-none cursor-default text-neutral-400/40",
+        style: "pointer-events-none cursor-default opacity-40",
       },
       available: {
         match: availableMatcher,
