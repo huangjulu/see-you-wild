@@ -3,7 +3,7 @@ import { fileTypeFromBuffer } from "file-type";
 import { handleError } from "@/lib/api/handle-error";
 import { apiOk } from "@/lib/api-response";
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { uploadEventImage } from "@/lib/r2/storage";
+import { uploadImage } from "@/lib/storage/upload-image";
 
 const MAX_FILE_SIZE = 4 * 1024 * 1024;
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       return apiOk({ error: "僅支援 JPG、PNG、WebP 格式" }, 400);
     }
 
-    const publicUrl = await uploadEventImage(buffer, file.name, detected.mime);
+    const publicUrl = await uploadImage(buffer, file.name, detected.mime);
 
     return apiOk({ url: publicUrl });
   } catch (err) {

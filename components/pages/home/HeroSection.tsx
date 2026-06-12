@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import Button from "@/components/ui/atoms/Button";
 import { useTimeline, useTween } from "@/lib/gsap";
@@ -9,6 +9,7 @@ import { useTranslations } from "@/lib/i18n/client";
 const HeroSection = () => {
   const t = useTranslations("home.hero");
   const sectionRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const h1Ref = useRef<HTMLHeadingElement>(null);
   const subtitlesRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
@@ -70,6 +71,10 @@ const HeroSection = () => {
   useTween(ctaRef, parallaxTween);
   useTween(scrollRef, parallaxTween);
 
+  useEffect(function startVideoAfterMount() {
+    videoRef.current?.play().catch(() => {});
+  }, []);
+
   return (
     <section
       ref={sectionRef}
@@ -77,14 +82,16 @@ const HeroSection = () => {
       aria-label="Hero"
     >
       <video
-        autoPlay
+        ref={videoRef}
+        poster="https://pub-4f074e0ebf814197a45996298c88925f.r2.dev/hero/syw-hero-v3-poster.webp"
+        preload="none"
         muted
         loop
         playsInline
         className="absolute bottom-0 left-0 w-full h-[180%] object-cover will-change-transform pointer-events-none"
       >
         <source
-          src="https://pub-4f074e0ebf814197a45996298c88925f.r2.dev/hero/syw-hero-v2.mp4"
+          src="https://pub-4f074e0ebf814197a45996298c88925f.r2.dev/hero/syw-hero-v3.mp4"
           type="video/mp4"
         />
       </video>
