@@ -88,4 +88,35 @@ describe("createAdminToken", () => {
     expect(admin.verify("reg-1", paymentHex)).toBe(false);
     expect(payment.verify("reg-1", adminHex)).toBe(false);
   });
+
+  it("token 格式為 `${expiresAtMs}.${hmac}`", () => {
+    const token = createAdminToken(TEST_SECRET);
+    expect(token.generate("reg-1")).toMatch(/^\d+\.[0-9a-f]{64}$/);
+  });
+
+  it("過期 token verify 失敗（ttl 為負數模擬已過期）", () => {
+    const token = createAdminToken(TEST_SECRET);
+    const expired = token.generate("reg-1", -1000);
+    expect(token.verify("reg-1", expired)).toBe(false);
+  });
+
+  it("竄改過期戳記延長效期 → 簽章失效，verify 失敗", () => {
+    const token = createAdminToken(TEST_SECRET);
+    const valid = token.generate("reg-1");
+    const [, signature] = valid.split(".");
+    const extended = `${Date.now() + 365 * 86400_000}.${signature}`;
+    expect(token.verify("reg-1", extended)).toBe(false);
+  });
+
+  it("舊版無過期戳記格式（純 hex）verify 失敗", () => {
+    const token = createAdminToken(TEST_SECRET);
+    const legacyHex = "a".repeat(64);
+    expect(token.verify("reg-1", legacyHex)).toBe(false);
+  });
+
+  it("篡改 registrationId 後 verify 失敗", () => {
+    const token = createAdminToken(TEST_SECRET);
+    const valid = token.generate("reg-1");
+    expect(token.verify("reg-2", valid)).toBe(false);
+  });
 });
