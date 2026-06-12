@@ -281,6 +281,48 @@ describe("assignCarpool", () => {
     vi.clearAllMocks();
   });
 
+  it("happy path：driver + passenger 分組結果回傳且 RPC 持久化成功", async () => {
+    const driver = makeRegistration({
+      id: "drv-1",
+      carpool_role: "driver",
+      seat_count: 3,
+    });
+    const passenger = makeRegistration({ id: "p-1" });
+
+    setupSupabaseMock(
+      [
+        makeSingleChain({ data: baseEvent, error: null }),
+        makeRegsChain({ data: [driver, passenger], error: null }),
+      ],
+      { rpcResult: { error: null } }
+    );
+
+    const result = await assignCarpool("evt-1");
+
+    expect(result).toHaveLength(2);
+    expect(result[0]).toMatchObject({
+      registration_id: "drv-1",
+      final_role: "driver",
+      car_group: 1,
+    });
+    expect(result[1]).toMatchObject({
+      registration_id: "p-1",
+      final_role: "passenger",
+      car_group: 1,
+    });
+  });
+
+  it("沒有 paid + carpool 報名時回空陣列，不呼叫 RPC", async () => {
+    setupSupabaseMock([
+      makeSingleChain({ data: baseEvent, error: null }),
+      makeRegsChain({ data: [], error: null }),
+    ]);
+
+    const result = await assignCarpool("evt-1");
+
+    expect(result).toEqual([]);
+  });
+
   it("event 不存在時 throw EventNotFoundError", async () => {
     setupSupabaseMock([
       makeSingleChain({ data: null, error: { message: "not found" } }),
