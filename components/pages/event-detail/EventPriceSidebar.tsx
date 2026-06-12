@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import Button from "@/components/ui/atoms/Button";
 import { useTranslations } from "@/lib/i18n/client";
 
@@ -11,6 +13,7 @@ interface EventPriceSidebarProps {
   allOptionsSelected: boolean;
   selectedDate: string | null;
   onBook: () => void;
+  eventId: string;
 }
 
 const EventPriceSidebar = (props: EventPriceSidebarProps) => {
@@ -19,7 +22,23 @@ const EventPriceSidebar = (props: EventPriceSidebarProps) => {
     props.basePrice + (props.isSelfArrival ? 0 : props.carpoolSurcharge);
   const formattedPrice = totalPrice.toLocaleString("zh-TW");
   const dateLabel = formatSelectedDate(props.selectedDate);
-  const disabled = !props.allOptionsSelected;
+
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
+
+  useEffect(
+    function checkRegistrationStatus() {
+      try {
+        const keys = Object.keys(localStorage);
+        const registered = keys.some((k) =>
+          k.startsWith(`syw:reg:${props.eventId}:`)
+        );
+        setAlreadyRegistered(registered);
+      } catch {}
+    },
+    [props.eventId]
+  );
+
+  const disabled = !props.allOptionsSelected || alreadyRegistered;
 
   return (
     <>
@@ -53,11 +72,15 @@ const EventPriceSidebar = (props: EventPriceSidebarProps) => {
               <span className="pl-2 typo-body opacity-80">{dateLabel}</span>
             )}
           </Button>
-          {disabled && (
+          {alreadyRegistered ? (
+            <p className="typo-body text-xs text-center text-secondary">
+              {t("alreadyRegistered")}
+            </p>
+          ) : !props.allOptionsSelected ? (
             <p className="typo-body text-xs text-center text-secondary">
               {t("selectOptionsHint")}
             </p>
-          )}
+          ) : null}
         </div>
       </aside>
 

@@ -7,7 +7,7 @@ import {
   ChevronLeft as IconChevronLeft,
   ChevronRight as IconChevronRight,
 } from "lucide-react";
-import { useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 
 import JourneyCard from "@/components/pages/home/JourneyCard";
 import Button from "@/components/ui/atoms/Button";
@@ -16,7 +16,11 @@ import { ScrollTrigger, useTween } from "@/lib/gsap";
 import { useTranslations } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 
-const JourneysSection = () => {
+interface JourneysSectionProps {
+  typeImages?: Record<string, string>;
+}
+
+const JourneysSection: React.FC<JourneysSectionProps> = (props) => {
   const t = useTranslations("home.journeys");
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -169,7 +173,7 @@ const JourneysSection = () => {
               key={key}
               title={t(`items.${key}.title`)}
               subtitle={t(`items.${key}.subtitle`)}
-              image={JOURNEY_IMAGES[i]}
+              image={props.typeImages?.[key] ?? JOURNEY_IMAGES[i]}
               href={`/events?type=${key}`}
             />
           ))}

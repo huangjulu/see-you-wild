@@ -5,13 +5,16 @@ import PhilosophySection from "@/components/pages/home/PhilosophySection";
 import TestimonialsSection from "@/components/pages/home/TestimonialsSection";
 import WhyChooseUsSection from "@/components/pages/home/WhyChooseUsSection";
 import CookiePopup from "@/components/ui/molecules/CookiePopup";
+import { getJourneyImages } from "@/lib/supabase/queries/journey-images";
 
-const HomeTemplate = () => {
+const HomeTemplate = async () => {
+  const typeImages = await getJourneyImages();
+
   return (
     <main>
       <HeroSection />
       <PhilosophySection />
-      <JourneysSection />
+      <JourneysSection typeImages={typeImages} />
       <WhyChooseUsSection />
       <TestimonialsSection />
       <CTASection />

@@ -243,7 +243,8 @@
     "viewFaq": "View FAQ",
     "viewRefundPolicy": "View Policy",
     "calendarFull": "Full",
-    "calendarAvailable": "Available"
+    "calendarAvailable": "Available",
+    "alreadyRegistered": "You have already registered for this event"
   },
   "registration": {
     "title": "Registration Form",
