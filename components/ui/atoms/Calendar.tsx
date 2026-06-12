@@ -231,7 +231,7 @@ function CalendarDayButton(props: CalendarDayButtonProps) {
         "hover:data-[selected-single=true]:bg-brand-500",
         size === "lg" && "justify-start pt-2",
         ...markerStyles,
-        isWeekend && !modifiers.selected && !modifiers.full && "text-critical",
+        isWeekend && !modifiers.selected && "text-critical",
         className
       )}
       {...rest}
