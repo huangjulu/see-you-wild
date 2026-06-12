@@ -104,12 +104,12 @@ describe("createRegistrationNotifier", () => {
     );
   });
 
-  it("adminUrl 格式為 baseUrl/admin/registrations/{id}", async () => {
+  it("adminUrl 指向後台儀表板 baseUrl/admin", async () => {
     const notifier = createRegistrationNotifier(baseContext);
     await notifier.notifyAll();
     expect(sendAdminNotification).toHaveBeenCalledWith(
       expect.objectContaining({
-        adminUrl: "https://seeyouwild.com/admin/registrations/reg-1",
+        adminUrl: "https://seeyouwild.com/admin",
       })
     );
   });

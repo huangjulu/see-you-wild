@@ -37,7 +37,7 @@ export function createRegistrationNotifier(context: NotifierContext) {
       eventTitle: event.title,
       amountDue: registration.amount_due,
       expiresAt: registration.expires_at,
-      adminUrl: `${baseUrl}/admin/registrations/${registration.id}`,
+      adminUrl: `${baseUrl}/admin`,
       adminEmail: process.env.ADMIN_EMAIL ?? "admin@seeyouwild.com",
     });
   }
