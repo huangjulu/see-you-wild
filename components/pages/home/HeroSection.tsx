@@ -110,7 +110,7 @@ const HeroSection = () => {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 flex flex-col items-center max-w-4xl">
+      <div className="relative z-10 flex flex-col items-center max-w-4xl translate-y-[10vh] md:translate-y-0">
         <h1
           ref={h1Ref}
           className="typo-display text-5xl md:text-6xl lg:text-7xl text-white leading-tight [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-primary)_50%,transparent)]"
