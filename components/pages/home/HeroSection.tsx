@@ -3,11 +3,14 @@
 import { useEffect, useRef } from "react";
 
 import Button from "@/components/ui/atoms/Button";
-import { useTimeline, useTween } from "@/lib/gsap";
+import { ScrollTrigger, useTimeline, useTween } from "@/lib/gsap";
 import { useTranslations } from "@/lib/i18n/client";
+import { cn } from "@/lib/utils";
+import { useReducedMotion } from "@/stores/motion";
 
 const HeroSection = () => {
   const t = useTranslations("home.hero");
+  const reduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const mobileVideoRef = useRef<HTMLVideoElement>(null);
@@ -15,25 +18,42 @@ const HeroSection = () => {
   const subtitlesRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  useTimeline(sectionRef, (tl) => {
-    const subtitles = subtitlesRef.current?.children;
-    const cta = ctaRef.current;
-    const scroll = scrollRef.current;
-    if (!subtitles || !cta || !scroll) return;
+  useTimeline(
+    sectionRef,
+    (tl, el) => {
+      const h1 = h1Ref.current;
+      const subtitles = subtitlesRef.current?.children;
+      const cta = ctaRef.current;
+      if (!h1 || !subtitles || !cta) return;
 
-    tl.fromTo(
-      subtitles,
-      { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, duration: 0.9, ease: "power3.out", stagger: 0.2 }
-    );
-    tl.fromTo(
-      cta,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
-      "-=0.4"
-    );
-    tl.fromTo(scroll, { opacity: 0 }, { opacity: 1, duration: 0.8 }, "-=0.3");
-  });
+      tl.fromTo(
+        h1,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.9, ease: "power3.out" }
+      );
+      tl.fromTo(
+        subtitles,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.9, ease: "power3.out", stagger: 0.2 },
+        "-=0.5"
+      );
+      tl.fromTo(
+        cta,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
+        "-=0.4"
+      );
+
+      // 一次性：捲過 50px 才播放標題群進場（影片背景不受影響）
+      ScrollTrigger.create({
+        trigger: el,
+        start: "top top-=50",
+        once: true,
+        onEnter: () => tl.play(),
+      });
+    },
+    { paused: true }
+  );
 
   const OFFSET_TOP = 0.4;
   const PARALLEX_ANIMATE = 0.3;
@@ -113,20 +133,36 @@ const HeroSection = () => {
       <div className="relative z-10 flex flex-col items-center max-w-4xl translate-y-[10vh] md:translate-y-0">
         <h1
           ref={h1Ref}
-          className="typo-display text-5xl md:text-6xl lg:text-7xl text-white leading-tight [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-primary)_50%,transparent)]"
+          className={cn(
+            "typo-display text-5xl md:text-6xl lg:text-7xl text-white leading-tight [text-shadow:0_0_12px_color-mix(in_srgb,var(--color-primary)_50%,transparent)]",
+            !reduceMotion && "opacity-0"
+          )}
         >
           See You Wild
         </h1>
         <div className="absolute top-full mt-6 flex flex-col items-center gap-4">
           <div ref={subtitlesRef} className="flex flex-col items-center">
-            <p className="typo-body text-base md:text-lg text-white/80 opacity-0 text-shadow-md">
+            <p
+              className={cn(
+                "typo-body text-base md:text-lg text-white/80 text-shadow-md",
+                !reduceMotion && "opacity-0"
+              )}
+            >
               {t("subtitle")}
             </p>
-            <p className="text-base text-white/60 italic tracking-widest opacity-0 text-shadow-md">
+            <p
+              className={cn(
+                "text-base text-white/60 italic tracking-widest text-shadow-md",
+                !reduceMotion && "opacity-0"
+              )}
+            >
               {t("subtitleEn")}
             </p>
           </div>
-          <div ref={ctaRef} className="mt-2 opacity-0">
+          <div
+            ref={ctaRef}
+            className={cn("mt-2", !reduceMotion && "opacity-0")}
+          >
             <Button theme="ghost" href="#journeys">
               {t("exploreCta")}
             </Button>
